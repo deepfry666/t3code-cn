@@ -1,0 +1,32 @@
+import { describe, expect, it } from "vite-plus/test";
+
+import { resolveLocale, translate } from "./locale";
+
+describe("interface locale", () => {
+  it("respects an explicit choice and otherwise follows the preferred browser language", () => {
+    expect(resolveLocale("en", ["zh-CN"])).toBe("en");
+    expect(resolveLocale("zh-CN", ["en-US"])).toBe("zh-CN");
+    expect(resolveLocale(null, ["zh-TW", "en"])).toBe("zh-CN");
+    expect(resolveLocale("invalid", ["en-US", "zh-CN"])).toBe("en");
+    expect(resolveLocale(null, [])).toBe("en");
+  });
+
+  it("uses the unchanged source message in English", () => {
+    const messages = { "New thread": "新建会话" } as const;
+    expect(translate("en", messages, "New thread")).toBe("New thread");
+    expect(translate("zh-CN", messages, "New thread")).toBe("新建会话");
+  });
+  it("interpolates values as plain text without substituting missing or inherited keys", () => {
+    const messages = {
+      "Open {name} ({count})": "打开 {name}（{count}）",
+      "{toString}": "{toString}",
+    } as const;
+    expect(
+      translate("zh-CN", messages, "Open {name} ({count})", { name: "<script>", count: 0 }),
+    ).toBe("打开 <script>（0）");
+    expect(translate("en", messages, "Open {name} ({count})", { name: "$&" })).toBe(
+      "Open $& ({count})",
+    );
+    expect(translate("zh-CN", messages, "{toString}")).toBe("{toString}");
+  });
+});

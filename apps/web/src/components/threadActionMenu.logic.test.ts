@@ -1,3 +1,5 @@
+import { translate } from "../i18n/locale";
+import { coreUiMessages } from "./coreUi.messages";
 import { describe, expect, it } from "vite-plus/test";
 
 import { buildThreadActionMenuItems, type ThreadActionMenuState } from "./threadActionMenu.logic";
@@ -26,16 +28,24 @@ const baseState: ThreadActionMenuState = {
 };
 
 describe("buildThreadActionMenuItems", () => {
-  it.each([false, true])(
-    "disables both lifecycle directions without permission (reversed: %s)",
-    (reversed) => {
-      const items = buildThreadActionMenuItems({
-        ...baseState,
-        canOperate: false,
-        isPinned: reversed,
-        isSettled: reversed,
-        isSnoozed: reversed,
-      });
+  it.each([
+    [false, "en"],
+    [true, "en"],
+    [false, "zh-CN"],
+    [true, "zh-CN"],
+  ] as const)(
+    "disables both lifecycle directions without permission (reversed: %s, locale: %s)",
+    (reversed, locale) => {
+      const items = buildThreadActionMenuItems(
+        {
+          ...baseState,
+          canOperate: false,
+          isPinned: reversed,
+          isSettled: reversed,
+          isSnoozed: reversed,
+        },
+        (key, params) => translate(locale, coreUiMessages, key, params),
+      );
       const expected = reversed
         ? [
             "unpin",
@@ -73,5 +83,22 @@ describe("buildThreadActionMenuItems", () => {
     });
     expect(items.find((item) => item.id === "archive")?.disabled).toBe(true);
     expect(items.find((item) => item.id === "turn-into-project")?.disabled).toBe(true);
+  });
+  it("preserves identifiers and user-provided labels when localizing action menus", () => {
+    const branch = "feature/{count}-$&";
+    const project = "<project>{branch}";
+    const state = { ...baseState, branch, projectFilter: { label: project, isActive: false } };
+    const english = buildThreadActionMenuItems(state);
+    const chinese = buildThreadActionMenuItems(state, (key, params) =>
+      translate("zh-CN", coreUiMessages, key, params),
+    );
+    expect(chinese.map(({ id, disabled, destructive }) => ({ id, disabled, destructive }))).toEqual(
+      english.map(({ id, disabled, destructive }) => ({ id, disabled, destructive })),
+    );
+    expect(chinese.find(({ id }) => id === "new-thread-on-branch")?.label).toContain(branch);
+    expect(chinese.find(({ id }) => id === "filter-by-project")?.label).toContain(project);
+    expect(chinese.find(({ id }) => id === "snooze")?.children?.[0]).toEqual(
+      english.find(({ id }) => id === "snooze")?.children?.[0],
+    );
   });
 });

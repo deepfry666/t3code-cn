@@ -58,6 +58,30 @@ const ITEMS: ReadonlyArray<SettingsSearchItem> = [
 ];
 
 describe("searchSettings", () => {
+  it("finds translated titles and sections without changing result identities", () => {
+    const result = searchSettings("自动换行", ITEMS, "zh-CN");
+    expect(result).toEqual([ITEMS[0]]);
+    expect(result[0]).toBe(ITEMS[0]);
+    expect(searchSettings("共享与访问", ITEMS, "zh-CN").map((item) => item.id)).toEqual([
+      "network-access",
+    ]);
+    expect(searchSettings("network", ITEMS, "zh-CN").map((item) => item.id)).toEqual([
+      "network-access",
+    ]);
+    expect(searchSettings("remote pairing", ITEMS, "zh-CN").map((item) => item.id)).toEqual([
+      "network-access",
+    ]);
+  });
+
+  it("finds the language selector by either language", () => {
+    for (const query of ["界面语言", "Interface language", "简体中文"]) {
+      expect(searchSettings(query, undefined, "zh-CN")[0]).toMatchObject({
+        id: "interface-language",
+        to: "/settings/general",
+      });
+    }
+  });
+
   it("matches titles, sections, and remembered setting details", () => {
     expect(searchSettings("word", ITEMS).map((item) => item.id)).toEqual(["word-wrap"]);
     expect(searchSettings("network", ITEMS).map((item) => item.id)).toEqual(["network-access"]);

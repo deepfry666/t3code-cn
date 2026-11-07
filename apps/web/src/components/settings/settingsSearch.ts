@@ -1,3 +1,5 @@
+import type { Locale } from "../../i18n/locale";
+import { translateSettingsLabel } from "./settingsMessages";
 import { HOSTED_APP_CHANNEL } from "~/branding";
 import { isElectron, isSecretsFeatureEnabled } from "~/env";
 import { isMacPlatform, isWindowsPlatform, normalizeSearchText } from "~/lib/utils";
@@ -219,6 +221,12 @@ const SOURCE_CONTROL_HOST_TERMS = sourceControlClients.definitions
   .join(" ");
 
 export const SETTINGS_SEARCH_ITEMS = [
+  {
+    id: "interface-language",
+    title: "Interface language",
+    to: "/settings/general",
+    searchTerms: ["language locale English Chinese 中文 简体中文 语言"],
+  },
   {
     id: "storage-worktree-keep-when",
     targetId: "storage-worktrees",
@@ -1477,6 +1485,7 @@ export function settingsForThisPlatform(
 export function searchSettings(
   query: string,
   items: ReadonlyArray<SettingsSearchItem> = SETTINGS_SEARCH_ITEMS,
+  locale: Locale = "en",
 ): ReadonlyArray<SettingsSearchItem> {
   const normalizedQuery = normalizeSearchText(query);
   if (normalizedQuery.length === 0) return [];
@@ -1484,27 +1493,30 @@ export function searchSettings(
 
   return settingsForThisPlatform(items)
     .flatMap((item, index) => {
-      const title = normalizeSearchText(item.title);
+      const titles = [
+        normalizeSearchText(item.title),
+        normalizeSearchText(translateSettingsLabel(item.title, locale)),
+      ];
       const fields = [
-        title,
+        ...titles,
         normalizeSearchText(SETTINGS_SECTION_LABELS[item.to]),
+        normalizeSearchText(translateSettingsLabel(SETTINGS_SECTION_LABELS[item.to], locale)),
         ...(item.searchTerms ?? []).map(normalizeSearchText),
       ];
       if (!queryTokens.every((token) => fields.some((field) => field.includes(token)))) return [];
 
       const exactPhraseField = fields.findIndex((field) => field.includes(normalizedQuery));
-      const rank =
-        title === normalizedQuery
-          ? 5
-          : title.startsWith(normalizedQuery)
-            ? 4
-            : title.includes(normalizedQuery)
-              ? 3
-              : queryTokens.every((token) => title.includes(token))
-                ? 2
-                : exactPhraseField >= 0
-                  ? 1
-                  : 0;
+      const rank = titles.includes(normalizedQuery)
+        ? 5
+        : titles.some((title) => title.startsWith(normalizedQuery))
+          ? 4
+          : titles.some((title) => title.includes(normalizedQuery))
+            ? 3
+            : titles.some((title) => queryTokens.every((token) => title.includes(token)))
+              ? 2
+              : exactPhraseField >= 0
+                ? 1
+                : 0;
       return [{ item, index, rank }];
     })
     .toSorted(

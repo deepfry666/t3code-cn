@@ -1,3 +1,4 @@
+import { useTranslation } from "~/i18n/useTranslation";
 import { SettingsGroup } from "./SettingsGroup";
 import { AuthSettingsWriteScope } from "@t3tools/contracts";
 import { usePrimaryEnvironmentId, usePrimaryEnvironment } from "../../state/environments";
@@ -547,6 +548,11 @@ export function SettingsRow({
   );
 }
 
+const resetMessages = {
+  "Reset to default": "恢复默认值",
+  "Reset {label} to default": "将{label}恢复为默认值",
+} as const;
+
 export function SettingResetButton({
   label,
   tooltip = "Reset to default",
@@ -558,6 +564,7 @@ export function SettingResetButton({
   disabled?: boolean;
   onClick: () => void;
 }) {
+  const t = useTranslation(resetMessages);
   return (
     <Tooltip>
       <TooltipTrigger
@@ -565,7 +572,7 @@ export function SettingResetButton({
           <Button
             size="icon-micro"
             variant="ghost-muted"
-            aria-label={`Reset ${label} to default`}
+            aria-label={t("Reset {label} to default", { label })}
             disabled={disabled}
             onClick={(event) => {
               event.stopPropagation();
@@ -576,7 +583,9 @@ export function SettingResetButton({
           </Button>
         }
       />
-      <TooltipPopup side="top">{tooltip}</TooltipPopup>
+      <TooltipPopup side="top">
+        {tooltip === "Reset to default" ? t("Reset to default") : tooltip}
+      </TooltipPopup>
     </Tooltip>
   );
 }
