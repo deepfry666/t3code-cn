@@ -4087,9 +4087,26 @@ const buildDesktopArtifactUnlocked = Effect.fn("buildDesktopArtifactUnlocked")(f
   );
 });
 
+/** This source-only fork must not produce packages that share the upstream identity. */
+export class ForkDistributionNotReadyError extends Schema.TaggedError<ForkDistributionNotReadyError>()(
+  "ForkDistributionNotReadyError",
+  {},
+) {
+  override get message() {
+    return "T3 Code CN desktop packaging is not enabled: application/protocol identity, data and WSL paths, CLI ownership, authentication callbacks and update feeds still need isolation and verification. See https://github.com/deepfry666/t3code-cn/issues/8. Web builds and isolated development remain available.";
+  }
+}
+
+// Deliberately not an environment flag: signing, skip-build and mock-update options
+// must not bypass the release boundary. Remove this gate only in the reviewed
+// isolation change, after the corresponding package/runtime checks are complete.
+export const requireForkDistributionReady: Effect.Effect<void, ForkDistributionNotReadyError> =
+  Effect.fail(new ForkDistributionNotReadyError());
+
 const buildDesktopArtifact = Effect.fn("buildDesktopArtifact")(function* (
   options: ResolvedBuildOptions,
 ) {
+  yield* requireForkDistributionReady;
   const repoRoot = yield* RepoRoot;
   return yield* withDesktopBuildLock(repoRoot, buildDesktopArtifactUnlocked(options));
 });
