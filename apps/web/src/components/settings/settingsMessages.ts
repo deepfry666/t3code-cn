@@ -124,7 +124,7 @@ export const settingsMessages = {
   "Thread title instructions": "会话标题生成说明",
   Version: "版本",
   "Update track": "更新通道",
-  "t3 command": "t3 命令",
+  "t3-cn command": "t3-cn 命令",
   "Mobile app": "移动应用",
   "Privacy policy": "隐私政策",
   "OpenTelemetry export": "OpenTelemetry 导出",

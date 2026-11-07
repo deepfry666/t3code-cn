@@ -73,7 +73,7 @@ describe("renderCliShim", () => {
     );
   });
 
-  it("keeps the install's T3 home under sudo, unless one is set", () => {
+  it("ignores the official home and accepts only the fork override", () => {
     const root = tempRoot();
     writeExecutable(NodePath.join(root, "app"), REPORTER);
     const shim = writeShim(root, {
@@ -82,7 +82,10 @@ describe("renderCliShim", () => {
       entry: "/bin.mjs",
     });
     expect(run(shim, []).stdout).toContain(`home=${root}/home`);
-    expect(run(shim, [], { T3CODE_HOME: "/elsewhere" }).stdout).toContain("home=/elsewhere");
+    expect(run(shim, [], { T3CODE_HOME: "/official" }).stdout).toContain(`home=${root}/home`);
+    expect(
+      run(shim, [], { T3CODE_HOME: "/official", T3CODE_CN_HOME: "/fork-home" }).stdout,
+    ).toContain("home=/fork-home");
     const relative = NodeChildProcess.spawnSync("./bin/t3", [], { cwd: root, encoding: "utf8" });
     expect(relative.stdout).toContain(`cli=${shim}`);
   });
@@ -113,6 +116,8 @@ describe("renderCliShim", () => {
     });
     const lines = script.split("\r\n");
     expect(lines).toContain("setlocal EnableExtensions DisableDelayedExpansion");
+    expect(lines).toContain('if defined T3CODE_CN_HOME set "T3CODE_HOME=%T3CODE_CN_HOME%"');
+    expect(script).not.toContain("if not defined T3CODE_HOME");
     expect(lines).toContain("chcp 65001 >nul");
     expect(lines).toContain(
       'if exist "C:\\Apps\\R&whoami&X 100%%\\!CHANNEL!\\T3 Code.exe" goto run',
