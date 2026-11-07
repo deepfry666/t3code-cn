@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 
+import { composerUiMessages } from "../components/chat/composerUi.messages";
+import { themeUiMessages } from "../components/settings/themeUi.messages";
 import { chatUiMessages } from "../components/chat/chatUi.messages";
 import { coreUiMessages } from "../components/coreUi.messages";
 import { settingsContentMessages } from "../components/settings/settingsContent.messages";
@@ -8,6 +10,8 @@ import { translate } from "./locale";
 
 const catalogs: Record<string, Readonly<Record<string, string>>> = {
   chat: chatUiMessages,
+  composer: composerUiMessages,
+  theme: themeUiMessages,
   core: coreUiMessages,
   settings: settingsMessages,
   settingsContent: settingsContentMessages,

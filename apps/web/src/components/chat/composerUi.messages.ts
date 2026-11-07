@@ -1,0 +1,23 @@
+export const composerUiMessages = {
+  "Preview {name}": "预览 {name}",
+  "Retry upload for {name}": "重新上传 {name}",
+  "Remove {name}": "移除 {name}",
+  "Play {name}": "播放 {name}",
+  "Draft attachment may not persist": "草稿附件可能无法保留",
+  "Draft attachment could not be saved locally and may be lost on navigation.":
+    "草稿附件无法保存到本地，离开当前页面后可能丢失。",
+  "Attach again": "重新添加附件",
+  "Remove to send": "移除后才能发送",
+  Draft: "草稿",
+  "Show {count} more image attachments": "显示另外 {count} 张图片附件",
+  "Attach files": "添加附件",
+  Cancel: "取消",
+  Decline: "拒绝",
+  "Always allow this session": "本次会话始终允许",
+  Approve: "批准",
+  "More approval options": "更多审批选项",
+  More: "更多",
+  "Code language: {language}": "代码语言：{language}",
+  "Search languages": "搜索语言",
+  "No matching languages.": "没有匹配的语言。",
+} as const;
