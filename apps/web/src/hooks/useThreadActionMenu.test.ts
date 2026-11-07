@@ -38,6 +38,8 @@ vi.mock("../components/CustomSnoozeDialog", () => ({ requestCustomSnooze: vi.fn(
 vi.mock("react", () => ({
   useCallback: (callback: unknown) => callback,
   useMemo: (factory: () => unknown) => factory(),
+  useSyncExternalStore: (_subscribe: unknown, _read: unknown, serverSnapshot: () => unknown) =>
+    serverSnapshot(),
 }));
 vi.mock("@tanstack/react-router", () => ({
   useRouter: () => ({ navigate: async () => recordEffect("project-settings") }),
