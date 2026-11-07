@@ -27,29 +27,30 @@ const environmentInput = {
   runningUnderArm64Translation: false,
 } satisfies DesktopEnvironment.MakeDesktopEnvironmentInput;
 
-const layerElectronApp = Layer.succeed(ElectronApp.ElectronApp, {
-  metadata: Effect.die("unexpected metadata read"),
-  name: Effect.succeed("T3 Code"),
-  systemLocale: Effect.succeed("en-US"),
-  preferredSystemLanguages: Effect.succeed(["en-US"]),
-  whenReady: Effect.void,
-  requestSingleInstanceLock: Effect.succeed(true),
-  quit: Effect.void,
-  exit: () => Effect.void,
-  relaunch: () => Effect.void,
-  setPath: () => Effect.void,
-  setName: () => Effect.void,
-  setAboutPanelOptions: () => Effect.void,
-  setAppUserModelId: () => Effect.void,
-  getAppMetrics: Effect.succeed([]),
-  setAsDefaultProtocolClient: () => Effect.succeed(true),
-  setDesktopName: () => Effect.void,
-  setDockIcon: () => Effect.void,
-  appendCommandLineSwitch: () => Effect.void,
-  onBeforeQuitForUpdate: () => Effect.void,
-  removeCommandLineSwitch: () => Effect.void,
-  on: () => Effect.void,
-} satisfies ElectronApp.ElectronApp["Service"]);
+const layerElectronApp = (languages: readonly string[]) =>
+  Layer.succeed(ElectronApp.ElectronApp, {
+    metadata: Effect.die("unexpected metadata read"),
+    name: Effect.succeed("T3 Code"),
+    systemLocale: Effect.succeed("en-US"),
+    preferredSystemLanguages: Effect.succeed(languages),
+    whenReady: Effect.void,
+    requestSingleInstanceLock: Effect.succeed(true),
+    quit: Effect.void,
+    exit: () => Effect.void,
+    relaunch: () => Effect.void,
+    setPath: () => Effect.void,
+    setName: () => Effect.void,
+    setAboutPanelOptions: () => Effect.void,
+    setAppUserModelId: () => Effect.void,
+    getAppMetrics: Effect.succeed([]),
+    setAsDefaultProtocolClient: () => Effect.succeed(true),
+    setDesktopName: () => Effect.void,
+    setDockIcon: () => Effect.void,
+    appendCommandLineSwitch: () => Effect.void,
+    onBeforeQuitForUpdate: () => Effect.void,
+    removeCommandLineSwitch: () => Effect.void,
+    on: () => Effect.void,
+  } satisfies ElectronApp.ElectronApp["Service"]);
 
 const layerElectronDialog = Layer.succeed(ElectronDialog.ElectronDialog, {
   pickFolder: () => Effect.succeedNone,
@@ -108,6 +109,7 @@ const configureMenu = (
   selectedAction: Deferred.Deferred<string>,
   applicationMenuTemplate: Deferred.Deferred<readonly Electron.MenuItemConstructorOptions[]>,
   environment: Partial<DesktopEnvironment.MakeDesktopEnvironmentInput> = {},
+  languages: readonly string[] = ["en-US"],
 ) =>
   Effect.gen(function* () {
     const menu = yield* DesktopApplicationMenu.DesktopApplicationMenu;
@@ -119,7 +121,7 @@ const configureMenu = (
         Layer.provideMerge(layerDesktopWindow(selectedAction)),
         Layer.provideMerge(layerDesktopUpdates),
         Layer.provideMerge(layerElectronDialog),
-        Layer.provideMerge(layerElectronApp),
+        Layer.provideMerge(layerElectronApp(languages)),
         Layer.provideMerge(
           DesktopEnvironment.layer({ ...environmentInput, ...environment }).pipe(
             Layer.provide(Layer.mergeAll(NodeServices.layer, DesktopConfig.layerTest({}))),
@@ -130,6 +132,23 @@ const configureMenu = (
   );
 
 describe("DesktopApplicationMenu", () => {
+  it.effect("uses Chinese OS labels while preserving application menu dispatch", () =>
+    Effect.gen(function* () {
+      const selectedAction = yield* Deferred.make<string>();
+      const applicationMenuTemplate =
+        yield* Deferred.make<readonly Electron.MenuItemConstructorOptions[]>();
+      yield* configureMenu(selectedAction, applicationMenuTemplate, {}, ["zh-CN"]);
+      const template = yield* Deferred.await(applicationMenuTemplate);
+      const file = template.find((item) => item.label === "文件");
+      if (!Array.isArray(file?.submenu)) throw new Error("Expected File submenu");
+      const settings = file.submenu.find((item) => item.label === "设置…");
+      if (typeof settings?.click !== "function") throw new Error("Expected Settings action");
+      assert.equal(settings.accelerator, "CmdOrCtrl+,");
+      settings.click({} as Electron.MenuItem, {} as Electron.BrowserWindow, {} as KeyboardEvent);
+      assert.equal(yield* Deferred.await(selectedAction), "open-settings");
+    }),
+  );
+
   it.effect("leaves the accelerator to Chromium instead of injecting a paste", () =>
     Effect.gen(function* () {
       const selectedAction = yield* Deferred.make<string>();

@@ -7,6 +7,8 @@ import * as Schema from "effect/Schema";
 import type * as Electron from "electron";
 
 import { makeComponentLogger } from "../app/DesktopObservability.ts";
+import { localizeApplicationMenu } from "./menuLocalization.ts";
+import * as ElectronApp from "../electron/ElectronApp.ts";
 import * as ElectronDialog from "../electron/ElectronDialog.ts";
 import * as ElectronMenu from "../electron/ElectronMenu.ts";
 import * as DesktopEnvironment from "../app/DesktopEnvironment.ts";
@@ -115,6 +117,7 @@ const handleCheckForUpdatesMenuClick = Effect.gen(function* () {
 /** @public */
 export const make = Effect.gen(function* () {
   const electronMenu = yield* ElectronMenu.ElectronMenu;
+  const electronApp = yield* ElectronApp.ElectronApp;
   const environment = yield* DesktopEnvironment.DesktopEnvironment;
   const context = yield* Effect.context<DesktopApplicationMenuRuntimeServices>();
   const runPromise = Effect.runPromiseWith(context);
@@ -314,7 +317,10 @@ export const make = Effect.gen(function* () {
       },
     );
 
-    yield* electronMenu.setApplicationMenu(template);
+    const languages = yield* electronApp.preferredSystemLanguages;
+    yield* electronMenu.setApplicationMenu(
+      localizeApplicationMenu(template, languages, environment.displayName),
+    );
   }).pipe(Effect.withSpan("desktop.menu.configure"));
 
   return DesktopApplicationMenu.of({
