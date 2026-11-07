@@ -315,8 +315,10 @@ export const createDevRunnerEnv = Effect.fn("dev-runner.createDevRunnerEnv")(fun
   const serverPort = port ?? BASE_SERVER_PORT + serverOffset;
   const webPort = BASE_WEB_PORT + webOffset;
   const configuredBaseDir = t3Home?.trim() || undefined;
-  const resolvedBaseDir = yield* resolveBaseDir(configuredBaseDir);
   const isDesktopMode = mode === "dev:desktop";
+  const resolvedBaseDir = yield* resolveBaseDir(
+    configuredBaseDir ?? (isDesktopMode ? "~/.t3code-cn" : undefined),
+  );
 
   const output: NodeJS.ProcessEnv = {
     ...baseEnv,
@@ -326,11 +328,15 @@ export const createDevRunnerEnv = Effect.fn("dev-runner.createDevRunnerEnv")(fun
       `http://${isDesktopMode ? DESKTOP_DEV_LOOPBACK_HOST : "localhost"}:${webPort}`,
   };
 
-  if (configuredBaseDir !== undefined) {
+  if (configuredBaseDir !== undefined || isDesktopMode) {
     output.T3CODE_HOME = resolvedBaseDir;
   } else {
     delete output.T3CODE_HOME;
   }
+
+  // The fork desktop reads its own variable; its child server still speaks the upstream protocol.
+  if (isDesktopMode) output.T3CODE_CN_HOME = resolvedBaseDir;
+  else delete output.T3CODE_CN_HOME;
 
   // Managed T3 service shells leak launcher variables that make dev servers fail version checks.
   // Dev-runner servers are never launcher-managed (serviceLauncherClient.ts resolveStartup).
@@ -738,7 +744,11 @@ export const runDevRunnerWithInput = Effect.fn("dev-runner.runDevRunnerWithInput
   const resolvedT3Home =
     (input.t3Home?.trim() || undefined) ??
     worktreeHome ??
-    (hostEnvironment.T3CODE_HOME?.trim() || undefined);
+    ((input.mode === "dev:desktop"
+      ? hostEnvironment.T3CODE_CN_HOME
+      : hostEnvironment.T3CODE_HOME
+    )?.trim() ||
+      undefined);
   const env = yield* createDevRunnerEnv({
     mode: input.mode,
     baseEnv: hostEnvironment,
@@ -857,7 +867,8 @@ export const runDevRunnerWithInput = Effect.fn("dev-runner.runDevRunnerWithInput
   // After sharing, so the warm step sees the same bundled-dev env as Vite.
   yield* prepareFirstStart({
     mode: input.mode,
-    seed: input.seed !== false,
+    // Fork desktop development never imports the official database automatically.
+    seed: input.mode !== "dev:desktop" && input.seed !== false,
     worktreeHome: baseDir === worktreeHome ? worktreeHome : undefined,
     env,
   });

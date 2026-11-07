@@ -412,6 +412,28 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
       }),
     );
 
+    it.effect("keeps the fork desktop and child server on the same isolated home", () =>
+      Effect.gen(function* () {
+        for (const t3Home of [undefined, "/explicit-cn"]) {
+          const env = yield* createDevRunnerEnv({
+            mode: "dev:desktop",
+            baseEnv: { T3CODE_HOME: "/official-do-not-use", T3CODE_CN_HOME: "/stale-cn" },
+            serverOffset: 0,
+            webOffset: 0,
+            t3Home,
+            browser: undefined,
+            autoBootstrapProjectFromCwd: undefined,
+            logWebSocketEvents: undefined,
+            host: undefined,
+            port: undefined,
+            devUrl: undefined,
+          }).pipe(Effect.provideService(HostProcess.HomeDirectory, "/home/dev"));
+          assert.equal(env.T3CODE_HOME, t3Home ?? "/home/dev/.t3code-cn");
+          assert.equal(env.T3CODE_CN_HOME, env.T3CODE_HOME);
+        }
+      }),
+    );
+
     it.effect("expands a home-relative T3 home the way the server does", () =>
       Effect.gen(function* () {
         const path = yield* Path.Path;
@@ -734,7 +756,10 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
           NodeFS.mkdirSync(path.join(home, ".t3", "userdata"), { recursive: true });
           NodeFS.writeFileSync(path.join(home, ".t3", "userdata", "statev2.sqlite"), "");
 
-          const spawnedArgs = (seed: boolean | undefined) =>
+          const spawnedArgs = (
+            seed: boolean | undefined,
+            mode: "dev:server" | "dev:desktop" = "dev:server",
+          ) =>
             Effect.gen(function* () {
               const spawned: Array<ReadonlyArray<string>> = [];
               const spawnerLayer = Layer.succeed(
@@ -746,7 +771,12 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
                   return Effect.succeed(mockProcess(0));
                 }),
               );
-              yield* runDevRunnerWithInput({ ...devServerInput, t3Home: undefined, seed }).pipe(
+              yield* runDevRunnerWithInput({
+                ...devServerInput,
+                mode,
+                t3Home: undefined,
+                seed,
+              }).pipe(
                 Effect.provide(Layer.mergeAll(emptyConfigLayer, netServiceLayer, spawnerLayer)),
                 Effect.provideService(HostProcess.Platform, "linux"),
                 Effect.provideService(HostProcess.WorkingDirectory, root),
@@ -759,6 +789,8 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
             });
 
           assert.deepStrictEqual(yield* spawnedArgs(false), []);
+          assert.deepStrictEqual(yield* spawnedArgs(undefined, "dev:desktop"), []);
+          assert.deepStrictEqual(yield* spawnedArgs(true, "dev:desktop"), []);
           const [seedArgs] = yield* spawnedArgs(undefined);
           assert.includeMembers([...(seedArgs ?? [])], ["--base-dir", path.join(root, ".t3")]);
 
