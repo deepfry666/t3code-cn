@@ -1,3 +1,4 @@
+import { vi } from "vite-plus/test";
 import * as NodeCrypto from "@effect/platform-node/NodeCrypto";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import { assert, describe, it } from "@effect/vitest";
@@ -22,6 +23,13 @@ import * as DesktopServerExposure from "./DesktopServerExposure.ts";
 import * as DesktopAppSettings from "../settings/DesktopAppSettings.ts";
 import * as DesktopWslEnvironment from "../wsl/DesktopWslEnvironment.ts";
 import * as DesktopWslServerTree from "../wsl/DesktopWslServerTree.ts";
+
+// These configuration tests simulate a Windows host with no mirrored WSL IPv4.
+// Do not depend on the executing machine's network interface permissions.
+vi.mock("node:os", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("node:os")>()),
+  networkInterfaces: () => ({}),
+}));
 
 const layerShellEnvironment = (prepared = true) =>
   Layer.succeed(DesktopShellEnvironment.DesktopShellEnvironment, {
@@ -433,6 +441,8 @@ describe("DesktopBackendConfiguration", () => {
             "Ubuntu",
             "--exec",
             "env",
+            "-u",
+            "T3CODE_HOME",
             `PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${resolvedPath}`,
             `${linuxAppRoot}/t3`,
             "--bootstrap-fd",
@@ -648,6 +658,8 @@ describe("DesktopBackendConfiguration", () => {
           "Ubuntu",
           "--exec",
           "env",
+          "-u",
+          "T3CODE_HOME",
           "PATH=/home/test user's/.nvm/versions/node/v22.0.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/test user/bin:/opt/test's tools/bin:/usr/bin:/bin",
           nodePath,
           linuxEntryPath,
@@ -733,6 +745,9 @@ describe("DesktopBackendConfiguration", () => {
 
         assert.equal(config.executablePath, "wsl.exe");
         assert.equal(config.bootstrap.port, 5050);
+        assert.equal(config.bootstrap.t3Home, "~/.t3code-cn");
+        assert.isUndefined(config.env.T3CODE_HOME);
+        assert.isUndefined(config.env.T3CODE_CN_HOME);
         assert.equal(config.bootstrap.host, "0.0.0.0");
         assert.equal(config.bootstrap.tailscaleServeEnabled, false);
         assert.notProperty(config.bootstrap, "desktopTelemetryFd");
@@ -763,6 +778,8 @@ describe("DesktopBackendConfiguration", () => {
         ),
         Effect.provideService(HostProcess.Environment, {
           WSLENV: "GOPATH/p:OPENAI_API_KEY/u:EMPTY::AZURE_DEVOPS_EXT_PAT/u",
+          T3CODE_HOME: "C:/official-data",
+          T3CODE_CN_HOME: "C:/fork-windows-data",
           OPENAI_API_KEY: "openai-key",
           ANTHROPIC_API_KEY: "anthropic-key",
           T3CODE_OTLP_HEADERS: 'authorization="Bearer%20my-token"',

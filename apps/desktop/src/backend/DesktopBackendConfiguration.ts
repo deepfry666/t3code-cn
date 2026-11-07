@@ -572,7 +572,8 @@ const resolveWslStartConfig = Effect.fn("desktop.backendConfiguration.resolveWsl
     mode: "desktop" as const,
     noBrowser: true,
     port: input.port,
-    // Omit t3Home to keep the Linux backend from sharing the primary's Windows SQLite file.
+    // Resolve inside the distro, never reuse the primary Windows or official Linux database.
+    t3Home: "~/.t3code-cn",
     host: wslBindHost,
     desktopBootstrapToken: input.bootstrapToken,
     desktopBootstrapSecret: input.bootstrapSecret,
@@ -644,7 +645,7 @@ const resolveWslStartConfig = Effect.fn("desktop.backendConfiguration.resolveWsl
 
   const parentEnvWithoutT3Home: Record<string, string | undefined> = {};
   for (const [key, value] of Object.entries(env)) {
-    if (key === "T3CODE_HOME") continue;
+    if (key === "T3CODE_HOME" || key === "T3CODE_CN_HOME") continue;
     parentEnvWithoutT3Home[key] = value;
   }
   const wslEnv = mergeWslEnv(parentEnvWithoutT3Home.WSLENV, forwardedEnvNames);
@@ -706,6 +707,9 @@ const resolveWslStartConfig = Effect.fn("desktop.backendConfiguration.resolveWsl
       ...distroArgs,
       "--exec",
       "env",
+      // A distro-level T3CODE_HOME would otherwise override the fork bootstrap.
+      "-u",
+      "T3CODE_HOME",
       `PATH=${launchPath}`,
       ...command,
       "--bootstrap-fd",
