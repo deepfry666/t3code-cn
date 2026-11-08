@@ -1,7 +1,6 @@
 import {
   createPreviewFramePainter,
   createPreviewStreamClient,
-  previewStreamControlLabel,
   previewStreamModifiers,
   type PreviewStreamClient,
   type PreviewStreamControl,
@@ -12,7 +11,6 @@ import {
   type PreviewStreamMouseButton,
   type PreviewStreamPointer,
   type PreviewStreamViewport,
-  previewStreamHostSetupMessage,
 } from "@t3tools/client-runtime/preview/server-browser-stream";
 import type {
   EnvironmentId,
@@ -68,6 +66,22 @@ const TAP_SLOP_PX = 8;
 const MULTI_CLICK_MS = 500;
 const MULTI_CLICK_SLOP_PX = 4;
 const WHEEL_LINE_PX = 16;
+
+// The shared label serves mobile, which stays English; web words the same states from its catalog.
+type BrowserTranslate = ReturnType<typeof useTranslation<typeof browserUiMessages>>;
+
+const controlLabel = (t: BrowserTranslate, control: PreviewStreamControl | null): string =>
+  control === null
+    ? t("Connecting...")
+    : !control.canOperate
+      ? t("Read-only")
+      : control.controller === "you"
+        ? t("You have control")
+        : control.controller === "agent"
+          ? t("Agent has control")
+          : control.controller === "another-viewer"
+            ? t("Another viewer has control")
+            : t("Watching");
 
 type MouseInput = Extract<PreviewStreamInput, { type: "mouse" }>;
 type WheelInput = Extract<PreviewStreamInput, { type: "wheel" }>;
@@ -756,7 +770,7 @@ export function ServerBrowserSurface(props: {
         )}
       >
         <span role="status" className="text-xs text-muted-foreground">
-          {previewStreamControlLabel(control)}
+          {controlLabel(t, control)}
         </span>
         {control?.canOperate ? (
           <Button
@@ -905,7 +919,13 @@ export function ServerBrowserSurface(props: {
       {visible && hostSetup ? (
         <div className="visible absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-background p-4 text-center">
           <p role="alert" className="max-w-sm text-sm text-muted-foreground">
-            {previewStreamHostSetupMessage(hostSetup)}
+            {hostSetup.need === "sandbox"
+              ? t(
+                  "This server's host blocks the sandbox its browser runs in. Run this once on the host, then try again:",
+                )
+              : t(
+                  "This server's host is missing libraries its browser needs. Run this once on the host, then try again:",
+                )}
           </p>
           <CommandBlock command={hostSetup.command} className="w-full max-w-md text-left" />
           <Button variant="outline" size="sm" onClick={() => setHostSetup(null)}>

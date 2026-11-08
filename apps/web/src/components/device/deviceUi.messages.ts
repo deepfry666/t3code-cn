@@ -26,6 +26,7 @@ export const deviceUiMessages = {
   "Capturing screenshot": "正在截屏",
   "Save screenshot": "保存截图",
   "Screenshot capture failed. Try again.": "截屏失败，请重试。",
+  "Screenshot capture failed ({status}). Try again.": "截屏失败（{status}），请重试。",
   "More device actions": "更多设备操作",
   "Float device over chat": "让设备悬浮在对话上方",
   "Close device panel": "关闭设备面板",

@@ -16,11 +16,12 @@ import {
   sessionGrantsScope,
   type SessionGrantInput,
 } from "@t3tools/contracts";
+import * as Schema from "effect/Schema";
 import { AsyncResult } from "effect/reactivity";
 import { useRef, useState, type ReactElement } from "react";
 
 import { translateNow } from "~/i18n/useTranslation";
-import { writeTextToClipboard } from "../../hooks/useCopyToClipboard";
+import { ClipboardApiUnavailableError, writeTextToClipboard } from "../../hooks/useCopyToClipboard";
 import { readLocalApi } from "../../localApi";
 import { appAtomRegistry } from "../../rpc/atomRegistry";
 import { assetEnvironment } from "../../state/assets";
@@ -31,6 +32,8 @@ import { stackedThreadToast, toastManager } from "../ui/toast";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 import { downloadMedia, readMediaPng } from "./mediaContent";
 import { mediaUiMessages } from "./mediaUi.messages";
+
+const isClipboardApiUnavailable = Schema.is(ClipboardApiUnavailableError);
 
 /** Failure titles stay per action so each reads naturally in either language. */
 function mediaActionFailure(action: MediaActionId, kind: MediaActionSource["kind"]) {
@@ -209,10 +212,19 @@ export function MediaActions({
       if (text !== undefined) {
         const clipboardText =
           reference?.kind === "file" ? formatFilePathForClipboard(text, reference.path) : text;
-        await writeTextToClipboard(
-          clipboardText,
-          reference?.kind === "file" ? t("file path") : t("URL"),
-        );
+        const target = reference?.kind === "file" ? t("file path") : t("URL");
+        // The clipboard hook's own messages name its target in English, which the toast translates.
+        await writeTextToClipboard(clipboardText, target).catch((cause: unknown) => {
+          throw new Error(
+            translateNow(
+              mediaUiMessages,
+              isClipboardApiUnavailable(cause)
+                ? "Clipboard API is unavailable while copying {target}."
+                : "Failed to copy {target} to the clipboard.",
+              { target },
+            ),
+          );
+        });
         toastManager.add({
           type: "success",
           title: action === "copy-url" ? t("URL copied") : t("Path copied"),

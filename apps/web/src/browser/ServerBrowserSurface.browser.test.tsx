@@ -8,6 +8,7 @@ import { describe, expect, it, vi } from "vite-plus/test";
 import { userEvent } from "vite-plus/test/browser";
 
 import { act, render } from "../../test/render";
+import { setLocale } from "~/i18n/useTranslation";
 
 const mocks = vi.hoisted(() => ({
   createClient: vi.fn<(target: unknown, handlers: PreviewStreamEvents) => unknown>(),
@@ -218,5 +219,19 @@ describe("ServerBrowserSurface history", () => {
 
     press("pointerdown", 0);
     expect(mouseInputs()).not.toEqual([]);
+  });
+});
+
+describe("ServerBrowserSurface control status", () => {
+  it("words the status in the interface language and follows a switch", async () => {
+    setup();
+    await using _locale = { [Symbol.dispose]: () => setLocale("en") };
+    setLocale("zh-CN");
+    const { screen } = await renderSurface("another-viewer");
+    await using _screen = screen;
+    const status = screen.getByRole("status");
+    await expect.element(status).toHaveTextContent("其他查看者在操作");
+    await act(() => setLocale("en"));
+    await expect.element(status).toHaveTextContent("Another viewer has control");
   });
 });

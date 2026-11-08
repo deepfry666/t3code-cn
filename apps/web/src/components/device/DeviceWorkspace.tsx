@@ -12,6 +12,7 @@ import { DeviceToolsPanel } from "./DeviceToolsPanel";
 import { useDeviceControls } from "./useDeviceControls";
 import { translateNow } from "~/i18n/useTranslation";
 import { deviceUiMessages } from "./deviceUi.messages";
+import { deviceDetail } from "./deviceDetail";
 
 const isDeviceScreenshotError = Schema.is(DeviceScreenshotError);
 
@@ -67,9 +68,13 @@ export function DeviceWorkspace(props: {
         if (isDeviceScreenshotError(cause) && cause.status === 401)
           refreshDeviceHubAccess(props.environmentId);
         setScreenshotError(
-          cause instanceof Error
-            ? cause.message
-            : translateNow(deviceUiMessages, "Screenshot capture failed. Try again."),
+          isDeviceScreenshotError(cause)
+            ? translateNow(deviceUiMessages, "Screenshot capture failed ({status}). Try again.", {
+                status: cause.status,
+              })
+            : cause instanceof Error
+              ? deviceDetail(cause.message)
+              : translateNow(deviceUiMessages, "Screenshot capture failed. Try again."),
         );
       })
       .finally(() => {

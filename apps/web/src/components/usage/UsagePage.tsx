@@ -30,7 +30,8 @@ import {
 } from "@t3tools/shared/usageMerge";
 
 import { cn } from "../../lib/utils";
-import { useTranslation } from "~/i18n/useTranslation";
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
+import { formatUsageDayLabel, formatUsageHourLabel } from "./usageDates";
 import { usageUiMessages } from "./usageUi.messages";
 import { usePrimarySettings } from "../../hooks/useSettings";
 import { resolveHour12 } from "../../timestampFormat";
@@ -46,15 +47,12 @@ import {
   enumerateDays,
   enumerateHourStarts,
   formatCount,
-  formatDateTimeShort,
-  formatDayShort,
   formatHourShort,
   formatPercent,
   formatTokens,
-  formatUsageContractMismatch,
   formatUsd,
   makeWindow,
-  usageSourceMessages,
+  usageSourceNotices,
 } from "@t3tools/shared/usageFormat";
 import { Button, InlineButton } from "../ui/button";
 import { ProviderInstanceIcon } from "../chat/ProviderInstanceIcon";
@@ -178,6 +176,7 @@ function UsageModelDialogHost({
 
 export function UsagePage() {
   const t = useTranslation(usageUiMessages);
+  const locale = useLocale();
   const [preferences, setPreferences] = useState(readUsagePagePreferences);
   const keybindings = useAtomValue(primaryServerKeybindingsAtom);
   const hour12 = usePrimarySettings((settings) => resolveHour12(settings.timestampFormat));
@@ -360,12 +359,12 @@ export function UsagePage() {
   const windowLabel =
     shownHourly && shownWindow.sinceTime !== undefined && shownWindow.untilTime !== undefined
       ? t("{from} to {to}", {
-          from: formatDateTimeShort(shownWindow.sinceTime, shownWindow.timeZone, hour12),
-          to: formatDateTimeShort(shownWindow.untilTime, shownWindow.timeZone, hour12),
+          from: formatUsageHourLabel(shownWindow.sinceTime, shownWindow.timeZone, hour12, locale),
+          to: formatUsageHourLabel(shownWindow.untilTime, shownWindow.timeZone, hour12, locale),
         })
       : t("{from} to {to}", {
-          from: formatDayShort(shownWindow.sinceDay),
-          to: formatDayShort(shownWindow.untilDay),
+          from: formatUsageDayLabel(shownWindow.sinceDay, locale),
+          to: formatUsageDayLabel(shownWindow.untilDay, locale),
         });
   const topbarContent = (
     <div className="grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 py-2 @4xl/usage-header:flex">
@@ -623,6 +622,7 @@ function UsageOverview({
   readonly onSelectModel: (key: string) => void;
 }) {
   const t = useTranslation(usageUiMessages);
+  const locale = useLocale();
   const [breakdown, setBreakdown] = useState<"model" | "time">("model");
   const shownHourly = shownWindow.resolution === "hour";
   const loading = usageLoading(showingKept, selectedEnvironments, refreshingUsage, hiddenProviders);
@@ -641,7 +641,7 @@ function UsageOverview({
   const chartLoadingProviders = new Set(
     activeProviders.filter((provider) => loadingProviders.has(provider)),
   );
-  const sourceMessages = usageSourceMessages(
+  const sourceNotices = usageSourceNotices(
     selectedEnvironments.flatMap(
       (environment) =>
         environment.summary?.sources.filter(
@@ -664,9 +664,17 @@ function UsageOverview({
 
   return (
     <div aria-busy={loadingPartial} className="flex flex-col gap-6">
-      {sourceMessages.map((message) => (
-        <p key={message} className="mb-4 text-sm text-muted-foreground">
-          {message}
+      {sourceNotices.map((notice) => (
+        <p
+          key={notice.kind === "malformed" ? `malformed:${notice.count}` : notice.message}
+          className="mb-4 text-sm text-muted-foreground"
+        >
+          {notice.kind === "malformed"
+            ? t(
+                "{count} malformed or inconsistent usage record(s) were skipped; usage may be incomplete.",
+                { count: notice.count },
+              )
+            : notice.message}
         </p>
       ))}
       <section className="grid gap-6 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)]">
@@ -1015,7 +1023,7 @@ function UsageOverview({
                       <td className="py-2 pl-2 text-foreground">
                         {"hourStart" in period
                           ? formatHourShort(period.hourStart, shownWindow.timeZone, hour12)
-                          : formatDayShort(period.day)}
+                          : formatUsageDayLabel(period.day, locale)}
                       </td>
                       {activeProviders.map((provider) => (
                         <td
@@ -1129,7 +1137,14 @@ function UsageCoverageNotice({
       ))}
       {incompatible.map(({ environment, mismatch }) => (
         <span key={environment.environmentId}>
-          {formatUsageContractMismatch(environment.label, mismatch)}
+          {mismatch.direction === "serverBehind"
+            ? t("{environment} runs an older server version and is excluded from totals.", {
+                environment: environment.label,
+              })
+            : t(
+                "This client is older than the server on {environment}; its usage is excluded from totals.",
+                { environment: environment.label },
+              )}
         </span>
       ))}
       {duplicateSources.length > 0 ? (

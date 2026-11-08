@@ -11,6 +11,7 @@ import { Button } from "~/components/ui/button";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "~/components/ui/tooltip";
 import { useTranslation } from "~/i18n/useTranslation";
 import { deviceUiMessages } from "./deviceUi.messages";
+import { deviceDetail } from "./deviceDetail";
 
 const FOLDS = [
   { id: "closed", angle: 0 },
@@ -30,6 +31,7 @@ export function DeviceDuoControls(props: {
 }) {
   const t = useTranslation(deviceUiMessages);
   const { screen } = props;
+  const error = deviceDetail(props.state.error);
   const { fold, stand, phoneVertical: reportedVertical, settled } = duoFoldState(screen);
   const [settledVertical, setSettledVertical] = useState(reportedVertical);
   if (settled && settledVertical !== reportedVertical) setSettledVertical(reportedVertical);
@@ -107,21 +109,21 @@ export function DeviceDuoControls(props: {
           ),
         )}
       </div>
-      {props.state.error ? (
+      {error ? (
         <Tooltip>
           <TooltipTrigger
             render={
               <span
                 tabIndex={0}
                 role="alert"
-                aria-label={props.state.error}
+                aria-label={error}
                 className="pointer-events-auto text-xs text-destructive"
               >
                 !
               </span>
             }
           />
-          <TooltipPopup side="left">{props.state.error}</TooltipPopup>
+          <TooltipPopup side="left">{error}</TooltipPopup>
         </Tooltip>
       ) : null}
     </div>

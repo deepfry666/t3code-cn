@@ -1,5 +1,8 @@
 import { type TimestampFormat } from "@t3tools/contracts/settings";
 
+import { translateNow } from "./i18n/useTranslation";
+import { timestampFormatMessages } from "./timestampFormat.messages";
+
 function getTimestampFormatOptions(
   timestampFormat: TimestampFormat,
   includeSeconds: boolean,
@@ -196,7 +199,7 @@ export function formatDayAwareTimestamp(
   const dayDiff = today.index - messageDay.index;
 
   if (dayDiff <= 0) return time;
-  if (dayDiff === 1) return `yesterday at ${time}`;
+  if (dayDiff === 1) return translateNow(timestampFormatMessages, "yesterday at {time}", { time });
   return `${formatNumericDate(date, messageDay.year === today.year, timeZone)} ${time}`;
 }
 
@@ -217,7 +220,7 @@ export function formatUpcomingTimestamp(
 
   if (dayDiff < 0) return formatDayAwareTimestamp(isoDate, timestampFormat, nowMs, timeZone);
   if (dayDiff === 0) return time;
-  if (dayDiff === 1) return `tomorrow at ${time}`;
+  if (dayDiff === 1) return translateNow(timestampFormatMessages, "tomorrow at {time}", { time });
   return `${formatNumericDate(date, targetDay.year === today.year, timeZone)} ${time}`;
 }
 

@@ -26,6 +26,11 @@ const state = vi.hoisted(() => ({
   clipboard: vi.fn(),
   copyText: vi.fn(),
   menuFinished: null as (() => void) | null,
+  toasts: [] as {
+    readonly type?: string;
+    readonly title?: string;
+    readonly description?: string;
+  }[],
 }));
 
 vi.mock("react", async (importOriginal) => ({
@@ -34,7 +39,10 @@ vi.mock("react", async (importOriginal) => ({
   useRef: <A,>(current: A) => ({ current }),
   useState: <A,>(initial: A) => [initial, () => {}],
 }));
-vi.mock("../../hooks/useCopyToClipboard", () => ({ writeTextToClipboard: state.copyText }));
+vi.mock("../../hooks/useCopyToClipboard", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../hooks/useCopyToClipboard")>()),
+  writeTextToClipboard: state.copyText,
+}));
 vi.mock("../../localApi", () => ({
   readLocalApi: () => ({ contextMenu: { show: state.showMenu } }),
 }));
@@ -68,6 +76,7 @@ vi.mock("../ui/toast", () => ({
   stackedThreadToast: <A,>(toast: A) => toast,
   toastManager: {
     add: (toast: { type: string }) => {
+      state.toasts.push(toast);
       if (toast.type !== "loading") state.menuFinished?.();
       return "toast";
     },
@@ -76,6 +85,7 @@ vi.mock("../ui/toast", () => ({
 }));
 
 import { MediaActions, useMediaActions, type MediaActionSource } from "./MediaActions";
+import { setLocale } from "~/i18n/useTranslation";
 
 const environmentId = EnvironmentId.make("media-environment");
 const threadId = ThreadId.make("media-thread");
@@ -130,6 +140,7 @@ beforeEach(() => {
   state.openFile.mockReset();
   state.copyText.mockReset().mockResolvedValue(true);
   state.menuFinished = null;
+  state.toasts = [];
   class TestClipboardItem {
     constructor(readonly items: Record<string, Promise<Blob>>) {}
   }
@@ -184,3 +195,43 @@ it.each(["save", "copy-image", "open-file"])(
     expect(state.openFile).not.toHaveBeenCalled();
   },
 );
+
+it("words a failed copy in the interface language", async () => {
+  state.sessions.set(environmentId, granted);
+  const completed = deferred<void>();
+  state.menuFinished = () => completed.resolve();
+  state.showMenu.mockResolvedValue("copy-relative-path");
+  state.copyText.mockRejectedValue(new Error("ClipboardWriteError"));
+
+  openMenu(hostSource());
+  await completed.promise;
+
+  expect(state.toasts).toEqual([
+    expect.objectContaining({
+      type: "error",
+      title: "Could not copy the relative path",
+      description: "Failed to copy file path to the clipboard.",
+    }),
+  ]);
+});
+
+it("words a failed copy in Chinese", async () => {
+  using _locale = { [Symbol.dispose]: () => setLocale("en") };
+  setLocale("zh-CN");
+  state.sessions.set(environmentId, granted);
+  const completed = deferred<void>();
+  state.menuFinished = () => completed.resolve();
+  state.showMenu.mockResolvedValue("copy-relative-path");
+  state.copyText.mockRejectedValue(new Error("ClipboardWriteError"));
+
+  openMenu(hostSource());
+  await completed.promise;
+
+  expect(state.toasts).toEqual([
+    expect.objectContaining({
+      type: "error",
+      title: "无法复制相对路径",
+      description: "无法将文件路径复制到剪贴板。",
+    }),
+  ]);
+});

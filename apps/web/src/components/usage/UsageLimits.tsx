@@ -11,8 +11,6 @@ import {
 import { useAtomValue } from "@effect/atom-react";
 import { normalizeProviderAccentColor } from "@t3tools/client-runtime/state/provider-instance-display";
 import {
-  formatDuration,
-  formatResetsIn,
   type LimitPace,
   paceOf,
   paceRemainingPercent,
@@ -29,6 +27,7 @@ import { useEnvironmentScope, readEnvironmentScope } from "../../state/session";
 import { serverEnvironment } from "../../state/server";
 import { useAtomCommand } from "../../state/use-atom-command";
 import { formatUpcomingTimestamp } from "../../timestampFormat";
+import { formatResetsIn, formatUsageDuration } from "./usageResetTime";
 import {
   AlertDialog,
   AlertDialogClose,
@@ -323,7 +322,7 @@ export function resetCreditsSummary(
   compact = false,
 ): string {
   const expiresIn = credits.nextExpiresAt
-    ? formatDuration(Date.parse(credits.nextExpiresAt) - now)
+    ? formatUsageDuration(Date.parse(credits.nextExpiresAt) - now)
     : null;
   if (credits.availableCount === 0) return translateNow(usageUiMessages, "No reset credits banked");
   const banked = compact

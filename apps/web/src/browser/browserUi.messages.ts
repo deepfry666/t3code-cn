@@ -48,4 +48,14 @@ export const browserUiMessages = {
   "The integrated browser is unavailable in this runtime.": "此运行环境不支持内置浏览器。",
   "Recording canvas is unavailable.": "录制画布不可用。",
   "Link opening is unavailable.": "无法打开链接。",
+  "Connecting...": "正在连接…",
+  "Read-only": "只读",
+  "You have control": "你在操作",
+  "Agent has control": "智能体在操作",
+  "Another viewer has control": "其他查看者在操作",
+  Watching: "仅查看",
+  "This server's host blocks the sandbox its browser runs in. Run this once on the host, then try again:":
+    "此服务器的主机阻止了其浏览器所需的沙箱。请在主机上运行一次以下命令，然后重试：",
+  "This server's host is missing libraries its browser needs. Run this once on the host, then try again:":
+    "此服务器的主机缺少其浏览器所需的库。请在主机上运行一次以下命令，然后重试：",
 } as const;

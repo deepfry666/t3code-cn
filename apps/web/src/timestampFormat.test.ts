@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 
+import { setLocale } from "./i18n/useTranslation";
 import { formatDayAwareTimestamp, formatUpcomingTimestamp } from "./timestampFormat";
 
 describe("timestamps in an explicit time zone", () => {
@@ -11,6 +12,31 @@ describe("timestamps in an explicit time zone", () => {
     expect(formatUpcomingTimestamp("2026-07-02T00:30:00.000Z", "12-hour", now, zone)).not.toMatch(
       /tomorrow/,
     );
+    expect(formatUpcomingTimestamp("2026-07-02T05:30:00.000Z", "12-hour", now, zone)).toMatch(
+      /^tomorrow at /,
+    );
+    expect(formatDayAwareTimestamp("2026-07-01T03:30:00.000Z", "12-hour", now, zone)).toMatch(
+      /^yesterday at /,
+    );
+  });
+});
+
+describe("relative days in the interface language", () => {
+  const now = Date.parse("2026-07-01T23:00:00.000Z");
+  const zone = "America/New_York";
+
+  it("switches to Chinese and back to the same English", () => {
+    try {
+      setLocale("zh-CN");
+      expect(formatUpcomingTimestamp("2026-07-02T05:30:00.000Z", "12-hour", now, zone)).toMatch(
+        /^明天 /,
+      );
+      expect(formatDayAwareTimestamp("2026-07-01T03:30:00.000Z", "12-hour", now, zone)).toMatch(
+        /^昨天 /,
+      );
+    } finally {
+      setLocale("en");
+    }
     expect(formatUpcomingTimestamp("2026-07-02T05:30:00.000Z", "12-hour", now, zone)).toMatch(
       /^tomorrow at /,
     );

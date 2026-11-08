@@ -21,7 +21,12 @@ export function formatMalformedUsageWarning(count: number): string {
   return `${count} malformed or inconsistent usage record(s) were skipped; usage may be incomplete.`;
 }
 
-export function usageSourceMessages(sources: readonly UsageSource[]): readonly string[] {
+/** Source problems, split so each client can word the malformed-record hint itself. */
+export type UsageSourceNotice =
+  | { readonly kind: "message"; readonly message: string }
+  | { readonly kind: "malformed"; readonly count: number };
+
+export function usageSourceNotices(sources: readonly UsageSource[]): readonly UsageSourceNotice[] {
   const messages = new Set<string>();
   const malformedBySource = new Map<string, number>();
   for (const source of sources) {
@@ -51,8 +56,16 @@ export function usageSourceMessages(sources: readonly UsageSource[]): readonly s
     (total, count) => total + count,
     0,
   );
-  if (malformedRecords > 0) messages.add(formatMalformedUsageWarning(malformedRecords));
-  return [...messages];
+  return [
+    ...[...messages].map((message) => ({ kind: "message", message }) as const),
+    ...(malformedRecords > 0 ? [{ kind: "malformed", count: malformedRecords } as const] : []),
+  ];
+}
+
+export function usageSourceMessages(sources: readonly UsageSource[]): readonly string[] {
+  return usageSourceNotices(sources).map((notice) =>
+    notice.kind === "malformed" ? formatMalformedUsageWarning(notice.count) : notice.message,
+  );
 }
 
 export function formatUsd(value: number): string {
@@ -216,27 +229,35 @@ export function formatDateTimeShort(instant: string, timeZone?: string, hour12 =
   return formatHour(dateHourFormat, date, hour12);
 }
 
-export function formatRelativeHourShort(
-  hourStart: string,
-  relativeTo: string,
+/** Whole calendar days from `reference` to `instant` in `timeZone`; null when either is unparsable. */
+export function usageDayOffset(
+  instant: string,
+  reference: string,
   timeZone?: string,
-  hour12 = true,
-): string {
-  const instant = new Date(hourStart);
-  const reference = new Date(relativeTo);
-  if (Number.isNaN(instant.getTime()) || Number.isNaN(reference.getTime())) {
-    return formatDateTimeShort(hourStart, timeZone, hour12);
-  }
-
+): number | null {
+  const date = new Date(instant);
+  const from = new Date(reference);
+  if (Number.isNaN(date.getTime()) || Number.isNaN(from.getTime())) return null;
+  // Compare calendar days, not instants: a 23-hour or 25-hour DST day still spans one day.
   const dayFormat = dateTimeFormatter("en-CA", {
     ...(timeZone === undefined ? {} : { timeZone }),
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   });
-  const instantDay = Date.parse(`${dayFormat.format(instant)}T00:00:00Z`);
-  const referenceDay = Date.parse(`${dayFormat.format(reference)}T00:00:00Z`);
-  const calendarDaysAgo = Math.round((referenceDay - instantDay) / (24 * HOUR_MS));
+  const instantDay = Date.parse(`${dayFormat.format(date)}T00:00:00Z`);
+  const referenceDay = Date.parse(`${dayFormat.format(from)}T00:00:00Z`);
+  return Math.round((referenceDay - instantDay) / (24 * HOUR_MS));
+}
+
+export function formatRelativeHourShort(
+  hourStart: string,
+  relativeTo: string,
+  timeZone?: string,
+  hour12 = true,
+): string {
+  const calendarDaysAgo = usageDayOffset(hourStart, relativeTo, timeZone);
+  if (calendarDaysAgo === null) return formatDateTimeShort(hourStart, timeZone, hour12);
   const hour = formatHourShort(hourStart, timeZone, hour12);
 
   if (calendarDaysAgo === 0) return `${hour} today`;

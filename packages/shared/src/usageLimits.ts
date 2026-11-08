@@ -389,27 +389,60 @@ export function collectLimitAccounts(presentations: LimitPresentations): readonl
   return [...accounts.values()];
 }
 
-export function collectLimitNotices(presentations: LimitPresentations): readonly string[] {
+export type LimitNoticeReason = "probeFailed" | "noWindows" | "noAccounts";
+
+/** T3's own wording for a notice, per reason; server explanations are shown instead. */
+const LIMIT_NOTICE_REASONS: Readonly<Record<LimitNoticeReason, string>> = {
+  probeFailed: "Could not read limits.",
+  noWindows: "No limits reported.",
+  noAccounts: "No accounts reported.",
+};
+
+export interface LimitNotice {
+  /** Environment-labeled when several environments are shown. */
+  readonly subject: string;
+  /** A server or provider explanation, shown as written. */
+  readonly message: string | null;
+  readonly reason: LimitNoticeReason | null;
+}
+
+export function limitNotices(presentations: LimitPresentations): readonly LimitNotice[] {
   const label = (environmentLabel: string, subject: string) =>
     presentations.size > 1 ? `${environmentLabel} · ${subject}` : subject;
-  const notices: string[] = [];
+  const notices: LimitNotice[] = [];
   for (const presentation of presentations.values()) {
     const environmentLabel = presentation.entry.target.label;
     for (const provider of providersWithLimits(presentation.serverConfig?.providers ?? [])) {
-      if (provider.usageLimits?.unavailable?.reason === "unsupported") continue;
-      const notice = provider.usageLimits ? limitsNotice(provider.usageLimits) : null;
-      const name = provider.displayName?.trim() || String(provider.driver);
-      if (notice) notices.push(`${label(environmentLabel, name)}: ${notice}`);
+      const limits = provider.usageLimits;
+      if (!limits || limits.unavailable?.reason === "unsupported") continue;
+      const reason =
+        limits.unavailable?.reason === "probeFailed"
+          ? ("probeFailed" as const)
+          : limits.windows.length === 0
+            ? ("noWindows" as const)
+            : null;
+      if (reason === null) continue;
+      notices.push({
+        subject: label(environmentLabel, provider.displayName?.trim() || String(provider.driver)),
+        message: limits.unavailable?.message ?? null,
+        reason,
+      });
     }
     for (const source of presentation.serverConfig?.usageLimitSources ?? []) {
-      if (source.error) {
-        notices.push(`${label(environmentLabel, source.label)}: ${source.error}`);
-      } else if (source.accounts.length === 0) {
-        notices.push(`${label(environmentLabel, source.label)}: No accounts reported.`);
-      }
+      const subject = label(environmentLabel, source.label);
+      if (source.error) notices.push({ subject, message: source.error, reason: null });
+      else if (source.accounts.length === 0)
+        notices.push({ subject, message: null, reason: "noAccounts" });
     }
   }
   return notices;
+}
+
+export function collectLimitNotices(presentations: LimitPresentations): readonly string[] {
+  return limitNotices(presentations).map(
+    (notice) =>
+      `${notice.subject}: ${notice.message ?? (notice.reason ? LIMIT_NOTICE_REASONS[notice.reason] : "")}`,
+  );
 }
 
 export interface LimitPoolMember {

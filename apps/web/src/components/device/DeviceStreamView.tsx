@@ -26,6 +26,7 @@ import type { DeviceHardwareButton, DeviceScreenSize } from "@t3tools/client-run
 import { observeResize } from "~/lib/observeResize";
 import { useTranslation } from "~/i18n/useTranslation";
 import { deviceUiMessages } from "./deviceUi.messages";
+import { deviceDetail } from "./deviceDetail";
 
 const NO_SESSION_ATOM = Atom.make<DeviceStreamSession | null>(null).pipe(
   Atom.withLabel("device-stream:none"),
@@ -467,7 +468,7 @@ export function DeviceStreamView(props: {
           <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center p-2">
             <span className="rounded-md bg-background/85 px-2 py-1 text-xs text-muted-foreground">
               {t("Input disconnected{detail}, reconnecting…", {
-                detail: inputState.detail ? ` (${inputState.detail})` : "",
+                detail: inputState.detail ? ` (${deviceDetail(inputState.detail)})` : "",
               })}
             </span>
           </div>
@@ -487,7 +488,9 @@ export function DeviceStreamView(props: {
               description={props.deviceDescription ?? ""}
               stage="stream"
               message={
-                status === "error" ? (detail ?? t("Stream failed.")) : t("Connecting video…")
+                status === "error"
+                  ? (deviceDetail(detail) ?? t("Stream failed."))
+                  : t("Connecting video…")
               }
               error={status === "error"}
             >

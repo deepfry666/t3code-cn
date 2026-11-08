@@ -27,6 +27,7 @@ import { mediaUiMessages } from "../components/media/mediaUi.messages";
 import { previewUiMessages } from "../components/preview/previewUi.messages";
 import { browserUiMessages } from "../browser/browserUi.messages";
 import { deviceUiMessages } from "../components/device/deviceUi.messages";
+import { deviceDetailMessages } from "../components/device/deviceDetail.messages";
 import { usagePricesMessages } from "../components/usage/usagePrices.messages";
 import { usageUiMessages } from "../components/usage/usageUi.messages";
 import { sidebarUiMessages } from "../components/sidebar/sidebarUi.messages";
@@ -40,6 +41,7 @@ import { filesUiMessages } from "../components/files/filesUi.messages";
 import { gitUiMessages } from "../components/gitUi.messages";
 import { projectScriptsUiMessages } from "../components/projectScriptsUi.messages";
 import { pullRequestUiMessages } from "../components/pullRequest/pullRequestUi.messages";
+import { timestampFormatMessages } from "../timestampFormat.messages";
 import { translate } from "./locale";
 
 const catalogs: Record<string, Readonly<Record<string, string>>> = {
@@ -77,8 +79,10 @@ const catalogs: Record<string, Readonly<Record<string, string>>> = {
   settingsVoice: settingsVoiceMessages,
   settingsMaintenance: settingsMaintenanceMessages,
   usageUi: usageUiMessages,
+  timestampFormat: timestampFormatMessages,
   usagePrices: usagePricesMessages,
   deviceUi: deviceUiMessages,
+  deviceDetail: deviceDetailMessages,
   mediaUi: mediaUiMessages,
   previewUi: previewUiMessages,
   browserUi: browserUiMessages,
