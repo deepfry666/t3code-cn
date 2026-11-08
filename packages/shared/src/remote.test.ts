@@ -7,18 +7,22 @@ import {
   RemotePairingTokenMissingError,
   RemotePairingUrlInvalidError,
   resolveRemotePairingTarget,
+  setPairingTokenOnUrl,
 } from "./remote.ts";
 
 describe("remote", () => {
-  it("derives backend urls and token from a pairing url", () => {
-    expect(
-      resolveRemotePairingTarget({
-        pairingUrl: "https://remote.example.com/pair#token=pairing-token",
-      }),
-    ).toEqual({
+  it.each([
+    ["http://192.168.1.44:3773", "ws://192.168.1.44:3773/"],
+    ["https://remote.example.com", "wss://remote.example.com/"],
+  ])("derives backend urls and token from a mobile pairing url at %s", (origin, wsBaseUrl) => {
+    const url = setPairingTokenOnUrl(new URL("/pair", origin), "pairing-token");
+    // The official mobile scanner needs raw HTTP(S), not the fork's desktop app scheme.
+    expect(url.protocol).toMatch(/^https?:$/);
+    expect(url.toString()).toBe(`${origin}/pair#token=pairing-token`);
+    expect(resolveRemotePairingTarget({ pairingUrl: url.toString() })).toEqual({
       credential: "pairing-token",
-      httpBaseUrl: "https://remote.example.com/",
-      wsBaseUrl: "wss://remote.example.com/",
+      httpBaseUrl: `${origin}/`,
+      wsBaseUrl,
     });
   });
 

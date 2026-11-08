@@ -188,11 +188,11 @@ export const readHostedPairingRequest = (url: URL): HostedPairingRequest | null 
   };
 };
 
-/** Wraps a pairing URL in the desktop pairing link that desktop opens and mobile scans. */
+/** Wraps a pairing URL for desktop-only handoff; mobile scans the raw HTTP(S) URL. */
 export const buildPairingAppLink = (pairingUrl: string): string =>
   `${FORK_IDENTITY.urlScheme}://pair?${new URLSearchParams([[PAIRING_APP_LINK_PARAM, pairingUrl]])}`;
 
-/** Reads the pairing URL from a desktop pairing link on any app channel scheme. */
+/** Reads the pairing URL from a desktop-only pairing link on any app channel scheme. */
 export const readPairingAppLink = (value: string): string | null => {
   if (!URL.canParse(value)) return null;
   const url = new URL(value);
