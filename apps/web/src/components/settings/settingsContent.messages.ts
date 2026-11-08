@@ -20,7 +20,7 @@ export const settingsContentMessages = {
   "Only built-in themes show artwork.": "仅内置主题支持背景图。",
   "Choose how Dev and Nightly environments are identified.":
     "选择开发版与 Nightly 环境的标识方式。",
-  "Show Dev or Nightly artwork in the sidebar header.": "在侧栏顶部显示开发版或 Nightly 背景图。",
+  "Show Dev or Nightly artwork in the sidebar header.": "在侧边栏顶部显示开发版或 Nightly 背景图。",
   "Adjust the contrast of colors and borders across the interface.": "调整界面颜色和边框的对比度。",
   contrast: "对比度",
   Contrast: "对比度",
@@ -52,11 +52,11 @@ export const settingsContentMessages = {
   "System alerts when a thread finishes, fails, or needs input or approval. Applies to this device while T3 Code is open.":
     "会话完成、失败或需要输入或批准时发送系统提醒。仅在此设备上打开 T3 Code 时生效。",
   "Notifications need a supported browser over HTTPS, or the desktop app. Sound only is still available.":
-    "通知需要支持的 HTTPS 浏览器或桌面应用。仍可使用仅声音提醒。",
+    "通知功能需要通过 HTTPS 访问的受支持浏览器，或使用桌面应用。仍可使用仅声音提醒。",
   "Notifications are unavailable in this browser. Sound only is still available.":
     "此浏览器不支持通知。仍可使用仅声音提醒。",
   "Allow notifications in your browser or system settings, then choose this option again. Sound only is still available.":
-    "请在浏览器或系统设置中允许通知，再次选择此选项。仍可使用仅声音提醒。",
+    "请在浏览器或系统设置中允许通知，然后重新选择此选项。仍可使用仅声音提醒。",
   "Thread notifications": "会话通知",
   Off: "关闭",
   "Notifications only": "仅通知",

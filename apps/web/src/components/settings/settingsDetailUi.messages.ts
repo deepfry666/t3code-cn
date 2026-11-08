@@ -1,6 +1,6 @@
 export const settingsDetailUiMessages = {
-  Beta: "测试功能",
-  "Boring sidebar (group by project)": "简洁侧栏（按项目分组）",
+  Beta: "测试版",
+  "Boring sidebar (group by project)": "简洁侧边栏（按项目分组）",
   "Two-line folder rows": "双行文件夹列表",
   "Tool calls in chat": "聊天中的工具调用",
   "Guest links": "访客链接",

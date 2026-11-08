@@ -68,7 +68,7 @@ export const coreUiMessages = {
   "Project settings": "项目设置",
   "Thread title cannot be empty": "会话标题不能为空",
   "Failed to rename thread": "重命名会话失败",
-  "Failed to settle thread": "会话收尾失败",
+  "Failed to settle thread": "收尾会话失败",
   "Failed to un-settle thread": "取消会话收尾失败",
   "Failed to wake thread": "唤醒会话失败",
   Thread: "会话",
