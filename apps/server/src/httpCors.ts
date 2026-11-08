@@ -1,4 +1,3 @@
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import { ORCHESTRATION_PROTOCOL_HEADER } from "@t3tools/contracts";
 
 export const browserApiCorsAllowedMethods = ["GET", "POST", "OPTIONS"] as const;
@@ -11,7 +10,4 @@ export const browserApiCorsAllowedHeaders = [
   ORCHESTRATION_PROTOCOL_HEADER,
 ] as const;
 
-export const DESKTOP_RENDERER_ORIGINS = [
-  `${FORK_IDENTITY.urlScheme}://app`,
-  `${FORK_IDENTITY.devUrlScheme}://app`,
-] as const;
+export const DESKTOP_RENDERER_ORIGINS = ["t3code://app", "t3code-dev://app"] as const;

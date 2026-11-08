@@ -12,107 +12,56 @@ const nightlies = Array.from({ length: 100 }, (_, index) => ({
   tag_name: `v1.2.4-nightly.20261020.${200 - index}`,
 }));
 
-const supportsShellInstaller =
-  HostProcess.Platform.defaultValue() === "linux" ||
-  (HostProcess.Platform.defaultValue() === "darwin" &&
-    HostProcess.Architecture.defaultValue() === "arm64");
-
-it.each([
-  [
-    "install.sh",
-    'repo="deepfry666/t3code-cn"',
-    "${T3CODE_CN_HOME:-$HOME/.t3code-cn}",
-    "${bin_dir}/t3-cn",
-  ],
-  [
-    "install.ps1",
-    '$repo = "deepfry666/t3code-cn"',
-    "$env:T3CODE_CN_HOME",
-    'Join-Path $binDir "t3-cn.cmd"',
-  ],
-])("%s uses fork release, home and launcher identities", async (file, repo, home, launcher) => {
-  const source = await NodeFSP.readFile(NodePath.join(import.meta.dirname, file), "utf8");
-  expect(source).toContain(repo);
-  expect(source).toContain(home);
-  expect(source).toContain(".t3code-cn");
-  expect(source).toContain(launcher);
-  expect(source).not.toMatch(/\bT3CODE_HOME\b/);
-  expect(source).not.toContain('Join-Path $HOME ".t3"');
-  expect(source).not.toContain('${bin_dir}/t3"');
-  expect(source).not.toContain('Join-Path $binDir "t3.cmd"');
-});
-
-describe.skipIf(!supportsShellInstaller)("installer home", () => {
-  it.each([true, false])(
-    "isolates fork home with override %s and preserves official launchers",
-    async (override) => {
-      const temporaryRoot = await NodeFSP.realpath(
-        await NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "t3-install-home-")),
-      );
-      const root = NodePath.join(temporaryRoot, "cwd\n");
-      const homeName = "-custom home\\home\n";
-      const home = NodePath.join(root, override ? homeName : ".t3code-cn");
-      const officialHome = NodePath.join(root, "official-home");
-      const version = "1.2.3";
-      const target = NodePath.join(home, "runtime/versions", version);
-      const launcher = NodePath.join(root, "bin/t3-cn");
-      const officialLauncher = NodePath.join(root, "bin/t3");
-      const officialShim = NodePath.join(root, "bin/t3.cmd");
-      try {
-        await NodeFSP.mkdir(officialHome, { recursive: true });
-        await NodeFSP.writeFile(NodePath.join(officialHome, "t3"), "official runtime\n");
-        await NodeFSP.mkdir(NodePath.dirname(launcher), { recursive: true });
-        await NodeFSP.symlink(NodePath.join(officialHome, "t3"), officialLauncher);
-        await NodeFSP.writeFile(officialShim, "official shim\r\n");
-        await NodeFSP.mkdir(target, { recursive: true });
-        await NodeFSP.writeFile(NodePath.join(target, ".install-complete"), `${version}\n`);
-        await NodeFSP.writeFile(NodePath.join(target, "t3"), "#!/bin/sh\necho 't3-cn v1.2.3'\n", {
-          mode: 0o755,
-        });
-        const { status, stdout, stderr } = NodeChildProcess.spawnSync(
-          "sh",
-          [NodePath.resolve(import.meta.dirname, "install.sh")],
-          {
-            cwd: root,
-            env: {
-              ...process.env,
-              HOME: root,
-              T3CODE_HOME: officialHome,
-              T3CODE_CN_HOME: override ? homeName : "",
-              T3CODE_VERSION: version,
-              T3CODE_INSTALL_BIN_DIR: NodePath.dirname(launcher),
-              T3CODE_RELEASE_BASE_URL: "http://127.0.0.1:1",
-            },
-            encoding: "utf8",
+describe.skipIf(HostProcess.Platform.defaultValue() !== "linux")("installer home", () => {
+  it("installs a relative home from a directory ending in a newline", async () => {
+    const temporaryRoot = await NodeFSP.realpath(
+      await NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "t3-install-home-")),
+    );
+    const root = NodePath.join(temporaryRoot, "cwd\n");
+    const homeName = "-custom home\\home\n";
+    const home = NodePath.join(root, homeName);
+    const version = "1.2.3";
+    const target = NodePath.join(home, "runtime/versions", version);
+    const launcher = NodePath.join(root, "bin/t3");
+    try {
+      await NodeFSP.mkdir(target, { recursive: true });
+      await NodeFSP.writeFile(NodePath.join(target, ".install-complete"), `${version}\n`);
+      await NodeFSP.writeFile(NodePath.join(target, "t3"), "#!/bin/sh\necho 't3 v1.2.3'\n", {
+        mode: 0o755,
+      });
+      const { status, stdout, stderr } = NodeChildProcess.spawnSync(
+        "sh",
+        [NodePath.resolve(import.meta.dirname, "install.sh")],
+        {
+          cwd: root,
+          env: {
+            ...process.env,
+            HOME: root,
+            T3CODE_HOME: homeName,
+            T3CODE_VERSION: version,
+            T3CODE_INSTALL_BIN_DIR: NodePath.dirname(launcher),
+            T3CODE_RELEASE_BASE_URL: "http://127.0.0.1:1",
           },
-        );
-        expect(status, stdout + stderr).toBe(0);
-        expect(stderr).toContain(`Installed T3 Code CN ${version}`);
-        expect(await NodeFSP.readlink(launcher)).toBe(NodePath.join(target, "t3"));
-        expect(await NodeFSP.readlink(officialLauncher)).toBe(NodePath.join(officialHome, "t3"));
-        expect(await NodeFSP.readFile(officialShim, "utf8")).toBe("official shim\r\n");
-        expect(await NodeFSP.readdir(officialHome)).toEqual(["t3"]);
-        expect(await NodeFSP.readFile(NodePath.join(officialHome, "t3"), "utf8")).toBe(
-          "official runtime\n",
-        );
-        expect(await NodeFSP.readFile(NodePath.join(home, "runtime/launchers"), "utf8")).toBe(
-          `${launcher}\n`,
-        );
-        expect(
-          NodeChildProcess.execFileSync(launcher, ["--version"], {
-            cwd: NodeOS.tmpdir(),
-            encoding: "utf8",
-          }).trim(),
-        ).toBe("t3-cn v1.2.3");
-      } finally {
-        await NodeFSP.rm(temporaryRoot, { recursive: true, force: true });
-      }
-    },
-  );
+          encoding: "utf8",
+        },
+      );
+      expect(status, stdout + stderr).toBe(0);
+      expect(stderr).toContain(`Installed T3 Code ${version}`);
+      expect(await NodeFSP.readlink(launcher)).toBe(NodePath.join(target, "t3"));
+      expect(
+        NodeChildProcess.execFileSync(launcher, ["--version"], {
+          cwd: NodeOS.tmpdir(),
+          encoding: "utf8",
+        }).trim(),
+      ).toBe("t3 v1.2.3");
+    } finally {
+      await NodeFSP.rm(temporaryRoot, { recursive: true, force: true });
+    }
+  });
 });
 
 // regression: #22490
-describe.skipIf(!supportsShellInstaller)("installer channel lookup", () => {
+describe.skipIf(HostProcess.Platform.defaultValue() !== "linux")("installer channel lookup", () => {
   it.each([
     ["stable", "1.2.3"],
     ["preview", "1.2.4-preview.20261019.50"],
@@ -122,10 +71,10 @@ describe.skipIf(!supportsShellInstaller)("installer channel lookup", () => {
     const server = NodeHttp.createServer((request, response) => {
       const url = new URL(request.url ?? "/", "http://fixture");
       const body =
-        url.pathname === "/deepfry666/t3code-cn/releases/latest" &&
+        url.pathname === "/pingdotgg/t3code/releases/latest" &&
         request.headers.accept === "application/json"
           ? { tag_name: "v1.2.3" }
-          : url.pathname === "/repos/deepfry666/t3code-cn/releases"
+          : url.pathname === "/repos/pingdotgg/t3code/releases"
             ? { "1": nightlies, "2": [{ tag_name: `v${version}` }, { tag_name: "v1.2.3" }] }[
                 url.searchParams.get("page") ?? ""
               ]
@@ -155,9 +104,7 @@ describe.skipIf(!supportsShellInstaller)("installer channel lookup", () => {
               ...process.env,
               T3CODE_VERSION: "",
               T3CODE_CHANNEL: channel,
-              HOME: root,
-              T3CODE_HOME: NodePath.join(root, "official-home"),
-              T3CODE_CN_HOME: NodePath.join(root, "home"),
+              T3CODE_HOME: NodePath.join(root, "home"),
               T3CODE_INSTALL_BIN_DIR: NodePath.join(root, "bin"),
               // A wrong version must fail here instead of downloading a real release.
               T3CODE_RELEASE_BASE_URL: origin,
@@ -172,7 +119,7 @@ describe.skipIf(!supportsShellInstaller)("installer channel lookup", () => {
         },
       );
       expect(code, output).toBe(0);
-      expect(output).toContain(`Installed T3 Code CN ${version}`);
+      expect(output).toContain(`Installed T3 Code ${version}`);
     } finally {
       server.closeAllConnections();
       await new Promise<void>((resolve) => server.close(() => resolve()));
@@ -181,19 +128,14 @@ describe.skipIf(!supportsShellInstaller)("installer channel lookup", () => {
   });
 });
 
-describe.skipIf(!supportsShellInstaller)("installer checksum", () => {
+describe.skipIf(HostProcess.Platform.defaultValue() !== "linux")("installer checksum", () => {
   it.each(
     ["home\\data", "home\ndata"].flatMap((homeName) =>
-      [
-        { validChecksum: true, runtimeVersion: "t3-cn v1.2.3" },
-        { validChecksum: false, runtimeVersion: "t3-cn v1.2.3" },
-        { validChecksum: true, runtimeVersion: "t3 v1.2.3" },
-        { validChecksum: true, runtimeVersion: "t3-cn v1.2.4" },
-      ].map((fixture) => ({ homeName, ...fixture })),
+      [true, false].map((validChecksum) => ({ homeName, validChecksum })),
     ),
   )(
-    "verifies home $homeName with valid checksum $validChecksum and runtime $runtimeVersion",
-    async ({ homeName, validChecksum, runtimeVersion }) => {
+    "verifies home $homeName with valid checksum $validChecksum",
+    async ({ homeName, validChecksum }) => {
       const availableTools = ["sha256sum", "shasum"].filter(
         (tool) =>
           NodeChildProcess.spawnSync("sh", ["-c", 'command -v "$1"', "sh", tool]).status === 0,
@@ -203,7 +145,7 @@ describe.skipIf(!supportsShellInstaller)("installer checksum", () => {
         const root = await NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "t3-install-checksum-"));
         const home = NodePath.join(root, homeName);
         const version = "1.2.3";
-        const stem = `t3-${version}-${HostProcess.Platform.defaultValue()}-${HostProcess.Architecture.defaultValue()}`;
+        const stem = `t3-${version}-linux-${HostProcess.Architecture.defaultValue()}`;
         const archiveName = `${stem}.tar.gz`;
         const server = NodeHttp.createServer();
         try {
@@ -234,7 +176,7 @@ describe.skipIf(!supportsShellInstaller)("installer checksum", () => {
           await NodeFSP.mkdir(NodePath.join(root, stem));
           await NodeFSP.writeFile(
             NodePath.join(root, stem, "t3"),
-            `#!/bin/sh\necho '${runtimeVersion}'\n`,
+            "#!/bin/sh\necho 't3 v1.2.3'\n",
             { mode: 0o755 },
           );
           const archivePath = NodePath.join(root, archiveName);
@@ -261,9 +203,7 @@ describe.skipIf(!supportsShellInstaller)("installer checksum", () => {
                     ...process.env,
                     PATH: tools,
                     T3CODE_VERSION: version,
-                    HOME: root,
                     T3CODE_HOME: home,
-                    T3CODE_CN_HOME: home,
                     T3CODE_INSTALL_BIN_DIR: NodePath.join(root, "bin"),
                     T3CODE_RELEASE_BASE_URL: `http://127.0.0.1:${address.port}`,
                   },
@@ -278,26 +218,21 @@ describe.skipIf(!supportsShellInstaller)("installer checksum", () => {
             },
           );
           const versions = NodePath.join(home, "runtime/versions");
-          if (validChecksum && runtimeVersion === "t3-cn v1.2.3") {
+          if (validChecksum) {
             expect(code, `${checksumTool}: ${output}`).toBe(0);
             expect(
               await NodeFSP.readFile(NodePath.join(versions, version, ".install-complete"), "utf8"),
             ).toBe("1.2.3\n");
             expect(
-              NodeChildProcess.execFileSync(NodePath.join(root, "bin/t3-cn"), ["--version"], {
+              NodeChildProcess.execFileSync(NodePath.join(root, "bin/t3"), ["--version"], {
                 encoding: "utf8",
               }).trim(),
-            ).toBe("t3-cn v1.2.3");
+            ).toBe("t3 v1.2.3");
           } else {
             expect(code).not.toBe(0);
-            expect(output).toContain(
-              validChecksum ? "downloaded runtime is not a T3 Code CN build" : "checksum mismatch",
-            );
+            expect(output).toContain("checksum mismatch");
             expect(output).not.toContain("Installed T3 Code");
             expect(await NodeFSP.readdir(versions)).toEqual([]);
-            await expect(NodeFSP.lstat(NodePath.join(root, "bin/t3-cn"))).rejects.toMatchObject({
-              code: "ENOENT",
-            });
           }
         } finally {
           server.closeAllConnections();

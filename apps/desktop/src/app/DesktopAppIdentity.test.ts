@@ -8,7 +8,6 @@ import * as Option from "effect/Option";
 import * as PlatformError from "effect/PlatformError";
 
 import type * as Electron from "electron";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 
 import * as ElectronApp from "../electron/ElectronApp.ts";
 import * as DesktopAppIdentity from "./DesktopAppIdentity.ts";
@@ -41,7 +40,7 @@ interface ElectronAppCalls {
 const layerElectronApp = (calls: ElectronAppCalls) =>
   Layer.succeed(ElectronApp.ElectronApp, {
     metadata: Effect.die("unexpected metadata read"),
-    name: Effect.succeed(FORK_IDENTITY.displayName),
+    name: Effect.succeed("T3 Code"),
     systemLocale: Effect.succeed("en-US"),
     preferredSystemLanguages: Effect.succeed(["en-US"]),
     whenReady: Effect.void,
@@ -149,25 +148,25 @@ const withIdentity = <A, E, R>(
 };
 
 describe("DesktopAppIdentity", () => {
-  it.effect("isolates the fork profile even when the official profile exists", () =>
+  it.effect("isolates the V2 profile even when the legacy V1 profile exists", () =>
     withIdentity(
       Effect.gen(function* () {
         const identity = yield* DesktopAppIdentity.DesktopAppIdentity;
         const userDataPath = yield* identity.resolveUserDataPath;
 
-        assert.equal(userDataPath, "/Users/alice/Library/Application Support/t3code-cn");
+        assert.equal(userDataPath, "/Users/alice/Library/Application Support/t3code-v2");
       }),
       { legacyPathExists: true },
     ),
   );
 
-  it.effect("does not adopt the official development profile", () =>
+  it.effect("keeps using the legacy development profile", () =>
     withIdentity(
       Effect.gen(function* () {
         const identity = yield* DesktopAppIdentity.DesktopAppIdentity;
         assert.equal(
           yield* identity.resolveUserDataPath,
-          "/Users/alice/Library/Application Support/t3code-cn-dev",
+          "/Users/alice/Library/Application Support/T3 Code (Dev)",
         );
       }),
       {
@@ -201,12 +200,9 @@ describe("DesktopAppIdentity", () => {
 
         const runtimeName = calls.setName[0];
         assert.isDefined(runtimeName);
-        assert.equal(runtimeName, `${FORK_IDENTITY.displayName} ${stage}`);
+        assert.equal(runtimeName, `T3 Code ${stage}`);
         assert.match(runtimeName.replaceAll(" ", ""), /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/);
-        assert.equal(
-          calls.setAboutPanelOptions[0]?.applicationName,
-          `${FORK_IDENTITY.displayName} (${stage})`,
-        );
+        assert.equal(calls.setAboutPanelOptions[0]?.applicationName, `T3 Code (${stage})`);
       }),
       { calls, environment },
     );

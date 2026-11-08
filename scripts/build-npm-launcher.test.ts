@@ -51,7 +51,7 @@ const serveFakeRelease = Effect.fn("test.serveFakeRelease")(function* (
   root: string,
   executable = `#!/bin/sh
 if [ -n "$T3CODE_TEST_CALLS" ]; then echo "$*|$T3CODE_NPM_LAUNCHER_PATH" >> "$T3CODE_TEST_CALLS"; fi
-if [ "$1" = "--version" ]; then echo "t3-cn v${VERSION}"; exit 0; fi
+if [ "$1" = "--version" ]; then echo "${VERSION}"; exit 0; fi
 echo "stub $* launcher=$T3CODE_NPM_LAUNCHER_PATH"
 exit 7
 `,
@@ -111,9 +111,7 @@ it.layer(NodeServices.layer)("build-npm-launcher", (it) => {
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const root = yield* fs
-          .makeTempDirectoryScoped({ prefix: "t3-npm-launcher-test-" })
-          .pipe(Effect.flatMap((directory) => fs.realPath(directory)));
+        const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-npm-launcher-test-" });
         const output = yield* buildNpmLauncher({
           version: VERSION,
           outputDir: path.join(root, "out"),
@@ -122,10 +120,9 @@ it.layer(NodeServices.layer)("build-npm-launcher", (it) => {
         const manifest = yield* decodeManifest(
           yield* fs.readFileString(path.join(output.packageDir, "package.json")),
         );
-        assert.equal(manifest.name, "t3-cn");
+        assert.equal(manifest.name, "t3");
         assert.equal(manifest.version, VERSION);
-        assert.deepStrictEqual(manifest.bin, { "t3-cn": "./bin/t3.mjs" });
-        assert.deepInclude(manifest.repository, { url: "https://github.com/deepfry666/t3code-cn" });
+        assert.deepStrictEqual(manifest.bin, { t3: "./bin/t3.mjs" });
         assert.isUndefined(manifest.dependencies);
         assert.isUndefined(manifest.optionalDependencies);
         assert.isAbove(npmReleaseDatabaseMigration(manifest) ?? 0, 0);
@@ -143,8 +140,7 @@ it.layer(NodeServices.layer)("build-npm-launcher", (it) => {
         const home = path.join(root, "home");
         const env = {
           PATH: (yield* HostProcess.Environment).PATH,
-          T3CODE_CN_HOME: home,
-          T3CODE_HOME: path.join(root, "official-do-not-use"),
+          T3CODE_HOME: home,
           T3CODE_TEST_CALLS: path.join(root, "calls"),
           T3CODE_RELEASE_BASE_URL: release.baseUrl,
         };
@@ -159,7 +155,6 @@ it.layer(NodeServices.layer)("build-npm-launcher", (it) => {
           (yield* fs.readFileString(env.T3CODE_TEST_CALLS)).trim().split("\n"),
           ["--version|", `serve a b|${launcher}`],
         );
-        assert.isFalse(yield* fs.exists(env.T3CODE_HOME));
         const versionDir = path.join(home, "runtime/versions", VERSION);
         assert.equal(
           (yield* fs.readFileString(path.join(versionDir, ".install-complete"))).trim(),
@@ -217,7 +212,7 @@ it.layer(NodeServices.layer)("build-npm-launcher", (it) => {
         const raceHome = path.join(root, "race-home");
         const launch = run(process.execPath, [launcher, "--version"], {
           cwd: root,
-          env: { ...env, T3CODE_CN_HOME: raceHome },
+          env: { ...env, T3CODE_HOME: raceHome },
         });
         const [one, two] = yield* Effect.all([launch, launch], { concurrency: "unbounded" });
         assert.equal(one.exitCode, 0, one.stderr);
@@ -295,7 +290,7 @@ fs.readFileSync = (file, ...rest) => {
         const recovered = yield* run(
           process.execPath,
           ["--import", peerHook, launcher, "--version"],
-          { cwd: root, env: { ...env, T3CODE_CN_HOME: staleHome } },
+          { cwd: root, env: { ...env, T3CODE_HOME: staleHome } },
         );
         const checks = (yield* fs.readFileString(peerChecks)).trim().split("\n");
         assert.isAtLeast(checks.length, 2);
@@ -315,7 +310,7 @@ fs.readFileSync = (file, ...rest) => {
         yield* fs.makeDirectory(`${staleOnlyDir}.lock`);
         const locked = yield* run(process.execPath, [launcher, "--version"], {
           cwd: root,
-          env: { ...env, T3CODE_CN_HOME: staleOnlyHome },
+          env: { ...env, T3CODE_HOME: staleOnlyHome },
         });
         assert.equal(locked.exitCode, 1);
         assert.include(locked.stderr, `delete ${staleOnlyDir}.lock`);
@@ -325,9 +320,9 @@ fs.readFileSync = (file, ...rest) => {
         yield* fs.remove(`${staleOnlyDir}.lock`, { recursive: true });
         const replaced = yield* run(process.execPath, [launcher, "--version"], {
           cwd: root,
-          env: { ...env, T3CODE_CN_HOME: staleOnlyHome },
+          env: { ...env, T3CODE_HOME: staleOnlyHome },
         });
-        assert.equal(replaced.stdout.trim(), `t3-cn v${VERSION}`, replaced.stderr);
+        assert.equal(replaced.stdout.trim(), VERSION, replaced.stderr);
         assert.equal(replaced.exitCode, 0);
         assert.deepStrictEqual(
           yield* fs.readDirectory(path.join(staleOnlyHome, "runtime/versions")),
@@ -337,7 +332,7 @@ fs.readFileSync = (file, ...rest) => {
         release.corruptChecksum();
         const corrupt = yield* run(process.execPath, [launcher, "--version"], {
           cwd: root,
-          env: { ...env, T3CODE_CN_HOME: path.join(root, "other-home") },
+          env: { ...env, T3CODE_HOME: path.join(root, "other-home") },
         });
         assert.equal(corrupt.exitCode, 1);
         assert.include(corrupt.stderr, "checksum mismatch");
@@ -345,44 +340,6 @@ fs.readFileSync = (file, ...rest) => {
           yield* fs.readDirectory(path.join(root, "other-home/runtime/versions")),
           [],
         );
-      }),
-  );
-  it.effect.skipIf(HostProcess.Platform.defaultValue() === "win32")(
-    "does not publish a release with the wrong runtime identity or version",
-    () =>
-      Effect.gen(function* () {
-        const fs = yield* FileSystem.FileSystem;
-        const path = yield* Path.Path;
-        for (const runtimeVersion of [
-          `t3 v${VERSION}`,
-          "t3-cn v1.2.4",
-          VERSION,
-          `t3-cn v${VERSION} extra`,
-        ]) {
-          const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-npm-identity-test-" });
-          const output = yield* buildNpmLauncher({
-            version: VERSION,
-            outputDir: path.join(root, "out"),
-          });
-          const release = yield* serveFakeRelease(root, `#!/bin/sh\necho '${runtimeVersion}'\n`);
-          const home = path.join(root, "home");
-          const failed = yield* run(
-            process.execPath,
-            [path.join(output.packageDir, "bin/t3.mjs"), "serve"],
-            {
-              cwd: root,
-              env: {
-                PATH: (yield* HostProcess.Environment).PATH,
-                T3CODE_CN_HOME: home,
-                T3CODE_RELEASE_BASE_URL: release.baseUrl,
-              },
-            },
-          );
-          assert.equal(failed.exitCode, 1, `${runtimeVersion}: ${failed.stderr}`);
-          assert.include(failed.stderr, "downloaded runtime is not a T3 Code CN build");
-          assert.equal(failed.stdout, "");
-          assert.deepStrictEqual(yield* fs.readDirectory(path.join(home, "runtime/versions")), []);
-        }
       }),
   );
   it.effect.skipIf(HostProcess.Platform.defaultValue() === "win32")(
@@ -418,8 +375,7 @@ syncBuiltinESMExports();
           );
           const env = {
             PATH: (yield* HostProcess.Environment).PATH,
-            T3CODE_CN_HOME: home,
-            T3CODE_HOME: path.join(root, "official-do-not-use"),
+            T3CODE_HOME: home,
             T3CODE_RELEASE_BASE_URL: release.baseUrl,
             T3CODE_TEST_READY: path.join(root, "probe-ready"),
             T3CODE_TEST_TERM: path.join(root, "probe-term"),

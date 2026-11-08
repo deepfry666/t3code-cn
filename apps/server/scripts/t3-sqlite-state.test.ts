@@ -26,24 +26,6 @@ const createFixtureDatabase = Effect.fn("createSqliteStateFixtureDatabase")(func
 });
 
 it.layer(NodeServices.layer)("t3-sqlite-state", (it) => {
-  it.effect.each([".t3code-cn", ".t3"])("protects the live %s home from mutation", (directory) =>
-    Effect.gen(function* () {
-      const fs = yield* FileSystem.FileSystem;
-      const path = yield* Path.Path;
-      const home = yield* fs.makeTempDirectoryScoped({ prefix: "t3-cn-sqlite-home-" });
-      const baseDir = path.join(home, directory);
-      yield* createFixtureDatabase(baseDir);
-      const result = yield* runSqliteState({
-        operation: "exec",
-        baseDir,
-        sql: "DELETE FROM fixtures",
-      }).pipe(Effect.provideService(HostProcess.HomeDirectory, home), Effect.result);
-      assert.isTrue(result._tag === "Failure");
-      if (result._tag === "Failure")
-        assert.equal(result.failure._tag, "SqliteStateSharedHomeMutationError");
-    }),
-  );
-
   it.effect("enables checkpoint_fullfsync on its direct connection", () =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;

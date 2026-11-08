@@ -8,8 +8,6 @@ import * as Tracer from "effect/Tracer";
 import type { HttpClient } from "effect/http";
 import { OtlpSerialization, OtlpTracer } from "effect/observability";
 
-import { FORK_IDENTITY } from "./forkIdentity.ts";
-
 export interface RelayClientTracingConfig {
   readonly tracesUrl: string;
   readonly tracesDataset: string;
@@ -168,7 +166,7 @@ export function layer(
       serviceName: resource.serviceName,
       serviceVersion: resource.serviceVersion,
       attributes: {
-        "service.namespace": FORK_IDENTITY.slug,
+        "service.namespace": "t3code",
         "service.instance.id": resource.serviceInstanceId,
         "service.runtime": resource.runtime,
         "t3code.component": resource.component ?? "relay-client",

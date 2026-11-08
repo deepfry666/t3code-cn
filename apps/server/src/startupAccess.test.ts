@@ -4,36 +4,8 @@ import { describe, expect, it } from "@effect/vitest";
 
 import {
   acceptsPrivateNetworkConnection,
-  buildPairingUrl,
-  formatHeadlessServeOutput,
   resolveHeadlessConnectionString,
 } from "./startupAccess.ts";
-
-it.each(["http://192.168.1.42:3773", "https://host.tailnet.ts.net"])(
-  "keeps non-desktop pairing payloads compatible with the official mobile app at %s",
-  (connectionString) => {
-    const output = formatHeadlessServeOutput({
-      connectionString,
-      token: "PAIRCODE",
-      pairingUrl: buildPairingUrl(connectionString, "PAIRCODE"),
-    });
-    const links = output
-      .split("\n")
-      .filter(
-        (line) => !line.startsWith("Desktop app link:") && !line.startsWith("Connection string:"),
-      )
-      .flatMap((line) => /^(?:[^:]+): (\S+:\/\/\S+)$/.exec(line)?.[1] ?? []);
-
-    expect(links.length).toBeGreaterThan(0);
-    for (const payload of links) {
-      const url = new URL(payload);
-      // The unchanged official mobile parser cannot unwrap the fork's desktop scheme.
-      expect(url.protocol).toMatch(/^https?:$/);
-      expect(url.origin).toBe(connectionString);
-      expect(new URLSearchParams(url.hash.slice(1)).get("token")).toBe("PAIRCODE");
-    }
-  },
-);
 
 const ipv4 = (address: string, internal = false): NodeOS.NetworkInterfaceInfo => ({
   address,

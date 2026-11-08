@@ -1,5 +1,4 @@
 import type { ManagedPolicyDocument } from "@t3tools/contracts";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import {
   WINDOWS_POLICY_KEY,
   WINDOWS_POLICY_GROUPS,
@@ -238,7 +237,7 @@ export function windowsAdmx(): string {
   return `<?xml version="1.0" encoding="utf-8"?>
 <policyDefinitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" revision="1.0" schemaVersion="1.0" xmlns="http://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions">
   <policyNamespaces>
-    <target prefix="${FORK_IDENTITY.slug}" namespace="${FORK_IDENTITY.policyName}.Policies" />
+    <target prefix="t3code" namespace="T3Tools.Policies.T3Code" />
   </policyNamespaces>
   <resources minRequiredRevision="1.0" />
   <supportedOn>
@@ -271,8 +270,8 @@ const presentationElement = (element: Element) => {
 /** The en-US strings and dialog layouts for `windowsAdmx`. */
 export function windowsAdml(): string {
   const strings: Array<readonly [string, string]> = [
-    ["T3Code", FORK_IDENTITY.displayName],
-    ["SUPPORTED_T3Code", `${FORK_IDENTITY.displayName} with managed policy support`],
+    ["T3Code", "T3 Code"],
+    ["SUPPORTED_T3Code", "T3 Code with managed policy support"],
   ];
   const presentations: Array<string> = [];
   for (const policy of policies()) {
@@ -292,8 +291,8 @@ export function windowsAdml(): string {
   }
   return `<?xml version="1.0" encoding="utf-8"?>
 <policyDefinitionResources xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" revision="1.0" schemaVersion="1.0" xmlns="http://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions">
-  <displayName>${FORK_IDENTITY.displayName}</displayName>
-  <description>Policies for ${FORK_IDENTITY.displayName}</description>
+  <displayName>T3 Code</displayName>
+  <description>Policies for T3 Code</description>
   <resources>
     <stringTable>
 ${strings.map(([id, text]) => `      <string id="${id}">${escapeXml(text)}</string>`).join("\n")}
@@ -338,7 +337,7 @@ const nullPath = (
   return undefined;
 };
 
-/** A device configuration profile that installs `document` for this app's preference domain. */
+/** A device configuration profile that installs `document` for `com.t3tools.t3code`. */
 export function macosProfile(
   document: ManagedPolicyDocument,
   uuids: { readonly profile: string; readonly payload: string },
@@ -358,17 +357,17 @@ export function macosProfile(
   const profile = {
     PayloadContent: [
       {
-        PayloadDisplayName: `${FORK_IDENTITY.displayName} policy`,
-        PayloadIdentifier: `${FORK_IDENTITY.appId}.policy.${uuids.payload}`,
-        PayloadType: FORK_IDENTITY.appId,
+        PayloadDisplayName: "T3 Code policy",
+        PayloadIdentifier: `com.t3tools.t3code.policy.${uuids.payload}`,
+        PayloadType: "com.t3tools.t3code",
         PayloadUUID: uuids.payload,
         PayloadVersion: 1,
         ...document,
       },
     ],
-    PayloadDescription: `Configures ${FORK_IDENTITY.displayName} for every user on this Mac.`,
-    PayloadDisplayName: `${FORK_IDENTITY.displayName} policy for ${document.organization}`,
-    PayloadIdentifier: `${FORK_IDENTITY.appId}.policy`,
+    PayloadDescription: "Configures T3 Code for every user on this Mac.",
+    PayloadDisplayName: `T3 Code policy for ${document.organization}`,
+    PayloadIdentifier: `com.t3tools.t3code.policy`,
     PayloadOrganization: document.organization,
     PayloadScope: "System",
     PayloadType: "Configuration",

@@ -1,7 +1,6 @@
 import * as NodeSqlite from "node:sqlite";
 
 import * as NodeServices from "@effect/platform-node/NodeServices";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import { expect, it } from "@effect/vitest";
 import * as Effect from "effect/Effect";
 import * as FileSystem from "effect/FileSystem";
@@ -29,9 +28,9 @@ it.each([1])("blocks legacy launcher protocol %i with exact recovery steps", (la
   expect(reason).toMatch(new RegExp(`\\b${launcherProtocol}\\b`));
   expect(reason).toMatch(new RegExp(`\\b${SERVICE_LAUNCHER_PROTOCOL}\\b`));
   expect(reason).toContain("curl -fsSL https://t3.codes/install.sh | T3CODE_VERSION=9.8.7 sh");
-  expect(reason).toContain(`~/.local/bin/${FORK_IDENTITY.cliName} service install`);
-  expect(reason).toContain(`${FORK_IDENTITY.cliName} --version`);
-  expect(reason).toContain(`which -a ${FORK_IDENTITY.cliName}`);
+  expect(reason).toContain("~/.local/bin/t3 service install");
+  expect(reason).toContain("t3 --version");
+  expect(reason).toContain("which -a t3");
 });
 
 it.layer(NodeServices.layer)("service preflight database", (it) => {

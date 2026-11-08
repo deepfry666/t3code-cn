@@ -1,6 +1,5 @@
 import * as Console from "effect/Console";
 import type { ManagedPolicyDocument } from "@t3tools/contracts";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as Effect from "effect/Effect";
 import * as FileSystem from "effect/FileSystem";
 import * as Layer from "effect/Layer";
@@ -150,9 +149,9 @@ const templatesCommand = Command.make("templates", {
         return yield* new CliError.UserError({ cause: document, userMessage: profile.reason });
       }
       const files = [
-        [path.join(directory, "windows", `${FORK_IDENTITY.slug}.admx`), windowsAdmx()],
-        [path.join(directory, "windows", "en-US", `${FORK_IDENTITY.slug}.adml`), windowsAdml()],
-        [path.join(directory, "macos", `${FORK_IDENTITY.slug}.mobileconfig`), profile.profile],
+        [path.join(directory, "windows", "t3code.admx"), windowsAdmx()],
+        [path.join(directory, "windows", "en-US", "t3code.adml"), windowsAdml()],
+        [path.join(directory, "macos", "t3code.mobileconfig"), profile.profile],
       ] as const;
       for (const [file, contents] of files) {
         yield* fs.makeDirectory(path.dirname(file), { recursive: true });

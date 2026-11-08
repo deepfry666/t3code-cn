@@ -13,8 +13,8 @@ const { version } = JSON.parse(
 const SUPPORTED = ["darwin-arm64", "linux-arm64", "linux-x64", "win32-arm64", "win32-x64"];
 
 function t3Home() {
-  const raw = (process.env.T3CODE_CN_HOME || "").trim();
-  if (raw === "") return path.join(os.homedir(), ".t3code-cn");
+  const raw = (process.env.T3CODE_HOME || "").trim();
+  if (raw === "") return path.join(os.homedir(), ".t3");
   if (raw === "~") return os.homedir();
   if (raw.startsWith("~/") || raw.startsWith("~\\")) return path.join(os.homedir(), raw.slice(2));
   return path.resolve(raw);
@@ -64,8 +64,7 @@ async function download(url, file) {
 async function install(dir, key) {
   const archive = `t3-${version}-${key}.${process.platform === "win32" ? "zip" : "tar.gz"}`;
   const base = (
-    process.env.T3CODE_RELEASE_BASE_URL ||
-    "https://github.com/deepfry666/t3code-cn/releases/download"
+    process.env.T3CODE_RELEASE_BASE_URL || "https://github.com/pingdotgg/t3code/releases/download"
   ).replace(/\/+$/, "");
   const sums = await (await get(`${base}/v${version}/SHA256SUMS`)).text();
   const expected = /^([0-9a-f]{64})\s+\*?(.+)$/im;
@@ -95,7 +94,7 @@ async function install(dir, key) {
       path.join(staging, process.platform === "win32" ? "t3.exe" : "t3"),
       ["--version"],
       {
-        stdio: ["ignore", "pipe", "pipe"],
+        stdio: ["ignore", "ignore", "pipe"],
         encoding: "utf8",
         timeout: 30_000,
         killSignal: "SIGKILL",
@@ -108,9 +107,6 @@ async function install(dir, key) {
           validate.stderr?.trim() ||
           `--version exited with ${validate.signal || validate.status}`,
       );
-    }
-    if (validate.stdout.trim() !== `t3-cn v${version}`) {
-      throw new Error(`downloaded runtime is not a T3 Code CN build (expected t3-cn v${version})`);
     }
     fs.writeFileSync(path.join(staging, ".install-complete"), `${version}\n`);
     publish(staging, dir);
@@ -169,7 +165,7 @@ async function main() {
   if (!SUPPORTED.includes(key)) {
     throw new Error(
       `no T3 Code CLI build is available for ${key} (supported: ${SUPPORTED.join(", ")}).\n` +
-        "The desktop app is at https://github.com/deepfry666/t3code-cn/releases",
+        "The desktop app is at https://github.com/pingdotgg/t3code/releases",
     );
   }
   const dir = path.join(t3Home(), "runtime", "versions", version);

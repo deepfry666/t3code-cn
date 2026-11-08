@@ -7,22 +7,18 @@ import {
   RemotePairingTokenMissingError,
   RemotePairingUrlInvalidError,
   resolveRemotePairingTarget,
-  setPairingTokenOnUrl,
 } from "./remote.ts";
 
 describe("remote", () => {
-  it.each([
-    ["http://192.168.1.44:3773", "ws://192.168.1.44:3773/"],
-    ["https://remote.example.com", "wss://remote.example.com/"],
-  ])("derives backend urls and token from a mobile pairing url at %s", (origin, wsBaseUrl) => {
-    const url = setPairingTokenOnUrl(new URL("/pair", origin), "pairing-token");
-    // The official mobile scanner needs raw HTTP(S), not the fork's desktop app scheme.
-    expect(url.protocol).toMatch(/^https?:$/);
-    expect(url.toString()).toBe(`${origin}/pair#token=pairing-token`);
-    expect(resolveRemotePairingTarget({ pairingUrl: url.toString() })).toEqual({
+  it("derives backend urls and token from a pairing url", () => {
+    expect(
+      resolveRemotePairingTarget({
+        pairingUrl: "https://remote.example.com/pair#token=pairing-token",
+      }),
+    ).toEqual({
       credential: "pairing-token",
-      httpBaseUrl: `${origin}/`,
-      wsBaseUrl,
+      httpBaseUrl: "https://remote.example.com/",
+      wsBaseUrl: "wss://remote.example.com/",
     });
   });
 
@@ -151,15 +147,13 @@ describe("remote", () => {
   it("round-trips pairing urls through app links on every channel scheme", () => {
     const pairingUrl = "https://vps.example.com/pair#token=ABC123";
     const appLink = buildPairingAppLink(pairingUrl);
-    expect(appLink.startsWith("t3code-cn://pair?")).toBe(true);
+    expect(appLink.startsWith("t3code://pair?")).toBe(true);
     expect(readPairingAppLink(appLink)).toBe(pairingUrl);
-    expect(readPairingAppLink(appLink.replace("t3code-cn:", "t3code:"))).toBeNull();
-    expect(readPairingAppLink(appLink.replace("t3code-cn:", "t3code-dev:"))).toBeNull();
-    expect(readPairingAppLink(appLink.replace("t3code-cn:", "t3code-cn-dev:"))).toBe(pairingUrl);
-    expect(readPairingAppLink("t3code-cn://pair")).toBeNull();
+    expect(readPairingAppLink(appLink.replace("t3code:", "t3code-dev:"))).toBe(pairingUrl);
+    expect(readPairingAppLink("t3code://pair")).toBeNull();
     expect(readPairingAppLink(appLink.replace("//pair?", "//pair/other?"))).toBeNull();
     expect(
-      readPairingAppLink(`t3code-cn://threads?pairingUrl=${encodeURIComponent(pairingUrl)}`),
+      readPairingAppLink(`t3code://threads?pairingUrl=${encodeURIComponent(pairingUrl)}`),
     ).toBeNull();
     expect(
       readPairingAppLink(`https://pair?pairingUrl=${encodeURIComponent(pairingUrl)}`),

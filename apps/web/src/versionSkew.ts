@@ -5,7 +5,6 @@ import type {
   ServerSelfUpdateCapability,
 } from "@t3tools/contracts";
 import type { ServerUpdateState } from "@t3tools/client-runtime/state/server";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import { compareSemverVersions, parseSemver } from "@t3tools/shared/semver";
 import * as Schema from "effect/Schema";
 
@@ -102,11 +101,11 @@ export function manualServerUpdateCommand(
 ): string {
   if (installation?.kind === "npm-global") {
     const prefix = `'${installation.prefix.replaceAll("'", "'\\''")}'`;
-    return `npm install --global --prefix ${prefix} ${FORK_IDENTITY.npmPackageName}@${targetVersion}`;
+    return `npm install --global --prefix ${prefix} t3@${targetVersion}`;
   }
   const runner =
     installation?.kind === "pnpm-dlx" ? "pnpm dlx" : installation?.kind === "bunx" ? "bunx" : "npx";
-  return `${runner} ${FORK_IDENTITY.npmPackageName}@${targetVersion}`;
+  return `${runner} t3@${targetVersion}`;
 }
 
 export function buildVersionMismatchDismissalKey(

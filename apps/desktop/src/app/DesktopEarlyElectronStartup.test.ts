@@ -13,7 +13,7 @@ describe("DesktopEarlyElectronStartup", () => {
 
   it("reads the persisted linux password-store preference before Electron is ready", () => {
     const preference = resolveEarlyLinuxPasswordStorePreference({
-      env: { T3CODE_CN_HOME: "/home/user/.t3-test" },
+      env: { T3CODE_HOME: "/home/user/.t3-test" },
       homeDirectory: "/home/user",
       joinPath,
       readFileString: (path) => {
@@ -25,23 +25,9 @@ describe("DesktopEarlyElectronStartup", () => {
     assert.equal(preference, "kwallet6");
   });
 
-  it("ignores the official home before Electron starts", () => {
-    let inspected = "";
-    resolveEarlyLinuxPasswordStorePreference({
-      env: { T3CODE_HOME: "/official-do-not-use" },
-      homeDirectory: "/home/user",
-      joinPath,
-      readFileString: (path) => {
-        inspected = path;
-        return "{}";
-      },
-    });
-    assert.equal(inspected, "/home/user/.t3code-cn/userdata/desktop-settings.json");
-  });
-
   it("accepts JSONC in the early desktop settings file", () => {
     const preference = resolveEarlyLinuxPasswordStorePreference({
-      env: { T3CODE_CN_HOME: "/home/user/.t3-test" },
+      env: { T3CODE_HOME: "/home/user/.t3-test" },
       homeDirectory: "/home/user",
       joinPath,
       readFileString: () => `{
@@ -147,7 +133,7 @@ describe("DesktopEarlyElectronStartup", () => {
 
 describe("Linux device scale persistence failures", () => {
   const input = {
-    env: { T3CODE_CN_HOME: "/isolated" },
+    env: { T3CODE_HOME: "/isolated" },
     homeDirectory: "/home/user",
     joinPath: NodePath.posix.join,
   };

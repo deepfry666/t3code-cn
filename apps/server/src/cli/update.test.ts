@@ -1,10 +1,7 @@
-import * as NodeCrypto from "@effect/platform-node/NodeCrypto";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import { assert, it } from "@effect/vitest";
 import type { ManagedUpdatesPolicy } from "@t3tools/contracts";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as HostProcess from "@t3tools/shared/HostProcess";
-import * as NetService from "@t3tools/shared/Net";
 import * as Duration from "effect/Duration";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
@@ -16,11 +13,9 @@ import * as TestClock from "effect/testing/TestClock";
 import * as TestConsole from "effect/testing/TestConsole";
 import { HttpClient, HttpClientResponse } from "effect/http";
 import * as ChildProcessSpawner from "effect/process/ChildProcessSpawner";
-import { Command } from "effect/cli";
 import { afterEach, vi } from "vite-plus/test";
 
 import packageJson from "../../package.json" with { type: "json" };
-import { cli } from "../binCli.ts";
 import * as BootService from "../cloud/bootService.ts";
 import { pinnedRuntimePaths, prunePinnedRuntimes } from "../cloud/pinnedRuntime.ts";
 import * as ManagedPolicy from "../policy/ManagedPolicy.ts";
@@ -71,32 +66,6 @@ it.effect("authenticates each release page until the requested channel is found"
     assert.equal(version, "1.2.3");
     assert.deepStrictEqual(pages, ["1", "2"]);
   }),
-);
-
-it.effect.each([200, 404])(
-  "fails cleanly without falling back when the fork has no releases (%s)",
-  (status) =>
-    Effect.gen(function* () {
-      const requests: string[] = [];
-      const error = yield* resolveNewestVersion("stable").pipe(
-        Effect.provideService(HostProcess.Environment, {}),
-        Effect.provideService(
-          HttpClient.HttpClient,
-          HttpClient.make((request) => {
-            requests.push(request.url);
-            return Effect.succeed(
-              HttpClientResponse.fromWeb(request, Response.json([], { status })),
-            );
-          }),
-        ),
-        Effect.flip,
-      );
-      assert.include(error.message, "No published stable release");
-      assert.include(error.message, "deepfry666/t3code-cn");
-      assert.deepEqual(requests, [
-        "https://api.github.com/repos/deepfry666/t3code-cn/releases?per_page=100&page=1",
-      ]);
-    }),
 );
 
 it.effect("reads the newest version from the update feed file a mirror publishes", () =>
@@ -178,17 +147,6 @@ it.layer(NodeServices.layer)("t3 update under a managed policy", (it) => {
       ),
     );
 
-  it.effect("reports its version in the form runtime validation accepts", () =>
-    Effect.gen(function* () {
-      yield* Command.runWith(cli, { version: "1.2.3" })(["--version"]);
-      assert.include(yield* TestConsole.logLines, `${FORK_IDENTITY.cliName} v1.2.3`);
-    }).pipe(
-      Effect.provide(
-        Layer.mergeAll(NodeServices.layer, NodeCrypto.layer, NetService.layer, TestConsole.layer),
-      ),
-    ),
-  );
-
   it.effect("refuses to update when updates are off", () =>
     Effect.gen(function* () {
       const error = yield* runWithPolicy({ mode: "off" });
@@ -235,36 +193,6 @@ it.layer(NodeServices.layer)("t3 update under a managed policy", (it) => {
 });
 
 it.layer(NodeServices.layer)("t3 update launcher", (it) => {
-  it.effect("updates only the fork Windows shim beside the official launcher", () =>
-    Effect.gen(function* () {
-      const fs = yield* FileSystem.FileSystem;
-      const path = yield* Path.Path;
-      const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-cn-update-shim-" });
-      const old = pinnedRuntimePaths(path, baseDir, "1.0.0", "win32");
-      const target = pinnedRuntimePaths(path, baseDir, "2.0.0", "win32");
-      yield* fs.makeDirectory(path.join(baseDir, "runtime"), { recursive: true });
-      const contents = `@echo off\r\n"${old.entryPath}" %*`;
-      const official = path.join(baseDir, "t3.cmd");
-      const fork = path.join(baseDir, "t3-cn.cmd");
-      yield* fs.writeFileString(official, contents);
-      yield* fs.writeFileString(fork, contents);
-      const repoint = repointLauncher({
-        launchedAs: old.entryPath,
-        baseDir,
-        targetEntryPath: target.entryPath,
-      }).pipe(
-        Effect.provideService(HostProcess.Platform, "win32"),
-        Effect.provideService(HostProcess.Environment, { PATH: baseDir }),
-      );
-      assert.deepEqual(yield* repoint, Option.some(fork));
-      assert.equal(yield* fs.readFileString(fork), `@echo off\r\n"${target.entryPath}" %*`);
-      assert.equal(yield* fs.readFileString(official), contents);
-      yield* fs.remove(fork);
-      assert.deepEqual(yield* repoint, Option.none());
-      assert.equal(yield* fs.readFileString(official), contents);
-    }),
-  );
-
   it.effect("repoints a symlink that lives in a runtime versions tree", () =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
@@ -557,19 +485,16 @@ it.layer(NodeServices.layer)("t3 update with a background service", (it) => {
         install: () => Effect.succeed({ program: [runtime.entryPath], baseDir, unitPath, logPath }),
       });
       vi.spyOn(BootService, "layer").mockReturnValue(service);
-      let runtimeName = "t3";
       const runner = ProcessRunner.ProcessRunner.of({
         run: (input) =>
           input.args?.includes("--version") === true
             ? unrelatedLsof
                 .run(input)
-                .pipe(
-                  Effect.map((result) => ({ ...result, stdout: `${runtimeName} v${version}\n` })),
-                )
+                .pipe(Effect.map((result) => ({ ...result, stdout: `t3 v${version}\n` })))
             : unrelatedLsof.run(input),
       });
 
-      const update = runUpdate({
+      const output = yield* runUpdate({
         baseDir,
         logsDir: baseDir,
         serverRuntimeStatePath: path.join(baseDir, "server-runtime.json"),
@@ -594,13 +519,9 @@ it.layer(NodeServices.layer)("t3 update with a background service", (it) => {
         ),
       );
 
-      const error = yield* update.pipe(Effect.flip);
-      assert.equal(error._tag, "PinnedRuntimeInstallError");
-      runtimeName = "t3-cn";
-      const output = yield* update;
       assert.include(
         output,
-        `Background service still running the version before ${version}. Run \`t3-cn service restart\` when you are ready to switch it to ${version}.`,
+        `Background service still running the version before ${version}. Run \`t3 service restart\` when you are ready to switch it to ${version}.`,
       );
     }).pipe(
       Effect.scoped,

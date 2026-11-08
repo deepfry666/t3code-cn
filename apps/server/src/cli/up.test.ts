@@ -3,7 +3,6 @@ import * as NodeServices from "@effect/platform-node/NodeServices";
 import { expect, it } from "@effect/vitest";
 import * as HostProcess from "@t3tools/shared/HostProcess";
 import * as NetService from "@t3tools/shared/Net";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as Cause from "effect/Cause";
 import * as ConfigProvider from "effect/ConfigProvider";
 import * as Effect from "effect/Effect";
@@ -185,7 +184,7 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer, NetService.layer))
     },
     {
       label: "the local network opens",
-      prints: `Run \`${FORK_IDENTITY.cliName} pair --base-dir <baseDir>\`.`,
+      prints: "Run `t3 pair --base-dir <baseDir>`.",
       installed: true,
       env: "T3CODE_LAN=false\n",
       args: ["--lan"],
@@ -224,7 +223,7 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer, NetService.layer))
     {
       label: "a failed update keeps service.env matching the old service",
       // The old service still runs, so no foreground server is offered.
-      prints: `Fix that, then run \`${FORK_IDENTITY.cliName} up --base-dir <baseDir>\` again.`,
+      prints: "Fix that, then run `t3 up --base-dir <baseDir>` again.",
       installed: true,
       status: { current: false },
       installFails: true,

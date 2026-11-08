@@ -3,7 +3,6 @@ import * as NodeModule from "node:module";
 import * as NodeOS from "node:os";
 import * as NodePath from "node:path";
 import * as NodeSea from "node:sea";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 
 export function enableCliCompileCache(): void {
   try {
@@ -13,6 +12,6 @@ export function enableCliCompileCache(): void {
       process.env.XDG_CACHE_HOME ||
       // oxlint-disable-next-line t3code/no-global-process-runtime -- Runs before the CLI's Effect runtime loads.
       (process.platform === "linux" ? NodePath.join(NodeOS.homedir(), ".cache") : NodeOS.tmpdir());
-    NodeModule.enableCompileCache(NodePath.join(cacheRoot, FORK_IDENTITY.slug, "compile-cache"));
+    NodeModule.enableCompileCache(NodePath.join(cacheRoot, "t3code", "compile-cache"));
   } catch {}
 }

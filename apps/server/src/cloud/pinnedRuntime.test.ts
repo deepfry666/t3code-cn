@@ -13,8 +13,6 @@ import * as ChildProcessSpawner from "effect/process/ChildProcessSpawner";
 
 import * as HostProcess from "@t3tools/shared/HostProcess";
 
-import { cliArchiveExecutableName } from "../../../../scripts/build-cli-archive.ts";
-
 import * as ProcessRunner from "../processRunner.ts";
 import {
   ensurePinnedRuntimeInstalled,
@@ -70,20 +68,6 @@ const extractingRunner = (fs: FileSystem.FileSystem, path: Path.Path, commands: 
   });
 
 it.layer(NodeServices.layer)("ensurePinnedRuntimeInstalled", (it) => {
-  it.effect("packages the executable the pinned runtime consumes on every platform", () =>
-    Effect.gen(function* () {
-      const path = yield* Path.Path;
-      for (const [buildPlatform, nodePlatform] of [
-        ["mac", "darwin"],
-        ["linux", "linux"],
-        ["win", "win32"],
-      ] as const) {
-        const runtime = pinnedRuntimePaths(path, "/fork-home", "1.2.3", nodePlatform);
-        assert.equal(path.basename(runtime.entryPath), cliArchiveExecutableName(buildPlatform));
-      }
-    }),
-  );
-
   it.effect("installs the verified release archive as the runtime executable", () =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
@@ -115,7 +99,7 @@ it.layer(NodeServices.layer)("ensurePinnedRuntimeInstalled", (it) => {
       ]);
       assert.deepEqual(commands, ["tar"]);
       assert.equal(yield* fs.readFileString(paths.sentinelPath), `${version}\n`);
-      assert.isFalse(yield* fs.exists(path.join(paths.versionDir, "t3code-cn-runtime-archive")));
+      assert.isFalse(yield* fs.exists(path.join(paths.versionDir, "t3-runtime-archive")));
     }),
   );
 
@@ -461,11 +445,11 @@ it.layer(NodeServices.layer)("prunePinnedRuntimes", (it) => {
       yield* fs.makeDirectory(customBinDir);
       // Chained: the launcher reaches its runtime through a second link.
       yield* fs.symlink(path.join(versionsDir, "1.2.0", "t3"), path.join(baseDir, "alias-t3"));
-      yield* fs.symlink(path.join(baseDir, "alias-t3"), path.join(binDir, "t3-cn"));
-      yield* fs.symlink(path.join(versionsDir, "1.2.5", "t3"), path.join(customBinDir, "t3-cn"));
+      yield* fs.symlink(path.join(baseDir, "alias-t3"), path.join(binDir, "t3"));
+      yield* fs.symlink(path.join(versionsDir, "1.2.5", "t3"), path.join(customBinDir, "t3"));
       yield* fs.writeFileString(
         path.join(baseDir, "runtime", "launchers"),
-        `${path.join(customBinDir, "t3-cn")}\n`,
+        `${path.join(customBinDir, "t3")}\n`,
       );
       yield* fs.writeFileString(
         path.join(baseDir, "runtime", "service-state.json"),
@@ -496,7 +480,7 @@ it.layer(NodeServices.layer)("prunePinnedRuntimes", (it) => {
       // The launcher found on PATH is remembered for a service that cannot see it.
       assert.equal(
         yield* fs.readFileString(path.join(baseDir, "runtime", "launchers")),
-        `${path.join(customBinDir, "t3-cn")}\n\n${path.join(binDir, "t3-cn")}\n`,
+        `${path.join(customBinDir, "t3")}\n\n${path.join(binDir, "t3")}\n`,
       );
       assert.deepEqual((yield* fs.readDirectory(versionsDir)).toSorted(), [
         ".staging-abc",
@@ -527,7 +511,7 @@ it.layer(NodeServices.layer)("prunePinnedRuntimes", (it) => {
       const { baseDir, versionsDir } = yield* setup(["1.0.0", "1.1.0"]);
       const binDir = path.join(baseDir, "custom-bin");
       yield* fs.makeDirectory(binDir);
-      yield* fs.symlink(path.join(versionsDir, "1.0.0", "t3"), path.join(binDir, "t3-cn"));
+      yield* fs.symlink(path.join(versionsDir, "1.0.0", "t3"), path.join(binDir, "t3"));
       const launchersFile = path.join(baseDir, "runtime", "launchers");
       yield* fs.writeFileString(launchersFile, recorded);
       const prune = (environment: Record<string, string>) =>
@@ -566,7 +550,7 @@ it.layer(NodeServices.layer)("prunePinnedRuntimes", (it) => {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const { baseDir, versionsDir } = yield* setup(["1.0.0", "1.1.0"]);
-      const shim = path.join(baseDir, "t3-cn.cmd");
+      const shim = path.join(baseDir, "t3.cmd");
       yield* fs.writeFileString(
         shim,
         `@echo off\r\n"${path.join(versionsDir, "1.0.0", "t3.exe").toUpperCase()}" %*`,
@@ -623,7 +607,7 @@ it.layer(NodeServices.layer)("prunePinnedRuntimes", (it) => {
         // Multicall coreutils (Ubuntu's uutils) refuse to run renamed, so copy Node instead.
         yield* fs.copyFile(process.execPath, entry);
         yield* fs.chmod(entry, 0o755);
-        const link = path.join(baseDir, "t3-cn");
+        const link = path.join(baseDir, "t3");
         yield* fs.symlink(entry, link);
         // Its argv names only the link, as with `t3 serve` run from PATH. Removing the link after
         // spawning leaves the process's executable as the only reference.

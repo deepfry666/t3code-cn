@@ -3,13 +3,12 @@ import { it as effectIt } from "@effect/vitest";
 import * as HostProcess from "@t3tools/shared/HostProcess";
 import { CommandAvailability, WindowsShellEnvironment } from "@t3tools/shared/shell";
 import * as Effect from "effect/Effect";
-import * as Path from "effect/Path";
 // @effect-diagnostics-next-line nodeBuiltinImport:off -- Observe the existing synchronous shell probe without launching the user's login shell.
 import * as NodeChildProcess from "node:child_process";
 import * as NodeOS from "node:os";
 import { assert, it, vi } from "vite-plus/test";
 
-import { fixPath, hydratePosixHome, resolveBaseDir } from "./os-jank.ts";
+import { fixPath, hydratePosixHome } from "./os-jank.ts";
 
 vi.mock("node:child_process", { spy: true });
 
@@ -151,18 +150,4 @@ effectIt.effect("replaces a Path-spelled Windows PATH instead of adding a second
 
     assert.deepEqual(env, { PATH: "C:\\Tools;C:\\Windows" });
   }),
-);
-
-effectIt.effect("defaults state to the fork home while preserving explicit paths", () =>
-  Effect.gen(function* () {
-    const path = yield* Path.Path;
-    for (const raw of [undefined, "", " "]) {
-      assert.equal(yield* resolveBaseDir(raw), path.join("/home/test", ".t3code-cn"));
-    }
-    assert.equal(yield* resolveBaseDir("~/custom-data"), path.join("/home/test", "custom-data"));
-    assert.equal(yield* resolveBaseDir("/isolated/data"), path.resolve("/isolated/data"));
-  }).pipe(
-    Effect.provideService(HostProcess.HomeDirectory, "/home/test"),
-    Effect.provide(NodeServices.layer),
-  ),
 );

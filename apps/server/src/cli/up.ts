@@ -1,5 +1,4 @@
 import * as HostProcess from "@t3tools/shared/HostProcess";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as Config from "effect/Config";
 import * as ConfigProvider from "effect/ConfigProvider";
 import * as Console from "effect/Console";
@@ -418,7 +417,7 @@ const setUp = Effect.fn("cli.up")(function* (flags: {
         }
         if (outcome === "skipped") {
           yield* Console.log(
-            `The installed service was not restarted. Run \`${FORK_IDENTITY.cliName} service status\` to see why.`,
+            "The installed service was not restarted. Run `t3 service status` to see why.",
           );
         }
         started = outcome === "restarted";

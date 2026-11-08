@@ -1,9 +1,8 @@
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import type { DesktopUpdateActionResult, DesktopUpdateState } from "@t3tools/contracts";
 
 export type DesktopUpdateButtonAction = "download" | "install" | "none";
 
-const DEFAULT_DESKTOP_RELEASE_REPOSITORY = FORK_IDENTITY.releaseRepository;
+const DEFAULT_DESKTOP_RELEASE_REPOSITORY = "deepfry666/t3code-cn";
 const GITHUB_REPOSITORY_SEGMENT = /^[A-Za-z0-9._-]+$/u;
 
 function isValidRepositorySegment(value: string | undefined): value is string {

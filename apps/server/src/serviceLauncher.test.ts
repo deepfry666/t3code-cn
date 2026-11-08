@@ -118,8 +118,7 @@ const writeFakeRuntime = (
   childSource: string,
 ) =>
   Effect.gen(function* () {
-    const platform = yield* HostProcess.Platform;
-    const entryPath = path.join(versionDir, platform === "win32" ? "t3.exe" : "t3");
+    const entryPath = path.join(versionDir, "t3");
     yield* fs.makeDirectory(versionDir, { recursive: true });
     yield* fs.writeFileString(entryPath, `#!${process.execPath}\n${childSource}`);
     yield* fs.chmod(entryPath, 0o755);
@@ -140,7 +139,7 @@ it.layer(NodeServices.layer)("service state persistence", (it) => {
         const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-service-env-" });
         const inherited = Object.freeze({
           PATH: "inherited-path",
-          T3CODE_CN_HOME: root,
+          T3CODE_HOME: root,
           T3_BOOT_SERVICE_UNIT: "managed-unit",
           T3_SERVICE_LAUNCHER_CONTEXT: "managed-context",
           T3CODE_PORT: "ambient",
@@ -159,10 +158,8 @@ it.layer(NodeServices.layer)("service state persistence", (it) => {
             "EMPTY=",
             "PATH=/bad",
             "Path=/bad",
-            "T3CODE_CN_HOME=/bad",
-            "t3code_cn_home=/bad",
-            "T3CODE_HOME=/official-do-not-use",
-            "t3code_home=/official-do-not-use",
+            "T3CODE_HOME=/bad",
+            "t3code_home=/bad",
             "T3_BOOT_SERVICE_UNIT=bad",
             "t3_boot_service_unit=bad",
             "T3_SERVICE_LAUNCHER_CONTEXT=bad",
@@ -322,7 +319,7 @@ if (context.update?.status === "pending") {
       const observationsPath = path.join(root, "environment-observations.jsonl");
       const envPath = path.join(root, SERVICE_ENV_FILE);
       yield* fs.writeFileString(envPath, "T3CODE_TEST_SERVICE_TOKEN=initial\n");
-      vi.stubEnv("T3CODE_CN_HOME", root);
+      vi.stubEnv("T3CODE_HOME", root);
       vi.stubEnv("T3CODE_TEST_SERVICE_TOKEN", "inherited");
       yield* Effect.addFinalizer(() => Effect.sync(() => vi.unstubAllEnvs()));
       yield* fs.makeDirectory(path.dirname(databasePath), { recursive: true });

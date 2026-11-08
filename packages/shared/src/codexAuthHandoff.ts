@@ -1,4 +1,3 @@
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import { EnvironmentId, ProviderInstanceId } from "@t3tools/contracts";
 import * as Schema from "effect/Schema";
 import { providerAuthReturnUrl } from "./providerAuthReturnUrl.ts";
@@ -88,9 +87,7 @@ export function codexCallbackUrl(value: string, redirectUri: string, state: stri
 }
 
 export function codexAuthHandoffUrl(input: CodexAuthHandoff, development = false) {
-  const url = new URL(
-    `${development ? FORK_IDENTITY.devUrlScheme : FORK_IDENTITY.urlScheme}://auth/codex`,
-  );
+  const url = new URL(`${development ? "t3code-dev" : "t3code"}://auth/codex`);
   url.searchParams.set("request", encodeHandoff(input));
   return url.toString();
 }
@@ -100,7 +97,7 @@ export function readCodexAuthHandoff(value: string, development: boolean) {
     const url = new URL(value);
     if (
       value.length > 32_768 ||
-      url.protocol !== `${development ? FORK_IDENTITY.devUrlScheme : FORK_IDENTITY.urlScheme}:` ||
+      url.protocol !== (development ? "t3code-dev:" : "t3code:") ||
       url.host !== "auth" ||
       url.pathname !== "/codex" ||
       url.username ||

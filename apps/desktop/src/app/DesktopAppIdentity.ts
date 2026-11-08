@@ -23,7 +23,10 @@ const decodeAppPackageMetadata = Schema.decodeEffect(Schema.fromJsonString(AppPa
 export class DesktopAppIdentity extends Context.Service<
   DesktopAppIdentity,
   {
-    readonly resolveUserDataPath: Effect.Effect<string>;
+    readonly resolveUserDataPath: Effect.Effect<
+      string,
+      DesktopUserData.DesktopUserDataInitializationError
+    >;
     readonly configure: Effect.Effect<void>;
   }
 >()("@t3tools/desktop/app/DesktopAppIdentity") {}

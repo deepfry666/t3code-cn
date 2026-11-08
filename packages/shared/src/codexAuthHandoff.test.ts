@@ -32,10 +32,7 @@ const callbackUrl = `http://127.0.0.1:54213/auth/callback?state=${"a".repeat(43)
 
 describe("Codex desktop handoff", () => {
   it("keeps the hosted return route, account, and environment with the code in a fragment", () => {
-    expect(codexAuthHandoffUrl(input)).toMatch(/^t3code-cn:\/\/auth\/codex\?/);
-    expect(codexAuthHandoffUrl(input, true)).toMatch(/^t3code-cn-dev:\/\/auth\/codex\?/);
     expect(readCodexAuthHandoff(codexAuthHandoffUrl(input), false)).toEqual(input);
-    expect(readCodexAuthHandoff(codexAuthHandoffUrl(input, true), true)).toEqual(input);
     const delivery = codexAuthDeliveryUrl(input, callbackUrl);
     expect(new URL(delivery).search).toBe("");
     expect(readCodexAuthDelivery(delivery)).toEqual({
@@ -50,8 +47,6 @@ describe("Codex desktop handoff", () => {
   it("rejects other handlers, schemes, arbitrary return sites, and non-OpenAI authorization", () => {
     const link = codexAuthHandoffUrl(input);
     expect(readCodexAuthHandoff(link, true)).toBeUndefined();
-    expect(readCodexAuthHandoff(link.replace("t3code-cn:", "t3code:"), false)).toBeUndefined();
-    expect(readCodexAuthHandoff(link.replace("t3code-cn:", "t3code-dev:"), true)).toBeUndefined();
     expect(readCodexAuthHandoff(link.replace("auth/codex", "auth/other"), false)).toBeUndefined();
     expect(
       readCodexAuthHandoff(

@@ -6,9 +6,6 @@ import * as Deferred from "effect/Deferred";
 import * as Duration from "effect/Duration";
 import * as Effect from "effect/Effect";
 import * as Fiber from "effect/Fiber";
-import * as FileSystem from "effect/FileSystem";
-import * as Path from "effect/Path";
-import * as HostProcess from "@t3tools/shared/HostProcess";
 import * as Layer from "effect/Layer";
 import * as PlatformError from "effect/PlatformError";
 import * as Schema from "effect/Schema";
@@ -89,38 +86,6 @@ function commandArgs(command: ChildProcess.Command): ReadonlyArray<string> {
 const ARCHIVE = { archiveVersion: "1.2.3-preview.20260911.4" } as const;
 
 describe("ssh tunnel scripts", () => {
-  it.live("runs the fork runtime even when the official version is also installed", () =>
-    Effect.gen(function* () {
-      if ((yield* HostProcess.Platform) === "win32") return;
-      const fs = yield* FileSystem.FileSystem;
-      const path = yield* Path.Path;
-      const home = yield* fs.makeTempDirectoryScoped({ prefix: "t3-cn-ssh-home-" });
-      for (const [directory, label] of [
-        [".t3", "official"],
-        [".t3code-cn", "fork"],
-      ] as const) {
-        const runtime = path.join(home, directory, "runtime", "versions", ARCHIVE.archiveVersion);
-        yield* fs.makeDirectory(runtime, { recursive: true });
-        yield* fs.writeFileString(path.join(runtime, ".install-complete"), ARCHIVE.archiveVersion);
-        yield* fs.writeFileString(
-          path.join(runtime, "t3"),
-          `#!/bin/sh\nprintf '%s\\n' '${label}'\n`,
-        );
-        yield* fs.chmod(path.join(runtime, "t3"), 0o755);
-      }
-      const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-      const output = yield* spawner.string(
-        ChildProcess.make("sh", ["-s"], {
-          env: { HOME: home },
-          stdin: Stream.make(
-            new TextEncoder().encode(SshTunnel.buildRemoteT3RunnerScript(ARCHIVE)),
-          ),
-        }),
-      );
-      assert.equal(output.trim(), "fork");
-    }).pipe(Effect.scoped, Effect.provide(NodeServices.layer)),
-  );
-
   it("rejects archive versions that are not a single exact version segment", () => {
     for (const archiveVersion of [
       "../other",

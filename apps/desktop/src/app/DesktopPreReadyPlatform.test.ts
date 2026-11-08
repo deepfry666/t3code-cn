@@ -1,5 +1,4 @@
 import { assert, describe, it } from "@effect/vitest";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as HostProcess from "@t3tools/shared/HostProcess";
 import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
@@ -76,7 +75,7 @@ describe("DesktopPreReadyPlatform", () => {
   });
 
   it.effect("persists Linux scaling synchronously across relaunches and settings rewrites", () => {
-    vi.stubEnv("T3CODE_CN_HOME", "/isolated");
+    vi.stubEnv("T3CODE_HOME", "/isolated");
     vi.stubEnv("VITE_DEV_SERVER_URL", "");
     const settingsPath = "/isolated/userdata/desktop-settings.json";
     const files = new Map([[settingsPath, "{}"]]);
@@ -131,13 +130,13 @@ describe("DesktopPreReadyPlatform", () => {
     let desktopEntry = previousEntry;
     let iconInstalled = false;
     copyFileSyncMock.mockImplementation((_source: string, destination: string) => {
-      iconInstalled = destination === "/xdg/icons/t3code-cn.desktop.png";
+      iconInstalled = destination === "/xdg/icons/com.t3tools.T3Code.desktop.png";
     });
     setDesktopNameMock.mockImplementation((name: string) => {
       desktopName = name;
     });
     writeFileSyncMock.mockImplementation((path: string, contents: string) => {
-      if (path === "/xdg/applications/t3code-cn.desktop") desktopEntry = contents;
+      if (path === "/xdg/applications/com.t3tools.T3Code.desktop") desktopEntry = contents;
     });
 
     return Effect.scoped(
@@ -159,11 +158,14 @@ describe("DesktopPreReadyPlatform", () => {
           ),
         );
         const identity = yield* Effect.promise(() => portalIdentity);
-        assert.equal(identity.desktopName, "t3code-cn.desktop");
+        assert.equal(identity.desktopName, "com.t3tools.T3Code.desktop");
         assert.include(identity.desktopEntry ?? "", "Exec=/Applications/current.AppImage %U");
-        assert.include(identity.desktopEntry ?? "", `Name=${FORK_IDENTITY.displayName} (Beta)`);
-        assert.include(identity.desktopEntry ?? "", "MimeType=x-scheme-handler/t3code-cn;");
-        assert.include(identity.desktopEntry ?? "", "Icon=/xdg/icons/t3code-cn.desktop.png");
+        assert.include(identity.desktopEntry ?? "", "Name=T3 Code (Beta)");
+        assert.include(identity.desktopEntry ?? "", "MimeType=x-scheme-handler/t3code;");
+        assert.include(
+          identity.desktopEntry ?? "",
+          "Icon=/xdg/icons/com.t3tools.T3Code.desktop.png",
+        );
         assert.isTrue(identity.iconInstalled);
       }),
     ).pipe(Effect.ensuring(Effect.sync(() => vi.unstubAllEnvs())));
@@ -188,7 +190,7 @@ describe("DesktopPreReadyPlatform", () => {
           ),
         );
         const entry = writeFileSyncMock.mock.calls.find(
-          ([path]) => path === "/xdg/applications/t3code-cn.desktop",
+          ([path]) => path === "/xdg/applications/com.t3tools.T3Code.desktop",
         )?.[1];
         assert.include(entry, 'Exec="/opt/T3 Code/t3code" %U');
       }),

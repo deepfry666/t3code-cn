@@ -34,7 +34,7 @@ const makeEnvironment = (path: Path.Path, overrides: Record<string, unknown> = {
     isPackaged: true,
     isDevelopment: false,
     displayName: "T3 Code (Alpha)",
-    linuxDesktopEntryName: "t3code-cn.desktop",
+    linuxDesktopEntryName: "com.t3tools.T3Code.desktop",
     linuxApplicationsDir: "/home/alice/.local/share/applications",
     desktopLauncherPath: Option.none(),
     appImagePath: Option.some("/home/alice/Applications/T3-Code.AppImage"),
@@ -169,7 +169,7 @@ describe("DesktopLinuxUrlHandler", () => {
     const entry = DesktopLinuxUrlHandler.renderUrlHandlerDesktopEntry({
       displayName: "T3 Code (Nightly)",
       execTarget: '/home/al ice/Apps/T3 "100%" $HOME\\x.AppImage',
-      scheme: "t3code-cn",
+      scheme: "t3code",
       iconPath: "/home/al ice/icons/T3\\x.png",
     });
 
@@ -181,7 +181,7 @@ describe("DesktopLinuxUrlHandler", () => {
     );
     assert.include(entry, "NoDisplay=true");
     assert.notInclude(entry, "StartupWMClass=");
-    assert.include(entry, "MimeType=x-scheme-handler/t3code-cn;");
+    assert.include(entry, "MimeType=x-scheme-handler/t3code;");
     assert.include(entry, "Icon=/home/al ice/icons/T3\\\\x.png");
   });
 
@@ -197,13 +197,13 @@ describe("DesktopLinuxUrlHandler", () => {
         assert.equal(recorded.files.length, 1);
         assert.equal(
           recorded.files[0]?.path,
-          "/home/alice/.local/share/applications/t3code-cn.desktop",
+          "/home/alice/.local/share/applications/com.t3tools.T3Code.desktop",
         );
         assert.include(
           recorded.files[0]?.content,
           "Exec=/home/alice/Applications/T3-Code.AppImage %U",
         );
-        assert.include(recorded.files[0]?.content, "MimeType=x-scheme-handler/t3code-cn;");
+        assert.include(recorded.files[0]?.content, "MimeType=x-scheme-handler/t3code;");
         assert.deepEqual(recorded.commands, [
           {
             command: "update-desktop-database",
@@ -211,7 +211,7 @@ describe("DesktopLinuxUrlHandler", () => {
           },
           {
             command: "xdg-mime",
-            args: ["default", "t3code-cn.desktop", "x-scheme-handler/t3code-cn"],
+            args: ["default", "com.t3tools.T3Code.desktop", "x-scheme-handler/t3code"],
           },
         ]);
       });
@@ -229,8 +229,8 @@ describe("DesktopLinuxUrlHandler", () => {
         DesktopLinuxUrlHandler.renderUrlHandlerDesktopEntry({
           displayName: "T3 Code (Alpha)",
           execTarget: process.execPath,
-          scheme: "t3code-cn",
-          iconPath: "/home/alice/.local/share/icons/t3code-cn.desktop.png",
+          scheme: "t3code",
+          iconPath: "/home/alice/.local/share/icons/com.t3tools.T3Code.desktop.png",
         }),
       );
     });
@@ -256,8 +256,8 @@ describe("DesktopLinuxUrlHandler", () => {
         existingEntry: DesktopLinuxUrlHandler.renderUrlHandlerDesktopEntry({
           displayName: "T3 Code (Alpha)",
           execTarget: "/home/alice/Applications/T3-Code.AppImage",
-          scheme: "t3code-cn",
-          iconPath: "/home/alice/.local/share/icons/t3code-cn.desktop.png",
+          scheme: "t3code",
+          iconPath: "/home/alice/.local/share/icons/com.t3tools.T3Code.desktop.png",
         }),
       });
 
@@ -270,7 +270,7 @@ describe("DesktopLinuxUrlHandler", () => {
         },
         {
           command: "xdg-mime",
-          args: ["default", "t3code-cn.desktop", "x-scheme-handler/t3code-cn"],
+          args: ["default", "com.t3tools.T3Code.desktop", "x-scheme-handler/t3code"],
         },
       ]);
     });
@@ -278,14 +278,14 @@ describe("DesktopLinuxUrlHandler", () => {
 
   it.effect("installs a persistent icon even when the desktop entry is already current", () => {
     const recorded = emptyRecording();
-    const iconPath = "/home/alice/.local/share/icons/t3code-cn.desktop.png";
+    const iconPath = "/home/alice/.local/share/icons/com.t3tools.T3Code.desktop.png";
     return Effect.gen(function* () {
       yield* runRegister(recorded, {
         iconSource: "/tmp/.mount_T3/resources/icon.png",
         existingEntry: DesktopLinuxUrlHandler.renderUrlHandlerDesktopEntry({
           displayName: "T3 Code (Alpha)",
           execTarget: "/home/alice/Applications/T3-Code.AppImage",
-          scheme: "t3code-cn",
+          scheme: "t3code",
           iconPath,
         }),
       });
@@ -326,14 +326,14 @@ describe("DesktopLinuxUrlHandler", () => {
       yield* runRegister(unpackaged, {
         environment: {
           isPackaged: false,
-          linuxDesktopEntryName: "t3code-cn-dev.desktop",
+          linuxDesktopEntryName: "com.t3tools.T3Code.Development.desktop",
         },
       });
 
       assert.deepEqual(nonLinux.files, []);
       assert.equal(
         unpackaged.files[0]?.path,
-        "/home/alice/.local/share/applications/t3code-cn-dev.desktop",
+        "/home/alice/.local/share/applications/com.t3tools.T3Code.Development.desktop",
       );
       assert.deepEqual(unpackaged.commands, []);
     });
@@ -353,7 +353,7 @@ describe("DesktopLinuxUrlHandler", () => {
           module: "FileSystem",
           method: "writeFileString",
           description: "read-only filesystem",
-          pathOrDescriptor: "/home/alice/.local/share/applications/t3code-cn.desktop",
+          pathOrDescriptor: "/home/alice/.local/share/applications/com.t3tools.T3Code.desktop",
         }),
       });
 
@@ -558,7 +558,7 @@ const iconCacheRuns = (run: ThemeIconRun) =>
   run.commands.filter(({ command }) => command === "gtk-update-icon-cache").length;
 
 it.layer(NodeServices.layer)("DesktopLinuxUrlHandler theme icons", (it) => {
-  it.effect("installs the fork icon without creating an icon cache", () =>
+  it.effect("installs both app id spellings without creating an icon cache", () =>
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
@@ -568,16 +568,17 @@ it.layer(NodeServices.layer)("DesktopLinuxUrlHandler theme icons", (it) => {
 
       yield* registerWithRealFileSystem(run);
       assert.deepEqual([...(yield* fileSystem.readDirectory(fixture.appsDir))].sort(), [
-        "t3code-cn.png",
+        "com.t3tools.T3Code.png",
+        "com.t3tools.t3code.png",
       ]);
-      for (const name of ["t3code-cn"]) {
+      for (const name of ["com.t3tools.t3code", "com.t3tools.T3Code"]) {
         const target = path.join(fixture.appsDir, `${name}.png`);
         assert.deepEqual([...(yield* fileSystem.readFile(target))], [...icon]);
         yield* fileSystem.utimes(target, fixture.pastSeconds, fixture.pastSeconds);
       }
 
       yield* registerWithRealFileSystem(run);
-      for (const name of ["t3code-cn"]) {
+      for (const name of ["com.t3tools.t3code", "com.t3tools.T3Code"]) {
         const info = yield* fileSystem.stat(path.join(fixture.appsDir, `${name}.png`));
         assert.equal(Option.getOrThrow(info.mtime).getTime(), fixture.pastSeconds * 1000);
       }
@@ -586,38 +587,36 @@ it.layer(NodeServices.layer)("DesktopLinuxUrlHandler theme icons", (it) => {
     }).pipe(Effect.scoped),
   );
 
-  it.effect(
-    "replaces a stale fork icon, preserves the official icon, and refreshes the cache once",
-    () =>
-      Effect.gen(function* () {
-        const fileSystem = yield* FileSystem.FileSystem;
-        const path = yield* Path.Path;
-        const fixture = yield* themeIconFixture(new Uint8Array([1, 2, 3]));
-        yield* fixture.seedCache;
-        const lower = path.join(fixture.appsDir, "t3code-cn.png");
-        const upper = path.join(fixture.appsDir, "com.t3tools.T3Code.png");
-        yield* fileSystem.writeFile(lower, new Uint8Array([3, 2, 1]));
-        yield* fileSystem.writeFile(upper, new Uint8Array([1, 2, 3]));
-        for (const target of [lower, upper]) {
-          yield* fileSystem.utimes(target, fixture.pastSeconds, fixture.pastSeconds);
-        }
-        const run: ThemeIconRun = {
-          root: fixture.root,
-          commands: [],
-          onIconCacheRefresh: fixture.rewriteCache,
-        };
+  it.effect("replaces same-length stale icons and refreshes an existing cache once", () =>
+    Effect.gen(function* () {
+      const fileSystem = yield* FileSystem.FileSystem;
+      const path = yield* Path.Path;
+      const fixture = yield* themeIconFixture(new Uint8Array([1, 2, 3]));
+      yield* fixture.seedCache;
+      const lower = path.join(fixture.appsDir, "com.t3tools.t3code.png");
+      const upper = path.join(fixture.appsDir, "com.t3tools.T3Code.png");
+      yield* fileSystem.writeFile(lower, new Uint8Array([3, 2, 1]));
+      yield* fileSystem.writeFile(upper, new Uint8Array([1, 2, 3]));
+      for (const target of [lower, upper]) {
+        yield* fileSystem.utimes(target, fixture.pastSeconds, fixture.pastSeconds);
+      }
+      const run: ThemeIconRun = {
+        root: fixture.root,
+        commands: [],
+        onIconCacheRefresh: fixture.rewriteCache,
+      };
 
-        yield* registerWithRealFileSystem(run);
-        yield* registerWithRealFileSystem(run);
+      yield* registerWithRealFileSystem(run);
+      yield* registerWithRealFileSystem(run);
 
-        assert.deepEqual([...(yield* fileSystem.readFile(lower))], [1, 2, 3]);
-        const upperInfo = yield* fileSystem.stat(upper);
-        assert.equal(Option.getOrThrow(upperInfo.mtime).getTime(), fixture.pastSeconds * 1000);
-        assert.deepEqual(
-          run.commands.filter(({ command }) => command === "gtk-update-icon-cache"),
-          [{ command: "gtk-update-icon-cache", args: ["-f", "-t", fixture.hicolorDir] }],
-        );
-      }).pipe(Effect.scoped),
+      assert.deepEqual([...(yield* fileSystem.readFile(lower))], [1, 2, 3]);
+      const upperInfo = yield* fileSystem.stat(upper);
+      assert.equal(Option.getOrThrow(upperInfo.mtime).getTime(), fixture.pastSeconds * 1000);
+      assert.deepEqual(
+        run.commands.filter(({ command }) => command === "gtk-update-icon-cache"),
+        [{ command: "gtk-update-icon-cache", args: ["-f", "-t", fixture.hicolorDir] }],
+      );
+    }).pipe(Effect.scoped),
   );
 
   it.effect("refreshes when this launch changed an icon even if the cache looks newer", () =>
@@ -636,7 +635,7 @@ it.layer(NodeServices.layer)("DesktopLinuxUrlHandler theme icons", (it) => {
 
       yield* registerWithRealFileSystem(run);
 
-      assert.isTrue(yield* fileSystem.exists(path.join(fixture.appsDir, "t3code-cn.png")));
+      assert.isTrue(yield* fileSystem.exists(path.join(fixture.appsDir, "com.t3tools.T3Code.png")));
       assert.equal(iconCacheRuns(run), 1);
     }).pipe(Effect.scoped),
   );

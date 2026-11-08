@@ -22,7 +22,6 @@ import {
 } from "@t3tools/shared/cliRelease";
 
 import * as HostProcess from "@t3tools/shared/HostProcess";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 
 import * as ProcessRunner from "../processRunner.ts";
 import { isExactServiceVersion, parseServiceState, SERVICE_STATE_FILE } from "./serviceProtocol.ts";
@@ -30,7 +29,7 @@ import { isExactServiceVersion, parseServiceState, SERVICE_STATE_FILE } from "./
 const PINNED_RUNTIME_DIR = "runtime";
 const PINNED_RUNTIME_INSTALL_TIMEOUT = Duration.minutes(10);
 const PINNED_RUNTIME_DOWNLOAD_STALL_TIMEOUT = Duration.minutes(1);
-const PINNED_RUNTIME_ARCHIVE_FILE = `${FORK_IDENTITY.slug}-runtime-archive`;
+const PINNED_RUNTIME_ARCHIVE_FILE = "t3-runtime-archive";
 // Separate layers share one install lock across this process.
 const pinnedRuntimeInstallLock = Semaphore.makeUnsafe(1);
 
@@ -212,7 +211,7 @@ const installFromArchive = Effect.fn("cloud.pinned_runtime.install_archive")(fun
     );
   input.onProgress?.({ stage: "extract" });
   const extractStep = "extracting the t3 release archive";
-  // Strip the archive's stem directory so the executable lands directly in versionDir.
+  // Strip the archive's stem directory so the executable lands at <versionDir>/t3.
   yield* input.runner
     .run({
       command: cliArchiveTarCommand(input.platform, process.env),
@@ -456,7 +455,7 @@ const shellLauncherTargets = Effect.fn("cloud.pinned_runtime.shell_launcher_targ
   const platform = yield* HostProcess.Platform;
   const environment = yield* HostProcess.Environment;
   const home = yield* HostProcess.HomeDirectory;
-  const launcherName = `${FORK_IDENTITY.cliName}${platform === "win32" ? ".cmd" : ""}`;
+  const launcherName = platform === "win32" ? "t3.cmd" : "t3";
   const launchersFile = path.join(baseDir, PINNED_RUNTIME_DIR, PINNED_RUNTIME_LAUNCHERS_FILE);
   const recorded = (yield* fs.readFileString(launchersFile).pipe(Effect.orElseSucceed(() => "")))
     .split(/\r?\n/)

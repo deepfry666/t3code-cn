@@ -14,12 +14,10 @@ import { HttpClient } from "effect/http";
 import * as Schema from "effect/Schema";
 
 import { CLI_RELEASE_BASE_URL_ENV } from "@t3tools/shared/cliRelease";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 
 import * as ProcessRunner from "../processRunner.ts";
 import {
   ensurePinnedRuntimeInstalled,
-  isUnpublishedRelease,
   launcherOwnsVersionsDir,
   pinnedRuntimeCommand,
   pinnedRuntimePaths,
@@ -37,10 +35,11 @@ import {
   type ServiceState,
 } from "./serviceProtocol.ts";
 
-const BOOT_SERVICE_NAME = FORK_IDENTITY.slug;
+const BOOT_SERVICE_NAME = "t3code";
 export const BOOT_SERVICE_UNIT_FILE = `${BOOT_SERVICE_NAME}.service`;
-// `.service` keeps launchd and TCC records distinct from the desktop app's bundle id.
-export const BOOT_SERVICE_LAUNCHD_LABEL = `${FORK_IDENTITY.appId}.service`;
+// `.service` suffix keeps the label distinct from the desktop app's bundle id
+// (com.t3tools.t3code), so launchd and TCC records never collide.
+export const BOOT_SERVICE_LAUNCHD_LABEL = "com.t3tools.t3code.service";
 export const BOOT_SERVICE_PLIST_FILE = `${BOOT_SERVICE_LAUNCHD_LABEL}.plist`;
 const BOOT_SERVICE_UNIT_ENV = "T3_BOOT_SERVICE_UNIT";
 export const BOOT_SERVICE_LOG_FILE = "boot-service.log";
@@ -67,9 +66,9 @@ const unescapeXmlText = (value: string) =>
   value.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&amp;", "&");
 
 export function bootServiceBaseDirOf(contents: string): string | undefined {
-  const systemd = /^Environment=T3CODE_CN_HOME=(.*)$/m.exec(contents)?.[1];
+  const systemd = /^Environment=T3CODE_HOME=(.*)$/m.exec(contents)?.[1];
   if (systemd !== undefined) return unquoteSystemdValue(systemd.trim());
-  const plist = /<key>T3CODE_CN_HOME<\/key>\s*<string>([^<]*)<\/string>/.exec(contents)?.[1];
+  const plist = /<key>T3CODE_HOME<\/key>\s*<string>([^<]*)<\/string>/.exec(contents)?.[1];
   return plist === undefined ? undefined : unescapeXmlText(plist);
 }
 
@@ -97,14 +96,14 @@ export function renderBootServiceUnit(plan: BootServicePlan): string {
   // The user manager has no reliable network-online target; server networking retries itself.
   return [
     "[Unit]",
-    `Description=${FORK_IDENTITY.displayName} server`,
+    "Description=T3 Code server",
     "StartLimitIntervalSec=300",
     "StartLimitBurst=5",
     "",
     "[Service]",
     "Type=simple",
     "WorkingDirectory=%h",
-    `Environment=T3CODE_CN_HOME=${quoteSystemdValue(plan.baseDir)}`,
+    `Environment=T3CODE_HOME=${quoteSystemdValue(plan.baseDir)}`,
     `Environment=${BOOT_SERVICE_UNIT_ENV}=${BOOT_SERVICE_UNIT_FILE}`,
     `ExecStart=${plan.program.map(quoteSystemdValue).join(" ")}`,
     // Let the launcher mark an explicit stop before it signals the server.
@@ -161,7 +160,7 @@ export function renderBootServicePlist(
     `  <dict>`,
     `    <key>PATH</key>`,
     `    <string>${escapeXmlText(options.environmentPath)}</string>`,
-    `    <key>T3CODE_CN_HOME</key>`,
+    `    <key>T3CODE_HOME</key>`,
     `    <string>${escapeXmlText(plan.baseDir)}</string>`,
     `    <key>${BOOT_SERVICE_UNIT_ENV}</key>`,
     `    <string>${BOOT_SERVICE_PLIST_FILE}</string>`,
@@ -478,11 +477,11 @@ export function formatBootServiceProblem(problem: BootServiceProblem): string {
     case "linger-disabled":
       return 'Lingering is disabled. T3 Code will stop when your last login session ends and will not start at boot. Run `sudo loginctl enable-linger "$(id -un)"` on this machine, then retry the service command as your normal user.';
     case "service-disabled":
-      return `The service is not enabled to start automatically. Run \`${FORK_IDENTITY.cliName} service install\` to repair it.`;
+      return "The service is not enabled to start automatically. Run `t3 service install` to repair it.";
     case "service-stopped":
-      return `The service is not running. Check the service log and \`systemctl --user status ${BOOT_SERVICE_UNIT_FILE}\`, then run \`${FORK_IDENTITY.cliName} service install\`.`;
+      return "The service is not running. Check the service log and `systemctl --user status t3code.service`, then run `t3 service install`.";
     case "restart-pending":
-      return `A newer version is installed but the service is still running the previous one. Run \`${FORK_IDENTITY.cliName} service restart\` to switch.`;
+      return "A newer version is installed but the service is still running the previous one. Run `t3 service restart` to switch.";
   }
 }
 
@@ -512,7 +511,7 @@ export class BootServiceDowngradeRefusedError extends Schema.TaggedError<BootSer
   },
 ) {
   override get message(): string {
-    return `Refusing to replace ${FORK_IDENTITY.cliName}@${this.installedVersion} with older ${FORK_IDENTITY.cliName}@${this.targetVersion}. Run the command again with --allow-downgrade to continue.`;
+    return `Refusing to replace t3@${this.installedVersion} with older t3@${this.targetVersion}. Run the command again with --allow-downgrade to continue.`;
   }
 }
 
@@ -527,7 +526,7 @@ export class BootServiceOtherBaseDirError extends Schema.TaggedError<BootService
   },
 ) {
   override get message(): string {
-    return `The T3 Code service on this machine serves ${this.installedBaseDir}, not ${this.baseDir}. Pass ${formatBootServiceBaseDirOption(this.installedBaseDir)} to manage it, or run \`${FORK_IDENTITY.cliName} service uninstall ${formatBootServiceBaseDirOption(this.installedBaseDir)}\` first to move it; both data directories are kept.`;
+    return `The T3 Code service on this machine serves ${this.installedBaseDir}, not ${this.baseDir}. Pass ${formatBootServiceBaseDirOption(this.installedBaseDir)} to manage it, or run \`t3 service uninstall ${formatBootServiceBaseDirOption(this.installedBaseDir)}\` first to move it; both data directories are kept.`;
   }
 
   // A refusal the user fixes by rerunning, so the CLI prints the message, not a stack trace.
@@ -536,22 +535,8 @@ export class BootServiceOtherBaseDirError extends Schema.TaggedError<BootService
   }
 }
 
-export class BootServiceOwnershipError extends Schema.TaggedError<BootServiceOwnershipError>()(
-  "BootServiceOwnershipError",
-  { unitPath: Schema.optional(Schema.String), cause: Schema.optional(Schema.Defect()) },
-) {
-  override get message(): string {
-    return `Refusing to manage ${this.unitPath ?? FORK_IDENTITY.displayName}: fork service ownership could not be verified. Inspect the unit and its data directory before retrying; no service was stopped or removed.`;
-  }
-
-  override get [CliError.userMessage]() {
-    return this.message;
-  }
-}
-
 export type BootServiceError =
   | BootServiceUnsupportedError
-  | BootServiceOwnershipError
   | BootServiceOtherBaseDirError
   | BootServiceCommandError
   | BootServiceInstallError
@@ -677,25 +662,6 @@ export const make = Effect.fn("cloud.boot_service.make")(function* (input: {
       ? installedBaseDir
       : undefined;
   };
-  const ownsUnit = (unit: string) =>
-    detectedManager?.kind === "systemd"
-      ? unit
-          .split(/\r?\n/)
-          .includes(`Environment=${BOOT_SERVICE_UNIT_ENV}=${BOOT_SERVICE_UNIT_FILE}`)
-      : /<key>Label<\/key>\s*<string>([^<]*)<\/string>/.exec(unit)?.[1] ===
-        BOOT_SERVICE_LAUNCHD_LABEL;
-  const requireOwnedUnit = Effect.fn("cloud.boot_service.require_owned_unit")(function* () {
-    const unit = yield* fs
-      .readFileString(unitPath)
-      .pipe(Effect.mapError((cause) => new BootServiceOwnershipError({ unitPath, cause })));
-    if (!ownsUnit(unit) || bootServiceBaseDirOf(unit) === undefined) {
-      return yield* new BootServiceOwnershipError({ unitPath });
-    }
-    const installedBaseDir = otherBaseDirOf(unit);
-    if (installedBaseDir !== undefined) {
-      return yield* new BootServiceOtherBaseDirError({ installedBaseDir, baseDir: input.baseDir });
-    }
-  });
   const writeDurably = (filePath: string, contents: string) =>
     Effect.scoped(
       Effect.gen(function* () {
@@ -840,12 +806,13 @@ export const make = Effect.fn("cloud.boot_service.make")(function* (input: {
     const manager = yield* requireManager;
     // The unit is per user. Rewriting one that serves another home moves the
     // service onto this home's data, which looks like every thread vanished.
-    if (
-      yield* fs
-        .exists(unitPath)
-        .pipe(Effect.mapError((cause) => new BootServiceOwnershipError({ unitPath, cause })))
-    )
-      yield* requireOwnedUnit();
+    const existingUnit = yield* fs.readFileString(unitPath).pipe(Effect.option);
+    const installedBaseDir = Option.isSome(existingUnit)
+      ? otherBaseDirOf(existingUnit.value)
+      : undefined;
+    if (installedBaseDir !== undefined) {
+      return yield* new BootServiceOtherBaseDirError({ installedBaseDir, baseDir: input.baseDir });
+    }
     yield* fs
       .makeDirectory(input.logsDir, { recursive: true })
       .pipe(Effect.mapError((cause) => new BootServiceInstallError({ cause })));
@@ -879,9 +846,9 @@ export const make = Effect.fn("cloud.boot_service.make")(function* (input: {
                   cause,
                 }),
             ),
-            Effect.flatMap((result) =>
-              result.code === 0 &&
-              result.stdout.trim() === `${FORK_IDENTITY.cliName} v${input.cliVersion}`
+            Effect.flatMap((result) => {
+              const reportedVersion = /\bv(\S+)\s*$/.exec(result.stdout)?.[1];
+              return result.code === 0 && reportedVersion === input.cliVersion
                 ? Effect.void
                 : Effect.fail(
                     new PinnedRuntimeInstallError({
@@ -890,18 +857,10 @@ export const make = Effect.fn("cloud.boot_service.make")(function* (input: {
                       stdoutLength: result.stdout.length,
                       stderrLength: result.stderr.length,
                     }),
-                  ),
-            ),
+                  );
+            }),
           ),
     }).pipe(
-      Effect.catchIf(isUnpublishedRelease, (cause) =>
-        Effect.fail(
-          new PinnedRuntimeInstallError({
-            step: `finding ${FORK_IDENTITY.cliName}@${input.cliVersion} in ${FORK_IDENTITY.releaseRepository}; no fork release archive is published for this machine, so wait for a fork release before installing the service`,
-            cause,
-          }),
-        ),
-      ),
       Effect.mapError((error) =>
         error._tag === "PinnedRuntimeInstallError"
           ? new BootServiceCommandError({
@@ -1011,7 +970,7 @@ export const make = Effect.fn("cloud.boot_service.make")(function* (input: {
   const restart: BootService["Service"]["restart"] = Effect.gen(function* () {
     const manager = yield* requireManager;
     const unit = yield* fs.readFileString(unitPath).pipe(Effect.option);
-    if (Option.isNone(unit) || !ownsUnit(unit.value)) return "skipped" as const;
+    if (Option.isNone(unit)) return "skipped" as const;
     const installedBaseDir = bootServiceBaseDirOf(unit.value);
     if (
       installedBaseDir === undefined ||
@@ -1044,7 +1003,7 @@ export const make = Effect.fn("cloud.boot_service.make")(function* (input: {
     if (detectedManager === undefined) return yield* operation;
     const manager = detectedManager;
     const unit = yield* fs.readFileString(unitPath).pipe(Effect.option);
-    if (Option.isNone(unit) || !ownsUnit(unit.value)) return yield* operation;
+    if (Option.isNone(unit)) return yield* operation;
     const installedBaseDir = bootServiceBaseDirOf(unit.value);
     if (
       installedBaseDir === undefined ||
@@ -1092,10 +1051,9 @@ export const make = Effect.fn("cloud.boot_service.make")(function* (input: {
     if (
       !(yield* fs
         .exists(unitPath)
-        .pipe(Effect.mapError((cause) => new BootServiceOwnershipError({ unitPath, cause }))))
+        .pipe(Effect.mapError((cause) => new BootServiceInstallError({ cause }))))
     )
       return false;
-    yield* requireOwnedUnit();
     yield* runSteps(manager.deactivate);
     yield* fs
       .remove(unitPath)

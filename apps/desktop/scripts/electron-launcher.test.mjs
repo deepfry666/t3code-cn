@@ -5,8 +5,6 @@ import * as NodeOS from "node:os";
 import * as NodePath from "node:path";
 import * as NodeVM from "node:vm";
 
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
-
 import { assert, describe, it } from "vite-plus/test";
 
 import {
@@ -18,115 +16,11 @@ import {
 } from "./electron-launcher.mjs";
 
 describe("electron development launcher", () => {
-  it.each([false, true])(
-    "brands main and helper bundles and caches their identity (dev=%s)",
-    (development) => {
-      const source = NodeFS.readFileSync(
-        new URL("./electron-launcher.mjs", import.meta.url),
-        "utf8",
-      )
-        .replace(/^import\s[\s\S]*?;\n/gm, "")
-        .replaceAll("export ", "")
-        .replaceAll("import.meta.url", "moduleUrl");
-      const commands = [];
-      const files = new Map();
-      const context = {
-        FORK_IDENTITY,
-        NodeChildProcess: {
-          spawnSync: (command, args) => {
-            commands.push([command, args]);
-            return { status: 0 };
-          },
-        },
-        NodeFS: {
-          existsSync: () => true,
-          statSync: () => ({ mtimeMs: 1 }),
-          readFileSync: (path) => files.get(path) ?? "",
-          writeFileSync: (path, text) => files.set(path, text),
-          mkdirSync: () => {},
-          cpSync: () => {},
-          copyFileSync: () => {},
-          rmSync: () => {},
-          chmodSync: () => {},
-        },
-        NodeOS: { platform: () => "darwin" },
-        NodePath,
-        NodeURL: { fileURLToPath: () => "/repo/apps/desktop/scripts/electron-launcher.mjs" },
-        moduleUrl: "file:///repo/apps/desktop/scripts/electron-launcher.mjs",
-        process: { env: development ? { VITE_DEV_SERVER_URL: "http://localhost:1234" } : {} },
-      };
-      // Run the real bundle patching path with inert filesystem and subprocess boundaries.
-      const run = (identity = FORK_IDENTITY) =>
-        NodeVM.runInNewContext(
-          `${source}\nbuildMacLauncher("/electron/Electron.app/Contents/MacOS/Electron");`,
-          { ...context, FORK_IDENTITY: identity },
-        );
-      run();
-      const displayName = `${FORK_IDENTITY.displayName} (${development ? "Dev" : "Beta"})`;
-      const bundleId = `${FORK_IDENTITY.appId}${development ? ".dev.repo" : ""}`;
-      const bundlePath = `/repo/apps/desktop/.electron-runtime/${displayName}.app`;
-      const plistWrites = commands
-        .filter(([command]) => command === "plutil")
-        .map(([, args]) => args);
-      assert.deepInclude(plistWrites, [
-        "-replace",
-        "CFBundleDisplayName",
-        "-string",
-        displayName,
-        `${bundlePath}/Contents/Info.plist`,
-      ]);
-      assert.deepInclude(plistWrites, [
-        "-replace",
-        "CFBundleIdentifier",
-        "-string",
-        bundleId,
-        `${bundlePath}/Contents/Info.plist`,
-      ]);
-      for (const [name, suffix] of [
-        ["", "helper"],
-        [" (GPU)", "helper.gpu"],
-        [" (Plugin)", "helper.plugin"],
-        [" (Renderer)", "helper.renderer"],
-      ]) {
-        const plist = `${bundlePath}/Contents/Frameworks/Electron Helper${name}.app/Contents/Info.plist`;
-        assert.deepInclude(plistWrites, [
-          "-replace",
-          "CFBundleDisplayName",
-          "-string",
-          `${displayName} Helper${name}`,
-          plist,
-        ]);
-        assert.deepInclude(plistWrites, [
-          "-replace",
-          "CFBundleIdentifier",
-          "-string",
-          `${bundleId}.${suffix}`,
-          plist,
-        ]);
-      }
-      const metadata = JSON.parse(files.get("/repo/apps/desktop/.electron-runtime/metadata.json"));
-      assert.equal(metadata.appDisplayName, displayName);
-      assert.equal(metadata.appBundleId, bundleId);
-      assert.deepEqual(metadata.appProtocolSchemes, [
-        development ? FORK_IDENTITY.devUrlScheme : FORK_IDENTITY.urlScheme,
-      ]);
-      commands.length = 0;
-      run();
-      assert.isFalse(commands.some(([command]) => command === "plutil"));
-      run({ ...FORK_IDENTITY, displayName: "Renamed Fork" });
-      assert.isTrue(commands.some(([command]) => command === "plutil"));
-      assert.equal(
-        JSON.parse(files.get("/repo/apps/desktop/.electron-runtime/metadata.json")).appDisplayName,
-        `Renamed Fork (${development ? "Dev" : "Beta"})`,
-      );
-    },
-  );
-
   it("uses captured values only as fallbacks for a live runner environment", () => {
     const environmentScript = makeDevelopmentEnvironmentScript({
       VITE_DEV_SERVER_URL: "http://127.0.0.1:8526",
       T3CODE_PORT: "16566",
-      T3CODE_CN_HOME: "/tmp/t3",
+      T3CODE_HOME: "/tmp/t3",
       T3CODE_OTLP_PROTOCOL: "http/protobuf",
     });
 

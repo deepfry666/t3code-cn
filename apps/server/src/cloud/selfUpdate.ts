@@ -7,7 +7,6 @@ import {
   type ServerSelfUpdateResult,
 } from "@t3tools/contracts";
 import * as HostProcess from "@t3tools/shared/HostProcess";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as Config from "effect/Config";
 import * as Context from "effect/Context";
 import * as Duration from "effect/Duration";
@@ -186,7 +185,7 @@ export const make = Effect.fn("cloud.server_self_update.make")(function* () {
     }
     if (capability === null) {
       return yield* failWith(
-        `Remote updates require the T3 Code background service. Run \`${FORK_IDENTITY.cliName} service install\` on the server machine.`,
+        "Remote updates require the T3 Code background service. Run `t3 service install` on the server machine.",
       );
     }
 

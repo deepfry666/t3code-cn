@@ -1,10 +1,9 @@
 import * as Option from "effect/Option";
 import * as Schema from "effect/Schema";
 
-import { FORK_IDENTITY } from "./forkIdentity.ts";
 import { compareSemverVersions } from "./semver.ts";
 
-const CLI_RELEASE_REPOSITORY = FORK_IDENTITY.releaseRepository;
+const CLI_RELEASE_REPOSITORY = "deepfry666/t3code-cn";
 export const CLI_RELEASES_PAGE_URL = `https://github.com/${CLI_RELEASE_REPOSITORY}/releases`;
 export const CLI_RELEASE_CHECKSUMS_FILE = "SHA256SUMS";
 export const CLI_RELEASE_BASE_URL_ENV = "T3CODE_RELEASE_BASE_URL";

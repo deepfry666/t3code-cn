@@ -95,8 +95,6 @@ describe("WSL runtime cache", () => {
     const script = buildScript(runtimeId);
     expect(script).toContain("/1.2.3_x64__touch__tmp_nope");
     expect(script).not.toContain(runtimeId);
-    expect(script).toContain("$HOME/.t3code-cn/wsl-runtime");
-    expect(script).not.toContain("$HOME/.t3/wsl-runtime");
   });
 });
 
@@ -142,9 +140,9 @@ describe.skipIf(posixShellRunner === null)("WSL runtime install script (executed
       archivePath,
       archiveSha,
       runtimeId,
-      runtimeParent: `${work}/home/.t3code-cn/wsl-runtime`,
-      runtimeRoot: `${work}/home/.t3code-cn/wsl-runtime/${runtimeId}`,
-      serverEntry: `${work}/home/.t3code-cn/wsl-runtime/${runtimeId}/t3`,
+      runtimeParent: `${work}/home/.t3/wsl-runtime`,
+      runtimeRoot: `${work}/home/.t3/wsl-runtime/${runtimeId}`,
+      serverEntry: `${work}/home/.t3/wsl-runtime/${runtimeId}/t3`,
       installScript,
       install: (archive?: string, sha?: string) => runShell(installScript(archive, sha)),
     };
@@ -167,24 +165,6 @@ describe.skipIf(posixShellRunner === null)("WSL runtime install script (executed
         buildWslRuntimeProbeScript(fixture.runtimeRoot),
       ].join("\n"),
     );
-
-  it("leaves an official cache untouched during install, invalidate and prune", () => {
-    const fixture = createFixture();
-    const result = runShell(
-      [
-        "set -eu",
-        `export HOME=${sh(`${fixture.work}/home`)}`,
-        'official="$HOME/.t3/wsl-runtime/sha256-official"',
-        'mkdir -p "$official"',
-        'printf original > "$official/.t3code-wsl-runtime-ready"',
-        fixture.installScript(),
-        buildWslRuntimeInvalidateScript(fixture.runtimeId),
-        buildWslRuntimePruneScript(fixture.runtimeId),
-        'test "$(cat "$official/.t3code-wsl-runtime-ready")" = original',
-      ].join("\n"),
-    );
-    expect(result.status, `${result.stdout}\n${result.stderr}`).toBe(0);
-  });
 
   it("discovers version-managed Node for providers with a standalone runtime", () => {
     const fixture = createFixture();
@@ -406,7 +386,7 @@ describe.skipIf(posixShellRunner === null)("WSL runtime install script (executed
         "set -eu",
         "work=$(mktemp -d)",
         'home="$work/home"',
-        'runtime_parent="$home/.t3code-cn/wsl-runtime"',
+        'runtime_parent="$home/.t3/wsl-runtime"',
         'mkdir -p "$runtime_parent"',
         'make_ready() { mkdir -p "$runtime_parent/$1"; printf ready > "$runtime_parent/$1/.t3code-wsl-runtime-ready"; }',
         "make_ready sha256-current",

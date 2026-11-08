@@ -79,23 +79,7 @@ it("does not mistake installed files for KDE authorization, or fall back to a pi
 });
 
 it("detects a bundled update, updates explicitly, and removes only capture's registration", async () => {
-  const officialExecutable = NodePath.join(paths.dataHome, "t3code/kde-capture/t3-kde-snap-shot");
-  const officialDesktop = NodePath.join(
-    paths.dataHome,
-    "applications/com.t3tools.T3Code.KdeCapture.desktop",
-  );
-  await NodeFSP.mkdir(NodePath.dirname(officialExecutable), { recursive: true });
-  await NodeFSP.mkdir(NodePath.dirname(officialDesktop), { recursive: true });
-  await NodeFSP.writeFile(officialExecutable, "official helper");
-  await NodeFSP.writeFile(officialDesktop, "X-T3Code-Capture-Helper=true\n");
-  expect((await setup.state()).status).toBe("not-installed");
   await setup.perform("install-kde-helper");
-  const { executable, desktop } = kdeCapturePaths(paths);
-  expect(executable).toContain("/t3code-cn/kde-capture/");
-  expect(NodePath.basename(desktop)).toBe("t3code-cn.KdeCapture.desktop");
-  expect((await NodeFSP.readFile(desktop, "utf8")).split("\n")).toContain(
-    "X-t3code-cn-Capture-Helper=true",
-  );
   const unrelated = NodePath.join(paths.dataHome, "applications", "another-app.desktop");
   await NodeFSP.writeFile(unrelated, "keep me");
   await NodeFSP.writeFile(paths.bundle, "updated helper");
@@ -105,10 +89,6 @@ it("detects a bundled update, updates explicitly, and removes only capture's reg
   await setup.perform("remove-kde-helper");
   expect((await setup.state()).status).toBe("not-installed");
   expect(await NodeFSP.readFile(unrelated, "utf8")).toBe("keep me");
-  await expect(NodeFSP.stat(executable)).rejects.toMatchObject({ code: "ENOENT" });
-  await expect(NodeFSP.stat(desktop)).rejects.toMatchObject({ code: "ENOENT" });
-  expect(await NodeFSP.readFile(officialExecutable, "utf8")).toBe("official helper");
-  expect(await NodeFSP.readFile(officialDesktop, "utf8")).toBe("X-T3Code-Capture-Helper=true\n");
 });
 
 it("repairs the old semicolon permission entry without replacing unrelated registrations", async () => {
@@ -151,8 +131,6 @@ it("refuses symlink destinations and unrelated desktop entries", async () => {
   await NodeFSP.mkdir(NodePath.dirname(desktop), { recursive: true });
   await NodeFSP.writeFile(desktop, "[Desktop Entry]\nName=Unrelated");
   await expect(setup.perform("install-kde-helper")).rejects.toThrow("Another desktop entry");
-  await NodeFSP.writeFile(desktop, "[Desktop Entry]\nX-T3Code-Capture-Helper=true\n");
-  await expect(setup.perform("remove-kde-helper")).rejects.toThrow("Another desktop entry");
   await NodeFSP.unlink(desktop);
   await NodeFSP.mkdir(NodePath.dirname(executable), { recursive: true });
   await NodeFSP.symlink(paths.bundle, executable);

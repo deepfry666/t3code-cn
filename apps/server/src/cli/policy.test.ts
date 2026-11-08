@@ -1,54 +1,20 @@
 import * as NodeCrypto from "@effect/platform-node/NodeCrypto";
 import * as NodeServices from "@effect/platform-node/NodeServices";
-import * as NetService from "@t3tools/shared/Net";
 import { assert, it } from "@effect/vitest";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as FileSystem from "effect/FileSystem";
 import * as Path from "effect/Path";
 import * as Schema from "effect/Schema";
-import * as TestConsole from "effect/testing/TestConsole";
-import { Command } from "effect/cli";
 
 import * as ManagedPolicy from "../policy/ManagedPolicy.ts";
 import {
   makePersistedServerRuntimeState,
   PersistedServerRuntimeState,
 } from "../serverRuntimeState.ts";
-import { describeRunningServer, policyCommand } from "./policy.ts";
+import { describeRunningServer } from "./policy.ts";
 
 const encodeState = Schema.encodeEffect(Schema.fromJsonString(PersistedServerRuntimeState));
-
-it.effect("writes fork template filenames beside existing official templates", () =>
-  Effect.scoped(
-    Effect.gen(function* () {
-      const fs = yield* FileSystem.FileSystem;
-      const path = yield* Path.Path;
-      const directory = yield* fs.makeTempDirectoryScoped({ prefix: "t3-cn-policy-templates-" });
-      const official = [
-        "windows/t3code.admx",
-        "windows/en-US/t3code.adml",
-        "macos/t3code.mobileconfig",
-      ];
-      for (const name of official) {
-        const file = path.join(directory, name);
-        yield* fs.makeDirectory(path.dirname(file), { recursive: true });
-        yield* fs.writeFileString(file, "official template");
-      }
-      yield* Command.runWith(policyCommand, { version: "0.0.0" })(["templates", directory]);
-      for (const name of official) {
-        assert.equal(yield* fs.readFileString(path.join(directory, name)), "official template");
-        assert.isTrue(
-          yield* fs.exists(path.join(directory, name.replace("t3code.", "t3code-cn."))),
-        );
-      }
-    }),
-  ).pipe(
-    Effect.provide(
-      Layer.mergeAll(NodeServices.layer, NodeCrypto.layer, NetService.layer, TestConsole.layer),
-    ),
-  ),
-);
 
 it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))((it) =>
   it.effect("tells whether the running server loaded the installed policy", () =>

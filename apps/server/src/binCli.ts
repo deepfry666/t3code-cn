@@ -8,7 +8,6 @@ import * as Layer from "effect/Layer";
 import { Argument, Command } from "effect/cli";
 import * as CliError from "effect/cli/CliError";
 
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as NetService from "@t3tools/shared/Net";
 import packageJson from "../package.json" with { type: "json" };
 import { acpMcpBridgeCommand, acpMcpCallCommand } from "./cli/acpMcpBridge.ts";
@@ -63,7 +62,7 @@ const connectUnavailableCommand = Command.make("connect", {
 );
 
 export const makeCli = ({ cloudEnabled = hasCloudPublicConfig } = {}) =>
-  Command.make(FORK_IDENTITY.cliName, { ...sharedServerCommandFlags }).pipe(
+  Command.make("t3", { ...sharedServerCommandFlags }).pipe(
     Command.withDescription(
       "Run T3 Code in this terminal and open it in your browser. To use it from your other devices, run `t3 up`.",
     ),

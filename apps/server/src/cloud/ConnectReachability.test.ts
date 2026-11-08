@@ -3,7 +3,6 @@ import * as NodeFS from "node:fs";
 import * as NodeNet from "node:net";
 
 import { T3_CONNECT_TROUBLESHOOTING_SECTIONS } from "@t3tools/contracts";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import { describe, expect, it } from "@effect/vitest";
 import * as Clock from "effect/Clock";
 import * as Deferred from "effect/Deferred";
@@ -101,9 +100,7 @@ describe("classifyReachability", () => {
     // Desktop and `t3 serve` run the server without a background service.
     const result = classifyReachability(facts({ managedTunnelConfigured: false }), checkedAt);
     expect(result).toMatchObject({ cause: "not_linked" });
-    expect(result.status === "unreachable" && result.fix).not.toContain(
-      `${FORK_IDENTITY.cliName} service`,
-    );
+    expect(result.status === "unreachable" && result.fix).not.toContain("t3 service");
   });
 });
 

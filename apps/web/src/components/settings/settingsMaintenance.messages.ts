@@ -332,17 +332,16 @@ export const settingsMaintenanceMessages = {
   "Scan with your phone camera.": "用手机相机扫描。",
   "Open {store}": "打开 {store}",
   "{store} link": "{store} 链接",
-  "Could not install t3-cn": "无法安装 t3-cn",
-  "Could not remove t3-cn": "无法移除 t3-cn",
+  "Could not install t3": "无法安装 t3",
+  "Could not remove t3": "无法移除 t3",
   "Something went wrong.": "出了点问题。",
-  "Another t3-cn at {shadowedBy} runs first in a new terminal. Remove it to use T3 Code CN's.":
-    "新终端会优先运行 {shadowedBy} 中的另一个 t3-cn。请先移除它，再使用 T3 Code CN 的版本。",
-  "Run T3 Code CN's CLI as `t3-cn` from any terminal.":
-    "在任意终端通过 `t3-cn` 运行 T3 Code CN 的 CLI。",
+  "Another t3 at {shadowedBy} runs first in a new terminal. Remove it to use T3 Code's.":
+    "新终端会优先运行 {shadowedBy} 中的另一个 t3。请先移除它，再使用 T3 Code 的版本。",
+  "Run T3 Code's CLI as `t3` from any terminal.": "在任意终端通过 `t3` 运行 T3 Code 的 CLI。",
   "Installed at {installedPath}. Open a new terminal to use it.":
     "已安装到 {installedPath}。打开新终端即可使用。",
-  "Installed at {installedPath}, which is not on your PATH yet. Add its folder to your PATH to run `t3-cn`.":
-    "已安装到 {installedPath}，该路径尚未加入 PATH。请将其文件夹加入 PATH 后运行 `t3-cn`。",
+  "Installed at {installedPath}, which is not on your PATH yet. Add its folder to your PATH to run `t3`.":
+    "已安装到 {installedPath}，该路径尚未加入 PATH。请将其文件夹加入 PATH 后运行 `t3`。",
   Remove: "移除",
   Install: "安装",
   Subprocess: "子进程",

@@ -1,4 +1,3 @@
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as NodeChildProcess from "node:child_process";
 import * as NodeFS from "node:fs";
 import * as NodeModule from "node:module";
@@ -14,13 +13,11 @@ const repoRoot = NodePath.resolve(desktopDir, "..", "..");
 const devBundleIdSuffix = NodePath.basename(repoRoot)
   .toLowerCase()
   .replaceAll(/[^a-z0-9]+/g, "");
-const APP_DISPLAY_NAME = `${FORK_IDENTITY.displayName} (${isDevelopment ? "Dev" : "Beta"})`;
+const APP_DISPLAY_NAME = isDevelopment ? "T3 Code (Dev)" : "T3 Code (Beta)";
 const APP_BUNDLE_ID = isDevelopment
-  ? `${FORK_IDENTITY.appId}.dev.${devBundleIdSuffix || "local"}`
-  : FORK_IDENTITY.appId;
-const APP_PROTOCOL_SCHEMES = isDevelopment
-  ? [FORK_IDENTITY.devUrlScheme]
-  : [FORK_IDENTITY.urlScheme];
+  ? `com.t3tools.t3code.dev.${devBundleIdSuffix || "local"}`
+  : "com.t3tools.t3code";
+const APP_PROTOCOL_SCHEMES = isDevelopment ? ["t3code-dev"] : ["t3code"];
 const LAUNCHER_VERSION = 20;
 const developmentMacIconPngPath = NodePath.join(
   repoRoot,
@@ -113,7 +110,7 @@ export function makeDevelopmentEnvironmentScript(environment) {
   const envEntries = [
     ["VITE_DEV_SERVER_URL", environment.VITE_DEV_SERVER_URL],
     ["T3CODE_PORT", environment.T3CODE_PORT],
-    ["T3CODE_CN_HOME", environment.T3CODE_CN_HOME],
+    ["T3CODE_HOME", environment.T3CODE_HOME],
     ["T3CODE_COMMIT_HASH", environment.T3CODE_COMMIT_HASH],
     ["T3CODE_OTLP_TRACES_URL", environment.T3CODE_OTLP_TRACES_URL],
     ["T3CODE_OTLP_EXPORT_INTERVAL_MS", environment.T3CODE_OTLP_EXPORT_INTERVAL_MS],
@@ -363,7 +360,6 @@ function buildMacLauncher(electronBinaryPath) {
     sourceAppBundlePath,
     sourceAppMtimeMs: NodeFS.statSync(sourceAppBundlePath).mtimeMs,
     iconMtimeMs: NodeFS.statSync(iconPath).mtimeMs,
-    appDisplayName: APP_DISPLAY_NAME,
     appBundleId: APP_BUNDLE_ID,
     appProtocolSchemes: APP_PROTOCOL_SCHEMES,
   };

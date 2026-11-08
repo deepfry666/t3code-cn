@@ -1,4 +1,3 @@
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as HostProcess from "@t3tools/shared/HostProcess";
 import * as Console from "effect/Console";
 import * as Effect from "effect/Effect";
@@ -40,10 +39,10 @@ const runStep = Effect.fn("browserSetup.runStep")(function* (
   }
 });
 
-/** Under sudo, an unspecified home belongs to the invoking user. */
+/** Under sudo, an unspecified home uses the invoking user's ~/.t3. */
 const setupBaseDir = Effect.fn("browserSetup.baseDir")(function* (explicit: Option.Option<string>) {
   const env = yield* HostProcess.Environment;
-  const raw = Option.getOrUndefined(explicit) ?? env.T3CODE_CN_HOME;
+  const raw = Option.getOrUndefined(explicit) ?? env.T3CODE_HOME;
   if (raw !== undefined || env.SUDO_USER === undefined) return yield* resolveBaseDir(raw);
   const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
   const entry = yield* spawner
@@ -53,7 +52,7 @@ const setupBaseDir = Effect.fn("browserSetup.baseDir")(function* (explicit: Opti
     .pipe(Effect.orElseSucceed(() => ""));
   const home = entry.trim().split(":")[5];
   const path = yield* Path.Path;
-  return home ? path.join(home, FORK_IDENTITY.homeDirName) : yield* resolveBaseDir(undefined);
+  return home ? path.join(home, ".t3") : yield* resolveBaseDir(undefined);
 });
 
 const aptOffers = Effect.fn("browserSetup.aptOffers")(function* (name: string) {
@@ -120,9 +119,7 @@ const browserSetupCommand = Command.make("setup", { baseDir: baseDirFlag }).pipe
       // sudo resets the environment, so a chosen home has to be on the command line.
       const setupCommand = yield* resolveRootCliCommand(
         PreviewBrowserHost.SETUP_SUBCOMMAND,
-        Option.isSome(baseDir) || env.T3CODE_CN_HOME !== undefined
-          ? ["--base-dir", baseDirPath]
-          : [],
+        Option.isSome(baseDir) || env.T3CODE_HOME !== undefined ? ["--base-dir", baseDirPath] : [],
       );
       // Root, unless sudo came from another user, is likely the server's own account.
       const rootWarning =

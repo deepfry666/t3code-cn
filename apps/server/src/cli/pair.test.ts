@@ -1,5 +1,4 @@
 // @effect-diagnostics nodeBuiltinImport:off - CLI integration exercises Node HTTP and filesystem boundaries.
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as NodeHttp from "node:http";
 import * as NodeFS from "node:fs";
 import * as NodeOS from "node:os";
@@ -218,10 +217,7 @@ describe("t3 pair", () => {
 
         const token = /#token=([A-Z2-9]+)/.exec(output)?.[1];
         assert.isString(token);
-        assert.include(
-          output,
-          `Desktop app link: ${buildPairingAppLink(`${origin}/pair#token=${token}`)}`,
-        );
+        assert.include(output, `App link: ${buildPairingAppLink(`${origin}/pair#token=${token}`)}`);
 
         const listed = yield* captureStdout(
           runCli(["auth", "pairing", "list", "--base-dir", baseDir, "--json"]),
@@ -372,7 +368,7 @@ describe("t3 pair", () => {
           runCli(["pair"]).pipe(
             Effect.provideService(HostProcess.WorkingDirectory, worktree),
             Effect.provide(
-              ConfigProvider.layer(ConfigProvider.fromEnv({ env: { T3CODE_CN_HOME: sharedHome } })),
+              ConfigProvider.layer(ConfigProvider.fromEnv({ env: { T3CODE_HOME: sharedHome } })),
             ),
             Effect.flip,
           ),
@@ -413,7 +409,7 @@ describe("t3 pair", () => {
           ]);
           assert.isTrue(Exit.isFailure(exit));
           if (Exit.isFailure(exit)) {
-            assert.include(String(Cause.squash(exit.cause)), "t3-cn@0.0.45 pair");
+            assert.include(String(Cause.squash(exit.cause)), "t3@0.0.45 pair");
           }
         }),
       "127.0.0.1",
@@ -533,7 +529,7 @@ describe("auth scope options", () => {
       if (!CliError.isCliError(error) || error._tag !== "ShowHelp") {
         assert.fail(`Expected ShowHelp, got ${String(error)}`);
       }
-      assert.deepEqual(error.commandPath, [FORK_IDENTITY.cliName, ...command]);
+      assert.deepEqual(error.commandPath, ["t3", ...command]);
       const scopeError = error.errors[0];
       if (scopeError?._tag !== "InvalidValue") {
         assert.fail(`Expected InvalidValue, got ${String(scopeError?._tag)}`);

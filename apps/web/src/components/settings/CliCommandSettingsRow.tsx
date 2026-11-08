@@ -30,8 +30,7 @@ export function CliCommandSettingsRow() {
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title:
-              action === "install" ? t("Could not install t3-cn") : t("Could not remove t3-cn"),
+            title: action === "install" ? t("Could not install t3") : t("Could not remove t3"),
             description: error instanceof Error ? error.message : t("Something went wrong."),
           }),
         );
@@ -42,18 +41,17 @@ export function CliCommandSettingsRow() {
   if (!bridge || !state?.supported) return null;
   const installed = state.installedPath !== null;
   const description = state.shadowedBy
-    ? t(
-        "Another t3-cn at {shadowedBy} runs first in a new terminal. Remove it to use T3 Code CN's.",
-        { shadowedBy: state.shadowedBy },
-      )
+    ? t("Another t3 at {shadowedBy} runs first in a new terminal. Remove it to use T3 Code's.", {
+        shadowedBy: state.shadowedBy,
+      })
     : !installed
-      ? t("Run T3 Code CN's CLI as `t3-cn` from any terminal.")
+      ? t("Run T3 Code's CLI as `t3` from any terminal.")
       : state.onPath
         ? t("Installed at {installedPath}. Open a new terminal to use it.", {
             installedPath: state.installedPath,
           })
         : t(
-            "Installed at {installedPath}, which is not on your PATH yet. Add its folder to your PATH to run `t3-cn`.",
+            "Installed at {installedPath}, which is not on your PATH yet. Add its folder to your PATH to run `t3`.",
             { installedPath: state.installedPath },
           );
 

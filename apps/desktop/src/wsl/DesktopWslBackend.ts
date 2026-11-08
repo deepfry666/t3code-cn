@@ -6,7 +6,6 @@ import * as Option from "effect/Option";
 import * as Ref from "effect/Ref";
 import * as Semaphore from "effect/Semaphore";
 
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as NetService from "@t3tools/shared/Net";
 
 import * as DesktopObservability from "../app/DesktopObservability.ts";
@@ -129,7 +128,7 @@ export const layer = Layer.effect(
                 Ref.set(
                   preflightErrorRef,
                   Option.some(
-                    `Another T3 Code server is using this distro's T3 home, or an older background service is set up for it. Stop that server or pair with it, or try \`${FORK_IDENTITY.cliName} update\` in the distro. If the older launcher cannot update, run \`${FORK_IDENTITY.cliName} service uninstall\` and optionally reinstall with \`${FORK_IDENTITY.cliName} service install\` from a current CLI in the distro. Use \`npx ${FORK_IDENTITY.cliName}@latest\` if \`${FORK_IDENTITY.cliName}\` is missing or outdated, and pass \`--base-dir\` with the service's T3 home to each command.`,
+                    "Another T3 Code server is using this distro's T3 home, or an older background service is set up for it. Stop that server or pair with it, or try `t3 update` in the distro. If the older launcher cannot update, run `t3 service uninstall` and optionally reinstall with `t3 service install` from a current CLI in the distro. Use `npx t3@latest` if `t3` is missing or outdated, and pass `--base-dir` with the service's T3 home to each command.",
                   ),
                 ),
               ),

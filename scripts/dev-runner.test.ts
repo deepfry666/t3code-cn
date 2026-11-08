@@ -412,28 +412,6 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
       }),
     );
 
-    it.effect("keeps the fork desktop and child server on the same isolated home", () =>
-      Effect.gen(function* () {
-        for (const t3Home of [undefined, "/explicit-cn"]) {
-          const env = yield* createDevRunnerEnv({
-            mode: "dev:desktop",
-            baseEnv: { T3CODE_HOME: "/official-do-not-use", T3CODE_CN_HOME: "/stale-cn" },
-            serverOffset: 0,
-            webOffset: 0,
-            t3Home,
-            browser: undefined,
-            autoBootstrapProjectFromCwd: undefined,
-            logWebSocketEvents: undefined,
-            host: undefined,
-            port: undefined,
-            devUrl: undefined,
-          }).pipe(Effect.provideService(HostProcess.HomeDirectory, "/home/dev"));
-          assert.equal(env.T3CODE_CN_HOME, t3Home ?? "/home/dev/.t3code-cn");
-          assert.equal(env.T3CODE_HOME, undefined);
-        }
-      }),
-    );
-
     it.effect("expands a home-relative T3 home the way the server does", () =>
       Effect.gen(function* () {
         const path = yield* Path.Path;
@@ -452,7 +430,7 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
             devUrl: undefined,
           }).pipe(
             Effect.provideService(HostProcess.HomeDirectory, "/home/dev"),
-            Effect.map((env) => env.T3CODE_CN_HOME),
+            Effect.map((env) => env.T3CODE_HOME),
           );
 
         assert.equal(yield* homeFor("~/t3-dev"), path.join("/home/dev", "t3-dev"));
@@ -679,7 +657,6 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
         readonly t3Home: string | undefined;
         readonly cwd: string;
         readonly ambientHome: string | undefined;
-        readonly mode?: "dev" | "dev:web" | "dev:server";
       }) =>
         Effect.gen(function* () {
           let captured: Record<string, string | undefined> | undefined;
@@ -695,24 +672,19 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
             }),
           );
 
-          yield* runDevRunnerWithInput({
-            ...devServerInput,
-            mode: input.mode ?? "dev:server",
-            t3Home: input.t3Home,
-          }).pipe(
+          yield* runDevRunnerWithInput({ ...devServerInput, t3Home: input.t3Home }).pipe(
             Effect.provide(Layer.mergeAll(emptyConfigLayer, netServiceLayer, spawnerLayer)),
             Effect.provideService(HostProcess.Platform, "linux"),
             Effect.provideService(HostProcess.WorkingDirectory, input.cwd),
-            // No fork home here, so these runs never seed from this machine's install.
+            // No ~/.t3 here, so these runs never seed from this machine's install.
             Effect.provideService(HostProcess.HomeDirectory, input.cwd),
-            Effect.provideService(HostProcess.Environment, {
-              T3CODE_HOME: "/official-do-not-use",
-              ...(input.ambientHome === undefined ? {} : { T3CODE_CN_HOME: input.ambientHome }),
-            }),
+            Effect.provideService(
+              HostProcess.Environment,
+              input.ambientHome === undefined ? {} : { T3CODE_HOME: input.ambientHome },
+            ),
           );
 
-          assert.equal(captured?.T3CODE_HOME, undefined);
-          return captured?.T3CODE_CN_HOME;
+          return captured?.T3CODE_HOME;
         });
 
       it.effect("prefers an explicit --home-dir over the worktree default", () =>
@@ -741,7 +713,7 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
         }).pipe(Effect.scoped),
       );
 
-      it.effect("prefers the worktree .t3 over an ambient T3CODE_CN_HOME", () =>
+      it.effect("prefers the worktree .t3 over an ambient T3CODE_HOME", () =>
         Effect.gen(function* () {
           const path = yield* Path.Path;
           const root = yield* makeWorktree;
@@ -754,38 +726,15 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
         }).pipe(Effect.scoped),
       );
 
-      it.effect("uses only the fork ambient home outside worktrees", () =>
-        Effect.gen(function* () {
-          const fs = yield* FileSystem.FileSystem;
-          const path = yield* Path.Path;
-          const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-devrunner-main-" });
-          yield* fs.makeDirectory(path.join(root, ".git"));
-          for (const mode of ["dev", "dev:web", "dev:server"] as const) {
-            const forkHome = path.join(root, "fork-home");
-            assert.equal(
-              yield* spawnedHome({ t3Home: undefined, cwd: root, ambientHome: forkHome, mode }),
-              forkHome,
-            );
-            assert.equal(
-              yield* spawnedHome({ t3Home: undefined, cwd: root, ambientHome: undefined, mode }),
-              undefined,
-            );
-          }
-        }),
-      );
-
-      it.effect("seeds a worktree database only from the fork home when it has none", () =>
+      it.effect("seeds a worktree database from ~/.t3 only when it has none", () =>
         Effect.gen(function* () {
           const path = yield* Path.Path;
           const root = yield* makeWorktree;
           const home = path.join(root, "home");
-          NodeFS.mkdirSync(path.join(home, ".t3code-cn", "userdata"), { recursive: true });
-          NodeFS.writeFileSync(path.join(home, ".t3code-cn", "userdata", "statev2.sqlite"), "");
+          NodeFS.mkdirSync(path.join(home, ".t3", "userdata"), { recursive: true });
+          NodeFS.writeFileSync(path.join(home, ".t3", "userdata", "statev2.sqlite"), "");
 
-          const spawnedArgs = (
-            seed: boolean | undefined,
-            mode: "dev:server" | "dev:desktop" = "dev:server",
-          ) =>
+          const spawnedArgs = (seed: boolean | undefined) =>
             Effect.gen(function* () {
               const spawned: Array<ReadonlyArray<string>> = [];
               const spawnerLayer = Layer.succeed(
@@ -797,12 +746,7 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
                   return Effect.succeed(mockProcess(0));
                 }),
               );
-              yield* runDevRunnerWithInput({
-                ...devServerInput,
-                mode,
-                t3Home: undefined,
-                seed,
-              }).pipe(
+              yield* runDevRunnerWithInput({ ...devServerInput, t3Home: undefined, seed }).pipe(
                 Effect.provide(Layer.mergeAll(emptyConfigLayer, netServiceLayer, spawnerLayer)),
                 Effect.provideService(HostProcess.Platform, "linux"),
                 Effect.provideService(HostProcess.WorkingDirectory, root),
@@ -815,16 +759,7 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
             });
 
           assert.deepStrictEqual(yield* spawnedArgs(false), []);
-          assert.deepStrictEqual(yield* spawnedArgs(undefined, "dev:desktop"), []);
-          assert.deepStrictEqual(yield* spawnedArgs(true, "dev:desktop"), []);
-          const source = path.join(home, ".t3code-cn", "userdata", "statev2.sqlite");
-          NodeFS.rmSync(source);
-          NodeFS.mkdirSync(path.join(home, ".t3", "userdata"), { recursive: true });
-          NodeFS.writeFileSync(path.join(home, ".t3", "userdata", "statev2.sqlite"), "official");
-          assert.deepStrictEqual(yield* spawnedArgs(undefined), []);
-          NodeFS.writeFileSync(source, "fork");
           const [seedArgs] = yield* spawnedArgs(undefined);
-          assert.includeMembers([...(seedArgs ?? [])], ["--source", source]);
           assert.includeMembers([...(seedArgs ?? [])], ["--base-dir", path.join(root, ".t3")]);
 
           // Either database means the worktree already has data.
@@ -850,7 +785,7 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
             const path = yield* Path.Path;
             const root = yield* makeWorktree;
             const home = path.join(root, "home");
-            const source = path.join(home, ".t3code-cn", "userdata", "statev2.sqlite");
+            const source = path.join(home, ".t3", "userdata", "statev2.sqlite");
             NodeFS.mkdirSync(path.dirname(source), { recursive: true });
             NodeFS.writeFileSync(source, "");
             const spawned: Array<ReadonlyArray<string>> = [];

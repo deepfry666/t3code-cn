@@ -7,7 +7,6 @@ import { OtlpExporter, OtlpSerialization, OtlpTracer } from "effect/observabilit
 
 import { settleAsyncResult, squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
 import { safeErrorLogAttributes } from "@t3tools/client-runtime/errors";
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import { resolvePrimaryEnvironmentHttpUrl } from "../environments/primary";
 import { releaseChannelOf, releaseResourceAttributes } from "@t3tools/shared/releaseResource";
 import * as ClientTracer from "./clientTracer";
@@ -50,9 +49,9 @@ const RELEASE_CHANNEL =
       ? "preview"
       : releaseChannelOf(APP_VERSION);
 const CLIENT_TRACING_RESOURCE = {
-  serviceName: `${FORK_IDENTITY.slug}-web`,
+  serviceName: "t3code-web",
   attributes: {
-    "service.namespace": FORK_IDENTITY.slug,
+    "service.namespace": "t3code",
     "service.instance.id": ClientTracer.serviceInstanceId,
     ...releaseResourceAttributes(RELEASE_CHANNEL),
     "service.runtime": "t3-web",

@@ -121,45 +121,6 @@ it.layer(NodeServices.layer)("cli config resolution", (it) => {
     );
   });
 
-  it.effect(
-    "ignores the official home and resolves only fork overrides before bootstrap and defaults",
-    () =>
-      Effect.gen(function* () {
-        const fs = yield* FileSystem.FileSystem;
-        const path = yield* Path.Path;
-        const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-cli-fork-home-" });
-        const officialHome = path.join(root, "official");
-        const forkHome = path.join(root, "fork");
-        const explicitHome = path.join(root, "explicit");
-        for (const [override, explicit, expected] of [
-          [undefined, undefined, path.join(root, ".t3code-cn")],
-          [forkHome, undefined, forkHome],
-          [forkHome, explicitHome, explicitHome],
-        ] as const) {
-          const config = yield* resolveServerConfig(
-            { ...minimalDesktopFlags(root), baseDir: Option.fromUndefinedOr(explicit) },
-            Option.none(),
-          ).pipe(
-            Effect.provide([
-              ConfigProvider.layer(
-                ConfigProvider.fromEnv({
-                  env: {
-                    T3CODE_HOME: officialHome,
-                    ...(override === undefined ? {} : { T3CODE_CN_HOME: override }),
-                  },
-                }),
-              ),
-              NetService.layer,
-            ]),
-            Effect.provideService(HostProcess.HomeDirectory, root),
-          );
-          expect(config.baseDir).toBe(expected);
-          expect(config.settingsPath).toBe(path.join(expected, "userdata/settings.json"));
-        }
-        expect(yield* fs.exists(officialHome)).toBe(false);
-      }),
-  );
-
   it.effect("keeps stale records and supervised startup out of the manual launch preflight", () =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
@@ -415,27 +376,6 @@ it.layer(NodeServices.layer)("cli config resolution", (it) => {
     }),
   );
 
-  it.effect(
-    "uses the desktop bootstrap home when the child environment has no T3CODE_CN_HOME",
-    () =>
-      Effect.gen(function* () {
-        const fs = yield* FileSystem.FileSystem;
-        const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-cli-bootstrap-home-" });
-        const fd = yield* openBootstrapFd(makeDesktopBootstrap({ t3Home: baseDir }));
-        const resolved = yield* resolveServerConfig(
-          { ...minimalDesktopFlags(baseDir), baseDir: Option.none(), bootstrapFd: Option.some(fd) },
-          Option.none(),
-        ).pipe(
-          Effect.provide([
-            ConfigProvider.layer(ConfigProvider.fromEnv({ env: {} })),
-            NetService.layer,
-          ]),
-        );
-        expect(resolved.baseDir).toBe(baseDir);
-        expect(resolved.stateDir).toBe(`${baseDir}/userdata`);
-      }),
-  );
-
   it.effect("applies flag then env precedence over bootstrap envelope values", () =>
     Effect.gen(function* () {
       const { join } = yield* Path.Path;
@@ -481,7 +421,7 @@ it.layer(NodeServices.layer)("cli config resolution", (it) => {
                 env: {
                   T3CODE_MODE: "web",
                   T3CODE_BOOTSTRAP_FD: String(fd),
-                  T3CODE_CN_HOME: baseDir,
+                  T3CODE_HOME: baseDir,
                   T3CODE_NO_BROWSER: "true",
                   T3CODE_AUTO_BOOTSTRAP_PROJECT_FROM_CWD: "true",
                   T3CODE_LOG_WS_EVENTS: "true",

@@ -1,7 +1,5 @@
 import * as NodeOS from "node:os";
 
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
-
 import { parsePersistedServerObservabilitySettings } from "@t3tools/shared/serverSettings";
 import { currentDesktopBootstrapToken } from "@t3tools/shared/desktopBootstrapToken";
 import * as HostProcess from "@t3tools/shared/HostProcess";
@@ -73,9 +71,6 @@ const emptyBackendObservabilitySettings: BackendObservabilitySettings = {
 };
 
 const DESKTOP_BACKEND_ENV_NAMES = [
-  "T3CODE_HOME",
-  "T3CODE_CN_HOME",
-  "T3CODE_TRACE_FILE",
   "T3CODE_PORT",
   "T3CODE_MODE",
   "T3CODE_NO_BROWSER",
@@ -577,8 +572,7 @@ const resolveWslStartConfig = Effect.fn("desktop.backendConfiguration.resolveWsl
     mode: "desktop" as const,
     noBrowser: true,
     port: input.port,
-    // Resolve inside the distro, never reuse the primary Windows or official Linux database.
-    t3Home: `~/${FORK_IDENTITY.homeDirName}`,
+    // Omit t3Home to keep the Linux backend from sharing the primary's Windows SQLite file.
     host: wslBindHost,
     desktopBootstrapToken: input.bootstrapToken,
     desktopBootstrapSecret: input.bootstrapSecret,
@@ -650,7 +644,7 @@ const resolveWslStartConfig = Effect.fn("desktop.backendConfiguration.resolveWsl
 
   const parentEnvWithoutT3Home: Record<string, string | undefined> = {};
   for (const [key, value] of Object.entries(env)) {
-    if (key === "T3CODE_HOME" || key === "T3CODE_CN_HOME") continue;
+    if (key === "T3CODE_HOME") continue;
     parentEnvWithoutT3Home[key] = value;
   }
   const wslEnv = mergeWslEnv(parentEnvWithoutT3Home.WSLENV, forwardedEnvNames);
@@ -712,11 +706,6 @@ const resolveWslStartConfig = Effect.fn("desktop.backendConfiguration.resolveWsl
       ...distroArgs,
       "--exec",
       "env",
-      // Distro-level home overrides must not supersede the fork bootstrap.
-      "-u",
-      "T3CODE_HOME",
-      "-u",
-      "T3CODE_CN_HOME",
       `PATH=${launchPath}`,
       ...command,
       "--bootstrap-fd",

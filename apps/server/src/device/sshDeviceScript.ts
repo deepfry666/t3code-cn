@@ -1,5 +1,3 @@
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
-
 import { deviceToolMaintenanceScript } from "./deviceToolMaintenance.ts";
 import { AGENT_DEVICE_VERSION, DEVICE_HUB_VERSION } from "./DeviceToolchain.ts";
 
@@ -26,7 +24,6 @@ export const remoteDeviceScript = (
 ) =>
   `
 const owner = ${JSON.stringify(owner)};
-const homeDirName = ${JSON.stringify(FORK_IDENTITY.homeDirName)};
 const mode = ${JSON.stringify(mode)};
 const hubVersion = ${JSON.stringify(DEVICE_HUB_VERSION)};
 const agentVersion = ${JSON.stringify(AGENT_DEVICE_VERSION)};
@@ -38,7 +35,7 @@ const path = require('node:path');
 const os = require('node:os');
 const net = require('node:net');
 const { spawn, spawnSync } = require('node:child_process');
-const root = path.join(os.homedir(), homeDirName, 'device');
+const root = path.join(os.homedir(), '.t3', 'device');
 const state = path.join(root, 'hosts', owner);
 const run = (command, args, options = {}) => spawnSync(command, args, { encoding: 'utf8', timeout: 30000, ...options });
 const read = (file) => { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return null; } };
