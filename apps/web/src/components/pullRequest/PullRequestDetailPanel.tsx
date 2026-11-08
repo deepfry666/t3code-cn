@@ -503,11 +503,11 @@ export function PullRequestDetailPanel({
   const keybindings = useAtomValue(primaryServerKeybindingsAtom);
   const { copyToClipboard: copyReference } = useCopyToClipboard<string>({
     target: `${terminology.singular} reference`,
-    onCopy: (label) => toastManager.add({ type: "success", title: `${label} copied` }),
+    onCopy: (label) => toastManager.add({ type: "success", title: t("{label} copied", { label }) }),
     onError: (error, label) =>
       toastManager.add({
         type: "error",
-        title: `Failed to copy ${label}`,
+        title: t("Failed to copy {label}", { label }),
         description: error.message,
       }),
   });
@@ -892,7 +892,9 @@ export function PullRequestDetailPanel({
     setHandoff(kind);
     const toastId = toastManager.add({
       type: "loading",
-      title: `Preparing the ${terminology.singular} checkout...`,
+      title: t("Preparing the {kind} checkout...", {
+        kind: translatePullRequestLabel(terminology.singular, locale),
+      }),
     });
     const projectRef = scopeProjectRef(
       actingEnvironmentId,
