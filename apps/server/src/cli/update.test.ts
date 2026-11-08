@@ -1,7 +1,10 @@
+import * as NodeCrypto from "@effect/platform-node/NodeCrypto";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import { assert, it } from "@effect/vitest";
 import type { ManagedUpdatesPolicy } from "@t3tools/contracts";
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as HostProcess from "@t3tools/shared/HostProcess";
+import * as NetService from "@t3tools/shared/Net";
 import * as Duration from "effect/Duration";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
@@ -13,9 +16,11 @@ import * as TestClock from "effect/testing/TestClock";
 import * as TestConsole from "effect/testing/TestConsole";
 import { HttpClient, HttpClientResponse } from "effect/http";
 import * as ChildProcessSpawner from "effect/process/ChildProcessSpawner";
+import { Command } from "effect/cli";
 import { afterEach, vi } from "vite-plus/test";
 
 import packageJson from "../../package.json" with { type: "json" };
+import { cli } from "../binCli.ts";
 import * as BootService from "../cloud/bootService.ts";
 import { pinnedRuntimePaths, prunePinnedRuntimes } from "../cloud/pinnedRuntime.ts";
 import * as ManagedPolicy from "../policy/ManagedPolicy.ts";
@@ -172,6 +177,17 @@ it.layer(NodeServices.layer)("t3 update under a managed policy", (it) => {
         ),
       ),
     );
+
+  it.effect("reports its version in the form runtime validation accepts", () =>
+    Effect.gen(function* () {
+      yield* Command.runWith(cli, { version: "1.2.3" })(["--version"]);
+      assert.include(yield* TestConsole.logLines, `${FORK_IDENTITY.cliName} v1.2.3`);
+    }).pipe(
+      Effect.provide(
+        Layer.mergeAll(NodeServices.layer, NodeCrypto.layer, NetService.layer, TestConsole.layer),
+      ),
+    ),
+  );
 
   it.effect("refuses to update when updates are off", () =>
     Effect.gen(function* () {
