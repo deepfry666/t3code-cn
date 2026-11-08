@@ -2,6 +2,7 @@ import * as NodePath from "@effect/platform-node/NodePath";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import { assert, describe, it } from "@effect/vitest";
 import * as Effect from "effect/Effect";
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as Layer from "effect/Layer";
 
 import * as DesktopEnvironment from "./DesktopEnvironment.ts";
@@ -47,6 +48,7 @@ describe("DesktopEnvironment", () => {
         resourcesPath: "/install/resources",
       });
 
+      assert.equal(environment.appUserModelId, FORK_IDENTITY.appId);
       assert.equal(environment.appRoot, "/install/resources/app.asar");
       assert.equal(environment.serverRoot, "/install/resources/server.asar");
       assert.equal(
@@ -77,6 +79,8 @@ describe("DesktopEnvironment", () => {
       assert.equal(explicit.baseDir, "/isolated-cn");
       assert.equal(explicit.stateDir, "/isolated-cn/userdata");
 
+      assert.equal(development.appUserModelId, `${FORK_IDENTITY.appId}.dev`);
+      assert.equal(production.appUserModelId, FORK_IDENTITY.appId);
       assert.equal(development.stateDir, "/Users/alice/.t3code-cn/dev");
       assert.equal(production.stateDir, "/Users/alice/.t3code-cn/userdata");
     }),

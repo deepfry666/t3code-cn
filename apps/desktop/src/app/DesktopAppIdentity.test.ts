@@ -8,6 +8,7 @@ import * as Option from "effect/Option";
 import * as PlatformError from "effect/PlatformError";
 
 import type * as Electron from "electron";
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 
 import * as ElectronApp from "../electron/ElectronApp.ts";
 import * as DesktopAppIdentity from "./DesktopAppIdentity.ts";
@@ -40,7 +41,7 @@ interface ElectronAppCalls {
 const layerElectronApp = (calls: ElectronAppCalls) =>
   Layer.succeed(ElectronApp.ElectronApp, {
     metadata: Effect.die("unexpected metadata read"),
-    name: Effect.succeed("T3 Code"),
+    name: Effect.succeed(FORK_IDENTITY.displayName),
     systemLocale: Effect.succeed("en-US"),
     preferredSystemLanguages: Effect.succeed(["en-US"]),
     whenReady: Effect.void,
@@ -200,9 +201,12 @@ describe("DesktopAppIdentity", () => {
 
         const runtimeName = calls.setName[0];
         assert.isDefined(runtimeName);
-        assert.equal(runtimeName, `T3 Code ${stage}`);
+        assert.equal(runtimeName, `${FORK_IDENTITY.displayName} ${stage}`);
         assert.match(runtimeName.replaceAll(" ", ""), /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/);
-        assert.equal(calls.setAboutPanelOptions[0]?.applicationName, `T3 Code (${stage})`);
+        assert.equal(
+          calls.setAboutPanelOptions[0]?.applicationName,
+          `${FORK_IDENTITY.displayName} (${stage})`,
+        );
       }),
       { calls, environment },
     );

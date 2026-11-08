@@ -8,6 +8,7 @@ import { build } from "vite-plus/pack";
 import { assert, it } from "vite-plus/test";
 
 import desktopConfig from "../vite.config.ts";
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 
 it("keeps lazy Linux imports and worker bundles from executing desktop startup twice", async () => {
   const directory = await NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "t3-desktop-bundle-"));
@@ -134,11 +135,11 @@ it("loads the emitted packaged boot entry and backend cache preload", async () =
       });
     }
     const outputDirectory = NodePath.join(directory, "dist-electron");
-    const fixture = `console.log(require('node:module').getCompileCacheDir() ? 'cached' : 'uncached');`;
+    const fixture = `console.log(require('node:module').getCompileCacheDir() || 'uncached');`;
     await NodeFSP.writeFile(NodePath.join(outputDirectory, "main.cjs"), fixture);
     await NodeFSP.writeFile(
       NodePath.join(outputDirectory, "backend.mjs"),
-      `import { getCompileCacheDir } from 'node:module'; console.log(getCompileCacheDir() ? 'cached' : 'uncached');`,
+      `import { getCompileCacheDir } from 'node:module'; console.log(getCompileCacheDir() || 'uncached');`,
     );
     for (const disabled of [false, true]) {
       for (const args of [
@@ -163,7 +164,14 @@ it("loads the emitted packaged boot entry and backend cache preload", async () =
           },
         });
         assert.equal(child.status, 0, child.stderr);
-        assert.equal(child.stdout.trim(), disabled ? "uncached" : "cached");
+        if (disabled) {
+          assert.equal(child.stdout.trim(), "uncached");
+        } else {
+          assert.include(
+            child.stdout.trim(),
+            NodePath.join(FORK_IDENTITY.slug, "compile-cache") + NodePath.sep,
+          );
+        }
       }
     }
   } finally {
