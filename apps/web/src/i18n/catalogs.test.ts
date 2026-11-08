@@ -19,9 +19,11 @@ import { settingsDevicesMessages } from "../components/settings/settingsDevices.
 import { settingsCodeMessages } from "../components/settings/settingsCode.messages";
 import { settingsVoiceMessages } from "../components/settings/settingsVoice.messages";
 import { settingsMaintenanceMessages } from "../components/settings/settingsMaintenance.messages";
+import { deviceToolVersionsMessages } from "../components/device/deviceToolVersions.messages";
 import { translate } from "./locale";
 
 const catalogs: Record<string, Readonly<Record<string, string>>> = {
+  deviceToolVersions: deviceToolVersionsMessages,
   chat: chatUiMessages,
   composer: composerUiMessages,
   theme: themeUiMessages,
