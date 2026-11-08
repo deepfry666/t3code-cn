@@ -66,6 +66,7 @@ export const coreUiMessages = {
   "Unpin project": "取消置顶项目",
   "Pin project": "置顶项目",
   "Project settings": "项目设置",
+  "Project settings for {project}": "{project} 的项目设置",
   "Thread title cannot be empty": "会话标题不能为空",
   "Failed to rename thread": "重命名会话失败",
   "Failed to settle thread": "收尾会话失败",

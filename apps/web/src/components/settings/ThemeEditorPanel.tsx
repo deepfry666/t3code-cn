@@ -827,7 +827,9 @@ export function ThemeEditorPanel({
       } else if (mergeTarget) {
         if (takenAppearances.includes(activeAppearance)) {
           setError(
-            `“${mergeTarget.label}” already has light and dark palettes. Pick another name.`,
+            t("“{name}” already has light and dark palettes. Pick another name.", {
+              name: mergeTarget.label,
+            }),
           );
           return;
         }

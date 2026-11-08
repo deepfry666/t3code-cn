@@ -85,6 +85,8 @@ export const themeEditorUiMessages = {
   "“{name}” has no {appearance} palette. Create a theme with the same name to add one.":
     "“{name}”没有{appearance}调色板。创建同名主题即可添加。",
   "“{name}” already has a {appearance} palette.": "“{name}”已有{appearance}调色板。",
+  "“{name}” already has light and dark palettes. Pick another name.":
+    "“{name}”已有浅色和深色调色板，请换一个名称。",
   "“{name}” already has a {appearance} palette. Pick another name.":
     "“{name}”已有{appearance}调色板，请换一个名称。",
   "Merge into “{name}”": "合并到“{name}”",

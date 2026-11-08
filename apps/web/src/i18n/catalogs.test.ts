@@ -9,6 +9,7 @@ import { coreUiMessages } from "../components/coreUi.messages";
 import { settingsContentMessages } from "../components/settings/settingsContent.messages";
 import { generalMessages } from "../components/settings/generalMessages";
 import { settingsMessages } from "../components/settings/settingsMessages";
+import { settingsPanelsMessages } from "../components/settings/settingsPanels.messages";
 import { translate } from "./locale";
 
 const catalogs: Record<string, Readonly<Record<string, string>>> = {
@@ -21,6 +22,7 @@ const catalogs: Record<string, Readonly<Record<string, string>>> = {
   settings: settingsMessages,
   settingsContent: settingsContentMessages,
   general: generalMessages,
+  settingsPanels: settingsPanelsMessages,
 };
 const placeholders = (value: string) =>
   [...value.matchAll(/\{(\w+)\}/g)].map((match) => match[1]).sort();
