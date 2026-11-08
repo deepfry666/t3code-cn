@@ -1,3 +1,5 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { timelineUiMessages } from "./timelineUi.messages";
 import { pipe } from "effect/Function";
 import {
   SECRET_REQUEST_DEFAULT_PLACEHOLDER,
@@ -37,6 +39,7 @@ export function SecretRequestCard(props: {
   readonly item: SecretRequestItem;
   readonly visibility: OrchestrationV2ProjectedTurnItem["visibility"];
 }) {
+  const t = useTranslation(timelineUiMessages);
   const { item } = props;
   const display = secretRequestDisplay(item, props.visibility);
   if (display.kind === "answered" || display.kind === "pending-elsewhere") {
@@ -52,7 +55,7 @@ export function SecretRequestCard(props: {
         icon={<Icon className="size-3.5 text-icon-muted" aria-hidden />}
         label={
           <>
-            {item.label} · {display.label}
+            {item.label} · {t(display.label as SecretRequestStatusLabel)}
           </>
         }
       />
@@ -60,6 +63,16 @@ export function SecretRequestCard(props: {
   }
   return <PendingSecretRequestForm environmentId={props.environmentId} item={item} />;
 }
+
+// Shared with mobile, so these English labels are translated here at render.
+type SecretRequestStatusLabel =
+  | "Saved securely and kept private"
+  | "Declined"
+  | "Request ended"
+  | "Waiting for an answer in the original thread";
+type SecretRequestPrivacyNote =
+  | "Kept out of chat, in a private file this agent's commands can read for 24 hours"
+  | "Stored securely, never shown to the agent";
 
 const NO_SOURCES: ReadonlyArray<SecretRequestSource> = [];
 
@@ -74,6 +87,7 @@ function PendingSecretRequestForm(props: {
   readonly environmentId: EnvironmentId;
   readonly item: SecretRequestItem;
 }) {
+  const t = useTranslation(timelineUiMessages);
   const { item } = props;
   const inputId = useId();
   const errorId = useId();
@@ -177,7 +191,7 @@ function PendingSecretRequestForm(props: {
               data-1p-ignore
               data-lpignore="true"
               data-bwignore
-              placeholder={item.placeholder ?? SECRET_REQUEST_DEFAULT_PLACEHOLDER}
+              placeholder={item.placeholder ?? t(SECRET_REQUEST_DEFAULT_PLACEHOLDER)}
               value={secret}
               disabled={submitting}
               aria-invalid={error !== null || undefined}
@@ -205,7 +219,7 @@ function PendingSecretRequestForm(props: {
           )}
         </div>
         <Button type="submit" disabled={submitting || draft.trim().length === 0}>
-          Save securely
+          {t("Save securely")}
         </Button>
       </div>
       {error !== null ? (
@@ -219,7 +233,7 @@ function PendingSecretRequestForm(props: {
           className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground"
         >
           <ShieldCheckIcon className="size-3.5 shrink-0" aria-hidden />
-          {secretRequestPrivacyNote(item)}
+          {t(secretRequestPrivacyNote(item) as SecretRequestPrivacyNote)}
         </p>
         <Button
           type="button"
@@ -228,7 +242,7 @@ function PendingSecretRequestForm(props: {
           disabled={submitting}
           onClick={() => void send({ type: "decline" })}
         >
-          Decline
+          {t("Decline")}
         </Button>
       </div>
     </form>

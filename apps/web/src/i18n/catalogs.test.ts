@@ -5,6 +5,7 @@ import { settingsDetailUiMessages } from "../components/settings/settingsDetailU
 import { composerUiMessages } from "../components/chat/composerUi.messages";
 import { themeUiMessages } from "../components/settings/themeUi.messages";
 import { chatUiMessages } from "../components/chat/chatUi.messages";
+import { timelineUiMessages } from "../components/chat/timelineUi.messages";
 import { coreUiMessages } from "../components/coreUi.messages";
 import { settingsContentMessages } from "../components/settings/settingsContent.messages";
 import { generalMessages } from "../components/settings/generalMessages";
@@ -25,6 +26,7 @@ import { translate } from "./locale";
 const catalogs: Record<string, Readonly<Record<string, string>>> = {
   deviceToolVersions: deviceToolVersionsMessages,
   chat: chatUiMessages,
+  timeline: timelineUiMessages,
   composer: composerUiMessages,
   theme: themeUiMessages,
   themeEditor: themeEditorUiMessages,

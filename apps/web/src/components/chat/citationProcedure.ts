@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { timelineUiMessages } from "./timelineUi.messages";
 import { useAtomValue } from "@effect/atom-react";
 import { type AtomCommandSuccess, runAtomCommand } from "@t3tools/client-runtime/state/runtime";
 import { Atom, type AtomRegistry } from "effect/reactivity";
@@ -27,12 +29,25 @@ export interface CitedThreadSnapshot {
 
 export type CitedHistoryOutcome =
   | { readonly _tag: "found" }
-  | { readonly _tag: "failed"; readonly title: string; readonly description: string }
+  | {
+      readonly _tag: "failed";
+      readonly title: CitationFailureTitle;
+      readonly description: CitationFailureDescription;
+    }
   | { readonly _tag: "aborted" };
 
 type HistoryPageResult = AtomCommandSuccess<
   Awaited<ReturnType<typeof threadEnvironment.loadEarlierHistory.run>>
 >;
+
+type CitationFailureTitle =
+  | "Could not load the cited response"
+  | "The cited response is unavailable"
+  | "The citation does not refer to an assistant response";
+type CitationFailureDescription =
+  | "Load earlier turns, then click the citation to try again. Your saved quote is unchanged."
+  | "It may have been removed. The selected text is still saved in your citation."
+  | "The selected text is still saved in your citation.";
 
 const MAX_CITATION_PAGES = 20;
 
@@ -213,8 +228,8 @@ const citedHistoryAtom = Atom.family(
         if (outcome._tag === "failed") {
           toastManager.add({
             type: "warning",
-            title: outcome.title,
-            description: outcome.description,
+            title: translateNow(timelineUiMessages, outcome.title),
+            description: translateNow(timelineUiMessages, outcome.description),
           });
         }
         get.setSelf({ _tag: outcome._tag });

@@ -1,3 +1,5 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { timelineUiMessages } from "./timelineUi.messages";
 import { scopeThreadRef } from "@t3tools/client-runtime/environment";
 import type { EnvironmentId } from "@t3tools/contracts";
 import {
@@ -19,6 +21,7 @@ export function MarkdownThreadLink(props: {
   readonly link: ThreadLink;
   readonly label: string | null;
 }) {
+  const t = useTranslation(timelineUiMessages);
   const environmentId = props.link.environmentId ?? props.environmentId;
   const decodedId = percentDecodedThreadLinkId(props.link.threadId);
   const written = useThreadShell(scopeThreadRef(environmentId, props.link.threadId));
@@ -31,11 +34,15 @@ export function MarkdownThreadLink(props: {
   const remote = useThreadShell(guess ? guessThreadLinkRef(props.link, refs) : null);
   const thread = local ?? remote;
   if (thread === null) {
-    const unknown = unknownThreadLinkLabel(props.link, props.environmentId);
+    const unknown = t(
+      unknownThreadLinkLabel(props.link, props.environmentId) as
+        | "Thread no longer available"
+        | "Thread on another machine",
+    );
     return <UnresolvedChip label={props.label ?? unknown} tooltip={unknown} />;
   }
   const ref = { environmentId: thread.environmentId, threadId: thread.id };
-  const title = thread.title.trim() || props.label || "Untitled thread";
+  const title = thread.title.trim() || props.label || t("Untitled thread");
   return (
     <ThreadContextChip
       record={{ ...ref, title }}
