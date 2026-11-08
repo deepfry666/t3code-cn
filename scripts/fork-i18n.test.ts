@@ -24,6 +24,7 @@ const GLOSSARY: ReadonlyArray<readonly [english: RegExp, chinese: string]> = [
   [/\bpull requests?\b/i, "拉取请求"],
   [/\bbeta\b/i, "测试版"],
   [/\blabs\b/i, "实验功能"],
+  [/\bcheckouts?\b/i, "工作副本"],
 ];
 
 const CJK = /[一-鿿]/;

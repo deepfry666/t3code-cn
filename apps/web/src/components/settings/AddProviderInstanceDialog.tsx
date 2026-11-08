@@ -769,7 +769,7 @@ export function AddProviderInstanceDialog({
                   disabled={isPreparingRegistryAgent}
                   onClick={() => navigateToStep(wizardStep + 1)}
                 >
-                  {t("Next")}
+                  {t("Next@@wizard")}
                 </Button>
               ) : (
                 <Button

@@ -249,7 +249,7 @@ export const settingsProvidersMessages = {
     "此驱动无需额外配置，可以直接添加实例。",
   Back: "返回",
   "Configure manually": "手动配置",
-  Next: "下一题",
+  "Next@@wizard": "下一步",
   "Adding...": "正在添加…",
   "Continue to sign-in": "继续登录",
   "Add instance": "添加实例",

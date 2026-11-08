@@ -2038,7 +2038,7 @@ function ScheduledTaskEditorForm({
                       setDraft((current) => ({ ...current, timeOfDay: event.target.value }))
                     }
                   />
-                  <span className="text-xs text-muted-foreground">{t("on")}</span>
+                  <span className="text-xs text-muted-foreground">{t("on@@weekdays")}</span>
                 </div>
                 <ToggleGroup
                   multiple
