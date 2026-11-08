@@ -8,7 +8,7 @@ import {
   type ProviderInstanceEntry,
 } from "../../providerInstances";
 import { useEnvironmentProviders, useEnvironments } from "../../state/environments";
-import { readLocale } from "~/i18n/useTranslation";
+import { useLocale } from "~/i18n/useTranslation";
 import { translateSettingsFeedback } from "./settingsFeedback.messages";
 import { useSettingsScope } from "./SettingsScopeContext";
 
@@ -19,6 +19,7 @@ export function useScopedModelDisabledReason(
   const { targets } = useSettingsScope();
   const { environments } = useEnvironments();
   const providersByEnvironment = useEnvironmentProviders();
+  const locale = useLocale();
   return (instanceId: ProviderInstanceId, model: string): string | null => {
     const sourceEntry = entries.find((entry) => entry.instanceId === instanceId);
     for (const candidate of targets) {
@@ -42,7 +43,6 @@ export function useScopedModelDisabledReason(
         entry.driverKind !== sourceEntry?.driverKind ||
         !options?.some((option) => option.slug === model && !option.isUnavailable)
       ) {
-        const locale = readLocale();
         return translateSettingsFeedback(
           "This model is unavailable on {environment}. Select that environment to choose its model separately.",
           locale,

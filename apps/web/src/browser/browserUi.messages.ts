@@ -28,6 +28,7 @@ export const browserUiMessages = {
   files: "文件",
   "a file": "一个文件",
   "Choose {files}": "选择{files}",
+  file: "文件",
   Cancel: "取消",
   "Browser dialog": "浏览器对话框",
   "Dialog response": "对话框输入",

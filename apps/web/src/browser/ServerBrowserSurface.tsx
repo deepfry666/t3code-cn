@@ -853,7 +853,7 @@ export function ServerBrowserSurface(props: {
                 {t("Cancel")}
               </Button>
               <Button size="sm" onClick={() => fileInputRef.current?.click()}>
-                {t("Choose {files}", { files: fileChooser.multiple ? t("files") : "file" })}
+                {t("Choose {files}", { files: fileChooser.multiple ? t("files") : t("file") })}
               </Button>
             </div>
           </div>

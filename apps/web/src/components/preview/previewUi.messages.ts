@@ -1,10 +1,11 @@
 export const previewUiMessages = {
+  "Reconnecting preview…": "正在重新连接预览…",
   Navigation: "导航",
   Back: "返回",
   Forward: "前进",
   Stop: "停止",
   Refresh: "刷新",
-  "Search or enter URL": "搜索或输入网址",
+  "Search or enter URL": "搜索或输入 URL",
   "Loading…": "加载中",
   "Open in system browser": "在系统浏览器中打开",
   "Cancel annotation": "取消标注",
@@ -63,7 +64,7 @@ export const previewUiMessages = {
   "Too many redirects": "重定向次数过多",
   "No preview yet": "暂无预览",
   "Type a URL above, or run a dev script. Local servers this thread starts will show up here automatically.":
-    "在上方输入网址，或运行开发脚本。此会话启动的本地服务器会自动显示在这里。",
+    "在上方输入 URL，或运行开发脚本。此会话启动的本地服务器会自动显示在这里。",
   "Recently used": "最近使用",
   "Local servers": "本地服务器",
   "Select a live local server to open it in this browser tab.":
@@ -77,7 +78,7 @@ export const previewUiMessages = {
   "Removed profile": "已移除的配置",
   "Unable to open browser": "无法打开浏览器",
   "Could not open this address": "无法打开此地址",
-  "Enter an http or https URL.": "请输入 http 或 https 网址。",
+  "Enter an http or https URL.": "请输入 http 或 https URL。",
   "An error occurred.": "发生错误。",
   "Unable to change the browser tab": "无法切换浏览器标签页",
   "Open in {environment}'s browser": "在{environment}的浏览器中打开",
