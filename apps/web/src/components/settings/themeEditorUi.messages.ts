@@ -5,6 +5,15 @@ export const themeEditorUiMessages = {
   "Could not read that file. Paste the JSON below instead.": "无法读取文件，请在下方粘贴 JSON。",
   "Theme added, but it could not be selected. Try again.": "已添加主题，但无法选中，请重试。",
   "That theme file is invalid.": "主题文件无效。",
+  "That theme file is not valid JSON.": "主题文件不是有效的 JSON。",
+  "Theme files must contain a JSON object.": "主题文件必须包含 JSON 对象。",
+  'That VS Code theme has no "editor.background" color, so there is nothing to build a palette from.':
+    '该 VS Code 主题没有 "editor.background" 颜色，无法据此生成配色。',
+  "Theme colors must be objects.": "主题颜色必须是对象。",
+  "A theme collection cannot be empty.": "主题集合不能为空。",
+  "That theme collection is invalid.": "该主题集合无效。",
+  "Your installed themes changed while this package was downloading. Try again.":
+    "下载该主题包期间已安装的主题发生了变化，请重试。",
   "or import a file": "或导入文件",
   "Choose files": "选择文件",
   "Reading…": "正在读取…",

@@ -6,7 +6,9 @@ import { useState } from "react";
 import { useEnvironmentSettings } from "../../hooks/useSettings";
 import { serverEnvironment } from "../../state/server";
 import { useAtomCommand } from "../../state/use-atom-command";
+import { useTranslation } from "~/i18n/useTranslation";
 import { Button } from "../ui/button";
+import { settingsCodeMessages } from "./settingsCode.messages";
 import { ProviderSettingsForm } from "./ProviderSettingsForm";
 
 export function SourceControlHostSettings({
@@ -20,6 +22,7 @@ export function SourceControlHostSettings({
   };
   readonly onSaved: () => void;
 }) {
+  const t = useTranslation(settingsCodeMessages);
   const saved = useEnvironmentSettings(
     environmentId,
     (settings) => settings.sourceControlHosts[definition.kind],
@@ -68,7 +71,7 @@ export function SourceControlHostSettings({
               void save(Object.fromEntries(Object.keys(saved ?? {}).map((key) => [key, ""])))
             }
           >
-            Remove
+            {t("Remove")}
           </Button>
         </div>
       ) : null}

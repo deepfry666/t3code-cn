@@ -1,6 +1,8 @@
 import { CircleCheckIcon } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
+import { useTranslation } from "~/i18n/useTranslation";
 import { Button } from "../ui/button";
+import { permissionsUiMessages } from "./permissionsUi.messages";
 
 export interface PermissionItem {
   id: string;
@@ -18,6 +20,7 @@ export function PermissionChecklist({
   permissions: readonly PermissionItem[];
   busy?: boolean;
 }) {
+  const t = useTranslation(permissionsUiMessages);
   return (
     <div className="space-y-2">
       {permissions.map((permission) => (
@@ -30,11 +33,11 @@ export function PermissionChecklist({
           {permission.granted ? (
             <span role="status" className="flex items-center gap-1 text-xs text-success">
               <CircleCheckIcon className="size-4" aria-hidden="true" />
-              Allowed
+              {t("Allowed")}
             </span>
           ) : (
             <Button size="xs" variant="outline" disabled={busy} onClick={permission.onAllow}>
-              Allow
+              {t("Allow")}
             </Button>
           )}
         </div>
@@ -46,12 +49,13 @@ export function PermissionChecklist({
 export function PermissionContinueButton({
   ready,
   busy = false,
-  children = "Continue",
+  children,
   ...props
 }: Omit<ComponentProps<typeof Button>, "disabled"> & { ready: boolean; busy?: boolean }) {
+  const t = useTranslation(permissionsUiMessages);
   return (
     <Button {...props} disabled={!ready || busy}>
-      {children}
+      {children ?? t("Continue")}
     </Button>
   );
 }

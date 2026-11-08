@@ -1,5 +1,5 @@
-import { useTranslation } from "~/i18n/useTranslation";
-import { settingsDevicesMessages } from "./settingsDevices.messages";
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
+import { settingsDevicesMessages, translateDevicesLabel } from "./settingsDevices.messages";
 import { useState } from "react";
 import * as Option from "effect/Option";
 import type { SshDeviceHostConfig } from "@t3tools/contracts";
@@ -79,6 +79,8 @@ function DeviceHostEditorForm({
 }) {
   const [draft, setDraft] = useState(host);
   const t = useTranslation(settingsDevicesMessages);
+  const locale = useLocale();
+  const tl = (label: string) => translateDevicesLabel(label, locale);
   const [expandedChecks, setExpandedChecks] = useState<{ key: string; open: boolean } | null>(null);
   const { checks, testConnection } = useHostConnectionChecks(targets);
   const connectionKey = deviceHostConnectionKey(draft);
@@ -268,7 +270,7 @@ function DeviceHostEditorForm({
                       <details className="mt-1.5 text-muted-foreground">
                         <summary className="cursor-pointer">{t("Show error")}</summary>
                         <p className="mt-1 max-h-32 overflow-auto whitespace-pre-wrap break-words">
-                          {result.error}
+                          {tl(result.error)}
                         </p>
                       </details>
                     ) : null}

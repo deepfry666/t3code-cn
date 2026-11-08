@@ -192,6 +192,7 @@ export const settingsMaintenanceMessages = {
   Default: "默认",
   "Decrease {label}": "减少{label}",
   "{label} in days": "{label}（天）",
+  "{label} in seconds": "{label}（秒）",
   "{label} details": "{label}详情",
   "Increase {label}": "增加{label}",
   days: "天",

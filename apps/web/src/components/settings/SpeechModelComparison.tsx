@@ -1,7 +1,9 @@
 import type { EnvironmentSpeechModel } from "@t3tools/contracts";
 import { CheckIcon } from "lucide-react";
 
+import { useTranslation } from "~/i18n/useTranslation";
 import { cn } from "../../lib/utils";
+import { settingsVoiceMessages } from "./settingsVoice.messages";
 import { languageLabel } from "./SpeechLanguageSelect";
 
 const commonLanguages = [
@@ -81,6 +83,7 @@ export function ModelBenchmarks({
   facts: readonly string[];
 }) {
   const data = model.benchmark;
+  const t = useTranslation(settingsVoiceMessages);
   const visible = !data
     ? []
     : languages.length
@@ -97,20 +100,20 @@ export function ModelBenchmarks({
             {languageLabel(code)}:{" "}
             {score ? (
               <>
-                <strong className="font-medium text-foreground">{score.grade}</strong> (
-                {score.errorPercent}% error)
+                <strong className="font-medium text-foreground">{score.grade}</strong>{" "}
+                {t("({percent}% error)", { percent: score.errorPercent })}
               </>
             ) : (
-              "not benchmarked"
+              t("not benchmarked")
             )}
           </span>
         );
       })}
       {data ? (
         <span>
-          Speed:{" "}
+          {t("Speed:")}{" "}
           {data.secondsPer30s === null ? (
-            "not benchmarked"
+            t("not benchmarked")
           ) : (
             <>
               <strong className="font-medium text-foreground">{data.secondsPer30s} s</strong> / 30 s

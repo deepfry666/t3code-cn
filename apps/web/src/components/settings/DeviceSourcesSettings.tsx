@@ -337,7 +337,7 @@ export function DeviceSourcesSettings(props: {
               const result = checked[target.environmentId];
               return t("{environment}: {error}", {
                 environment: target.label,
-                error: result?.status === "failed" ? result.error : t("failed"),
+                error: result?.status === "failed" ? tl(result.error) : t("failed"),
               });
             })
             .join("\n")

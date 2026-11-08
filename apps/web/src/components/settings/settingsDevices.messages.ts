@@ -75,6 +75,8 @@ export const settingsDevicesMessages = {
   Failed: "失败",
   Connected: "已连接",
   "Show error": "显示错误",
+  "Environment disconnected": "环境已断开",
+  "This connection cannot test device hosts.": "此连接无法测试设备主机。",
   "Save host": "保存主机",
   "user@host or SSH alias": "user@host 或 SSH 别名",
   "SSH config default": "SSH 配置默认值",

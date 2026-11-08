@@ -8,6 +8,8 @@ import {
   type ProviderInstanceEntry,
 } from "../../providerInstances";
 import { useEnvironmentProviders, useEnvironments } from "../../state/environments";
+import { readLocale } from "~/i18n/useTranslation";
+import { translateSettingsFeedback } from "./settingsFeedback.messages";
 import { useSettingsScope } from "./SettingsScopeContext";
 
 export function useScopedModelDisabledReason(
@@ -40,7 +42,15 @@ export function useScopedModelDisabledReason(
         entry.driverKind !== sourceEntry?.driverKind ||
         !options?.some((option) => option.slug === model && !option.isUnavailable)
       ) {
-        return `This model is unavailable on ${environment?.label ?? "a selected environment"}. Select that environment to choose its model separately.`;
+        const locale = readLocale();
+        return translateSettingsFeedback(
+          "This model is unavailable on {environment}. Select that environment to choose its model separately.",
+          locale,
+          {
+            environment:
+              environment?.label ?? translateSettingsFeedback("a selected environment", locale),
+          },
+        );
       }
     }
     return null;

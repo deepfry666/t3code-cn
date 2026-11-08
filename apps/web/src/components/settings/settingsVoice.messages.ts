@@ -20,6 +20,9 @@ export const settingsVoiceMessages = {
   "Can write English text from speech in another language. Turn on Translate to English to use it.":
     "可将其他语言的语音转为英文。开启“翻译为英文”即可使用。",
   "{count} languages": "{count} 种语言",
+  "({percent}% error)": "（错误率 {percent}%）",
+  "not benchmarked": "未测试",
+  "Speed:": "速度：",
   "{model} download progress": "{model} 下载进度",
   "Verifying download…": "正在校验下载…",
   "{progress}% downloaded": "已下载 {progress}%",
@@ -438,6 +441,7 @@ export const settingsVoiceMessages = {
     "将此快捷键添加到 Hyprland 配置，然后保存。按需更改按键。",
   " (Default)": "（默认）",
   "Could not check permissions. We'll try again automatically.": "无法检查权限，稍后会自动重试。",
+  "Permission status unavailable": "无法获取权限状态",
   "Try again.": "请重试。",
   "Best all-around choice for English dictation": "英语听写的综合首选",
   "Fast and accurate transcription in many European languages": "快速、准确地转写多种欧洲语言",
