@@ -249,7 +249,7 @@ export function ReviewThreadCard({
           onClick={() => setExpanded((current) => !current)}
         >
           {thread.isResolved ? t("Resolved") : t("Open")} · {commentCount}{" "}
-          {commentCount === 1 ? t("comment") : t("comments")}
+          {commentCount === 1 ? t("comment@@count") : t("comments@@count")}
         </button>
         {thread.isOutdated ? <span>{t("outdated")}</span> : null}
         {onFix ? (

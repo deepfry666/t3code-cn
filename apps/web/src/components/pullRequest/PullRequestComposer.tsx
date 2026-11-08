@@ -134,7 +134,7 @@ export function PullRequestComposer({
               <Toggle value="review">
                 {pendingComments.length > 0
                   ? t("Review ({count})", { count: pendingComments.length })
-                  : t("Review")}
+                  : t("Review@@change request")}
               </Toggle>
             </ToggleGroup>
           ) : (

@@ -77,6 +77,10 @@ export function shouldShowComposerContextStrip(input: {
 }
 
 // Hysteresis prevents labels and icons from flapping at the width boundary.
+import { translateNow } from "~/i18n/useTranslation";
+
+import { gitUiMessages } from "./gitUi.messages";
+
 const CONTEXT_STRIP_COMPACT_EXPAND_HYSTERESIS_PX = 16;
 
 export function resolveContextStripLabelsCompact(input: {
@@ -90,7 +94,7 @@ export function resolveContextStripLabelsCompact(input: {
 }
 
 export function resolveEnvModeLabel(mode: EnvMode): string {
-  return mode === "worktree" ? "New worktree" : "Current checkout";
+  return translateNow(gitUiMessages, mode === "worktree" ? "New worktree" : "Current checkout");
 }
 
 export const WORKTREE_SUBMODULES_LABELS: Record<WorktreeSubmodules, string> = {
@@ -100,15 +104,19 @@ export const WORKTREE_SUBMODULES_LABELS: Record<WorktreeSubmodules, string> = {
 };
 
 export function resolveCurrentWorkspaceLabel(activeWorktreePath: string | null): string {
-  return activeWorktreePath ? "Current worktree" : resolveEnvModeLabel("local");
+  return activeWorktreePath
+    ? translateNow(gitUiMessages, "Current worktree")
+    : resolveEnvModeLabel("local");
 }
 
 export function resolveLockedWorkspaceLabel(
   activeWorktreePath: string | null,
   effectiveEnvMode: EnvMode,
 ): string {
-  if (activeWorktreePath) return "Worktree";
-  return effectiveEnvMode === "worktree" ? resolveEnvModeLabel("worktree") : "Local checkout";
+  if (activeWorktreePath) return translateNow(gitUiMessages, "Worktree");
+  return effectiveEnvMode === "worktree"
+    ? resolveEnvModeLabel("worktree")
+    : translateNow(gitUiMessages, "Local checkout");
 }
 
 export interface PreviousWorktreeSeed {

@@ -1,4 +1,6 @@
 import { ThreadDetailsControl } from "./chat/ThreadDetailsControl";
+import { readLocale, translateNow, useLocale, useTranslation } from "../i18n/useTranslation";
+import { gitUiMessages, translateGitLabel } from "./gitUi.messages";
 import { useAtomMount, useAtomValue } from "@effect/atom-react";
 import {
   AuthOrchestrationOperateScope,
@@ -223,8 +225,8 @@ function getMenuActionDisabledReason({
   hasPrimaryRemote: boolean;
 }): string | null {
   if (!item.disabled) return null;
-  if (isBusy) return "Git action in progress.";
-  if (!gitStatus) return "Git status is unavailable.";
+  if (isBusy) return translateNow(gitUiMessages, "Git action in progress.");
+  if (!gitStatus) return translateNow(gitUiMessages, "Git status is unavailable.");
 
   const hasBranch = gitStatus.refName !== null;
   const hasChanges = gitStatus.hasWorkingTreeChanges;
@@ -234,48 +236,65 @@ function getMenuActionDisabledReason({
 
   if (item.id === "commit") {
     if (!hasChanges) {
-      return "Worktree is clean. Make changes before committing.";
+      return translateNow(gitUiMessages, "Worktree is clean. Make changes before committing.");
     }
-    return "Commit is currently unavailable.";
+    return translateNow(gitUiMessages, "Commit is currently unavailable.");
   }
 
   if (item.id === "push") {
     if (!hasBranch) {
-      return "Detached HEAD: check out a branch before pushing.";
+      return translateNow(gitUiMessages, "Detached HEAD: check out a branch before pushing.");
     }
     if (hasChanges) {
-      return "Commit or stash local changes before pushing.";
+      return translateNow(gitUiMessages, "Commit or stash local changes before pushing.");
     }
     if (isBehind) {
-      return "Branch is behind upstream. Pull/rebase before pushing.";
+      return translateNow(gitUiMessages, "Branch is behind upstream. Pull/rebase before pushing.");
     }
     if (!gitStatus.hasUpstream && !hasPrimaryRemote) {
-      return 'Add an "origin" remote before pushing.';
+      return translateNow(gitUiMessages, 'Add an "origin" remote before pushing.');
     }
     if (!isAhead) {
-      return "No local commits to push.";
+      return translateNow(gitUiMessages, "No local commits to push.");
     }
-    return "Push is currently unavailable.";
+    return translateNow(gitUiMessages, "Push is currently unavailable.");
   }
 
   if (!hasBranch) {
-    return `Detached HEAD: check out a branch before creating a ${terminology.singular}.`;
+    return translateNow(
+      gitUiMessages,
+      "Detached HEAD: check out a branch before creating a {kind}.",
+      { kind: translateGitLabel(terminology.singular, readLocale()) },
+    );
   }
   if (!gitStatus.hasUpstream && !hasPrimaryRemote) {
-    return `Add an "origin" remote before creating a ${terminology.singular}.`;
+    return translateNow(gitUiMessages, 'Add an "origin" remote before creating a {kind}.', {
+      kind: translateGitLabel(terminology.singular, readLocale()),
+    });
   }
   if ((gitStatus.aheadOfDefaultCount ?? gitStatus.aheadCount) <= 0) {
-    return `No local commits to include in a ${terminology.singular}.`;
+    return translateNow(gitUiMessages, "No local commits to include in a {kind}.", {
+      kind: translateGitLabel(terminology.singular, readLocale()),
+    });
   }
   if (isBehind) {
-    return `Branch is behind upstream. Pull/rebase before creating a ${terminology.singular}.`;
+    return translateNow(
+      gitUiMessages,
+      "Branch is behind upstream. Pull/rebase before creating a {kind}.",
+      { kind: translateGitLabel(terminology.singular, readLocale()) },
+    );
   }
-  return `Create ${terminology.singular} is currently unavailable.`;
+  return translateNow(gitUiMessages, "Create {kind} is currently unavailable.", {
+    kind: translateGitLabel(terminology.singular, readLocale()),
+  });
 }
 
-const COMMIT_DIALOG_TITLE = "Commit changes";
-const COMMIT_DIALOG_DESCRIPTION =
-  "Review and confirm your commit. Leave the message blank to auto-generate one.";
+const commitDialogTitle = () => translateNow(gitUiMessages, "Commit changes");
+const commitDialogDescription = () =>
+  translateNow(
+    gitUiMessages,
+    "Review and confirm your commit. Leave the message blank to auto-generate one.",
+  );
 
 function GitActionItemIcon({
   icon,
@@ -429,6 +448,7 @@ interface PublishRepositoryDialogProps {
 }
 
 function PublishRepositoryDialog(props: PublishRepositoryDialogProps) {
+  const t = useTranslation(gitUiMessages);
   const openLink = useOpenLink(props.threadRef);
   const navigate = useNavigate();
   const sourceControlDiscovery = useEnvironmentQuery(
@@ -780,7 +800,7 @@ function PublishRepositoryDialog(props: PublishRepositoryDialogProps) {
               {publishAdvancedOpen ? (
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   <label className="space-y-1.5" htmlFor="publish-remote-name">
-                    <span className="text-xs font-medium text-foreground">Remote</span>
+                    <span className="text-xs font-medium text-foreground">{t("Remote")}</span>
                     <Input
                       id="publish-remote-name"
                       value={publishRemoteName}
@@ -830,7 +850,7 @@ function PublishRepositoryDialog(props: PublishRepositoryDialogProps) {
                 role="alert"
                 className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive"
               >
-                <p className="font-medium">Publish failed</p>
+                <p className="font-medium">{t("Publish failed")}</p>
                 <p className="mt-0.5 text-destructive/90">{publishError}</p>
               </div>
             ) : null}
@@ -881,7 +901,7 @@ function PublishRepositoryDialog(props: PublishRepositoryDialogProps) {
 
         <WizardFooter>
           {publishWizardStep === 2 ? (
-            <Button onClick={() => handleOpenChange(false)}>Done</Button>
+            <Button onClick={() => handleOpenChange(false)}>{t("Done")}</Button>
           ) : (
             <>
               <Button
@@ -933,6 +953,8 @@ export default function GitActionsControl({
   showChanges = true,
   onOpenChanges,
 }: GitActionsControlProps) {
+  const t = useTranslation(gitUiMessages);
+  const locale = useLocale();
   const panelAnchorRef = useRef<HTMLDivElement | null>(null);
   const updateThreadMetadata = useAtomCommand(
     threadEnvironment.updateMetadata,
@@ -1468,8 +1490,9 @@ export default function GitActionsControl({
       ) : null}
       {gitStatusForActions?.refName === null && (
         <p className="px-2 py-1.5 text-xs text-warning">
-          Detached HEAD: create and check out a branch to enable push and{" "}
-          {changeRequestTerminology.singular} actions.
+          {t("Detached HEAD: create and check out a branch to enable push and {kind} actions.", {
+            kind: translateGitLabel(changeRequestTerminology.singular, locale),
+          })}
         </p>
       )}
       {gitStatusForActions &&
@@ -1477,7 +1500,9 @@ export default function GitActionsControl({
         !gitStatusForActions.hasWorkingTreeChanges &&
         gitStatusForActions.behindCount > 0 &&
         gitStatusForActions.aheadCount === 0 && (
-          <p className="px-2 py-1.5 text-xs text-warning">Behind upstream. Pull/rebase first.</p>
+          <p className="px-2 py-1.5 text-xs text-warning">
+            {t("Behind upstream. Pull/rebase first.")}
+          </p>
         )}
       {gitStatusError && <p className="px-2 py-1.5 text-xs text-destructive">{gitStatusError}</p>}
     </>
@@ -1640,7 +1665,7 @@ export default function GitActionsControl({
         >
           <FileDiffIcon className={THREAD_DETAILS_PANEL_ICON_CLASS} aria-hidden />
           <span className="flex min-w-0 flex-1 items-baseline gap-1.5">
-            <span className="shrink-0">Changes</span>
+            <span className="shrink-0">{t("Changes")}</span>
             {changesBaseLabel ? (
               <Tooltip>
                 <TooltipTrigger
@@ -1692,18 +1717,20 @@ export default function GitActionsControl({
       >
         <DialogPopup>
           <DialogHeader>
-            <DialogTitle>{COMMIT_DIALOG_TITLE}</DialogTitle>
-            <DialogDescription>{COMMIT_DIALOG_DESCRIPTION}</DialogDescription>
+            <DialogTitle>{commitDialogTitle()}</DialogTitle>
+            <DialogDescription>{commitDialogDescription()}</DialogDescription>
           </DialogHeader>
           <DialogPanel>
             <div className="space-y-3 rounded-xl bg-zinc-25 p-3 text-sm ring-1 ring-black/5 dark:bg-white/[0.035] dark:ring-white/5">
               <div className="grid grid-cols-[auto_1fr] items-center gap-x-2 gap-y-1">
-                <span className="text-muted-foreground">Branch</span>
+                <span className="text-muted-foreground">{t("Branch")}</span>
                 <span className="flex items-center justify-between gap-2">
                   <span className="font-medium">
                     {gitStatusForActions?.refName ?? "(detached HEAD)"}
                   </span>
-                  {isDefaultRef && <span className="text-right text-warning">Default branch</span>}
+                  {isDefaultRef && (
+                    <span className="text-right text-warning">{t("Default branch")}</span>
+                  )}
                 </span>
               </div>
               <div className="space-y-1">
@@ -1720,7 +1747,7 @@ export default function GitActionsControl({
                         }}
                       />
                     )}
-                    <span className="text-muted-foreground">Files</span>
+                    <span className="text-muted-foreground">{t("Files")}</span>
                     {!allSelected && !isEditingFiles && (
                       <span className="text-muted-foreground">
                         ({selectedFiles.length} of {allFiles.length})
@@ -1780,7 +1807,7 @@ export default function GitActionsControl({
                                   />
                                   <span className="shrink-0">
                                     {isExcluded ? (
-                                      <span className="text-muted-foreground">Excluded</span>
+                                      <span className="text-muted-foreground">{t("Excluded")}</span>
                                     ) : (
                                       <>
                                         <span className="text-diff-addition">
@@ -1875,7 +1902,7 @@ export default function GitActionsControl({
         <DialogPopup className="max-w-xl">
           <DialogHeader>
             <DialogTitle>
-              {pendingDefaultBranchActionCopy?.title ?? "Run action on default branch?"}
+              {pendingDefaultBranchActionCopy?.title ?? t("Run action on default branch?")}
             </DialogTitle>
             <DialogDescription>{pendingDefaultBranchActionCopy?.description}</DialogDescription>
             {featureBranchUnavailableReason && (
@@ -1889,7 +1916,7 @@ export default function GitActionsControl({
               size="sm"
               onClick={() => setPendingDefaultBranchAction(null)}
             >
-              Abort
+              {t("Abort")}
             </Button>
             <Button
               className="w-full max-w-full sm:w-auto"
@@ -1898,7 +1925,7 @@ export default function GitActionsControl({
               onClick={() => continuePendingDefaultBranchAction(false)}
               disabled={!canWriteSourceControl}
             >
-              {pendingDefaultBranchActionCopy?.continueLabel ?? "Continue"}
+              {pendingDefaultBranchActionCopy?.continueLabel ?? t("Continue")}
             </Button>
             <Button
               className="w-full max-w-full sm:w-auto"
@@ -1906,7 +1933,7 @@ export default function GitActionsControl({
               onClick={() => continuePendingDefaultBranchAction(true)}
               disabled={!canChangeThreadBranch || featureBranchUnavailableReason !== null}
             >
-              Check out feature branch & continue
+              {t("Check out feature branch & continue")}
             </Button>
           </DialogFooter>
         </DialogPopup>

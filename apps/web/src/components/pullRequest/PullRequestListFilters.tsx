@@ -626,7 +626,7 @@ export function PullRequestFiltersMenu({
           onChange={(draft) => updateFilter("draft", draft)}
         />
         <PullRequestFilterRadioSubmenu
-          label={t("Review")}
+          label={t("Review@@change request")}
           value={filters.review ?? UNFILTERED_VALUE}
           options={REVIEW_OPTIONS}
           onChange={(review) => updateFilter("review", review)}

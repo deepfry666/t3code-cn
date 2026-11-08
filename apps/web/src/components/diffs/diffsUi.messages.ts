@@ -5,7 +5,7 @@ export const diffsUiMessages = {
   "Collapse diff": "折叠差异",
   Automatic: "自动",
   Uncommitted: "未提交的更改",
-  Changes: "更改",
+  Changes: "改动",
   "Tool call": "工具调用",
   Commit: "提交",
   "Commit {sha}": "提交 {sha}",
@@ -56,6 +56,6 @@ export const diffsUiMessages = {
   "Partial diff preview": "差异的不完整预览",
   "This file is too large to show in full. Counts include all changes.":
     "此文件过大，无法完整显示。统计包含全部改动。",
-  "Collapse all folders": "折叠所有文件夹",
-  "Expand all folders": "展开所有文件夹",
+  "Collapse all folders": "折叠全部文件夹",
+  "Expand all folders": "展开全部文件夹",
 };
