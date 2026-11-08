@@ -15,7 +15,8 @@ const GLOSSARY: ReadonlyArray<readonly [english: RegExp, chinese: string]> = [
   [/\benvironments?\b/i, "环境"],
   [/\bproviders?\b/i, "提供方"],
   [/\bworktrees?\b/i, "工作树"],
-  [/\bagents?\b/i, "智能体"],
+  // SSH uses an authentication agent, not a coding agent.
+  [/(?<!SSH config, )\bagents?\b/i, "智能体"],
   [/\bkeybindings?\b/i, "快捷键"],
   [/\barchived?\b/i, "归档"],
   [/\bsnooz\w*/i, "暂缓"],

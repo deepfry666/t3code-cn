@@ -1,6 +1,16 @@
 import { translate, type Locale } from "~/i18n/locale";
 
 export const settingsConnectionsMessages = {
+  "What agents here may do there": "这里的智能体在另一环境中的权限",
+  "Read projects and threads. Cannot start, message or change anything.":
+    "读取项目和会话，不能启动会话、发送消息或进行任何更改。",
+  "Ask before commands and file changes.": "执行命令和修改文件前询问。",
+  "Auto-approve edits, ask before other actions.": "自动批准编辑，其他操作前询问。",
+  "Supported providers approve routine actions; others still ask.":
+    "支持此模式的提供方会批准常规操作，其他提供方仍会询问。",
+  "Allow commands and edits without prompts.": "允许执行命令和编辑，无需确认。",
+  "An agent never gets more access there than its own mode here. Below full access, it can change only threads this link started, not that machine's own threads, projects or settings.":
+    "智能体在另一环境中的权限不会高于它在这里的运行模式。未授予完全访问权限时，它只能更改通过此连接启动的会话，不能更改该设备自身的会话、项目或设置。",
   "Showing access for": "显示访问权限的环境",
   Environment: "环境",
   Offline: "离线",
@@ -207,7 +217,7 @@ export const settingsConnectionsMessages = {
   "Copy the token and pair from another client using this backend's reachable host.":
     "复制 token，在另一个客户端中使用此后端可访问的主机地址配对。",
   Share: "分享",
-  "Copy code": "复制配对码",
+  "Copy code@@pairing": "复制配对码",
   "Show link": "显示链接",
   "Show code": "显示配对码",
   "Hosted app pairing link": "托管版应用配对链接",
@@ -284,7 +294,7 @@ export const settingsConnectionsMessages = {
   "Remote link": "远程连接",
   "Enter a backend host and pairing code.": "输入后端主机和配对码。",
   "Use local SSH config, agent, and tunnels for the backend.":
-    "使用本地 SSH 配置、智能体和隧道连接后端。",
+    "使用本地 SSH 配置、认证代理和隧道连接后端。",
   "Could not load linked environments": "无法加载已关联的环境",
   "Loading linked environments…": "正在加载已关联的环境…",
   "No linked environments": "没有已关联的环境",
@@ -309,7 +319,7 @@ export const settingsConnectionsMessages = {
   "Paste the code": "粘贴配对码",
   "Linking…": "正在关联…",
   Failed: "失败",
-  "Not checked": "未检查",
+  "Not checked": "尚未检查",
   retrying: "正在重试",
   Details: "详情",
   "connection diagnostics": "连接诊断",
@@ -472,7 +482,7 @@ export const settingsConnectionsMessages = {
   "Connection failed. Reason: {error}": "连接失败。原因：{error}",
   Server: "服务器",
   "Cloud VM": "云虚拟机",
-  Desktop: "桌面设备",
+  Desktop: "桌面端",
   Laptop: "笔记本电脑",
   "Mini PC": "迷你电脑",
   Workstation: "工作站",
@@ -486,7 +496,7 @@ export const settingsConnectionsMessages = {
   "Enter a pairing code.": "请输入配对码。",
   "Failed to connect SSH host.": "无法连接 SSH 主机。",
   "Could not answer the request. Try again.": "无法回复此请求。请重试。",
-  Mobile: "移动设备",
+  Mobile: "移动端",
   Tablet: "平板电脑",
   Unknown: "未知",
   Expired: "已过期",

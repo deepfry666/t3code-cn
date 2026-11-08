@@ -361,7 +361,7 @@ const PairingLinkListRow = memo(function PairingLinkListRow({
             {!credential ? null : canCopyToClipboard ? (
               shareablePairingUrl ? null : (
                 <Button size="xs" variant="outline" onClick={handleCopyCode}>
-                  {t("Copy code")}
+                  {t("Copy code@@pairing")}
                 </Button>
               )
             ) : (
@@ -418,7 +418,7 @@ const PairingLinkListRow = memo(function PairingLinkListRow({
                 </Button>
                 {canCopyToClipboard ? (
                   <Button variant="outline" onClick={handleCopyCode}>
-                    {t("Copy code")}
+                    {t("Copy code@@pairing")}
                   </Button>
                 ) : null}
               </DialogFooter>

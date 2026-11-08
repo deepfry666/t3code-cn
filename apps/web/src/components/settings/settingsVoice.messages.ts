@@ -118,7 +118,7 @@ export const settingsVoiceMessages = {
   "Chosen environment (unavailable)": "已选择的环境（不可用）",
   Off: "关闭",
   " via {environment}": " 经由 {environment}",
-  "unavailable environment": "不可用的环境",
+  "unavailable environment": "环境不可用",
   "On an environment": "在环境中",
   "Cloud via {environment}": "经由 {environment} 使用云端服务",
   "{provider} via {environment}": "{provider}（经由 {environment}）",

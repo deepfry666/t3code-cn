@@ -1,6 +1,14 @@
 import { translate, type Locale } from "~/i18n/locale";
 
 export const settingsCodeMessages = {
+  "No actions configured.": "尚未配置操作。",
+  "setup@@projectAction": "初始化",
+  "on settle": "收尾时",
+  "preview · desktop only": "预览 · 仅限桌面端",
+  "Edit {name}": "编辑 {name}",
+  "Show all environments": "显示所有环境",
+  "Choose a project to manage its name, icon, checkouts and actions.":
+    "选择一个项目，管理其名称、图标、工作副本和操作。",
   System: "跟随系统",
   Light: "浅色",
   Dark: "深色",

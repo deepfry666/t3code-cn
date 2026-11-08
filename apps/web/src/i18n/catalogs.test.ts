@@ -11,6 +11,14 @@ import { generalMessages } from "../components/settings/generalMessages";
 import { settingsShellMessages } from "../components/settings/settingsShell.messages";
 import { settingsMessages } from "../components/settings/settingsMessages";
 import { settingsPanelsMessages } from "../components/settings/settingsPanels.messages";
+import { settingsThreadsMessages } from "../components/settings/settingsThreads.messages";
+import { settingsProvidersMessages } from "../components/settings/settingsProviders.messages";
+import { settingsProviderAccountsMessages } from "../components/settings/settingsProviderAccounts.messages";
+import { settingsConnectionsMessages } from "../components/settings/settingsConnections.messages";
+import { settingsDevicesMessages } from "../components/settings/settingsDevices.messages";
+import { settingsCodeMessages } from "../components/settings/settingsCode.messages";
+import { settingsVoiceMessages } from "../components/settings/settingsVoice.messages";
+import { settingsMaintenanceMessages } from "../components/settings/settingsMaintenance.messages";
 import { translate } from "./locale";
 
 const catalogs: Record<string, Readonly<Record<string, string>>> = {
@@ -25,6 +33,14 @@ const catalogs: Record<string, Readonly<Record<string, string>>> = {
   settingsContent: settingsContentMessages,
   general: generalMessages,
   settingsPanels: settingsPanelsMessages,
+  settingsThreads: settingsThreadsMessages,
+  settingsProviders: settingsProvidersMessages,
+  settingsProviderAccounts: settingsProviderAccountsMessages,
+  settingsConnections: settingsConnectionsMessages,
+  settingsDevices: settingsDevicesMessages,
+  settingsCode: settingsCodeMessages,
+  settingsVoice: settingsVoiceMessages,
+  settingsMaintenance: settingsMaintenanceMessages,
 };
 const placeholders = (value: string) =>
   [...value.matchAll(/\{(\w+)\}/g)].map((match) => match[1]).sort();

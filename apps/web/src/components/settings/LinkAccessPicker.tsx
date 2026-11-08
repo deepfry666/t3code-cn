@@ -1,3 +1,6 @@
+import { useTranslation, useLocale } from "~/i18n/useTranslation";
+import { settingsConnectionsMessages } from "./settingsConnections.messages";
+import { translateConnectionLabel } from "./settingsConnections.messages";
 import { AuthMcpClientAccess } from "@t3tools/contracts";
 import { useId } from "react";
 
@@ -14,12 +17,14 @@ export function LinkAccessPicker({
   readonly onChange: (access: AuthMcpClientAccess) => void;
   readonly disabled?: boolean;
 }) {
+  const t = useTranslation(settingsConnectionsMessages);
+  const locale = useLocale();
   const labelId = useId();
   const selected = accessConfig[value];
   return (
     <div className="space-y-1.5">
       <span id={labelId} className="block text-xs font-medium">
-        What agents here may do there
+        {t("What agents here may do there")}
       </span>
       <Select
         value={value}
@@ -32,7 +37,7 @@ export function LinkAccessPicker({
           <SelectValue>
             <span className="flex items-center gap-2">
               <selected.icon aria-hidden className="size-4" />
-              {selected.label}
+              {translateConnectionLabel(selected.label, locale)}
             </span>
           </SelectValue>
         </SelectTrigger>
@@ -44,9 +49,11 @@ export function LinkAccessPicker({
                 <span className="grid min-w-0 gap-0.5 py-0.5">
                   <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
                     <Icon aria-hidden className="size-3.5 shrink-0 text-muted-foreground" />
-                    {label}
+                    {translateConnectionLabel(label, locale)}
                   </span>
-                  <span className="text-xs leading-4 text-muted-foreground">{description}</span>
+                  <span className="text-xs leading-4 text-muted-foreground">
+                    {translateConnectionLabel(description, locale)}
+                  </span>
                 </span>
               </SelectItem>
             );
@@ -54,9 +61,10 @@ export function LinkAccessPicker({
         </SelectPopup>
       </Select>
       <p className="text-xs text-muted-foreground">
-        {selected.description} An agent never gets more access there than its own mode here. Below
-        full access, it can change only threads this link started, not that machine's own threads,
-        projects or settings.
+        {translateConnectionLabel(selected.description, locale)}{" "}
+        {t(
+          "An agent never gets more access there than its own mode here. Below full access, it can change only threads this link started, not that machine's own threads, projects or settings.",
+        )}
       </p>
     </div>
   );

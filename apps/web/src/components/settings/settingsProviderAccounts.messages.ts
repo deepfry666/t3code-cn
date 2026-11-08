@@ -1,6 +1,10 @@
 import { translate, type Locale } from "~/i18n/locale";
 
 export const settingsProviderAccountsMessages = {
+  "Manage usage": "管理用量",
+  "We do not recommend managing multiple {providerName} accounts in T3 Code.":
+    "不建议在 T3 Code 中管理多个 {providerName} 账户。",
+  "More info": "更多信息",
   "Add ChatGPT account": "添加 ChatGPT 账户",
   "Each account has its own Codex instance and sign-in. Choose the other account on the sign-in page.":
     "每个账户都有独立的 Codex 实例和登录信息。请在登录页面选择另一个账户。",
@@ -63,7 +67,7 @@ export const settingsProviderAccountsMessages = {
   "{count} compatible agents found.": "找到 {count} 个兼容的智能体。",
   "Searching the registry...": "正在搜索注册表…",
   "No compatible agents found": "未找到兼容的智能体",
-  "Try a broader search.": "请扩大搜索范围。",
+  "Try a broader search.": "试试更宽泛的搜索词。",
   Downloading: "正在下载…",
   Preparing: "正在准备",
   "About {agent}": "关于 {agent}",
@@ -125,7 +129,7 @@ export const settingsProviderAccountsMessages = {
   'Write-only headers JSON, e.g. {"Authorization":"Bearer …"}':
     '只写请求头 JSON，例如 {"Authorization":"Bearer …"}',
   "Signed in as {email}.": "已登录为 {email}。",
-  "Toggle account email visibility": "切换账户邮箱显示",
+  "Toggle account email visibility": "显示或隐藏账户邮箱",
   "Click to reveal email": "点击显示邮箱",
   "Click to hide email": "点击隐藏邮箱",
   "Connected with your Codex CLI.": "已通过你的 Codex CLI 连接。",
@@ -154,7 +158,7 @@ export const settingsProviderAccountsMessages = {
   "T3 Code downloads and manages Codex for you.": "T3 Code 会为你下载和管理 Codex。",
   "Finishing sign-in...": "正在完成登录…",
   "Continue as {email} on OpenAI.": "在 OpenAI 页面以 {email} 继续。",
-  "Finish signing in in your browser.": "请在浏览器中完成登录。",
+  "Finish signing in in your browser.": "在浏览器中完成登录。",
   "Signed in with ChatGPT.": "已使用 ChatGPT 登录。",
   "Use your ChatGPT subscription.": "使用你的 ChatGPT 订阅。",
   "Retry connection": "重试连接",
@@ -187,24 +191,24 @@ export const settingsProviderAccountsMessages = {
   "Shared Codex config, sessions, and state.": "共享的 Codex 配置、运行实例和状态。",
   "Codex home path": "Codex 主目录路径",
   Unavailable: "不可用",
-  "Shadow home path": "影子主目录路径",
+  "Shadow home path": "独立主目录路径",
   "Account-specific home sharing the Codex state above.": "账户专用主目录，共享上方的 Codex 状态。",
   "This instance uses the shared Codex home directly.": "此实例直接使用共享的 Codex 主目录。",
-  "Codex shadow home path": "Codex 影子主目录路径",
+  "Codex shadow home path": "Codex 独立主目录路径",
   "Not used": "未使用",
-  "Complete sign-in in your browser.": "请在浏览器中完成登录。",
+  "Complete sign-in in your browser.": "在浏览器中完成登录。",
   "Checking provider status": "正在检查提供方状态",
   "Not found": "未找到",
   "Not authenticated": "未认证",
   "Installed · Sign-in not checked": "已安装 · 未检查登录状态",
-  "Needs attention": "需要注意",
+  "Needs attention": "需要处理",
   Authenticated: "已认证",
   Available: "可用",
   "{environment} {preference}": "{environment} {preference}",
   "{status} · {method}": "{status} · {method}",
   "This provider's shared sign-in changed.": "此提供方的共享登录信息已更改。",
   "Provider setup is already in progress.": "提供方设置已在进行中。",
-  "Starting sign-in.": "正在开始登录。",
+  "Starting sign-in.": "正在启动登录。",
   "Complete sign-in to continue.": "请完成登录后继续。",
   "Checking provider sign-in.": "正在检查提供方登录状态。",
   "Sign-in complete.": "登录完成。",
@@ -212,13 +216,13 @@ export const settingsProviderAccountsMessages = {
   "Provider setup is already stopping.": "正在停止提供方设置。",
   "Signed out.": "已退出登录。",
   "Could not sign out. Try again.": "无法退出登录。请重试。",
-  "Sign-in is in progress in another client.": "正在另一个客户端登录。",
+  "Sign-in is in progress in another client.": "正在其他客户端中登录。",
   "Signed out locally. Remote revocation could not be confirmed. Disconnect the app in ChatGPT Settings.":
     "已在本地退出登录。无法确认远程授权是否已撤销。请在 ChatGPT 设置中断开此应用的连接。",
   "Extracting Codex.": "正在解压 Codex。",
   "Downloading Codex.": "正在下载 Codex。",
   "Installation cancelled. The previous runtime is unchanged.":
-    "已取消安装。原有运行环境保持不变。",
+    "已取消安装，原有运行环境保持不变。",
   "Could not finish the Codex installation. Check disk space and directory access.":
     "无法完成 Codex 安装。请检查磁盘空间和目录访问权限。",
   "The managed Codex runtime is incomplete. Remove it and reinstall.":
