@@ -201,8 +201,9 @@ if ((Test-Path $marker) -and ((Get-Content $marker -Raw).Trim() -eq $version)) {
     Get-ChildItem (Join-Path $staging $stem) | Move-Item -Destination $staging
     Remove-Item (Join-Path $staging $stem), (Join-Path $staging $archive), (Join-Path $staging "SHA256SUMS") -Recurse -Force
 
-    & (Join-Path $staging "t3.exe") --version | Out-Null
+    $runtimeVersion = (& (Join-Path $staging "t3.exe") --version) -join "`n"
     if ($LASTEXITCODE -ne 0) { Fail "the downloaded executable does not run" }
+    if ($runtimeVersion.Trim() -cne "t3-cn v$version") { Fail "downloaded runtime is not a T3 Code CN build (expected t3-cn v$version)" }
     Set-Content -Path (Join-Path $staging ".install-complete") -Value $version -NoNewline
 
     if (Test-Path $targetDir) { Remove-Item $targetDir -Recurse -Force }

@@ -95,7 +95,7 @@ async function install(dir, key) {
       path.join(staging, process.platform === "win32" ? "t3.exe" : "t3"),
       ["--version"],
       {
-        stdio: ["ignore", "ignore", "pipe"],
+        stdio: ["ignore", "pipe", "pipe"],
         encoding: "utf8",
         timeout: 30_000,
         killSignal: "SIGKILL",
@@ -108,6 +108,9 @@ async function install(dir, key) {
           validate.stderr?.trim() ||
           `--version exited with ${validate.signal || validate.status}`,
       );
+    }
+    if (validate.stdout.trim() !== `t3-cn v${version}`) {
+      throw new Error(`downloaded runtime is not a T3 Code CN build (expected t3-cn v${version})`);
     }
     fs.writeFileSync(path.join(staging, ".install-complete"), `${version}\n`);
     publish(staging, dir);

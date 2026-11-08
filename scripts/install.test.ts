@@ -184,11 +184,16 @@ describe.skipIf(!supportsShellInstaller)("installer channel lookup", () => {
 describe.skipIf(!supportsShellInstaller)("installer checksum", () => {
   it.each(
     ["home\\data", "home\ndata"].flatMap((homeName) =>
-      [true, false].map((validChecksum) => ({ homeName, validChecksum })),
+      [
+        { validChecksum: true, runtimeVersion: "t3-cn v1.2.3" },
+        { validChecksum: false, runtimeVersion: "t3-cn v1.2.3" },
+        { validChecksum: true, runtimeVersion: "t3 v1.2.3" },
+        { validChecksum: true, runtimeVersion: "t3-cn v1.2.4" },
+      ].map((fixture) => ({ homeName, ...fixture })),
     ),
   )(
-    "verifies home $homeName with valid checksum $validChecksum",
-    async ({ homeName, validChecksum }) => {
+    "verifies home $homeName with valid checksum $validChecksum and runtime $runtimeVersion",
+    async ({ homeName, validChecksum, runtimeVersion }) => {
       const availableTools = ["sha256sum", "shasum"].filter(
         (tool) =>
           NodeChildProcess.spawnSync("sh", ["-c", 'command -v "$1"', "sh", tool]).status === 0,
@@ -229,7 +234,7 @@ describe.skipIf(!supportsShellInstaller)("installer checksum", () => {
           await NodeFSP.mkdir(NodePath.join(root, stem));
           await NodeFSP.writeFile(
             NodePath.join(root, stem, "t3"),
-            "#!/bin/sh\necho 't3-cn v1.2.3'\n",
+            `#!/bin/sh\necho '${runtimeVersion}'\n`,
             { mode: 0o755 },
           );
           const archivePath = NodePath.join(root, archiveName);
@@ -273,7 +278,7 @@ describe.skipIf(!supportsShellInstaller)("installer checksum", () => {
             },
           );
           const versions = NodePath.join(home, "runtime/versions");
-          if (validChecksum) {
+          if (validChecksum && runtimeVersion === "t3-cn v1.2.3") {
             expect(code, `${checksumTool}: ${output}`).toBe(0);
             expect(
               await NodeFSP.readFile(NodePath.join(versions, version, ".install-complete"), "utf8"),
@@ -285,9 +290,14 @@ describe.skipIf(!supportsShellInstaller)("installer checksum", () => {
             ).toBe("t3-cn v1.2.3");
           } else {
             expect(code).not.toBe(0);
-            expect(output).toContain("checksum mismatch");
+            expect(output).toContain(
+              validChecksum ? "downloaded runtime is not a T3 Code CN build" : "checksum mismatch",
+            );
             expect(output).not.toContain("Installed T3 Code");
             expect(await NodeFSP.readdir(versions)).toEqual([]);
+            await expect(NodeFSP.lstat(NodePath.join(root, "bin/t3-cn"))).rejects.toMatchObject({
+              code: "ENOENT",
+            });
           }
         } finally {
           server.closeAllConnections();

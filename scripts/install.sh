@@ -228,7 +228,8 @@ else
   step "Extracting T3 Code CN..."
   tar -xzf "${staging}/${archive}" -C "$staging" --strip-components=1
   rm -f "${staging}/${archive}" "${staging}/SHA256SUMS"
-  "${staging}/t3" --version >/dev/null || fail "the downloaded executable does not run"
+  runtime_version="$("${staging}/t3" --version)" || fail "the downloaded executable does not run"
+  [ "$runtime_version" = "t3-cn v${version}" ] || fail "downloaded runtime is not a T3 Code CN build (expected t3-cn v${version})"
   printf '%s\n' "$version" > "${staging}/.install-complete"
 
   rm -rf "$target_dir"
