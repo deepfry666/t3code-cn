@@ -546,6 +546,26 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
         "linux.desktop.entry.StartupWMClass",
         FORK_IDENTITY.slug,
       );
+      const fs = yield* FileSystem.FileSystem;
+      const path = yield* Path.Path;
+      const metainfoPath = path.join(
+        import.meta.dirname,
+        "../apps/desktop/resources/linux/com.t3tools.t3code.metainfo.xml",
+      );
+      assert.nestedPropertyVal(
+        linuxNightly,
+        "deb.fpm.0",
+        `${metainfoPath}=/usr/share/metainfo/${FORK_IDENTITY.appId}.metainfo.xml`,
+      );
+      const metainfo = yield* fs.readFileString(metainfoPath);
+      assert.include(metainfo, `<id>${FORK_IDENTITY.appId}</id>`);
+      assert.include(metainfo, `<name>${FORK_IDENTITY.displayName}</name>`);
+      assert.include(
+        metainfo,
+        `<launchable type="desktop-id">${FORK_IDENTITY.slug}.desktop</launchable>`,
+      );
+      assert.include(metainfo, `<icon type="stock">${FORK_IDENTITY.slug}</icon>`);
+      assert.include(metainfo, `<binary>${FORK_IDENTITY.slug}</binary>`);
       assert.nestedPropertyVal(linuxNightly, "publish.0.channel", "nightly");
       assert.deepStrictEqual(mock.publish, [{ provider: "generic", url: "http://localhost:3001" }]);
       assert.equal(mock.appId, FORK_IDENTITY.appId);

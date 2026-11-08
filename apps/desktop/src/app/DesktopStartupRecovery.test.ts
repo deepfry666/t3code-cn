@@ -1,3 +1,4 @@
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import type { DesktopUpdateState } from "@t3tools/contracts";
 import { describe, expect, it } from "@effect/vitest";
 import * as Deferred from "effect/Deferred";
@@ -98,14 +99,18 @@ describe("resolveStartupRecoveryOffer", () => {
 });
 
 it.effect.each([
-  { visible: false, started: false, closeMain: false },
-  { visible: true, started: false, closeMain: false },
-  { visible: true, started: true, closeMain: false },
-  { visible: true, started: false, closeMain: true },
-])("closes recovery safely with closeMain=$closeMain", ({ visible, started, closeMain }) =>
+  { visible: false, started: false, closeMain: false, lastStartedVersion: "0.1.2" },
+  { visible: false, started: false, closeMain: false, lastStartedVersion: null },
+  { visible: true, started: false, closeMain: false, lastStartedVersion: "0.1.2" },
+  { visible: true, started: true, closeMain: false, lastStartedVersion: "0.1.2" },
+  { visible: true, started: false, closeMain: true, lastStartedVersion: "0.1.2" },
+])("closes recovery safely with closeMain=$closeMain", (input) =>
   Effect.scoped(
     Effect.gen(function* () {
+      const { visible, started, closeMain, lastStartedVersion } = input;
       const checked = yield* Deferred.make<void>();
+      const opened = yield* Deferred.make<string>();
+      let navigate: ((event: { preventDefault: () => void }, url: string) => void) | undefined;
       const remembered = yield* Deferred.make<void>();
       const shouldRecover = !visible || !started;
       const closed = Promise.withResolvers<void>();
@@ -132,7 +137,12 @@ it.effect.each([
           return Promise.resolve();
         },
         once: () => {},
-        webContents: { setWindowOpenHandler: () => {}, on: () => {} },
+        webContents: {
+          setWindowOpenHandler: () => {},
+          on: (_event: string, listener: typeof navigate) => {
+            navigate = listener;
+          },
+        },
       } as unknown as Electron.BrowserWindow;
       const state = yield* DesktopState.DesktopState;
       if (started) yield* SubscriptionRef.set(state.primaryBackendStartup, { _tag: "Ready" });
@@ -140,7 +150,7 @@ it.effect.each([
         Effect.provide(
           Layer.mergeAll(
             FileSystem.layerNoop({
-              readFileString: () => Effect.succeed("0.1.2"),
+              readFileString: () => Effect.succeed(lastStartedVersion ?? ""),
               writeFileString: () => Deferred.succeed(remembered, undefined).pipe(Effect.asVoid),
             }),
             Layer.succeed(DesktopEnvironment.DesktopEnvironment, {
@@ -155,10 +165,9 @@ it.effect.each([
                   appListeners.set(event, listener);
                 }),
             } as unknown as ElectronApp.ElectronApp["Service"]),
-            Layer.succeed(
-              ElectronShell.ElectronShell,
-              {} as ElectronShell.ElectronShell["Service"],
-            ),
+            Layer.succeed(ElectronShell.ElectronShell, {
+              openExternal: (url: string) => Deferred.succeed(opened, url).pipe(Effect.asVoid),
+            } as unknown as ElectronShell.ElectronShell["Service"]),
             Layer.succeed(ElectronTheme.ElectronTheme, {
               shouldUseDarkColors: Effect.succeed(false),
             } as ElectronTheme.ElectronTheme["Service"]),
@@ -188,6 +197,11 @@ it.effect.each([
       expect(loaded.length).toBe(shouldRecover ? 1 : 0);
       if (shouldRecover) {
         expect(decodeURIComponent(loaded[0]!)).toContain("Failure details");
+        const action = lastStartedVersion === null ? "releases" : "reinstall";
+        navigate!({ preventDefault: () => {} }, `https://startup-recovery.invalid/${action}`);
+        expect(yield* Deferred.await(opened)).toBe(
+          `https://github.com/${FORK_IDENTITY.releaseRepository}/releases${lastStartedVersion === null ? "" : `/tag/v${lastStartedVersion}`}`,
+        );
         if (closeMain) yield* Ref.set(mainRef, Option.none());
         yield* SubscriptionRef.set(state.primaryBackendStartup, { _tag: "Ready" });
         yield* Deferred.await(remembered);

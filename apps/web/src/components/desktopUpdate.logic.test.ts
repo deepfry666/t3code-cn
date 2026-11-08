@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import type { DesktopUpdateState } from "@t3tools/contracts";
 
 import {
@@ -65,14 +66,14 @@ describe("desktop update button state", () => {
 });
 
 describe("desktop update UI helpers", () => {
-  it.each(["owner/repo/extra", "owner#notes/repo", "owner/repo?tab=notes"])(
-    "falls back to upstream for an invalid configured repository: %s",
+  it.each([undefined, "", "owner/repo/extra", "owner#notes/repo", "owner/repo?tab=notes"])(
+    "falls back to the fork for an invalid configured repository: %s",
     (repository) => {
       expect(getDesktopUpdateReleaseHistoryUrl(repository)).toBe(
-        "https://github.com/pingdotgg/t3code/releases",
+        `https://github.com/${FORK_IDENTITY.releaseRepository}/releases`,
       );
       expect(getDesktopUpdateReleaseUrl("1.2.3", repository)).toBe(
-        "https://github.com/pingdotgg/t3code/releases/tag/v1.2.3",
+        `https://github.com/${FORK_IDENTITY.releaseRepository}/releases/tag/v1.2.3`,
       );
     },
   );
