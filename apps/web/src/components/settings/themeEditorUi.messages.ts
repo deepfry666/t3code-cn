@@ -1,4 +1,5 @@
 import { translate, type Locale } from "~/i18n/locale";
+import { translateThemeErrorMessage } from "./themeErrorMessages";
 export const themeEditorUiMessages = {
   "Theme JSON": "主题 JSON",
   "Add a theme": "添加主题",
@@ -7,6 +8,16 @@ export const themeEditorUiMessages = {
   "That theme file is invalid.": "主题文件无效。",
   "That theme file is not valid JSON.": "主题文件不是有效的 JSON。",
   "Theme files must contain a JSON object.": "主题文件必须包含 JSON 对象。",
+  "Add at least one color role to the theme file.": "主题文件至少要添加一个颜色角色。",
+  "Theme files need a name (48 characters or fewer).": "主题文件需要名称（最多 48 个字符）。",
+  'Theme files need an appearance of "light" or "dark".':
+    "主题文件需要指定外观：“light” 或 “dark”。",
+  "Theme files need a colors object.": "主题文件需要 colors 对象。",
+  "Theme ids may only contain lowercase letters, numbers, and hyphens.":
+    "主题 ID 只能包含小写字母、数字和连字符。",
+  "Theme collections need a valid id and label.": "主题集合需要有效的 ID 和名称。",
+  "Theme variants must be an object.": "主题变体必须是对象。",
+  'Theme variants may only be named "light" or "dark".': "主题变体只能命名为 “light” 或 “dark”。",
   'That VS Code theme has no "editor.background" color, so there is nothing to build a palette from.':
     '该 VS Code 主题没有 "editor.background" 颜色，无法据此生成配色。',
   "Theme colors must be objects.": "主题颜色必须是对象。",
@@ -161,5 +172,5 @@ export const themeEditorUiMessages = {
 export function translateThemeEditorLabel(label: string, locale: Locale): string {
   return Object.hasOwn(themeEditorUiMessages, label)
     ? translate(locale, themeEditorUiMessages, label as keyof typeof themeEditorUiMessages)
-    : label;
+    : translateThemeErrorMessage(label, locale);
 }

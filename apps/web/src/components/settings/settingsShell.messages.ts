@@ -1,4 +1,5 @@
 import type { Locale } from "~/i18n/locale";
+import { translateThemeErrorMessage } from "./themeErrorMessages";
 
 export const settingsShellMessages = {
   Advanced: "高级",
@@ -111,6 +112,14 @@ export const settingsShellMessages = {
   "Open VSX theme details are unavailable.": "Open VSX 主题详情不可用。",
   "Open VSX theme details are unavailable right now.": "Open VSX 主题详情当前不可用。",
   "That Open VSX theme could not be downloaded.": "无法下载该 Open VSX 主题。",
+  "That Open VSX extension has no readable manifest.": "Open VSX 扩展的清单无法读取。",
+  "That Open VSX extension manifest is too large.": "Open VSX 扩展的清单过大。",
+  "Extension manifest is not valid JSON.": "扩展清单不是有效的 JSON。",
+  "Extension manifest is missing from the extension package.": "扩展包中缺少扩展清单。",
+  "Extension manifest has unreadable size metadata.": "扩展清单的大小信息无法读取。",
+  "Extension manifest is too large.": "扩展清单过大。",
+  "That Open VSX theme has no readable checksum.": "Open VSX 主题的校验和无法读取。",
+  "That theme extension is too large to import safely.": "该主题扩展过大，无法安全导入。",
   "That Open VSX theme has an invalid checksum.": "该 Open VSX 主题的校验和无效。",
   "That Open VSX theme failed its integrity check.": "该 Open VSX 主题未通过完整性检查。",
   "That Open VSX extension package could not be opened.": "无法打开该 Open VSX 扩展包。",
@@ -173,7 +182,8 @@ export const settingsShellMessages = {
 } as const;
 
 export function translateSettingsShellLabel(label: string, locale: Locale): string {
-  return locale === "zh-CN" && Object.hasOwn(settingsShellMessages, label)
-    ? settingsShellMessages[label as keyof typeof settingsShellMessages]
-    : label;
+  if (locale === "zh-CN" && Object.hasOwn(settingsShellMessages, label)) {
+    return settingsShellMessages[label as keyof typeof settingsShellMessages];
+  }
+  return translateThemeErrorMessage(label, locale);
 }

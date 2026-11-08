@@ -8,8 +8,17 @@ import { translate, type Locale } from "../../i18n/locale";
 const settingsFeedbackMessages = {
   "Setting not saved": "设置未保存",
   "Setting saved on some environments": "部分环境已保存设置",
+  "Model preferences not saved": "模型偏好未保存",
+  "Favorites not saved": "收藏未保存",
+  "Could not load saved model preferences. Try again.": "无法加载已保存的模型偏好，请重试。",
   "Could not save on {name}: {message}": "无法在{name}上保存：{message}",
   "Saved on {names}.": "已保存到{names}。",
+  "This connection lacks permission to change settings on {environment}.":
+    "此连接没有权限更改 {environment} 的设置。",
+  "the selected environment": "所选环境",
+  "Update older servers to save this setting.": "请更新旧版服务器后再保存此设置。",
+  "This setting is saved on a server, and the hosted app is not anchored to one. Change it from the desktop app or from the server's own address.":
+    "此设置保存在服务器上，而托管应用未固定连接某台服务器。请从桌面应用或服务器自身的地址修改。",
   "This connection lacks permission to change these settings.": "此连接无权修改这些设置。",
   "This setting is environment-wide and cannot be overridden by a project.":
     "此设置是环境级设置，无法由项目覆盖。",

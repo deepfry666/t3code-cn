@@ -13,6 +13,8 @@ import {
   THEME_FILE_VERSION,
 } from "../../themePalette";
 import type { OpenVsxThemeExtension } from "../../openVsxThemes";
+import { LOCALE_STORAGE_KEY } from "../../i18n/locale";
+import { setLocale } from "../../i18n/useTranslation";
 import { ThemeImportDialog } from "./ThemeImportDialog";
 
 const searchOpenVsxThemes = vi.hoisted(() => vi.fn());
@@ -190,5 +192,38 @@ describe("ThemeImportDialog JSONC imports", () => {
       "#002b36",
       "#fdf6e3",
     ]);
+  });
+});
+
+describe("ThemeImportDialog in Chinese", () => {
+  it("translates each failed file after its name instead of the joined line", async () => {
+    using _themes = isolateThemes();
+    const previousLocale = localStorage.getItem(LOCALE_STORAGE_KEY);
+    try {
+      setLocale("zh-CN");
+      await using _screen = await render(
+        <ThemeImportDialog
+          open
+          onOpenChange={() => {}}
+          onImported={() => true}
+          onImportedMany={() => {}}
+        />,
+      );
+      const input = document.querySelector<HTMLInputElement>('input[type="file"]')!;
+      await userEvent.upload(input, [
+        themeFile("Dawn"),
+        new File(["{"], "broken.json", { type: "application/json" }),
+      ]);
+
+      await expect.element(page.getByText("broken.json: 主题文件不是有效的 JSON。")).toBeVisible();
+      setLocale("en");
+      await expect
+        .element(page.getByText("broken.json: That theme file is not valid JSON."))
+        .toBeVisible();
+    } finally {
+      setLocale("en");
+      if (previousLocale === null) localStorage.removeItem(LOCALE_STORAGE_KEY);
+      else localStorage.setItem(LOCALE_STORAGE_KEY, previousLocale);
+    }
   });
 });

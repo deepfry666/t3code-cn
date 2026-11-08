@@ -21,6 +21,7 @@ import { settingsDevicesMessages } from "../components/settings/settingsDevices.
 import { settingsCodeMessages } from "../components/settings/settingsCode.messages";
 import { settingsVoiceMessages } from "../components/settings/settingsVoice.messages";
 import { settingsMaintenanceMessages } from "../components/settings/settingsMaintenance.messages";
+import { themeErrorMessages } from "../components/settings/themeErrorMessages";
 import { deviceToolVersionsMessages } from "../components/device/deviceToolVersions.messages";
 import { mediaUiMessages } from "../components/media/mediaUi.messages";
 import { previewUiMessages } from "../components/preview/previewUi.messages";
@@ -81,6 +82,7 @@ const catalogs: Record<string, Readonly<Record<string, string>>> = {
   mediaUi: mediaUiMessages,
   previewUi: previewUiMessages,
   browserUi: browserUiMessages,
+  themeErrors: themeErrorMessages,
 };
 const placeholders = (value: string) =>
   [...value.matchAll(/\{(\w+)\}/g)].map((match) => match[1]).sort();

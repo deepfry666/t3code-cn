@@ -1,4 +1,5 @@
 import { useLocale, useTranslation } from "~/i18n/useTranslation";
+import type { Locale } from "~/i18n/locale";
 import { themeEditorUiMessages, translateThemeEditorLabel } from "./themeEditorUi.messages";
 import { DownloadIcon, PlusIcon } from "lucide-react";
 import type { ChangeEvent, DragEvent, UIEvent } from "react";
@@ -145,6 +146,17 @@ function ThemeJsonEditor({
 
 type ImportableThemeFile = { name: string; size: number; text: () => Promise<string> };
 
+/** Each failure keeps its own file name so the message is translated before it is joined. */
+type ImportFailure = { readonly source?: string; readonly message: string };
+
+const failureText = (failures: ReadonlyArray<ImportFailure>, locale: Locale): string =>
+  failures
+    .map(({ source, message }) => {
+      const translated = translateThemeEditorLabel(message, locale);
+      return source ? `${source}: ${translated}` : translated;
+    })
+    .join("; ");
+
 interface ThemeImportCallbacks {
   onImported: (theme: ThemeDefinition) => boolean;
   onImportedMany: (themes: ReadonlyArray<ThemeDefinition>, context: { updated: boolean }) => void;
@@ -216,7 +228,7 @@ function ThemeImportBody({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [json, setJson] = useState("");
   const [fileName, setFileName] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [failures, setFailures] = useState<ReadonlyArray<ImportFailure>>([]);
   const [isReading, setIsReading] = useState(false);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [conflicts, setConflicts] = useState<ReadonlyArray<ThemeDefinition> | null>(null);
@@ -228,7 +240,7 @@ function ThemeImportBody({
   const readThemeFile = async (file: ImportableThemeFile) => {
     const oversized = describeOversizedThemeFile(file.size, t);
     if (oversized) {
-      setError(oversized);
+      setFailures([{ message: oversized }]);
       return;
     }
 
@@ -238,12 +250,12 @@ function ThemeImportBody({
     if (!isCurrentRequest(requestId)) return;
     setIsReading(false);
     if (fileText._tag === "Failure") {
-      setError("Could not read that file. Paste the JSON below instead.");
+      setFailures([{ message: "Could not read that file. Paste the JSON below instead." }]);
       return;
     }
     setJson(fileText.value);
     setFileName(file.name);
-    setError(null);
+    setFailures([]);
   };
 
   const readThemeBatch = (files: ReadonlyArray<ImportableThemeFile>) => {
@@ -258,12 +270,12 @@ function ThemeImportBody({
     files: ReadonlyArray<ImportableThemeFile>,
     requestId: number,
   ) => {
-    const failures: string[] = [];
+    const batchFailures: ImportFailure[] = [];
     const parsed: Array<{ theme: ThemeDefinition; sourceName: string }> = [];
     for (const file of files) {
       const oversized = describeOversizedThemeFile(file.size, t);
       if (oversized) {
-        failures.push(`${file.name}: ${t("too large")}`);
+        batchFailures.push({ source: file.name, message: oversized });
         continue;
       }
       try {
@@ -272,9 +284,10 @@ function ThemeImportBody({
           theme: parseThemeImport(await file.text()),
         });
       } catch (cause) {
-        failures.push(
-          `${file.name}: ${cause instanceof Error ? translateThemeEditorLabel(cause.message, locale) : t("not a theme file")}`,
-        );
+        batchFailures.push({
+          source: file.name,
+          message: cause instanceof Error ? cause.message : "not a theme file",
+        });
       }
     }
     if (!isCurrentRequest(requestId)) return;
@@ -288,16 +301,17 @@ function ThemeImportBody({
       try {
         installed.push(installCustomTheme(theme));
       } catch (cause) {
-        failures.push(
-          `${theme.label}: ${cause instanceof Error ? translateThemeEditorLabel(cause.message, locale) : t("could not install")}`,
-        );
+        batchFailures.push({
+          source: theme.label,
+          message: cause instanceof Error ? cause.message : "could not install",
+        });
       }
     }
     if (installed.length > 0) onImportedMany(installed, { updated: false });
-    setError(failures.length > 0 ? failures.join("; ") : null);
+    setFailures(batchFailures);
     if (conflicting.length > 0) {
       setConflicts(conflicting);
-    } else if (installed.length > 0 && failures.length === 0) {
+    } else if (installed.length > 0 && batchFailures.length === 0) {
       onClose();
     }
   };
@@ -371,7 +385,7 @@ function ThemeImportBody({
   const resolveConflicts = (mode: "update" | "copy") => {
     if (!conflicts) return;
     const resolved: ThemeDefinition[] = [];
-    const failures: string[] = [];
+    const resolvedFailures: ImportFailure[] = [];
     const preferredName =
       conflicts.length === 1 && fileName
         ? humanizeThemeName(fileName.replace(/\.[^.]+$/, ""))
@@ -391,27 +405,29 @@ function ThemeImportBody({
             : installCustomTheme(versionedCopy(theme, preferredName)),
         );
       } catch (cause) {
-        failures.push(
-          `${theme.label}: ${cause instanceof Error ? translateThemeEditorLabel(cause.message, locale) : t("failed")}`,
-        );
+        resolvedFailures.push({
+          source: theme.label,
+          message: cause instanceof Error ? cause.message : "failed",
+        });
       }
     }
     if (resolved.length > 0) onImportedMany(resolved, { updated: mode === "update" });
     setConflicts(null);
-    if (failures.length > 0) setError([error, ...failures].filter(Boolean).join("; "));
-    else if (!error) onClose();
+    if (resolvedFailures.length > 0) {
+      setFailures((current) => [...current, ...resolvedFailures]);
+    } else if (failures.length === 0) onClose();
   };
 
   const handleSubmit = () => {
     const oversized = describeOversizedThemeFile(json.length, t);
     if (oversized) {
-      setError(oversized);
+      setFailures([{ message: oversized }]);
       return;
     }
     try {
       const theme = parseThemeImport(json);
       if (getCustomThemes().some((existing) => existing.id === theme.id)) {
-        setError(null);
+        setFailures([]);
         setConflicts([theme]);
         return;
       }
@@ -420,12 +436,14 @@ function ThemeImportBody({
         try {
           removeCustomTheme(installedTheme.id);
         } catch {}
-        setError("Theme added, but it could not be selected. Try again.");
+        setFailures([{ message: "Theme added, but it could not be selected. Try again." }]);
         return;
       }
       onClose();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : t("That theme file is invalid."));
+      setFailures([
+        { message: cause instanceof Error ? cause.message : "That theme file is invalid." },
+      ]);
     }
   };
 
@@ -547,9 +565,9 @@ function ThemeImportBody({
         );
       })()}
 
-      {error ? (
+      {failures.length > 0 ? (
         <Alert aria-live="polite" variant="error">
-          {translateThemeEditorLabel(error, locale)}
+          {failureText(failures, locale)}
         </Alert>
       ) : null}
     </DialogPanel>

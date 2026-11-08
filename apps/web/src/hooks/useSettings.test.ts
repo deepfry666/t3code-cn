@@ -14,6 +14,7 @@ vi.mock("~/localApi", () => ({
 import {
   __resetClientSettingsPersistenceForTests,
   __setClientSettingsForTests,
+  describeSettingsSaveFailure,
   ensureClientSettingsHydrated,
   getClientSettings,
   mergeEnvironmentSettings,
@@ -335,4 +336,16 @@ it("uses the environment's model preferences after migration, including empty li
   );
   expect(merged.favorites).toEqual([]);
   expect(merged.providerModelPreferences).toEqual({});
+});
+
+it("keeps the environment name and the server's own error in a save failure", () => {
+  expect(
+    describeSettingsSaveFailure("Work laptop", new Error("settings are locked"), "zh-CN"),
+  ).toBe("无法在Work laptop上保存：settings are locked");
+  expect(describeSettingsSaveFailure("Work laptop", null, "zh-CN")).toBe(
+    "无法在Work laptop上保存：保存失败，请重新连接后再保存。",
+  );
+  expect(describeSettingsSaveFailure("Work laptop", null, "en")).toBe(
+    "Could not save on Work laptop: The save failed. Try reconnecting and saving again.",
+  );
 });
