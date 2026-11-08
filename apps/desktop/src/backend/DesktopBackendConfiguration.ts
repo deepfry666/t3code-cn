@@ -1,5 +1,7 @@
 import * as NodeOS from "node:os";
 
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
+
 import { parsePersistedServerObservabilitySettings } from "@t3tools/shared/serverSettings";
 import { currentDesktopBootstrapToken } from "@t3tools/shared/desktopBootstrapToken";
 import * as HostProcess from "@t3tools/shared/HostProcess";
@@ -71,6 +73,8 @@ const emptyBackendObservabilitySettings: BackendObservabilitySettings = {
 };
 
 const DESKTOP_BACKEND_ENV_NAMES = [
+  "T3CODE_HOME",
+  "T3CODE_TRACE_FILE",
   "T3CODE_PORT",
   "T3CODE_MODE",
   "T3CODE_NO_BROWSER",
@@ -573,7 +577,7 @@ const resolveWslStartConfig = Effect.fn("desktop.backendConfiguration.resolveWsl
     noBrowser: true,
     port: input.port,
     // Resolve inside the distro, never reuse the primary Windows or official Linux database.
-    t3Home: "~/.t3code-cn",
+    t3Home: `~/${FORK_IDENTITY.homeDirName}`,
     host: wslBindHost,
     desktopBootstrapToken: input.bootstrapToken,
     desktopBootstrapSecret: input.bootstrapSecret,

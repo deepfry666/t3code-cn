@@ -4,6 +4,7 @@ import * as NodeOS from "node:os";
 
 import * as NodeRuntime from "@effect/platform-node/NodeRuntime";
 import * as NodeServices from "@effect/platform-node/NodeServices";
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as NetService from "@t3tools/shared/Net";
 import { resolveGitWorktreePath, resolveWorktreeT3Home } from "@t3tools/shared/devHome";
 import * as HostProcess from "@t3tools/shared/HostProcess";
@@ -60,7 +61,7 @@ export function isProxiableBindHost(host: string): boolean {
 }
 
 export const DEFAULT_T3_HOME = Effect.map(Effect.service(Path.Path), (path) =>
-  path.join(NodeOS.homedir(), ".t3"),
+  path.join(NodeOS.homedir(), FORK_IDENTITY.homeDirName),
 );
 
 const MODE_ARGS = {
@@ -317,7 +318,7 @@ export const createDevRunnerEnv = Effect.fn("dev-runner.createDevRunnerEnv")(fun
   const configuredBaseDir = t3Home?.trim() || undefined;
   const isDesktopMode = mode === "dev:desktop";
   const resolvedBaseDir = yield* resolveBaseDir(
-    configuredBaseDir ?? (isDesktopMode ? "~/.t3code-cn" : undefined),
+    configuredBaseDir ?? (isDesktopMode ? `~/${FORK_IDENTITY.homeDirName}` : undefined),
   );
 
   const output: NodeJS.ProcessEnv = {
@@ -639,7 +640,12 @@ const prepareFirstStart = Effect.fn("dev-runner.prepareFirstStart")(function* (i
         );
       }
     }
-    const source = path.join(yield* HostProcess.HomeDirectory, ".t3", "userdata", "statev2.sqlite");
+    const source = path.join(
+      yield* HostProcess.HomeDirectory,
+      FORK_IDENTITY.homeDirName,
+      "userdata",
+      "statev2.sqlite",
+    );
     // A V1 state.sqlite counts as data too: the server imports it only while
     // statev2.sqlite is missing, so seeding would hide it.
     if (
@@ -867,7 +873,7 @@ export const runDevRunnerWithInput = Effect.fn("dev-runner.runDevRunnerWithInput
   // After sharing, so the warm step sees the same bundled-dev env as Vite.
   yield* prepareFirstStart({
     mode: input.mode,
-    // Fork desktop development never imports the official database automatically.
+    // Desktop development does not automatically import shared data.
     seed: input.mode !== "dev:desktop" && input.seed !== false,
     worktreeHome: baseDir === worktreeHome ? worktreeHome : undefined,
     env,

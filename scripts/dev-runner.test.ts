@@ -698,7 +698,7 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
             Effect.provide(Layer.mergeAll(emptyConfigLayer, netServiceLayer, spawnerLayer)),
             Effect.provideService(HostProcess.Platform, "linux"),
             Effect.provideService(HostProcess.WorkingDirectory, input.cwd),
-            // No ~/.t3 here, so these runs never seed from this machine's install.
+            // No fork home here, so these runs never seed from this machine's install.
             Effect.provideService(HostProcess.HomeDirectory, input.cwd),
             Effect.provideService(
               HostProcess.Environment,
@@ -748,13 +748,13 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
         }).pipe(Effect.scoped),
       );
 
-      it.effect("seeds a worktree database from ~/.t3 only when it has none", () =>
+      it.effect("seeds a worktree database only from the fork home when it has none", () =>
         Effect.gen(function* () {
           const path = yield* Path.Path;
           const root = yield* makeWorktree;
           const home = path.join(root, "home");
-          NodeFS.mkdirSync(path.join(home, ".t3", "userdata"), { recursive: true });
-          NodeFS.writeFileSync(path.join(home, ".t3", "userdata", "statev2.sqlite"), "");
+          NodeFS.mkdirSync(path.join(home, ".t3code-cn", "userdata"), { recursive: true });
+          NodeFS.writeFileSync(path.join(home, ".t3code-cn", "userdata", "statev2.sqlite"), "");
 
           const spawnedArgs = (
             seed: boolean | undefined,
@@ -791,7 +791,14 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
           assert.deepStrictEqual(yield* spawnedArgs(false), []);
           assert.deepStrictEqual(yield* spawnedArgs(undefined, "dev:desktop"), []);
           assert.deepStrictEqual(yield* spawnedArgs(true, "dev:desktop"), []);
+          const source = path.join(home, ".t3code-cn", "userdata", "statev2.sqlite");
+          NodeFS.rmSync(source);
+          NodeFS.mkdirSync(path.join(home, ".t3", "userdata"), { recursive: true });
+          NodeFS.writeFileSync(path.join(home, ".t3", "userdata", "statev2.sqlite"), "official");
+          assert.deepStrictEqual(yield* spawnedArgs(undefined), []);
+          NodeFS.writeFileSync(source, "fork");
           const [seedArgs] = yield* spawnedArgs(undefined);
+          assert.includeMembers([...(seedArgs ?? [])], ["--source", source]);
           assert.includeMembers([...(seedArgs ?? [])], ["--base-dir", path.join(root, ".t3")]);
 
           // Either database means the worktree already has data.
@@ -817,7 +824,7 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
             const path = yield* Path.Path;
             const root = yield* makeWorktree;
             const home = path.join(root, "home");
-            const source = path.join(home, ".t3", "userdata", "statev2.sqlite");
+            const source = path.join(home, ".t3code-cn", "userdata", "statev2.sqlite");
             NodeFS.mkdirSync(path.dirname(source), { recursive: true });
             NodeFS.writeFileSync(source, "");
             const spawned: Array<ReadonlyArray<string>> = [];

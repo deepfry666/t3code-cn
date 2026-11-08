@@ -1,6 +1,7 @@
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import { assert, it } from "@effect/vitest";
 import * as Effect from "effect/Effect";
+import * as HostProcess from "@t3tools/shared/HostProcess";
 import * as FileSystem from "effect/FileSystem";
 import * as Path from "effect/Path";
 import * as SqlClient from "effect/sql/SqlClient";
@@ -105,6 +106,33 @@ const createFixtureSource = Effect.fn("createMigrateDevDbFixtureSource")(functio
 });
 
 it.layer(NodeServices.layer)("migrate-dev-db", (it) => {
+  it.effect("defaults the source to the fork home without probing the official install", () =>
+    Effect.gen(function* () {
+      const fs = yield* FileSystem.FileSystem;
+      const path = yield* Path.Path;
+      const home = yield* fs.makeTempDirectoryScoped({ prefix: "migrate-dev-db-home-" });
+      const destDir = path.join(home, "worktree");
+      const source = yield* createFixtureSource(path.join(home, ".t3code-cn"));
+      const sourceBefore = yield* fs.readFile(source);
+      const result = yield* runMigrateDevDb({
+        baseDir: destDir,
+        projects: 5,
+        threadsPerProject: 2,
+      }).pipe(
+        Effect.provideService(HostProcess.HomeDirectory, home),
+        Effect.provideService(FileSystem.FileSystem, {
+          ...fs,
+          exists: (file) =>
+            file.includes("/.t3/")
+              ? Effect.die("must not probe the official install")
+              : fs.exists(file),
+        }),
+      );
+      assert.equal(result.databasePath, path.join(destDir, "userdata", "statev2.sqlite"));
+      assert.deepStrictEqual(yield* fs.readFile(source), sourceBefore);
+    }),
+  );
+
   it.effect("keeps stopped and settled thread families and clears pending work", () =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
@@ -375,6 +403,20 @@ it.layer(NodeServices.layer)("migrate-dev-db", (it) => {
         { sharedHome: sourceDir },
       ).pipe(Effect.flip);
       assert.equal(error._tag, "MigrateDevDbSharedHomeError");
+      const home = yield* fs.makeTempDirectoryScoped({ prefix: "migrate-dev-db-live-" });
+      const path = yield* Path.Path;
+      for (const directory of [".t3code-cn", ".t3"]) {
+        const baseDir = path.join(home, directory);
+        const result = yield* runMigrateDevDb({
+          baseDir,
+          source,
+          projects: 5,
+          threadsPerProject: 10,
+        }).pipe(Effect.provideService(HostProcess.HomeDirectory, home), Effect.result);
+        assert.isTrue(result._tag === "Failure");
+        if (result._tag === "Failure")
+          assert.equal(result.failure._tag, "MigrateDevDbSharedHomeError");
+      }
     }),
   );
 });

@@ -376,6 +376,25 @@ it.layer(NodeServices.layer)("cli config resolution", (it) => {
     }),
   );
 
+  it.effect("uses the desktop bootstrap home when the child environment has no T3CODE_HOME", () =>
+    Effect.gen(function* () {
+      const fs = yield* FileSystem.FileSystem;
+      const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-cli-bootstrap-home-" });
+      const fd = yield* openBootstrapFd(makeDesktopBootstrap({ t3Home: baseDir }));
+      const resolved = yield* resolveServerConfig(
+        { ...minimalDesktopFlags(baseDir), baseDir: Option.none(), bootstrapFd: Option.some(fd) },
+        Option.none(),
+      ).pipe(
+        Effect.provide([
+          ConfigProvider.layer(ConfigProvider.fromEnv({ env: {} })),
+          NetService.layer,
+        ]),
+      );
+      expect(resolved.baseDir).toBe(baseDir);
+      expect(resolved.stateDir).toBe(`${baseDir}/userdata`);
+    }),
+  );
+
   it.effect("applies flag then env precedence over bootstrap envelope values", () =>
     Effect.gen(function* () {
       const { join } = yield* Path.Path;
