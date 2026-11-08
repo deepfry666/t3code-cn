@@ -1,4 +1,4 @@
-import { readHostedPairingRequest } from "@t3tools/shared/remote";
+import { readHostedPairingRequest, readPairingAppLink } from "@t3tools/shared/remote";
 import * as Schema from "effect/Schema";
 
 const MOBILE_PAIRING_URL_PARAM = "pairingUrl";
@@ -75,6 +75,9 @@ export function extractPairingUrlFromQrPayload(payload: string): string {
   if (!trimmed) {
     throw new PairingQrPayloadEmptyError({});
   }
+
+  const desktopPairingUrl = readPairingAppLink(trimmed);
+  if (desktopPairingUrl) return desktopPairingUrl;
 
   try {
     const url = new URL(trimmed);

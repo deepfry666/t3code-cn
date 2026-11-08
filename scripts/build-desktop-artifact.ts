@@ -15,6 +15,7 @@ import {
   type DirectoryRecord,
 } from "@electron/asar";
 
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import { fromYaml } from "@t3tools/shared/schemaYaml";
 import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as HostProcess from "@t3tools/shared/HostProcess";
@@ -2857,7 +2858,7 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
       protocols: [
         {
           name: "T3 Code",
-          schemes: ["t3code", "t3code-dev"],
+          schemes: [FORK_IDENTITY.urlScheme, FORK_IDENTITY.devUrlScheme],
         },
         {
           name: "Web site URL",
@@ -2910,7 +2911,7 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
       protocols: [
         {
           name: "T3 Code",
-          schemes: ["t3code", "t3code-dev"],
+          schemes: [FORK_IDENTITY.urlScheme, FORK_IDENTITY.devUrlScheme],
         },
       ],
       desktop: {
