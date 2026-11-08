@@ -1057,7 +1057,7 @@ export default function DiffPanel({
                   <span aria-hidden="true" />
                   <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_2rem] items-center">
                     <span>{t("Branch")}</span>
-                    <span className="text-right">{t("Remote")}</span>
+                    <span className="text-right">{t("Remote@@git")}</span>
                   </div>
                 </div>
                 <ComboboxEmpty>{t("No matching refs.")}</ComboboxEmpty>

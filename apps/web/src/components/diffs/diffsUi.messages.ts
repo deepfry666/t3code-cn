@@ -59,7 +59,7 @@ export const diffsUiMessages = {
   "Collapse all folders": "折叠全部文件夹",
   "Expand all folders": "展开全部文件夹",
   Branch: "分支",
-  Remote: "远端",
+  "Remote@@git": "远端",
   Commits: "提交",
   Turn: "轮次",
   "No matching refs.": "没有匹配的引用。",

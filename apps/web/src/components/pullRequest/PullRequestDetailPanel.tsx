@@ -1730,7 +1730,7 @@ export function PullRequestDetailPanel({
                       <PullRequestReviewOutcomeIcon outcome="approved" className="size-3" />
                       {approvalCount.toLocaleString()}
                       <span className="sr-only">
-                        {approvalCount === 1 ? t("approval") : t("approvals")}
+                        {approvalCount === 1 ? t("approval@@count") : t("approvals")}
                       </span>
                     </span>
                   ) : null}

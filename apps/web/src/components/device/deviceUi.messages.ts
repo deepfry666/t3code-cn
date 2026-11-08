@@ -43,7 +43,7 @@ export const deviceUiMessages = {
   "Device stance": "设备姿态",
   "Laptop stand": "笔记本支架",
   "Tent stand": "帐篷支架",
-  Closed: "合上",
+  "Closed@@fold": "合上",
   Book: "书本",
   "Laptop@@fold shape": "笔记本",
   Open: "打开",

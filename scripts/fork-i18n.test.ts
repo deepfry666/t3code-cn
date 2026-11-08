@@ -25,7 +25,7 @@ const GLOSSARY: ReadonlyArray<readonly [english: RegExp, chinese: string]> = [
   [/\bpull requests?\b/i, "拉取请求"],
   [/\bbeta\b/i, "测试版"],
   [/\blabs\b/i, "实验功能"],
-  [/\bcheckouts?\b/i, "工作副本"],
+  [/\bcheckouts?\b(?! a ref)/i, "工作副本"],
 ];
 
 // Product names, brands and technical abbreviations stay as written in Chinese.

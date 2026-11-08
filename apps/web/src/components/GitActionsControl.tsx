@@ -808,7 +808,7 @@ function PublishRepositoryDialog(props: PublishRepositoryDialogProps) {
               {publishAdvancedOpen ? (
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   <label className="space-y-1.5" htmlFor="publish-remote-name">
-                    <span className="text-xs font-medium text-foreground">{t("Remote")}</span>
+                    <span className="text-xs font-medium text-foreground">{t("Remote@@git")}</span>
                     <Input
                       id="publish-remote-name"
                       value={publishRemoteName}

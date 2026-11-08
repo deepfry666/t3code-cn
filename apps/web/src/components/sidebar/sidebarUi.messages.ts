@@ -104,7 +104,7 @@ export const sidebarUiMessages = {
   "updating providers": "正在更新智能体提供方",
   "{done} of {total} updated": "已更新 {done}/{total}",
   "{label} failed": "{label} 失败",
-  "{count} failed": "{count} 个失败",
+  "{count} failed": "{count} 项失败",
   "Update {count} machine?": "更新 {count} 台设备？",
   "Update {count} machines?": "更新 {count} 台设备？",
   "{count} provider update": "{count} 个提供方更新",
