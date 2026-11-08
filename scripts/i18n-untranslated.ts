@@ -1,10 +1,17 @@
 // @effect-diagnostics nodeBuiltinImport:off globalConsole:off
 // Lists English UI text that bypasses t() in already-localized web components.
 // After an upstream merge: `vp run i18n:untranslated -- <pre-merge-commit>` shows only new lines.
+// `--all` also scans components with no translation yet; `--path <prefix>` narrows the scan.
 import * as NodeChildProcess from "node:child_process";
 import * as NodeFS from "node:fs";
 
-const since = process.argv.slice(2).find((arg) => arg !== "--");
+const args = process.argv.slice(2).filter((arg) => arg !== "--");
+const scanAll = args.includes("--all");
+const pathIndex = args.indexOf("--path");
+const pathPrefix = pathIndex === -1 ? undefined : args[pathIndex + 1];
+const since = args.find(
+  (arg, index) => !arg.startsWith("--") && (pathIndex === -1 || index !== pathIndex + 1),
+);
 const git = (args: ReadonlyArray<string>) =>
   NodeChildProcess.execFileSync("git", args, { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
 
@@ -43,7 +50,8 @@ function addedLines(file: string): ReadonlySet<number> | undefined {
 const localized = git(["ls-files", "apps/web/src"])
   .split("\n")
   .filter((file) => file.endsWith(".tsx") && !file.includes(".test."))
-  .filter((file) => NodeFS.readFileSync(file, "utf8").includes("useTranslation("));
+  .filter((file) => pathPrefix === undefined || file.startsWith(pathPrefix))
+  .filter((file) => scanAll || NodeFS.readFileSync(file, "utf8").includes("useTranslation("));
 
 const catalogKeys = new Set(
   git(["ls-files", "apps/web/src"])

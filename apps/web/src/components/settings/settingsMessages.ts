@@ -33,7 +33,7 @@ export const settingsMessages = {
   "Settings search results": "设置搜索结果",
   "No settings found": "未找到设置",
   Search: "搜索",
-  General: "常规",
+  General: "通用",
   Projects: "项目",
   Appearance: "外观",
   Chat: "聊天",

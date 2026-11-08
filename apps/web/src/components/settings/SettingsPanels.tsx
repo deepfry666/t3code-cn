@@ -2,6 +2,7 @@ import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { generalMessages } from "./generalMessages";
 import { translateSettingsLabel } from "./settingsMessages";
 import { settingsPanelsMessages, translatePanelLabel } from "./settingsPanels.messages";
+import { useLocalizedSetting } from "./useLocalizedSetting";
 import { LanguageSettings } from "./LanguageSettings";
 import { useAtomValue } from "@effect/atom-react";
 import { NotificationSettings } from "./NotificationSettings";
@@ -157,10 +158,7 @@ function usePanelText() {
   return {
     t,
     tl: (label: string) => translatePanelLabel(label, locale),
-    localizedSetting: (id: Parameters<typeof searchableSetting>[0]) => {
-      const item = searchableSetting(id);
-      return { ...item, title: translateSettingsLabel(item.title, locale) };
-    },
+    localizedSetting: useLocalizedSetting(),
   };
 }
 

@@ -87,6 +87,18 @@ describe("Chinese catalogs", () => {
     expect(unparsed).toEqual([]);
   });
 
+  it("keeps every placeholder and translates every entry", () => {
+    const placeholders = (text: string) => [...text.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+    const broken = entries
+      .filter(
+        (entry) =>
+          entry.localized.trim() === "" ||
+          placeholders(entry.localized).join() !== placeholders(entry.source).join(),
+      )
+      .map((entry) => `${entry.at} ${entry.source} → ${entry.localized}`);
+    expect(broken).toEqual([]);
+  });
+
   it("translates the same English text the same way everywhere", () => {
     const bySource = Map.groupBy(entries, (entry) => sourceKey(entry.source));
     const conflicts = [...bySource.values()]
