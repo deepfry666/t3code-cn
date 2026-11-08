@@ -1,4 +1,5 @@
 import { assert, describe, it } from "@effect/vitest";
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as HostProcess from "@t3tools/shared/HostProcess";
 import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
@@ -160,7 +161,7 @@ describe("DesktopPreReadyPlatform", () => {
         const identity = yield* Effect.promise(() => portalIdentity);
         assert.equal(identity.desktopName, "t3code-cn.desktop");
         assert.include(identity.desktopEntry ?? "", "Exec=/Applications/current.AppImage %U");
-        assert.include(identity.desktopEntry ?? "", "Name=T3 Code (Beta)");
+        assert.include(identity.desktopEntry ?? "", `Name=${FORK_IDENTITY.displayName} (Beta)`);
         assert.include(identity.desktopEntry ?? "", "MimeType=x-scheme-handler/t3code-cn;");
         assert.include(identity.desktopEntry ?? "", "Icon=/xdg/icons/t3code-cn.desktop.png");
         assert.isTrue(identity.iconInstalled);

@@ -1,4 +1,5 @@
 // @effect-diagnostics nodeBuiltinImport:off -- The integration fixture binds the same platform socket or named pipe as the CLI.
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as NodeChildProcess from "node:child_process";
 import * as NodeEvents from "node:events";
 import * as NodeFSP from "node:fs/promises";
@@ -243,7 +244,7 @@ describe("t3 app", () => {
                 Effect.sync(() => setProcessEnv("TMPDIR", root)),
                 (restore) => Effect.sync(restore),
               );
-              const baseDir = NodePath.join(root, ".t3");
+              const baseDir = NodePath.join(root, FORK_IDENTITY.homeDirName);
               const userId = yield* HostProcess.UserId;
               assert(userId !== undefined);
               const expectedUserId =
@@ -300,7 +301,7 @@ describe("t3 app", () => {
   it.effect("prefers the installed desktop app when a dev desktop is also running", () =>
     withTempDirectory("t3-app-preferred-test-", (root) =>
       Effect.gen(function* () {
-        const baseDir = NodePath.join(root, ".t3");
+        const baseDir = NodePath.join(root, FORK_IDENTITY.homeDirName);
         const desktop = yield* fakeDesktop({ baseDir });
         const development = yield* fakeDesktop({ baseDir, stateSubdirectory: "dev" });
 
@@ -315,7 +316,7 @@ describe("t3 app", () => {
   it.effect("finds the dev desktop when the default desktop socket is absent", () =>
     withTempDirectory("t3-app-dev-test-", (root) =>
       Effect.gen(function* () {
-        const baseDir = NodePath.join(root, ".t3");
+        const baseDir = NodePath.join(root, FORK_IDENTITY.homeDirName);
         const development = yield* fakeDesktop({ baseDir, stateSubdirectory: "dev" });
 
         yield* runCli(["app"]);
@@ -330,7 +331,7 @@ describe("t3 app", () => {
   it.effect("never searches a dev state directory for an explicit T3 home", () =>
     withTempDirectory("t3-app-explicit-test-", (root) =>
       Effect.gen(function* () {
-        const baseDir = NodePath.join(root, ".t3");
+        const baseDir = NodePath.join(root, FORK_IDENTITY.homeDirName);
         const development = yield* fakeDesktop({ baseDir, stateSubdirectory: "dev" });
 
         const flagError = yield* runCli(["app", "--base-dir", baseDir]).pipe(Effect.flip);
@@ -348,7 +349,7 @@ describe("t3 app", () => {
     (responseKind) =>
       withTempDirectory("t3-app-response-test-", (root) =>
         Effect.gen(function* () {
-          const baseDir = NodePath.join(root, ".t3");
+          const baseDir = NodePath.join(root, FORK_IDENTITY.homeDirName);
           const desktop = yield* fakeDesktop({
             baseDir,
             reply: (request) =>
