@@ -104,6 +104,10 @@ export function cliArchiveFileName(version: string, platform: BuildPlatform, arc
   return `${cliArchiveStem(version, platform, arch)}.${platform === "win" ? "zip" : "tar.gz"}`;
 }
 
+export function cliArchiveExecutableName(platform: BuildPlatform): string {
+  return platform === "win" ? "t3.exe" : "t3";
+}
+
 const runCommand = Effect.fn("runCommand")(function* (
   command: ChildProcess.Command,
   label: string,
@@ -596,7 +600,7 @@ const buildCliArchive = Effect.fn("buildCliArchive")(function* (input: {
   const path = yield* Path.Path;
   const repoRoot = yield* RepoRoot;
   const serverDir = path.join(repoRoot, "apps/server");
-  const executableName = input.platform === "win" ? "t3.exe" : "t3";
+  const executableName = cliArchiveExecutableName(input.platform);
   // tsdown suffixes cross-built executables; prefer the exact target over the plain host build.
   const targetKey = `${input.platform === "mac" ? "darwin" : input.platform}-${input.arch}`;
   const targetExecutable = path.join(

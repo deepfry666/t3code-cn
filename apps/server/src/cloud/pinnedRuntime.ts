@@ -60,10 +60,7 @@ export function pinnedRuntimePaths(
   const versionDir = path.join(pinnedRuntimeVersionsDir(path, baseDir), version);
   return {
     versionDir,
-    entryPath: path.join(
-      versionDir,
-      `${FORK_IDENTITY.cliName}${platform === "win32" ? ".exe" : ""}`,
-    ),
+    entryPath: path.join(versionDir, platform === "win32" ? "t3.exe" : "t3"),
     sentinelPath: path.join(versionDir, ".install-complete"),
   };
 }
