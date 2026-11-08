@@ -8,7 +8,7 @@ import * as FileSystem from "effect/FileSystem";
 import * as Layer from "effect/Layer";
 import * as Path from "effect/Path";
 import { CliError } from "effect/cli";
-import { HttpClient } from "effect/http";
+import { HttpClient, HttpClientResponse } from "effect/http";
 import * as ChildProcessSpawner from "effect/process/ChildProcessSpawner";
 
 import * as ProcessRunner from "../processRunner.ts";
@@ -24,10 +24,10 @@ import {
 
 it("reads the served T3 home back out of a rendered unit or plist", () => {
   const plan = (baseDir: string) => ({
-    program: [`${baseDir}/runtime/versions/1.2.3/t3`, "__service-launcher"],
+    program: [`${baseDir}/runtime/versions/1.2.3/t3-cn`, "__service-launcher"],
     baseDir,
     logPath: `${baseDir}/userdata/logs/boot-service.log`,
-    unitPath: "/home/theo/.config/systemd/user/t3code.service",
+    unitPath: "/home/theo/.config/systemd/user/t3code-cn.service",
   });
 
   expect(
@@ -51,10 +51,10 @@ it("reads the served T3 home back out of a rendered unit or plist", () => {
 
 it("protects the server unit from agents under CPU and memory pressure", () => {
   const unit = BootService.renderBootServiceUnit({
-    program: ["/home/theo/.t3/runtime/versions/1.2.3/t3", "__service-launcher"],
+    program: ["/home/theo/.t3/runtime/versions/1.2.3/t3-cn", "__service-launcher"],
     baseDir: "/home/theo/.t3",
     logPath: "/home/theo/.t3/userdata/logs/boot-service.log",
-    unitPath: "/home/theo/.config/systemd/user/t3code.service",
+    unitPath: "/home/theo/.config/systemd/user/t3code-cn.service",
   });
   const service = unit.slice(unit.indexOf("[Service]"), unit.indexOf("[Install]"));
   for (const line of [
@@ -77,7 +77,7 @@ it.each([
       BootService.renderBootServicePlist(plan, { homeDir: "/Users/theo", environmentPath: "" }),
   ],
 ] as const)("reads the launcher back out of %s", (_, baseDir, render) => {
-  const program = `${baseDir}/runtime/versions/1.2.3/t3`;
+  const program = `${baseDir}/runtime/versions/1.2.3/t3-cn`;
   expect(
     BootService.bootServiceProgramOf(
       render({ program: [program, "__service-launcher"], baseDir, logPath: "/log", unitPath: "" }),
@@ -116,6 +116,7 @@ const makeHarness = Effect.fn("test.make_boot_service_harness")(function* (
   const timeouts = new Map<string, unknown>();
   const control: {
     failCommand: string | undefined;
+    runtimeName?: string;
     stateAfterStop?: string;
     linger: string;
     enabled: boolean;
@@ -137,13 +138,15 @@ const makeHarness = Effect.fn("test.make_boot_service_harness")(function* (
       const failed = command === control.failCommand;
       if (!failed && command === "loginctl enable-linger --no-ask-password 501")
         control.linger = "yes";
-      if (!failed && command === "systemctl --user enable t3code.service") control.enabled = true;
-      if (!failed && command === "systemctl --user restart t3code.service") control.active = true;
+      if (!failed && command === "systemctl --user enable t3code-cn.service")
+        control.enabled = true;
+      if (!failed && command === "systemctl --user restart t3code-cn.service")
+        control.active = true;
       // A timed-out stop may still stop the service.
-      if (command === "systemctl --user stop t3code.service") control.active = false;
+      if (command === "systemctl --user stop t3code-cn.service") control.active = false;
       if (
         control.stateAfterStop !== undefined &&
-        (command === "systemctl --user stop t3code.service" ||
+        (command === "systemctl --user stop t3code-cn.service" ||
           command.startsWith("launchctl bootout --wait "))
       ) {
         yield* fs.writeFileString(statePath, control.stateAfterStop).pipe(Effect.orDie);
@@ -162,7 +165,7 @@ const makeHarness = Effect.fn("test.make_boot_service_harness")(function* (
                 ],
               })
             : input.args[0] === "--version"
-              ? `t3 v${/versions\/([^/]+)\//.exec(input.command)?.[1] ?? "1.2.3"}\n`
+              ? `${control.runtimeName ?? "t3-cn"} v${/versions\/([^/]+)\//.exec(input.command)?.[1] ?? "1.2.3"}\n`
               : input.command === "loginctl" && input.args[0] === "show-user"
                 ? `${control.linger}\n`
                 : input.args[1] === "is-enabled"
@@ -191,7 +194,11 @@ const makeHarness = Effect.fn("test.make_boot_service_harness")(function* (
     cliVersion = "1.2.3",
     serviceBaseDir = baseDir,
     insideService = false,
-    hostExecPath = "/usr/bin/t3",
+    hostExecPath = "/usr/bin/t3-cn",
+    overrides?: {
+      readonly fileSystem?: FileSystem.FileSystem;
+      readonly httpClient?: HttpClient.HttpClient;
+    },
   ) =>
     Effect.gen(function* () {
       const paths = pinnedRuntimePaths(path, serviceBaseDir, cliVersion, platform);
@@ -206,6 +213,7 @@ const makeHarness = Effect.fn("test.make_boot_service_harness")(function* (
       });
     }).pipe(
       Effect.provideService(ProcessRunner.ProcessRunner, runner),
+      Effect.provideService(FileSystem.FileSystem, overrides?.fileSystem ?? fs),
       Effect.provide(
         Layer.mergeAll(
           Layer.succeed(HostProcess.Platform, platform),
@@ -213,7 +221,8 @@ const makeHarness = Effect.fn("test.make_boot_service_harness")(function* (
           Layer.succeed(HostProcess.ExecutablePath, hostExecPath),
           Layer.succeed(
             HttpClient.HttpClient,
-            HttpClient.make(() => Effect.die("no release download expected")),
+            overrides?.httpClient ??
+              HttpClient.make(() => Effect.die("no release download expected")),
           ),
           ConfigProvider.layer(
             ConfigProvider.fromEnv({
@@ -223,7 +232,7 @@ const makeHarness = Effect.fn("test.make_boot_service_harness")(function* (
                 ...(environmentPath === undefined || environmentPath === ""
                   ? {}
                   : { PATH: environmentPath }),
-                ...(insideService ? { T3_BOOT_SERVICE_UNIT: "t3code.service" } : {}),
+                ...(insideService ? { T3_BOOT_SERVICE_UNIT: "t3code-cn.service" } : {}),
               },
             }),
           ),
@@ -298,7 +307,7 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
         );
         expect(yield* fs.readFileString(statePath)).toBe(before);
         expect(yield* fs.readFileString(plan.unitPath)).toBe(unit);
-        expect(commands).not.toContain("systemctl --user stop t3code.service");
+        expect(commands).not.toContain("systemctl --user stop t3code-cn.service");
       }),
   );
 
@@ -374,9 +383,12 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
           : path.join(home, ".config"),
         "systemd",
         "user",
-        "t3code.service",
+        "t3code-cn.service",
       );
       expect(yield* service.status).toMatchObject({ installed: false, unitPath });
+      const officialUnit = path.join(path.dirname(unitPath), "t3code.service");
+      yield* fs.makeDirectory(path.dirname(unitPath), { recursive: true });
+      yield* fs.writeFileString(officialUnit, "official service");
       const plan = yield* service.install();
       expect(plan.unitPath).toBe(unitPath);
       if (setting === "manager-unavailable") {
@@ -418,9 +430,10 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
       expect((yield* service.status).current).toBe(false);
       expect(yield* discoveredService.uninstall).toBe(true);
       expect(yield* fs.exists(unitPath)).toBe(false);
+      expect(yield* fs.readFileString(officialUnit)).toBe("official service");
       expect((yield* discoveredService.status).installed).toBe(false);
       // systemd can take 90s to stop, exceeding the runner's 60s default.
-      expect(timeouts.get("systemctl --user disable --now t3code.service")).toEqual(
+      expect(timeouts.get("systemctl --user disable --now t3code-cn.service")).toEqual(
         Duration.seconds(120),
       );
     }),
@@ -493,9 +506,12 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
           ),
         ).toEqual(
           platform === "linux"
-            ? ["systemctl --user stop t3code.service", "systemctl --user restart t3code.service"]
+            ? [
+                "systemctl --user stop t3code-cn.service",
+                "systemctl --user restart t3code-cn.service",
+              ]
             : [
-                "launchctl bootout --wait gui/501/com.t3tools.t3code.service",
+                "launchctl bootout --wait gui/501/io.github.deepfry666.t3codecn.service",
                 `launchctl bootstrap gui/501 ${plan.unitPath}`,
               ],
         );
@@ -560,7 +576,7 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
           protocol: SERVICE_LAUNCHER_PROTOCOL,
           activeVersion: "1.2.4",
         });
-        expect(yield* fs.readFileString(plan.unitPath)).toContain("versions/1.2.4/t3");
+        expect(yield* fs.readFileString(plan.unitPath)).toContain("versions/1.2.4/t3-cn");
         expect(
           commands.filter(
             (command) =>
@@ -580,14 +596,17 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
 
   it.effect("install with start=false keeps the marker when a later write fails", () =>
     Effect.gen(function* () {
-      const { service, fs, statePath, makeService } = yield* makeHarness();
+      const { service, fs, baseDir, statePath, makeService } = yield* makeHarness();
       const path = yield* Path.Path;
       yield* service.install();
-      const newer = yield* makeService(undefined, "1.2.4");
       const unitPath = (yield* service.status).unitPath;
-      yield* fs.remove(unitPath);
-      yield* fs.makeDirectory(unitPath);
-      yield* fs.writeFileString(path.join(unitPath, "occupied"), "");
+      const newer = yield* makeService(undefined, "1.2.4", baseDir, false, "/usr/bin/t3-cn", {
+        fileSystem: {
+          ...fs,
+          rename: (from, to) =>
+            fs.rename(to === unitPath ? path.join(baseDir, "missing-source") : from, to),
+        },
+      });
 
       const error = yield* newer.install({ start: false }).pipe(Effect.flip);
       expect(error._tag).toBe("BootServiceInstallError");
@@ -630,7 +649,7 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
       expect(failure).toBe("repair failed");
       expect(control.active).toBe(true);
 
-      control.failCommand = "systemctl --user stop t3code.service";
+      control.failCommand = "systemctl --user stop t3code-cn.service";
       let ran = false;
       const stopFailure = yield* service
         .withStopped(
@@ -651,11 +670,11 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
       commands.length = 0;
       yield* service.withStopped(Effect.sync(() => commands.push("repair")));
       expect(commands).toEqual([
-        "systemctl --user is-enabled t3code.service",
-        "systemctl --user is-active t3code.service",
-        "systemctl --user stop t3code.service",
+        "systemctl --user is-enabled t3code-cn.service",
+        "systemctl --user is-active t3code-cn.service",
+        "systemctl --user stop t3code-cn.service",
         "repair",
-        "systemctl --user restart t3code.service",
+        "systemctl --user restart t3code-cn.service",
       ]);
       expect(control.active).toBe(true);
       control.enabled = false;
@@ -665,8 +684,8 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
       control.enabled = false;
       commands.length = 0;
       yield* service.withStopped(Effect.sync(() => commands.push("repair")));
-      expect(commands).toContain("systemctl --user stop t3code.service");
-      expect(commands).not.toContain("systemctl --user restart t3code.service");
+      expect(commands).toContain("systemctl --user stop t3code-cn.service");
+      expect(commands).not.toContain("systemctl --user restart t3code-cn.service");
       expect(control.active).toBe(false);
       control.enabled = true;
       control.active = true;
@@ -680,6 +699,86 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
     }),
   );
 
+  it.effect.each([
+    { platform: "linux", contents: "[Service]\nExecStart=/official/t3\n" },
+    { platform: "darwin", contents: "<plist><dict/></plist>" },
+    { platform: "linux", contents: "official" },
+    { platform: "darwin", contents: "official" },
+    { platform: "linux", contents: undefined },
+    { platform: "darwin", contents: undefined },
+  ] as const)(
+    "refuses uninstall when $platform unit ownership is unknown ($contents)",
+    ({ platform, contents }) =>
+      Effect.gen(function* () {
+        const { service, fs, commands, baseDir } = yield* makeHarness(platform);
+        const plan = yield* service.install();
+        if (contents === undefined) {
+          yield* fs.remove(plan.unitPath);
+          yield* fs.makeDirectory(plan.unitPath);
+        } else {
+          const unit = yield* fs.readFileString(plan.unitPath);
+          yield* fs.writeFileString(
+            plan.unitPath,
+            contents === "official"
+              ? unit
+                  .replaceAll("t3code-cn.service", "t3code.service")
+                  .replaceAll("io.github.deepfry666.t3codecn.service", "com.t3tools.t3code.service")
+              : contents,
+          );
+        }
+        commands.length = 0;
+        const error = yield* service.uninstall.pipe(Effect.flip);
+        expect(error._tag).toBe("BootServiceOwnershipError");
+        expect(error.message).toContain("ownership");
+        expect(yield* fs.exists(plan.unitPath)).toBe(true);
+        expect(yield* fs.exists(baseDir)).toBe(true);
+        expect(commands).toEqual([]);
+      }),
+  );
+
+  it.effect("fails service installation cleanly when the fork has no release archive", () =>
+    Effect.gen(function* () {
+      const { fs, baseDir, runtime, makeService, commands } = yield* makeHarness("darwin");
+      const requests: string[] = [];
+      const service = yield* makeService(undefined, "1.2.3", baseDir, false, "/usr/bin/t3-cn", {
+        httpClient: HttpClient.make((request) => {
+          requests.push(request.url);
+          return Effect.succeed(
+            HttpClientResponse.fromWeb(request, new Response("", { status: 404 })),
+          );
+        }),
+      });
+      yield* fs.remove(runtime.versionDir, { recursive: true });
+      commands.length = 0;
+      const error = yield* service.install().pipe(Effect.flip);
+      expect(error.message).toContain("deepfry666/t3code-cn");
+      expect(error.message).toContain("no fork release archive");
+      expect(requests).toEqual([
+        "https://github.com/deepfry666/t3code-cn/releases/download/v1.2.3/SHA256SUMS",
+      ]);
+      expect(commands).toEqual([]);
+      expect((yield* service.status).installed).toBe(false);
+      expect(yield* fs.exists(runtime.sentinelPath)).toBe(false);
+    }),
+  );
+
+  it.effect(
+    "rejects an official runtime with the requested version before changing the service",
+    () =>
+      Effect.gen(function* () {
+        const { service, commands, control } = yield* makeHarness();
+        control.runtimeName = "t3";
+        commands.length = 0;
+        const error = yield* service.install().pipe(Effect.flip);
+        expect(error._tag).toBe("BootServiceCommandError");
+        expect(
+          commands.some(
+            (command) => command.includes("--user stop") || command.includes("--user enable"),
+          ),
+        ).toBe(false);
+      }),
+  );
+
   it.effect("restart and install leave a service that serves another T3 home alone", () =>
     Effect.gen(function* () {
       const { service, fs, baseDir, commands, makeService } = yield* makeHarness();
@@ -691,6 +790,8 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
       const other = yield* makeService(undefined, "1.2.3", path.join(otherHome, ".t3"));
       commands.length = 0;
       expect(yield* other.restart).toBe("skipped");
+      const refusedUninstall = yield* other.uninstall.pipe(Effect.flip);
+      expect(refusedUninstall._tag).toBe("BootServiceOtherBaseDirError");
       const refused = yield* other.install().pipe(Effect.flip);
       expect(refused._tag).toBe("BootServiceOtherBaseDirError");
       // The CLI prints a user message without a stack trace.
@@ -720,7 +821,7 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
 
       expect(yield* fs.readFileString(statePath)).toBe(state);
       expect(yield* fs.readFileString(plan.unitPath)).toBe(unit);
-      expect(commands).not.toContain("systemctl --user stop t3code.service");
+      expect(commands).not.toContain("systemctl --user stop t3code-cn.service");
       expect(result).toMatchObject({ handedOff: true, logPath: plan.logPath });
       const handoffs = invocations.filter(({ command }) => command === "systemd-run");
       expect(handoffs).toHaveLength(1);
@@ -746,7 +847,7 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
       expect(yield* fs.readFileString(statePath)).toBe(state);
       expect(yield* fs.readFileString(plan.unitPath)).toBe(unit);
       expect(control.active).toBe(true);
-      expect(commands).not.toContain("systemctl --user stop t3code.service");
+      expect(commands).not.toContain("systemctl --user stop t3code-cn.service");
     }),
   );
 
@@ -773,8 +874,8 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
         const outcome = yield* inside.restart;
         expect(commands).toEqual([
           "systemctl --user daemon-reload",
-          "systemctl --user enable t3code.service",
-          "systemctl --user restart --no-block t3code.service",
+          "systemctl --user enable t3code-cn.service",
+          "systemctl --user restart --no-block t3code-cn.service",
         ]);
         expect(outcome).toBe("queued");
         expect(yield* fs.readFileString(statePath)).toBe(state);
@@ -796,9 +897,9 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
           (command) => command.startsWith("systemctl ") && !command.includes("show-environment"),
         ),
       ).toEqual([
-        "systemctl --user stop t3code.service",
+        "systemctl --user stop t3code-cn.service",
         "systemctl --user daemon-reload",
-        "systemctl --user restart t3code.service",
+        "systemctl --user restart t3code-cn.service",
       ]);
     }),
   );
@@ -830,8 +931,8 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
             (command) => command.startsWith("systemctl ") && !command.includes("show-environment"),
           ),
         ).toEqual([
-          "systemctl --user stop t3code.service",
-          "systemctl --user restart t3code.service",
+          "systemctl --user stop t3code-cn.service",
+          "systemctl --user restart t3code-cn.service",
         ]);
       }
     }),
@@ -841,11 +942,15 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
     Effect.gen(function* () {
       const { service, fs, statePath, commands, timeouts, runtime } = yield* makeHarness("darwin");
       const path = yield* Path.Path;
+      const unitPath = (yield* service.status).unitPath;
+      const officialUnit = path.join(path.dirname(unitPath), "com.t3tools.t3code.service.plist");
+      yield* fs.makeDirectory(path.dirname(unitPath), { recursive: true });
+      yield* fs.writeFileString(officialUnit, "official service");
       const plan = yield* service.install();
 
       expect(
         plan.unitPath.endsWith(
-          path.join("Library", "LaunchAgents", "com.t3tools.t3code.service.plist"),
+          path.join("Library", "LaunchAgents", "io.github.deepfry666.t3codecn.service.plist"),
         ),
       ).toBe(true);
       expect(yield* fs.readFileString(plan.unitPath)).toContain(
@@ -863,12 +968,13 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
         installedVersion: "1.2.3",
       });
       expect(yield* service.uninstall).toBe(true);
+      expect(yield* fs.readFileString(officialUnit)).toBe("official service");
       expect((yield* service.status).installed).toBe(false);
       expect(commands.some((command) => command.startsWith("systemctl "))).toBe(false);
       // launchd can take 90s to bootout; the runner's 60s default could let bootstrap race it.
-      expect(timeouts.get("launchctl bootout --wait gui/501/com.t3tools.t3code.service")).toEqual(
-        Duration.seconds(120),
-      );
+      expect(
+        timeouts.get("launchctl bootout --wait gui/501/io.github.deepfry666.t3codecn.service"),
+      ).toEqual(Duration.seconds(120));
     }),
   );
 
@@ -951,7 +1057,8 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
     Effect.gen(function* () {
       const { service, control } = yield* makeHarness("darwin");
       yield* service.install();
-      control.failCommand = "launchctl bootout --wait gui/501/com.t3tools.t3code.service";
+      control.failCommand =
+        "launchctl bootout --wait gui/501/io.github.deepfry666.t3codecn.service";
 
       yield* service.install();
       expect((yield* service.status).current).toBe(true);

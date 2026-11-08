@@ -20,7 +20,7 @@ const status = {
   supported: true,
   installed: true,
   current: true,
-  unitPath: "/home/me/.config/systemd/user/t3code.service",
+  unitPath: "/home/me/.config/systemd/user/t3code-cn.service",
   logPath: "/home/me/.t3/userdata/logs/boot-service.log",
 } as const;
 
@@ -44,7 +44,7 @@ function makeTestService(
       Effect.sync(() => {
         installOptions.push(options);
         return {
-          program: ["/test/t3/runtime/versions/1.0.0/t3", "__service-launcher"],
+          program: ["/test/t3/runtime/versions/1.0.0/t3-cn", "__service-launcher"],
           baseDir: "/test/t3",
           unitPath: serviceStatus.unitPath,
           logPath: serviceStatus.logPath,
@@ -209,7 +209,7 @@ it.layer(Layer.mergeAll(NodeServices.layer, NetService.layer))("service commands
             ),
           ),
         );
-        expect(output).toContain(`t3@${packageJson.version}`);
+        expect(output).toContain(`t3-cn@${packageJson.version}`);
         expect(output).toContain(script);
         expect(installOptions).toEqual([]);
       }),
@@ -218,14 +218,23 @@ it.layer(Layer.mergeAll(NodeServices.layer, NetService.layer))("service commands
   it.effect.each([
     { label: "this home's service", otherHome: false, unreadable: false, removed: [true] },
     { label: "another home's service", otherHome: true, unreadable: false, removed: [] },
-    { label: "an unreadable service", otherHome: false, unreadable: true, removed: [true] },
+    { label: "an unreadable service", otherHome: false, unreadable: true, removed: [] },
+    {
+      label: "an unrecognised service",
+      otherHome: false,
+      unreadable: false,
+      unknown: true,
+      removed: [],
+    },
   ])("uninstall removes only $label", (input) =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-service-cli-test-" });
       const { service, uninstalls } = makeTestService({
         ...status,
-        installedBaseDir: input.otherHome ? "/home/me/.t3" : baseDir,
+        ...("unknown" in input
+          ? {}
+          : { installedBaseDir: input.otherHome ? "/home/me/.t3" : baseDir }),
       });
       vi.spyOn(BootService, "layer").mockReturnValue(
         Layer.succeed(
@@ -244,7 +253,10 @@ it.layer(Layer.mergeAll(NodeServices.layer, NetService.layer))("service commands
         "--base-dir",
         baseDir,
       ]).pipe(
-        Effect.andThen(TestConsole.logLines),
+        Effect.matchEffect({
+          onFailure: (error) => Effect.succeed([error.message]),
+          onSuccess: () => TestConsole.logLines,
+        }),
         Effect.map((lines) => lines.join("\n")),
         Effect.provideService(HostProcess.Environment, {}),
         Effect.provide(
@@ -255,7 +267,8 @@ it.layer(Layer.mergeAll(NodeServices.layer, NetService.layer))("service commands
         ),
       );
       expect(uninstalls).toEqual(input.removed);
-      expect(output).toContain(input.otherHome ? "--base-dir '/home/me/.t3'" : "Removed");
+      if (input.unreadable || "unknown" in input) expect(output).toContain("ownership");
+      else expect(output).toContain(input.otherHome ? "--base-dir '/home/me/.t3'" : "Removed");
     }),
   );
 });

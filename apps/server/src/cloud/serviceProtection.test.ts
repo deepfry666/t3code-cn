@@ -17,6 +17,19 @@ import * as ChildProcessSpawner from "effect/process/ChildProcessSpawner";
 import * as ProcessRunner from "../processRunner.ts";
 import * as ServiceProtection from "./serviceProtection.ts";
 
+it("keeps fork protection separate from official drop-ins", () => {
+  const plan = ServiceProtection.protectionPlan({
+    uid: 1000,
+    userUnitDir: "/test/systemd/user",
+    remoteAccessUnits: [],
+  });
+  for (const dropIn of [...plan.system, plan.managerDefaults, ...plan.user]) {
+    expect(dropIn.path).toMatch(/\/90-t3code-cn-protect\.conf$/);
+    expect(dropIn.path).not.toContain("t3code.service");
+  }
+  expect(plan.user.some(({ unit }) => unit === "t3code-cn.service")).toBe(true);
+});
+
 const temporaryDirectory = () =>
   NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "t3-service-protection-"));
 
@@ -38,7 +51,7 @@ describe.skipIf(HostProcess.Platform.defaultValue() !== "linux")("renderPrivileg
         "[Service]\nMemoryLow=2G\nOOMScoreAdjust=-900\n",
       );
       expect(theo.managerDefaults.path).toBe(
-        "/home/theo/.config/systemd/user.conf.d/90-t3code-protect.conf",
+        "/home/theo/.config/systemd/user.conf.d/90-t3code-cn-protect.conf",
       );
       expect(theo.oomUnits).toEqual(["user@1000.service", "tailscaled.service", "ssh.service"]);
 
@@ -79,7 +92,7 @@ describe.skipIf(HostProcess.Platform.defaultValue() !== "linux")("renderPrivileg
         expect(result.status).toBe(0);
       };
       const exists = (unit: string) =>
-        NodeFS.existsSync(NodePath.join(systemUnitDir, `${unit}.d`, "90-t3code-protect.conf"));
+        NodeFS.existsSync(NodePath.join(systemUnitDir, `${unit}.d`, "90-t3code-cn-protect.conf"));
 
       runScript(theo, "apply");
       runScript(plan(1001, []), "apply");
@@ -233,7 +246,7 @@ it.effect("counts memory.min as protection and names the first cgroup that grant
     "user-1000.slice",
     "user@1000.service",
     "app.slice",
-    "t3code.service",
+    "t3code-cn.service",
   ];
   const write = (depth: number, file: string, value: string) => {
     const directory = NodePath.join(root, ...controlGroup.slice(0, depth));

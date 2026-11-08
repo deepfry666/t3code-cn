@@ -1,4 +1,5 @@
 import * as HostProcess from "@t3tools/shared/HostProcess";
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import {
   CLI_RELEASE_BASE_URL_ENV,
   CLI_RELEASE_CHANNELS,
@@ -18,7 +19,13 @@ import * as Option from "effect/Option";
 import * as Path from "effect/Path";
 import * as Schema from "effect/Schema";
 import { Argument, Command, Flag, GlobalFlag, Prompt } from "effect/cli";
-import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
+import {
+  FetchHttpClient,
+  HttpClient,
+  HttpClientError,
+  HttpClientRequest,
+  HttpClientResponse,
+} from "effect/http";
 
 import packageJson from "../../package.json" with { type: "json" };
 import * as BootService from "../cloud/bootService.ts";
@@ -68,6 +75,9 @@ export const resolveNewestVersion = Effect.fn("cli.update.resolve_newest")(funct
   const httpClient = yield* HttpClient.HttpClient;
   const environment = yield* HostProcess.Environment;
   const githubToken = environment.GH_TOKEN?.trim() || environment.GITHUB_TOKEN?.trim() || undefined;
+  const noRelease = new CliUpdateError({
+    reason: `No published ${channel} release was found in ${FORK_IDENTITY.releaseRepository}. Wait for a ${FORK_IDENTITY.displayName} release before updating.`,
+  });
   for (let page = 1; page <= RELEASE_INDEX_MAX_PAGES; page += 1) {
     const request = HttpClientRequest.get(cliReleaseIndexPageUrl(page)).pipe(
       HttpClientRequest.setHeader("Accept", "application/vnd.github+json"),
@@ -79,7 +89,13 @@ export const resolveNewestVersion = Effect.fn("cli.update.resolve_newest")(funct
     const body = yield* httpClient.execute(authenticatedRequest).pipe(
       Effect.flatMap(HttpClientResponse.filterStatusOk),
       Effect.flatMap((response) => response.text),
-      Effect.mapError(() => new CliUpdateError({ reason: "Could not list t3 releases." })),
+      Effect.mapError((error) =>
+        HttpClientError.isHttpClientError(error) && error.response?.status === 404
+          ? noRelease
+          : new CliUpdateError({
+              reason: `Could not list releases from ${FORK_IDENTITY.releaseRepository}.`,
+            }),
+      ),
       Effect.timeoutOrElse({
         duration: RELEASE_INDEX_TIMEOUT,
         orElse: () => Effect.fail(new CliUpdateError({ reason: "Timed out listing t3 releases." })),
@@ -94,7 +110,7 @@ export const resolveNewestVersion = Effect.fn("cli.update.resolve_newest")(funct
     if (version !== undefined) return version;
     if (releases.length === 0) break;
   }
-  return yield* new CliUpdateError({ reason: `No published ${channel} release was found.` });
+  return yield* noRelease;
 });
 
 /** The version an update mirror's feed file for this platform offers on `channel`. */
@@ -228,7 +244,7 @@ export const findWindowsShim = Effect.fn("cli.update.find_windows_shim")(functio
     ...(environment["PATH"] ?? environment["Path"] ?? "").split(";"),
   ].filter((entry) => entry.trim().length > 0);
   for (const directory of candidates) {
-    const shimPath = path.join(directory, "t3.cmd");
+    const shimPath = path.join(directory, `${FORK_IDENTITY.cliName}.cmd`);
     const contents = yield* fs.readFileString(shimPath).pipe(Effect.option);
     if (Option.isNone(contents)) continue;
     const target = windowsShimTarget(contents.value);
@@ -323,7 +339,10 @@ const belongsToBootService = Effect.fn("cli.update.belongs_to_boot_service")(fun
   const runner = yield* ProcessRunner.ProcessRunner;
   if (platform === "linux") {
     const cgroup = yield* fs.readFileString(`/proc/${pid}/cgroup`).pipe(Effect.option);
-    return Option.isSome(cgroup) && cgroup.value.includes("/t3code.service");
+    return (
+      Option.isSome(cgroup) &&
+      cgroup.value.split(/[/\n]/).includes(BootService.BOOT_SERVICE_UNIT_FILE)
+    );
   }
   if (platform === "darwin") {
     const parent = yield* runner
@@ -395,10 +414,10 @@ export const runUpdate = Effect.fn("cli.update.run")(function* (input: {
   if (targetChannel === "preview" && currentChannel !== "preview") {
     yield* Console.log(
       [
-        `t3@${targetVersion} is a preview build.`,
+        `${FORK_IDENTITY.cliName}@${targetVersion} is a preview build.`,
         "  Preview builds are cut by maintainers from unreleased branches to exercise the release",
         "  pipeline. They can be broken, receive no fixes, and are never offered as updates; you",
-        `  will have to switch back to ${currentChannel} yourself with \`t3 update --channel ${currentChannel} --allow-downgrade\`.`,
+        `  will have to switch back to ${currentChannel} yourself with \`${FORK_IDENTITY.cliName} update --channel ${currentChannel} --allow-downgrade\`.`,
       ].join("\n"),
     );
     if (!(process.stdin.isTTY && process.stdout.isTTY)) {
@@ -448,7 +467,7 @@ export const runUpdate = Effect.fn("cli.update.run")(function* (input: {
   }
   if (!input.allowDowngrade && compareExactServiceVersions(targetVersion, newestInstalled) < 0) {
     return yield* new CliUpdateError({
-      reason: `t3@${targetVersion} is older than the installed ${newestInstalled}. Pass --allow-downgrade to install it anyway.`,
+      reason: `${FORK_IDENTITY.cliName}@${targetVersion} is older than the installed ${newestInstalled}. Pass --allow-downgrade to install it anyway.`,
     });
   }
 
@@ -487,7 +506,7 @@ export const runUpdate = Effect.fn("cli.update.run")(function* (input: {
       ).pipe(Effect.catchTags({ QuitError: () => Effect.succeed(false) }));
     } else {
       yield* Console.log(
-        "  Not a terminal, so the service keeps running its current version. Rerun with --yes to restart it now, or run `t3 service restart` later.",
+        `  Not a terminal, so the service keeps running its current version. Rerun with --yes to restart it now, or run \`${FORK_IDENTITY.cliName} service restart\` later.`,
       );
     }
   }
@@ -517,7 +536,8 @@ export const runUpdate = Effect.fn("cli.update.run")(function* (input: {
               new PinnedRuntimeInstallError({ step: "verifying the downloaded t3", cause }),
           ),
           Effect.flatMap((result) =>
-            result.code === 0 && /\bv(\S+)\s*$/.exec(result.stdout)?.[1] === targetVersion
+            result.code === 0 &&
+            result.stdout.trim() === `${FORK_IDENTITY.cliName} v${targetVersion}`
               ? Effect.void
               : Effect.fail(
                   new PinnedRuntimeInstallError({
@@ -534,8 +554,8 @@ export const runUpdate = Effect.fn("cli.update.run")(function* (input: {
         new CliUpdateError({
           reason:
             mirror === undefined
-              ? `No release archive was published for t3@${targetVersion}.`
-              : `${mirror.organization}'s update mirror has no t3@${targetVersion} for this machine.`,
+              ? `No release archive was published for ${FORK_IDENTITY.cliName}@${targetVersion} in ${FORK_IDENTITY.releaseRepository}. Wait for a ${FORK_IDENTITY.displayName} release before updating.`
+              : `${mirror.organization}'s update mirror has no ${FORK_IDENTITY.cliName}@${targetVersion} for this machine.`,
         }),
       ),
     ),
@@ -571,7 +591,7 @@ export const runUpdate = Effect.fn("cli.update.run")(function* (input: {
       Effect.mapError(
         (error) =>
           new CliUpdateError({
-            reason: `t3@${targetVersion} is installed but the background service could not be ${restartService ? "updated" : "pointed at it"}: ${error.message}`,
+            reason: `${FORK_IDENTITY.cliName}@${targetVersion} is installed but the background service could not be ${restartService ? "updated" : "pointed at it"}: ${error.message}`,
           }),
       ),
     );
@@ -590,7 +610,7 @@ export const runUpdate = Effect.fn("cli.update.run")(function* (input: {
 
   progress.success(`Installed T3 Code ${targetVersion}`);
   if (Option.isSome(repointed)) {
-    yield* Console.log("  Run t3 to get started.\n");
+    yield* Console.log(`  Run ${FORK_IDENTITY.cliName} to get started.\n`);
   } else {
     yield* Console.log(`  Run ${runtime.entryPath}\n`);
   }
@@ -611,7 +631,7 @@ export const runUpdate = Effect.fn("cli.update.run")(function* (input: {
           ? `the version before ${serviceVersion}`
           : serviceVersion;
     yield* Console.log(
-      `  Background service still running ${running}. Run \`t3 service restart\` when you are ready to switch it to ${targetVersion}.`,
+      `  Background service still running ${running}. Run \`${FORK_IDENTITY.cliName} service restart\` when you are ready to switch it to ${targetVersion}.`,
     );
   } else if (status.installed && !servesThisHome) {
     yield* Console.log(
