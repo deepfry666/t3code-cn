@@ -11,12 +11,14 @@ import { createContext, useContext } from "react";
 import type { PluggableList } from "unified";
 
 import { useAssetUrlRefresh, useAssetUrlState } from "~/assets/assetUrls";
+import { useTranslation } from "~/i18n/useTranslation";
 import { cn } from "~/lib/utils";
 import { PULL_REQUESTS_PANEL_REF } from "~/rightPanelStore";
 
 import ChatMarkdown from "../ChatMarkdown";
 import { MediaVideoPlayer } from "../media/MediaVideoPlayer";
 import { splitPullRequestBody, type PullRequestBodySegment } from "./pullRequestMarkdown.logic";
+import { pullRequestUiMessages } from "./pullRequestUi.messages";
 
 export const PullRequestMarkdownContext = createContext<{
   /** Stable per repository, so comments share one renderer and its parse cache. */
@@ -46,6 +48,7 @@ function PullRequestHostVideo({
     url: fetchUrl,
     ...(repository ? { repository } : {}),
   };
+  const t = useTranslation(pullRequestUiMessages);
   const assetUrl = useAssetUrlState(environmentId, resource);
   const refreshAssetUrl = useAssetUrlRefresh(environmentId, resource);
   const src =
@@ -54,7 +57,7 @@ function PullRequestHostVideo({
     <MediaVideoPlayer
       src={src === null ? null : src + markdownImageSourceFragment(url)}
       originalUrl={url}
-      label="Pull request video"
+      label={t("Pull request video")}
       className="w-full"
       videoClassName="rounded-lg border border-border/60"
       onRetry={refreshAssetUrl}
@@ -77,6 +80,7 @@ function PullRequestBodySegmentView({
   lineBreaks: boolean;
   onTaskListChange: ((input: { markerOffset: number; checked: boolean }) => void) | undefined;
 }) {
+  const t = useTranslation(pullRequestUiMessages);
   const context = useContext(PullRequestMarkdownContext);
   const repository = context?.repository ?? undefined;
   if (segment.kind === "table") {
@@ -156,7 +160,7 @@ function PullRequestBodySegmentView({
         key={`${segment.id}:${segment.url}`}
         src={segment.url}
         originalUrl={segment.url}
-        label="Pull request video"
+        label={t("Pull request video")}
         className="w-full"
         videoClassName="rounded-lg border border-border/60"
       />
@@ -172,7 +176,9 @@ function PullRequestBodySegmentView({
     >
       <PaperclipIcon aria-hidden className="size-3.5 shrink-0 text-muted-foreground" />
       <span className="min-w-0 flex-1 truncate">
-        Open attachment on {hostMedia?.definition.label ?? new URL(segment.url).hostname}
+        {t("Open attachment on {host}", {
+          host: hostMedia?.definition.label ?? new URL(segment.url).hostname,
+        })}
       </span>
       <ExternalLinkIcon aria-hidden className="size-3 shrink-0 text-muted-foreground" />
     </a>

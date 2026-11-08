@@ -1,6 +1,8 @@
 import type { PullRequestStack } from "@t3tools/contracts";
+import { useLocale } from "~/i18n/useTranslation";
 import { cn } from "~/lib/utils";
 import { resolvePullRequestState } from "./pullRequestPresentation";
+import { translatePullRequestLabel } from "./pullRequestUi.messages";
 
 export function PullRequestStackLayerContent({
   layer,
@@ -9,6 +11,7 @@ export function PullRequestStackLayerContent({
   layer: PullRequestStack["layers"][number];
   compact?: boolean;
 }) {
+  const locale = useLocale();
   const state = resolvePullRequestState({
     state: layer.state,
     isDraft: layer.isDraft ?? false,
@@ -20,7 +23,7 @@ export function PullRequestStackLayerContent({
         <span className="block truncate">{layer.title || layer.headBranch}</span>
         <span className="block truncate text-xs font-normal text-muted-foreground">
           #{layer.number} · {compact ? null : `${layer.headBranch} · `}
-          {state.label}
+          {translatePullRequestLabel(state.label, locale)}
         </span>
       </span>
     </>

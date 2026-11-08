@@ -1,7 +1,9 @@
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
+import { useTranslation } from "~/i18n/useTranslation";
 import { cn } from "~/lib/utils";
 
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
+import { pullRequestUiMessages } from "./pullRequestUi.messages";
 
 export function PullRequestCopyableCode({
   value,
@@ -20,6 +22,7 @@ export function PullRequestCopyableCode({
   readonly tooltipSide?: "top" | "bottom";
   readonly onError?: (error: Error) => void;
 }) {
+  const t = useTranslation(pullRequestUiMessages);
   const { copyToClipboard, isCopied } = useCopyToClipboard({
     target,
     timeout: 1600,
@@ -55,11 +58,11 @@ export function PullRequestCopyableCode({
             isCopied ? "opacity-100" : "opacity-0",
           )}
         >
-          Copied
+          {t("Copied")}
         </span>
       </TooltipTrigger>
       <TooltipPopup variant="code" side={tooltipSide}>
-        {`${isCopied ? "Copied" : copyLabel}: ${value}`}
+        {`${isCopied ? t("Copied") : copyLabel}: ${value}`}
       </TooltipPopup>
     </Tooltip>
   );

@@ -1,6 +1,7 @@
 import { ChevronDownIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { useLocale } from "~/i18n/useTranslation";
 import { cn } from "~/lib/utils";
 import { Button } from "../ui/button";
 import { Menu, MenuPopup, MenuRadioGroup, MenuRadioItem, MenuTrigger } from "../ui/menu";
@@ -9,6 +10,7 @@ import {
   PullRequestFilterOptionIcon,
   type PullRequestFilterOption,
 } from "./PullRequestListFilters";
+import { translatePullRequestLabel } from "./pullRequestUi.messages";
 
 export function PullRequestCompactFilterMenu<Value extends string>({
   label,
@@ -31,13 +33,16 @@ export function PullRequestCompactFilterMenu<Value extends string>({
   onChange: (value: Value) => void;
   className?: string;
 }) {
+  const locale = useLocale();
   const current = options.find((option) => option.value === value) ?? options[0];
+  const currentLabel =
+    current === undefined ? "" : translatePullRequestLabel(current.label, locale);
   if (!current) return null;
   return (
     <Menu>
       <MenuTrigger
-        aria-label={triggerLabel || iconOnly ? `${label}: ${current.label}` : label}
-        title={iconOnly ? `${label}: ${current.label}` : undefined}
+        aria-label={triggerLabel || iconOnly ? `${label}: ${currentLabel}` : label}
+        title={iconOnly ? `${label}: ${currentLabel}` : undefined}
         render={
           outlined ? (
             <Button variant="outline" size={iconOnly ? "icon" : "default"} />
@@ -56,7 +61,7 @@ export function PullRequestCompactFilterMenu<Value extends string>({
           </>
         ) : (
           <>
-            <span className="truncate">{current.label}</span>
+            <span className="truncate">{currentLabel}</span>
             <ChevronDownIcon aria-hidden className="size-3 shrink-0 text-muted-foreground/70" />
           </>
         )}
@@ -73,7 +78,7 @@ export function PullRequestCompactFilterMenu<Value extends string>({
               >
                 <span className="flex min-w-0 items-center gap-2">
                   <PullRequestFilterOptionIcon option={option} />
-                  {option.label}
+                  {translatePullRequestLabel(option.label, locale)}
                 </span>
               </MenuRadioItem>
             );

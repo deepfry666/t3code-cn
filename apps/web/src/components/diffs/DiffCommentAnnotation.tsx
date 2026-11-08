@@ -3,6 +3,7 @@ import { MessageCircle, Trash2 } from "lucide-react";
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import { Button } from "~/components/ui/button";
+import { useTranslation } from "~/i18n/useTranslation";
 import {
   PullRequestMarkdownTextarea,
   type PullRequestCompletionScope,
@@ -15,6 +16,7 @@ import {
 import { textDirection } from "~/textDirection";
 
 import { isCommentSubmitShortcut } from "./commentSubmitShortcut";
+import { diffsUiMessages } from "./diffsUi.messages";
 
 interface DiffCommentSecondaryAction {
   readonly label: string;
@@ -62,6 +64,7 @@ export function DiffCommentAnnotation({
   focusOnMount = true,
   completionScope = null,
 }: DiffCommentAnnotationProps) {
+  const t = useTranslation(diffsUiMessages);
   const [localDraftText, setLocalDraftText] = useState("");
   const displayedText = kind === "draft" && !onTextChange ? localDraftText : text;
   const trimmedText = displayedText.trim();
@@ -96,7 +99,7 @@ export function DiffCommentAnnotation({
             <Button
               variant="ghost-muted"
               size="icon-xs"
-              aria-label="Delete comment"
+              aria-label={t("Delete comment")}
               onClick={onDelete}
             >
               <Trash2 className="size-3" />

@@ -3,6 +3,7 @@ import type { PullRequestAction, PullRequestSummary } from "@t3tools/contracts";
 import { createContext, use, type ReactNode } from "react";
 import type { ChangeRequestTerminology } from "@t3tools/client-runtime/source-control-clients";
 
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { useShortcutModifierState } from "~/shortcutModifierState";
 import { pullRequestEnvironment } from "~/state/pullRequests";
 import { useUiStateStore } from "~/uiStateStore";
@@ -12,6 +13,7 @@ import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 import { resolvePullRequestMergeMethod } from "./pullRequestDetail.logic";
 import { PullRequestGlyph } from "./pullRequestIcons";
 import { pullRequestQuickActions, type EnvironmentPullRequestEntry } from "./pullRequestList.logic";
+import { pullRequestUiMessages, translatePullRequestLabel } from "./pullRequestUi.messages";
 import {
   usePullRequestActionRunner,
   usePullRequestDefaultMergeMethodResolver,
@@ -45,6 +47,8 @@ export function PullRequestSpeedActions<Entry extends PullRequestSpeedActionEntr
   sweeping?: boolean;
   onCloseSweepStart?: (entry: Entry, event: PointerEvent) => void;
 }) {
+  const t = useTranslation(pullRequestUiMessages);
+  const locale = useLocale();
   const canWrite = useAtomValue(
     pullRequestEnvironment.runAction.permissionAtom(entry.environmentId),
   );
@@ -68,7 +72,7 @@ export function PullRequestSpeedActions<Entry extends PullRequestSpeedActionEntr
         (method) => detail.mergeCapabilities[method],
       );
       if (allowed.length === 0)
-        throw new Error("No merge method is available for this repository.");
+        throw new Error(t("No merge method is available for this repository."));
       return resolvePullRequestMergeMethod(
         allowed,
         null,
@@ -84,10 +88,13 @@ export function PullRequestSpeedActions<Entry extends PullRequestSpeedActionEntr
     <SpeedModeGroup
       busy={busy}
       pending={actionPending || closing}
-      label={`Quick actions for ${terminology.singular} #${entry.number}`}
+      label={t("Quick actions for {kind} #{number}", {
+        kind: translatePullRequestLabel(terminology.singular, locale),
+        number: entry.number,
+      })}
     >
       {actions.map((action) => {
-        const label = ACTIONS[action].label;
+        const label = translatePullRequestLabel(ACTIONS[action].label, locale);
         const Icon = ACTIONS[action].Icon;
         return (
           <Tooltip key={action}>
@@ -97,7 +104,7 @@ export function PullRequestSpeedActions<Entry extends PullRequestSpeedActionEntr
                   variant={action === "close" ? "destructive-outline" : "outline"}
                   size="xs"
                   disabled={!canWrite || busy || (action === "merge" && entry.stack !== undefined)}
-                  aria-label={`${label} #${entry.number}`}
+                  aria-label={t("{label} #{number}", { label, number: entry.number })}
                   onClick={() => void perform(action)}
                   onPointerDown={(event) => {
                     if (action !== "close" || !event.isPrimary || event.button !== 0) return;
@@ -112,10 +119,12 @@ export function PullRequestSpeedActions<Entry extends PullRequestSpeedActionEntr
             </TooltipTrigger>
             <TooltipPopup>
               {action === "merge" && entry.stack
-                ? `Open this ${terminology.singular} to merge its stack`
+                ? t("Open this {kind} to merge its stack", {
+                    kind: translatePullRequestLabel(terminology.singular, locale),
+                  })
                 : action === "close" && onCloseSweepStart
-                  ? "Close immediately, or drag across rows to close several"
-                  : `${label} immediately`}
+                  ? t("Close immediately, or drag across rows to close several")
+                  : t("{label} immediately", { label })}
             </TooltipPopup>
           </Tooltip>
         );

@@ -4,6 +4,7 @@ import type { EnvironmentId, PullRequestDetailView, PullRequestRef } from "@t3to
 import { SendIcon } from "lucide-react";
 import { useEffect, useState, type RefObject } from "react";
 
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { TextFieldSpeechControls, useTextFieldSpeech } from "~/speech/useTextFieldSpeech";
 import { pullRequestEnvironment } from "~/state/pullRequests";
 
@@ -15,6 +16,7 @@ import {
   pullRequestCompletionScope,
 } from "./PullRequestMarkdownTextarea";
 import { pullRequestReviewKey } from "./pullRequestReviewStore";
+import { pullRequestUiMessages, translatePullRequestLabel } from "./pullRequestUi.messages";
 import { useInlineActionConfirm } from "./useInlineActionConfirm";
 
 export function PullRequestCommentForm({
@@ -42,6 +44,8 @@ export function PullRequestCommentForm({
   onCommented: () => void;
   onClose: () => void;
 }) {
+  const t = useTranslation(pullRequestUiMessages);
+  const locale = useLocale();
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState<"comment" | "close" | "reopen" | null>(null);
   const locked = submitting !== null || actionPending;
@@ -96,7 +100,7 @@ export function PullRequestCommentForm({
     });
     if (result._tag === "Failure") {
       setSubmitting(null);
-      toastManager.add({ type: "error", title: "Could not post the comment" });
+      toastManager.add({ type: "error", title: t("Could not post the comment") });
       return;
     }
     setBody("");
@@ -119,8 +123,13 @@ export function PullRequestCommentForm({
         readOnly={speech.freezesEditor}
         value={body}
         rows={3}
-        placeholder="Leave a comment"
-        aria-label={`Comment on this ${sourceControlClients.get(detail.provider).changeRequest.singular}`}
+        placeholder={t("Leave a comment")}
+        aria-label={t("Comment on this {kind}", {
+          kind: translatePullRequestLabel(
+            sourceControlClients.get(detail.provider).changeRequest.singular,
+            locale,
+          ),
+        })}
         onValueChange={setBody}
         onKeyDown={(event) => {
           if (event.nativeEvent.isComposing || event.keyCode === 229) return;
@@ -158,20 +167,20 @@ export function PullRequestCommentForm({
               // The longest label holds the width, so the confirming click lands on the button.
               <span className="inline-grid">
                 <span aria-hidden className="invisible col-start-1 row-start-1">
-                  Close with comment
+                  {t("Close with comment")}
                 </span>
                 <span className="col-start-1 row-start-1">
                   {submitting === "close"
-                    ? "Closing..."
+                    ? t("Closing...")
                     : inlineConfirm.isArmed("close")
-                      ? "Confirm close?"
-                      : "Close with comment"}
+                      ? t("Confirm close?")
+                      : t("Close with comment")}
                 </span>
               </span>
             ) : submitting === "reopen" ? (
-              "Reopening..."
+              t("Reopening...")
             ) : (
-              "Reopen with comment"
+              t("Reopen with comment")
             )}
           </Button>
         )}
@@ -182,7 +191,7 @@ export function PullRequestCommentForm({
           onClick={() => submitAfterDictation("comment")}
         >
           <SendIcon className="size-3.5" />
-          {submitting === "comment" ? "Posting..." : "Comment"}
+          {submitting === "comment" ? t("Posting...") : t("Comment")}
         </Button>
       </div>
     </div>

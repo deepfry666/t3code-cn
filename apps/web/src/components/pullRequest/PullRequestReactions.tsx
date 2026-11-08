@@ -8,6 +8,7 @@ import type {
 import { SmilePlusIcon } from "lucide-react";
 import { useState } from "react";
 
+import { useTranslation } from "~/i18n/useTranslation";
 import { cn } from "~/lib/utils";
 import { pullRequestEnvironment } from "~/state/pullRequests";
 
@@ -22,6 +23,8 @@ import {
   pullRequestReactionTooltip,
   pullRequestReactionsSignature,
 } from "@t3tools/client-runtime/pull-request-reactions";
+
+import { pullRequestUiMessages } from "./pullRequestUi.messages";
 
 const PILL_CLASS =
   "inline-flex h-6 shrink-0 items-center gap-1 rounded-full border px-2 text-xs outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring";
@@ -46,6 +49,7 @@ export function PullRequestReactionBar({
   readonly onRefresh: () => void;
   readonly className?: string | undefined;
 }) {
+  const t = useTranslation(pullRequestUiMessages);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pending, setPending] = useState<{
     readonly signature: string;
@@ -76,7 +80,7 @@ export function PullRequestReactionBar({
         next.delete(content);
         return { signature: current.signature, values: next };
       });
-      toastManager.add({ type: "error", title: "The reaction could not be saved" });
+      toastManager.add({ type: "error", title: t("The reaction could not be saved") });
       return;
     }
     onRefresh();

@@ -2,6 +2,7 @@ import type { EnvironmentId, PullRequestAction } from "@t3tools/contracts";
 import { EyeIcon, LayersIcon, PenLineIcon, UsersIcon, type LucideIcon } from "lucide-react";
 import { useDeferredValue, type RefCallback } from "react";
 
+import { useLocale } from "~/i18n/useTranslation";
 import { cn } from "~/lib/utils";
 import { Separator } from "../ui/separator";
 import {
@@ -11,6 +12,7 @@ import {
   type PullRequestGroup,
 } from "./pullRequestList.logic";
 import { PullRequestRow, type PullRequestRowTarget } from "./PullRequestRow";
+import { translatePullRequestLabel } from "./pullRequestUi.messages";
 import {
   PullRequestSpeedModeProvider,
   type PullRequestSpeedActionResult,
@@ -43,11 +45,12 @@ function PullRequestGroupHeader({
   group: { key: string; label: string };
   count: number;
 }) {
+  const locale = useLocale();
   const Icon = GROUP_ICONS[group.key] ?? LayersIcon;
   return (
     <div className="flex items-center gap-2 px-3 pb-1 text-xs font-medium text-muted-foreground/70">
       <Icon aria-hidden className="size-3.5 shrink-0" />
-      <h2 className="shrink-0">{group.label}</h2>
+      <h2 className="shrink-0">{translatePullRequestLabel(group.label, locale)}</h2>
       <span className="shrink-0 tabular-nums text-muted-foreground/50">{count}</span>
       <Separator className="min-w-2 flex-1" />
     </div>

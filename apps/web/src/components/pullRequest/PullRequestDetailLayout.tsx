@@ -1,10 +1,12 @@
 import { ArrowLeftIcon, FileDiffIcon } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { cn } from "~/lib/utils";
 
 import { Toggle, ToggleGroup } from "../ui/toggle-group";
 import { PullRequestMetaLine } from "./pullRequestPresentation";
+import { pullRequestUiMessages, translatePullRequestLabel } from "./pullRequestUi.messages";
 
 export function PullRequestDetailHeaderBody({
   title,
@@ -25,6 +27,7 @@ export function PullRequestDetailHeaderBody({
   files: ReactNode;
   diffStat: ReactNode;
 }) {
+  const t = useTranslation(pullRequestUiMessages);
   return (
     <div className="col-span-2 mt-1 min-w-0 px-4 pb-4">
       {title}
@@ -39,7 +42,7 @@ export function PullRequestDetailHeaderBody({
         <span className="flex min-w-0 flex-1 items-center gap-1.5 font-mono text-xs text-muted-foreground/70">
           {base}
           <ArrowLeftIcon
-            aria-label="receives changes from"
+            aria-label={t("receives changes from")}
             className="size-3.5 shrink-0 opacity-60"
           />
           {head}
@@ -77,10 +80,12 @@ export function PullRequestDetailTabBar<Tab extends string>({
   inert?: boolean;
   children?: ReactNode;
 }) {
+  const t = useTranslation(pullRequestUiMessages);
+  const locale = useLocale();
   return (
     <nav
       className="col-span-2 flex min-w-0 flex-wrap items-center gap-2 border-t border-border/60 px-4 py-2"
-      aria-label="Pull request tabs"
+      aria-label={t("Pull request tabs")}
       inert={inert}
     >
       <ToggleGroup
@@ -100,7 +105,7 @@ export function PullRequestDetailTabBar<Tab extends string>({
             onPointerEnter={onTabIntent ? () => onTabIntent(tab.value) : undefined}
             onFocus={onTabIntent ? () => onTabIntent(tab.value) : undefined}
           >
-            {tab.label}
+            {translatePullRequestLabel(tab.label, locale)}
           </Toggle>
         ))}
       </ToggleGroup>

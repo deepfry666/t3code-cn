@@ -4,6 +4,7 @@ import { CircleAlertIcon, CircleCheckIcon } from "lucide-react";
 import { AsyncResult, type AtomRegistry } from "effect/reactivity";
 
 import { getClientSettings } from "~/hooks/useSettings";
+import { translateNow } from "~/i18n/useTranslation";
 import { observedPullRequestTitle, pullRequestEnvironment } from "~/state/pullRequests";
 import {
   hasDesktopNotifications,
@@ -13,6 +14,7 @@ import {
 
 import { toastManager } from "../../ui/toast";
 import { readPullRequestListPreferences } from "../pullRequestListPreferences";
+import { pullRequestUiMessages } from "../pullRequestUi.messages";
 import { useGuideRunStore, type GuideRunWatch } from "./guideRunStore";
 
 const RUN_POLL_MS = 5_000;
@@ -89,7 +91,10 @@ function watchGuideRun(
     const looking = document.visibilityState === "visible" && document.hasFocus();
     if (looking && isGuideShown(runKey)) return;
 
-    const title = failure === null ? "Review guide ready" : "Review guide failed";
+    const title =
+      failure === null
+        ? translateNow(pullRequestUiMessages, "Review guide ready")
+        : translateNow(pullRequestUiMessages, "Review guide failed");
     const body =
       watch.title ??
       observedPullRequestTitle(registry, watch.environmentId, watch.reference) ??
@@ -129,7 +134,7 @@ function watchGuideRun(
             ),
         },
         actionProps: {
-          children: "Open guide",
+          children: translateNow(pullRequestUiMessages, "Open guide"),
           onClick: () => {
             toastManager.close(toastId);
             open();

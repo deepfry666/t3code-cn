@@ -1,4 +1,7 @@
+import { useTranslation } from "~/i18n/useTranslation";
+
 import { MenuGroupLabel } from "../ui/menu";
+import { pullRequestUiMessages } from "./pullRequestUi.messages";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 
 export function PullRequestStackHeader({
@@ -10,14 +13,15 @@ export function PullRequestStackHeader({
   notice?: string | null | undefined;
   stale?: boolean;
 }) {
+  const t = useTranslation(pullRequestUiMessages);
   return (
     <MenuGroupLabel>
       <div className="flex items-center justify-between gap-2">
-        <span>Stack #{number}</span>
+        <span>{t("Stack #{number}", { number })}</span>
         {notice ? (
           <Tooltip>
             <TooltipTrigger render={<span role="status" className="text-xs font-normal" />}>
-              {stale ? "May be stale" : "Refreshing…"}
+              {stale ? t("May be stale") : t("Refreshing…")}
             </TooltipTrigger>
             <TooltipPopup>{notice}</TooltipPopup>
           </Tooltip>

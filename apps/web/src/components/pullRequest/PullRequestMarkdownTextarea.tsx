@@ -19,6 +19,7 @@ import { CircleCheckIcon, CircleDotIcon } from "lucide-react";
 import { useId, useState, type Ref } from "react";
 import { flushSync } from "react-dom";
 
+import { useLocale } from "~/i18n/useTranslation";
 import { cn } from "~/lib/utils";
 import { usePullRequestFilterOptions } from "~/state/pullRequests";
 import { useDebouncedValue } from "~/state/queries";
@@ -26,6 +27,7 @@ import { useDebouncedValue } from "~/state/queries";
 import { Popover, PopoverPopup } from "../ui/popover";
 import { Textarea, type TextareaProps } from "../ui/textarea";
 import { PULL_REQUEST_STATE_PRESENTATION } from "./pullRequestIcons";
+import { translatePullRequestLabel } from "./pullRequestUi.messages";
 import { PullRequestActorAvatar, resolvePullRequestState } from "./pullRequestPresentation";
 
 /** The repository whose users `@` completes and whose issues and change requests `#` does. */
@@ -95,6 +97,7 @@ function useCompletions(
 }
 
 function ReferenceStateIcon({ candidate }: { candidate: PullRequestReferenceCandidate }) {
+  const locale = useLocale();
   const presentation =
     candidate.kind === "change-request"
       ? resolvePullRequestState({ state: candidate.state, isDraft: false })
@@ -112,7 +115,7 @@ function ReferenceStateIcon({ candidate }: { candidate: PullRequestReferenceCand
   return (
     <presentation.Icon
       role="img"
-      aria-label={presentation.label}
+      aria-label={translatePullRequestLabel(presentation.label, locale)}
       className={cn("size-4 shrink-0", presentation.toneClassName)}
     />
   );
@@ -177,6 +180,7 @@ export function PullRequestMarkdownTextarea({
   readonly onValueChange: (value: string) => void;
   readonly completionScope: PullRequestCompletionScope | null;
 }) {
+  const locale = useLocale();
   const listId = useId();
   const [element, setElement] = useState<HTMLTextAreaElement | null>(null);
   const [caret, setCaret] = useState<number | null>(null);
@@ -299,7 +303,10 @@ export function PullRequestMarkdownTextarea({
             <div
               id={listId}
               role="listbox"
-              aria-label={EMPTY_STATE[trigger?.kind ?? "mention"].label}
+              aria-label={translatePullRequestLabel(
+                EMPTY_STATE[trigger?.kind ?? "mention"].label,
+                locale,
+              )}
               className="-mx-1.5"
             >
               {candidates.map((completion, index) => (
@@ -325,11 +332,12 @@ export function PullRequestMarkdownTextarea({
             </div>
           ) : (
             <p className="px-1 text-xs text-muted-foreground">
-              {
+              {translatePullRequestLabel(
                 EMPTY_STATE[trigger?.kind ?? "mention"][
                   isPending ? "pending" : failed ? "failed" : "none"
-                ]
-              }
+                ],
+                locale,
+              )}
             </p>
           )}
         </PopoverPopup>

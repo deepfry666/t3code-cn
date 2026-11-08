@@ -10,6 +10,7 @@ import { ArrowUpRightIcon } from "lucide-react";
 import { useState } from "react";
 
 import { useRenderedAppearance } from "~/hooks/useTheme";
+import { translateNow, useTranslation } from "~/i18n/useTranslation";
 import {
   getRenderablePatch,
   resolveDiffThemeName,
@@ -38,6 +39,7 @@ import {
   rowsToPatch,
 } from "@t3tools/client-runtime/review-guide-tour";
 import type { PullRequestCompletionScope } from "../PullRequestMarkdownTextarea";
+import { pullRequestUiMessages } from "../pullRequestUi.messages";
 import { GuideNoteMarker } from "./GuideNotes";
 import { GuideProse } from "./GuideProse";
 
@@ -142,6 +144,7 @@ export function GuideExcerpt({
   loadDiffFiles: FileDiffContentsLoader;
   onOpenFile: (path: string) => void;
 }) {
+  const t = useTranslation(pullRequestUiMessages);
   // Keep selections outside ExcerptDiff to survive head reloads.
   const [draft, setDraft] = useState<ExcerptDraft | null>(null);
   const slice = excerptSlice(file, excerpt);
@@ -167,16 +170,19 @@ export function GuideExcerpt({
         />
       ) : loading ? (
         <p className="rounded-lg border border-border/60 px-3 py-2 text-xs text-muted-foreground">
-          Loading {excerpt.path}...
+          {t("Loading {path}...", { path: excerpt.path })}
         </p>
       ) : (
         <div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 px-3 py-2 text-xs text-muted-foreground">
           <span className="min-w-0 truncate">
-            <span className="font-mono text-foreground">{excerpt.path}</span> lines {excerpt.start}-
-            {excerpt.end} are not in the loaded diff.
+            {t("{path} lines {start}-{end} are not in the loaded diff.", {
+              path: excerpt.path,
+              start: excerpt.start,
+              end: excerpt.end,
+            })}
           </span>
           <Button size="xs" variant="outline" onClick={() => onOpenFile(excerpt.path)}>
-            Open in Code
+            {t("Open in Code")}
           </Button>
         </div>
       )}
@@ -205,6 +211,7 @@ function ExcerptDiff({
   commenting: ExcerptCommenting | null;
   onOpenFile: (path: string) => void;
 }) {
+  const t = useTranslation(pullRequestUiMessages);
   const resolvedTheme = useRenderedAppearance();
   const loadExcerptFiles = excerptLoader(excerpt, slice.rows, loadDiffFiles);
 
@@ -267,7 +274,7 @@ function ExcerptDiff({
     const comment = buildDiffReviewComment({
       id: `pull-request-guide:${excerpt.path}:${draft.range.start}:${draft.range.end}`,
       sectionId: `pull-request-guide:${excerpt.path}`,
-      sectionTitle: "Review guide",
+      sectionTitle: translateNow(pullRequestUiMessages, "Review guide"),
       filePath: excerpt.path,
       fileDiff: file,
       range: draft.range,
@@ -329,11 +336,11 @@ function ExcerptDiff({
                 placeholder={
                   commenting.canComment ? "Add a comment…" : "Ask the agent about these lines…"
                 }
-                submitLabel={commenting.canComment ? "Add to review" : "Ask agent"}
+                submitLabel={commenting.canComment ? t("Add to review") : t("Ask agent")}
                 {...(commenting.canComment && onAskAgent !== null
                   ? {
                       secondaryAction: {
-                        label: "Ask agent",
+                        label: t("Ask agent"),
                         onAction: (text: string) => askAgent(text),
                       },
                     }
