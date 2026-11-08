@@ -63,6 +63,7 @@ import { isElectron } from "~/env";
 import type { DesktopPreviewOverlay } from "~/previewStateStore";
 import type { RightPanelSurface } from "~/rightPanelStore";
 import { translateNow, useLocale, useTranslation } from "~/i18n/useTranslation";
+import { translate, type Locale } from "~/i18n/locale";
 import { cn } from "~/lib/utils";
 import { rightPanelTabsUiMessages, translateRightPanelLabel } from "./rightPanelTabsUi.messages";
 import { resolveShortcutCommand, type ShortcutMatchContext } from "~/keybindings";
@@ -578,16 +579,20 @@ function RightPanelEmptyState(props: {
   );
 }
 
-function surfaceTitle(
+/** Only the tab kinds the app names itself are translated; page, device and file names are not. */
+export function surfaceTitle(
   surface: RightPanelSurface,
   sessions: Readonly<Record<string, PreviewSessionSnapshot>>,
   terminalLabelsById: ReadonlyMap<string, string>,
+  locale: Locale,
 ): string {
+  const t = (key: Extract<keyof typeof rightPanelTabsUiMessages, string>) =>
+    translate(locale, rightPanelTabsUiMessages, key);
   switch (surface.kind) {
     case "diff":
-      return "Diff";
+      return t("Diff");
     case "files":
-      return "Files";
+      return t("Files");
     case "file":
       return surface.relativePath.slice(
         Math.max(surface.relativePath.lastIndexOf("/"), surface.relativePath.lastIndexOf("\\")) + 1,
@@ -600,19 +605,19 @@ function surfaceTitle(
     case "pull-request":
       return `#${surface.number}`;
     case "pull-requests":
-      return "Pull requests";
+      return t("Pull requests");
     case "device":
-      return surface.title ?? surface.target?.name ?? "Device";
+      return surface.title ?? surface.target?.name ?? t("Device");
     case "side-chat":
-      return "Side chat";
+      return t("Side chat");
     case "preview": {
       const snapshot = surface.resourceId ? sessions[surface.resourceId] : null;
-      if (!snapshot || snapshot.navStatus._tag === "Idle") return "Browser";
+      if (!snapshot || snapshot.navStatus._tag === "Idle") return t("Browser");
       if (snapshot.navStatus.title.trim().length > 0) return snapshot.navStatus.title;
       try {
-        return new URL(snapshot.navStatus.url).host || "Browser";
+        return new URL(snapshot.navStatus.url).host || t("Browser");
       } catch {
-        return "Browser";
+        return t("Browser");
       }
     }
   }
@@ -868,6 +873,46 @@ interface RightPanelTabHandlers {
   onContextMenu: (event: ReactMouseEvent, surface: RightPanelSurface) => void;
   onStartRename: (surfaceId: string) => void;
   onFinishRename: (surfaceId: string, title: string) => void;
+  onCancelRename: () => void;
+}
+
+/**
+ * The device tab's name field. Escape drops the edit instead of saving it, and the field
+ * starts from the name the user set (or the device's own), never from a translated label.
+ */
+export function DeviceTabRenameInput(props: {
+  surface: Extract<RightPanelSurface, { kind: "device" }>;
+  onFinishRename: (surfaceId: string, title: string) => void;
+  onCancelRename: () => void;
+}) {
+  const t = useTranslation(rightPanelTabsUiMessages);
+  const cancelledRef = useRef(false);
+  const name = props.surface.title ?? props.surface.target?.name ?? "";
+  return (
+    <input
+      aria-label={t("Device tab name")}
+      className="w-24 min-w-0 rounded-sm bg-background px-1 outline-none ring-1 ring-inset ring-ring"
+      defaultValue={name}
+      ref={(element) => {
+        if (!element) return;
+        cancelledRef.current = false;
+        element.focus();
+        element.select();
+      }}
+      onBlur={(event) => {
+        if (cancelledRef.current) return;
+        props.onFinishRename(props.surface.id, event.currentTarget.value);
+      }}
+      onKeyDown={(event) => {
+        event.stopPropagation();
+        if (event.key === "Enter") event.currentTarget.blur();
+        if (event.key === "Escape") {
+          cancelledRef.current = true;
+          props.onCancelRename();
+        }
+      }}
+    />
+  );
 }
 
 // Chromium on Linux only suppresses primary-selection paste when mouseup is cancelled.
@@ -907,6 +952,7 @@ function RightPanelTab(
     onContextMenu,
     onStartRename,
     onFinishRename,
+    onCancelRename,
   } = props;
   const { listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: surface.id,
@@ -961,24 +1007,11 @@ function RightPanelTab(
           <TooltipPopup>{audio === "muted" ? t("Unmute tab") : t("Mute tab")}</TooltipPopup>
         </Tooltip>
       )}
-      {props.renaming ? (
-        <input
-          aria-label={t("Device tab name")}
-          className="w-24 min-w-0 rounded-sm bg-background px-1 outline-none ring-1 ring-inset ring-ring"
-          defaultValue={title}
-          ref={(element) => {
-            element?.focus();
-            element?.select();
-          }}
-          onBlur={(event) => onFinishRename(surface.id, event.currentTarget.value)}
-          onKeyDown={(event) => {
-            event.stopPropagation();
-            if (event.key === "Enter") event.currentTarget.blur();
-            if (event.key === "Escape") {
-              event.currentTarget.value = title;
-              event.currentTarget.blur();
-            }
-          }}
+      {props.renaming && surface.kind === "device" ? (
+        <DeviceTabRenameInput
+          surface={surface}
+          onFinishRename={onFinishRename}
+          onCancelRename={onCancelRename}
         />
       ) : (
         <Tooltip>
@@ -1295,6 +1328,7 @@ export function RightPanelTabs(props: RightPanelTabsProps) {
     props.onRenameDevice?.(surfaceId, title);
     setRenamingDevice(null);
   });
+  const onCancelRenameTab = useStableCallback(() => setRenamingDevice(null));
 
   // A newly active tab, or tabs that start overflowing, can sit outside the scrolled strip.
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- scrolls the active tab DOM node into view after it changes or the tab strip starts overflowing
@@ -1345,7 +1379,7 @@ export function RightPanelTabs(props: RightPanelTabsProps) {
       workspaceLabel={
         focusedSurface
           ? translateRightPanelLabel(
-              `Workspace panel: ${surfaceTitle(focusedSurface, props.previewSessions, props.terminalLabelsById)}`,
+              `Workspace panel: ${surfaceTitle(focusedSurface, props.previewSessions, props.terminalLabelsById, locale)}`,
               locale,
             )
           : t("Workspace panel")
@@ -1391,8 +1425,10 @@ export function RightPanelTabs(props: RightPanelTabsProps) {
                     dragDisabled={!props.onMoveSurface || renamingDevice === surface.id}
                     active={surface.id === props.activeSurfaceId}
                     pending={props.pendingSurfaceIds.has(surface.id)}
-                    title={translateRightPanelLabel(
-                      surfaceTitle(surface, props.previewSessions, props.terminalLabelsById),
+                    title={surfaceTitle(
+                      surface,
+                      props.previewSessions,
+                      props.terminalLabelsById,
                       locale,
                     )}
                     audio={tabAudioState(
@@ -1415,6 +1451,7 @@ export function RightPanelTabs(props: RightPanelTabsProps) {
                     onContextMenu={onTabContextMenu}
                     onStartRename={onStartRenameTab}
                     onFinishRename={onFinishRenameTab}
+                    onCancelRename={onCancelRenameTab}
                   />
                 );
               })}
@@ -1586,6 +1623,7 @@ function DeviceTabTooltip(props: {
   environmentId: EnvironmentId | null;
   title: string;
 }) {
+  const t = useTranslation(rightPanelTabsUiMessages);
   const target = props.surface.target;
   const { state } = useDeviceState(target ? props.environmentId : null);
   const device = target
@@ -1597,7 +1635,7 @@ function DeviceTabTooltip(props: {
       <span>{props.title}</span>
       {target ? (
         <span className="text-muted-foreground">
-          {host?.label ?? "Device host"} ·{" "}
+          {host?.label ?? t("Device host")} ·{" "}
           {device?.version ?? (target.platform === "ios" ? "iOS" : "Android")}
         </span>
       ) : null}

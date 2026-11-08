@@ -1,10 +1,17 @@
-import { EnvironmentId, type ThreadPullRequestLink } from "@t3tools/contracts";
+import {
+  EnvironmentId,
+  type PreviewSessionSnapshot,
+  ThreadId,
+  type ThreadPullRequestLink,
+} from "@t3tools/contracts";
 import { describe, expect, it } from "vite-plus/test";
 
+import type { RightPanelSurface } from "../rightPanelStore";
 import {
   resolvePullRequestTabLink,
   surfaceShortcutActionForKey,
   surfaceShortcutTargetsTypingContext,
+  surfaceTitle,
 } from "./RightPanelTabs";
 
 function shortcutEvent(
@@ -165,5 +172,109 @@ describe("pull request tab snapshots", () => {
         link,
       ),
     ).toBe(newer);
+  });
+});
+
+const deviceSurface = (input: { readonly title?: string; readonly name?: string }) =>
+  ({
+    id: "device",
+    kind: "device",
+    ...(input.title === undefined ? {} : { title: input.title }),
+    ...(input.name === undefined
+      ? {}
+      : { target: { hostId: "host", deviceId: "phone", platform: "ios", name: input.name } }),
+  }) satisfies RightPanelSurface;
+
+const pageSnapshot = (title: string): PreviewSessionSnapshot => ({
+  threadId: ThreadId.make("thread-a"),
+  tabId: "browser-a",
+  navStatus: { _tag: "Success", url: "https://example.test/page", title },
+  canGoBack: false,
+  canGoForward: false,
+  updatedAt: "2026-02-01T00:00:00Z",
+});
+
+describe("surface titles", () => {
+  it("translates the labels the app gives a tab", () => {
+    expect(surfaceTitle({ id: "diff", kind: "diff" }, {}, new Map(), "zh-CN")).toBe("差异");
+    expect(surfaceTitle({ id: "files", kind: "files" }, {}, new Map(), "zh-CN")).toBe("文件");
+    expect(
+      surfaceTitle({ id: "pull-requests", kind: "pull-requests" }, {}, new Map(), "zh-CN"),
+    ).toBe("拉取请求");
+    expect(
+      surfaceTitle(
+        { id: "side-chat:thread-a", kind: "side-chat", threadId: ThreadId.make("thread-a") },
+        {},
+        new Map(),
+        "zh-CN",
+      ),
+    ).toBe("侧聊");
+    expect(surfaceTitle(deviceSurface({}), {}, new Map(), "zh-CN")).toBe("设备");
+    expect(
+      surfaceTitle(
+        { id: "browser:new", kind: "preview", resourceId: null },
+        {},
+        new Map(),
+        "zh-CN",
+      ),
+    ).toBe("浏览器");
+  });
+
+  it("leaves device, page, file and terminal names as written", () => {
+    // A device the user named "Settings" is their name, not the Settings command.
+    expect(surfaceTitle(deviceSurface({ name: "Settings" }), {}, new Map(), "zh-CN")).toBe(
+      "Settings",
+    );
+    expect(surfaceTitle(deviceSurface({ title: "项目" }), {}, new Map(), "zh-CN")).toBe("项目");
+    // A page titled "Files" is the page's own title.
+    expect(
+      surfaceTitle(
+        { id: "browser:a", kind: "preview", resourceId: "a" },
+        { a: pageSnapshot("Files") },
+        new Map(),
+        "zh-CN",
+      ),
+    ).toBe("Files");
+    expect(
+      surfaceTitle(
+        { id: "browser:a", kind: "preview", resourceId: "a" },
+        { a: pageSnapshot("") },
+        new Map(),
+        "zh-CN",
+      ),
+    ).toBe("example.test");
+    expect(
+      surfaceTitle(
+        {
+          id: "file:settings",
+          kind: "file",
+          relativePath: "src/Settings.ts",
+          revealLine: null,
+          revealRequestId: 0,
+        },
+        {},
+        new Map(),
+        "zh-CN",
+      ),
+    ).toBe("Settings.ts");
+    expect(
+      surfaceTitle(
+        {
+          id: "terminal:a",
+          kind: "terminal",
+          resourceId: "a",
+          terminalIds: ["t1"],
+          activeTerminalId: "t1",
+        },
+        {},
+        new Map([["t1", "项目"]]),
+        "zh-CN",
+      ),
+    ).toBe("项目");
+  });
+
+  it("keeps English titles unchanged", () => {
+    expect(surfaceTitle({ id: "diff", kind: "diff" }, {}, new Map(), "en")).toBe("Diff");
+    expect(surfaceTitle(deviceSurface({}), {}, new Map(), "en")).toBe("Device");
   });
 });

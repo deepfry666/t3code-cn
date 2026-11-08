@@ -6,7 +6,7 @@ import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { cn } from "~/lib/utils";
 import {
   commandPaletteUiMessages,
-  translateCommandPaletteLabel,
+  translateCommandPaletteFixedLabel,
 } from "./commandPaletteUi.messages";
 import { textDirection } from "~/textDirection";
 import { shortcutLabelForCommand } from "../keybindings";
@@ -63,7 +63,7 @@ export function CommandPaletteResults(props: CommandPaletteResultsProps) {
         <CommandGroup items={group.items} key={group.value}>
           {group.label ? (
             <CommandGroupLabel>
-              {translateCommandPaletteLabel(group.label, locale)}
+              {translateCommandPaletteFixedLabel(group.label, locale)}
             </CommandGroupLabel>
           ) : null}
           <CommandCollection>
@@ -134,7 +134,7 @@ export function CommandPaletteVirtualizedResults(props: CommandPaletteVirtualize
           row.kind === "label" ? (
             <div className={row.first ? undefined : "pt-1.5"}>
               <CommandListHeading>
-                {translateCommandPaletteLabel(row.label, locale)}
+                {translateCommandPaletteFixedLabel(row.label, locale)}
               </CommandListHeading>
             </div>
           ) : row.itemIndex === null ? (
@@ -172,11 +172,10 @@ function CommandPaletteTitle({
 }: {
   item: Pick<CommandPaletteActionItem | CommandPaletteSubmenuItem, "title">;
 }) {
-  const locale = useLocale();
   const { title } = item;
   return (
     <span className="truncate" dir={typeof title === "string" ? textDirection(title) : undefined}>
-      {typeof title === "string" ? translateCommandPaletteLabel(title, locale) : title}
+      {title}
     </span>
   );
 }
@@ -205,7 +204,6 @@ function ThreadRowContext({
 function DisabledCommandPaletteResultRow(props: {
   item: CommandPaletteActionItem | CommandPaletteSubmenuItem;
 }) {
-  const locale = useLocale();
   return (
     <div className="flex min-h-8 select-none items-center gap-2 rounded-sm px-2 py-1.5 text-base opacity-64 sm:min-h-7 sm:text-sm">
       <CommandPaletteTitleIcon>{props.item.icon}</CommandPaletteTitleIcon>
@@ -222,9 +220,7 @@ function DisabledCommandPaletteResultRow(props: {
             <SearchMatchHintLine hint={props.item.matchHint} />
           ) : props.item.description ? (
             <span className="min-w-0 text-muted-foreground/70 text-xs">
-              {typeof props.item.description === "string"
-                ? translateCommandPaletteLabel(props.item.description, locale)
-                : props.item.description}
+              {props.item.description}
             </span>
           ) : null}
         </span>
@@ -246,7 +242,6 @@ function CommandPaletteResultRow(props: {
   keybindings: ResolvedKeybindingsConfig;
   onExecuteItem: (item: CommandPaletteActionItem | CommandPaletteSubmenuItem) => void;
 }) {
-  const locale = useLocale();
   const shortcutLabel = props.item.shortcutCommand
     ? shortcutLabelForCommand(props.keybindings, props.item.shortcutCommand)
     : null;
@@ -277,9 +272,7 @@ function CommandPaletteResultRow(props: {
             <SearchMatchHintLine hint={props.item.matchHint} />
           ) : props.item.description ? (
             <span className="min-w-0 text-muted-foreground/70 text-xs">
-              {typeof props.item.description === "string"
-                ? translateCommandPaletteLabel(props.item.description, locale)
-                : props.item.description}
+              {props.item.description}
             </span>
           ) : null}
         </span>

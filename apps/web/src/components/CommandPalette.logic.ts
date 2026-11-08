@@ -12,8 +12,6 @@ import {
 import { threadSearchSubject } from "@t3tools/client-runtime/state/thread-search";
 import type { CommandPaletteLinkedThreads } from "../commandPaletteBus";
 import {
-  addProjectRemoteSourceLabel,
-  addProjectRemoteSourcePathHint,
   buildAddProjectRemoteSourceReadiness,
   type AddProjectRemoteSource,
   type AddProjectRemoteSourceReadiness,
@@ -43,13 +41,22 @@ export function buildLinkedThreadActionItems(
     query: string;
     icon: ReactNode;
     runThread: (thread: Pick<SidebarThreadSummary, "environmentId" | "id">) => Promise<void>;
+    /** Fixed copy for these rows; English by default, as the logic tests expect. */
+    labels?: {
+      readonly untitledThread?: string;
+      readonly linkedThread?: string;
+      readonly archivedThread?: string;
+    };
   },
 ): CommandPaletteActionItem[] {
   return input.threads.map((thread) => ({
     kind: "action",
     value: `thread:${input.environmentId}:${thread.id}`,
-    title: thread.title || "Untitled thread",
-    description: thread.archivedAt === null ? "Linked thread" : "Archived thread",
+    title: thread.title || input.labels?.untitledThread || "Untitled thread",
+    description:
+      thread.archivedAt === null
+        ? (input.labels?.linkedThread ?? "Linked thread")
+        : (input.labels?.archivedThread ?? "Archived thread"),
     searchTerms: [input.query, thread.title],
     icon: input.icon,
     run: () => input.runThread({ environmentId: input.environmentId, id: thread.id }),
@@ -189,6 +196,8 @@ export interface CommandPaletteItem {
   readonly title: ReactNode;
   /** The title as plain text, for searching, when `title` is styled. */
   readonly searchTitle?: string;
+  /** The English text behind a translated title, so it stays searchable in every locale. */
+  readonly titleSource?: string;
   readonly description?: ReactNode;
   readonly threadContentMatch?: CommandPaletteThreadContentMatch;
   readonly timestamp?: string;
@@ -353,11 +362,12 @@ export function buildCommandPaletteProjectMetadata(input: {
   readonly locationByEnvironmentId: ReadonlyMap<EnvironmentId, { readonly label: string }>;
 }) {
   const searchTerms: string[] = [];
-  const environmentLabels = new Set<string>();
+  // Null is a location the lookup does not know; the view names it, so it can localize it.
+  const environmentLabels = new Set<string | null>();
 
   for (const project of input.projects) {
-    const label = input.locationByEnvironmentId.get(project.environmentId)?.label ?? "Remote";
-    searchTerms.push(project.title, project.workspaceRoot, label);
+    const label = input.locationByEnvironmentId.get(project.environmentId)?.label ?? null;
+    searchTerms.push(project.title, project.workspaceRoot, label ?? "Remote");
     environmentLabels.add(label);
   }
 
@@ -529,10 +539,12 @@ function scorePaletteItem(
   // The title names the item; search terms are keywords. Ranges index the
   // first term, so they only highlight a title that is that term.
   const name = typeof item.title === "string" ? item.title : item.searchTitle;
+  const source =
+    item.titleSource !== undefined && item.titleSource !== name ? [item.titleSource] : [];
   const terms =
     name !== undefined && name !== item.searchTerms[0]
-      ? [name, ...item.searchTerms]
-      : item.searchTerms;
+      ? [name, ...source, ...item.searchTerms]
+      : [...source, ...item.searchTerms];
   const match = scoreSearchTerms(normalizedQuery, terms, options);
   return match && (item.title === terms[0] ? match : { ...match, ranges: [] });
 }
@@ -669,21 +681,39 @@ export function buildNestedSearchItems(
     typeof item.title === "string" ? item.title : item.searchTitle;
   const topLevelNames = new Set(items.map(nameOf));
   const foldedQuery = foldSearchQuery(query);
+  const prefixOf = (stem: string, rawTitle: string) =>
+    stem === rawTitle ? `${stem}: ` : `${stem.trimEnd()} `;
+  const stemOf = (title: string) => title.replace(/(\.\.\.|…)$/u, "");
   return items.flatMap((parent) => {
     if (parent.kind !== "submenu" || typeof parent.title !== "string") return [];
-    const stem = parent.title.replace(/(\.\.\.|…)$/u, "");
+    const sourceTitle = parent.titleSource ?? parent.title;
+    const stem = stemOf(parent.title);
+    const sourceStem = stemOf(sourceTitle);
     // A query that only names the submenu ("new thread in") wants the submenu row itself.
-    if (foldSearchQuery(stem).startsWith(foldedQuery)) return [];
-    const prefix = stem === parent.title ? `${stem}: ` : `${stem.trimEnd()} `;
+    if (
+      foldSearchQuery(stem).startsWith(foldedQuery) ||
+      foldSearchQuery(sourceStem).startsWith(foldedQuery)
+    ) {
+      return [];
+    }
+    const prefix = prefixOf(stem, parent.title);
+    const sourcePrefix = prefixOf(sourceStem, sourceTitle);
     return parent.groups.flatMap((group) =>
       group.items.flatMap((child) => {
         const name = nameOf(child);
         if (child.kind !== "action" || name === undefined) return [];
         const title = `${prefix}${name}`;
         if (topLevelNames.has(title)) return [];
-        const { searchTitle: _searchTitle, ...rest } = child;
+        const { searchTitle: _searchTitle, titleSource: _titleSource, ...rest } = child;
         // Only the combined title: child keywords like "theme" would list every theme.
-        return [{ ...rest, title, searchTerms: [title] }];
+        return [
+          {
+            ...rest,
+            title,
+            titleSource: `${sourcePrefix}${child.titleSource ?? name}`,
+            searchTerms: [title],
+          },
+        ];
       }),
     );
   });
@@ -778,7 +808,15 @@ export function buildRootGroups(input: {
   return groups;
 }
 
-export function getCommandPaletteInputPlaceholder(mode: CommandPaletteMode): string {
+export type CommandPaletteInputPlaceholder =
+  | "Search commands, projects, and threads..."
+  | "Enter project path (e.g. ~/projects/my-app)"
+  | "Search..."
+  | "Enter path (e.g. ~/projects/my-app)";
+
+export function getCommandPaletteInputPlaceholder(
+  mode: CommandPaletteMode,
+): CommandPaletteInputPlaceholder {
   switch (mode) {
     case "root":
       return "Search commands, projects, and threads...";
@@ -827,15 +865,6 @@ export type AddProjectCloneFlow =
       readonly repository: SourceControlRepositoryInfo | null;
       readonly remoteUrl: string;
     };
-
-export function remoteProjectInputPlaceholder(flow: AddProjectCloneFlow | null): string | null {
-  if (!flow) return null;
-  if (flow.step === "confirm") return null;
-  if (flow.source === "url") {
-    return "Enter Git clone URL";
-  }
-  return `Enter ${addProjectRemoteSourceLabel(flow.source)} repository (${addProjectRemoteSourcePathHint(flow.source)})`;
-}
 
 export function buildPaletteRemoteSourceReadiness(
   discovery: SourceControlDiscoveryResult | null,

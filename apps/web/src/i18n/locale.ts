@@ -9,7 +9,9 @@ export function resolveLocale(saved: string | null, languages: readonly string[]
 // "When@@snooze" lets one English word take a different Chinese meaning per context;
 // everything from "@@" on is dropped from the English text.
 const CONTEXT_SEPARATOR = "@@";
-const sourceText = (key: string) => key.split(CONTEXT_SEPARATOR, 1)[0] ?? key;
+
+/** The English text a catalog key stands for, e.g. to keep it searchable in another locale. */
+export const sourceText = (key: string) => key.split(CONTEXT_SEPARATOR, 1)[0] ?? key;
 
 export function translate<Messages extends Readonly<Record<string, string>>>(
   locale: Locale,

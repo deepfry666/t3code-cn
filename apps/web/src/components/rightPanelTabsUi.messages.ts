@@ -9,6 +9,7 @@ export const rightPanelTabsUiMessages = {
   "Pull requests": "拉取请求",
   "Linked pull requests": "已关联的拉取请求",
   Device: "设备",
+  "Device host": "设备主机",
   "Side chat": "侧聊",
   "Watch an iOS Simulator or Android Emulator.": "观看 iOS 模拟器或 Android 模拟器。",
   "Ask a side question while this thread keeps working.": "在会话继续运行的同时追问一个旁支问题。",
@@ -58,8 +59,6 @@ export const rightPanelTabsUiMessages = {
 } as const;
 
 const WORKSPACE_PANEL = /^Workspace panel: (.+)$/;
-const CLOSE_TITLED = /^Close (.+)$/;
-const TAB_TITLE_STATE = /^(.+), (needs approval|needs input|running)$/;
 
 /** Translate a right panel label that another module built as a plain string. */
 export function translateRightPanelLabel(label: string, locale: Locale): string {
@@ -69,24 +68,10 @@ export function translateRightPanelLabel(label: string, locale: Locale): string 
 
   const panel = WORKSPACE_PANEL.exec(label);
   if (panel) {
+    // The title is already a display name: a fixed label translated by kind, or user data.
     return translate(locale, rightPanelTabsUiMessages, "Workspace panel: {title}", {
-      title: translateRightPanelLabel(panel[1]!, locale),
+      title: panel[1]!,
     });
-  }
-  const state = TAB_TITLE_STATE.exec(label);
-  if (state) {
-    return translate(locale, rightPanelTabsUiMessages, "{title}, {state}", {
-      title: state[1]!,
-      state: translate(
-        locale,
-        rightPanelTabsUiMessages,
-        state[2] as "needs approval" | "needs input" | "running",
-      ),
-    });
-  }
-  const close = CLOSE_TITLED.exec(label);
-  if (close) {
-    return translate(locale, rightPanelTabsUiMessages, "Close {title}", { title: close[1]! });
   }
   return label;
 }

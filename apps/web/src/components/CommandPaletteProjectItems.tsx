@@ -12,6 +12,8 @@ import {
 import { EnvironmentMachineIcon } from "./EnvironmentMachineIcon";
 import { ProjectFavicon } from "./ProjectFavicon";
 import { COMMAND_PALETTE_META_ICON_CLASS, CommandPaletteMetaDot } from "./ThreadCommandSubtitle";
+import { useTranslation } from "~/i18n/useTranslation";
+import { commandPaletteUiMessages } from "./commandPaletteUi.messages";
 
 export interface CommandPaletteProjectLocation {
   readonly kind: "local" | "remote";
@@ -58,7 +60,7 @@ export function buildProjectSearchItems(input: ProjectItemsInput) {
         locationByEnvironmentId: input.locationByEnvironmentId,
       });
       return members.length > 1 ? (
-        <span className="truncate">{metadata.environmentLabels.join(" · ")}</span>
+        <ProjectEnvironmentLabels labels={metadata.environmentLabels} />
       ) : (
         <ProjectLocationDescription
           location={input.locationByEnvironmentId.get(project.environmentId)}
@@ -97,11 +99,22 @@ export function buildNewThreadInProjectItems(input: ProjectItemsInput) {
   });
 }
 
+function ProjectEnvironmentLabels(props: { readonly labels: ReadonlyArray<string | null> }) {
+  const t = useTranslation(commandPaletteUiMessages);
+  return (
+    <span className="truncate">
+      {props.labels.map((label) => label ?? t("Remote")).join(" · ")}
+    </span>
+  );
+}
+
 function ProjectLocationDescription(props: {
   readonly location: CommandPaletteProjectLocation | undefined;
   readonly workspaceRoot: string;
 }) {
-  const location = props.location ?? UNKNOWN_PROJECT_LOCATION;
+  const t = useTranslation(commandPaletteUiMessages);
+  // Only the fallback is the app's own copy; an environment's label is the user's name.
+  const location = props.location ?? { ...UNKNOWN_PROJECT_LOCATION, label: t("Remote") };
   return (
     <span className="flex min-w-0 items-center gap-1">
       <span className="inline-flex min-w-0 items-center gap-1">

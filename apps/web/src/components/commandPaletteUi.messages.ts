@@ -1,4 +1,4 @@
-import { translate, type Locale } from "../i18n/locale";
+import type { Locale } from "../i18n/locale";
 
 export const commandPaletteUiMessages = {
   // Groups, placeholders and empty states
@@ -7,6 +7,9 @@ export const commandPaletteUiMessages = {
   Projects: "项目",
   Settings: "设置",
   "In messages": "消息内容",
+  "ID or link": "ID 或链接",
+  "You:": "你：",
+  "Agent:": "助手：",
   Directories: "目录",
   Actions: "操作",
   "Recent Threads": "最近会话",
@@ -63,6 +66,8 @@ export const commandPaletteUiMessages = {
   "Start a new Git repository from a name": "按名称新建 Git 仓库",
   "Environment unavailable": "环境不可用",
   Environments: "环境",
+  Environment: "环境",
+  Branch: "分支",
   "Connect an environment": "连接环境",
   "No connected environment can add a project": "没有可添加项目的已连接环境",
   "New thread in...": "在以下位置新建会话…",
@@ -93,11 +98,50 @@ export const commandPaletteUiMessages = {
   "Host for the new repository": "新仓库的主机",
   "Select where to clone": "选择克隆位置",
   "New thread in {project}": "在 {project} 中新建会话",
+  "{provider} repository": "{provider} 仓库",
+  "Enter {provider} repository ({hint})": "输入 {provider} 仓库（{hint}）",
+  "The selected environment": "所选环境",
+  "{environment} is not connected.": "{environment} 未连接。",
   "{prefix}: {name}": "{prefix}：{name}",
+  "Copy PR link": "复制 PR 链接",
+  "Copy thread": "复制会话",
+  "Focus Next Workspace Area": "聚焦下一个工作区",
+  "Focus Previous Workspace Area": "聚焦上一个工作区",
+  "Pin project": "固定项目",
+  "Unpin project": "取消固定项目",
+  "Create private repository": "创建私有仓库",
+  "Create private repository on {provider}": "在 {provider} 上创建私有仓库",
+
+  // Descriptions
+  "Clone from a remote URL": "从远程 URL 克隆",
+  "Clone {provider} {hint}": "从 {provider} 克隆 {hint}",
+  "This device": "此设备",
+  "Your {provider} account": "你的 {provider} 账号",
+  "Creates {path}": "创建到 {path}",
+  "Creates {path} on {environment}": "在 {environment} 下创建到 {path}",
+  "Goes in {root}": "位于 {root}",
+  "Goes in {root} on {environment}": "在 {environment} 下位于 {root}",
+
+  // Buttons and empty states
+  Creating: "正在创建",
+  "Create & Add": "创建并添加",
+  "Create & Clone": "创建并克隆",
+  Clone: "克隆",
+  Add: "添加",
+  Lookup: "查询",
+  Working: "处理中",
+  Cloning: "正在克隆",
+  "Enter a Git clone URL and press Enter to continue.": "输入 Git 克隆 URL 后按 Enter 继续。",
+  "Enter a repository path and press Enter to look it up.": "输入仓库路径后按 Enter 查询。",
+  "Choose a destination path and press Enter to clone.": "选择目标路径后按 Enter 克隆。",
+  "Press Enter to create this folder and add it as a project.":
+    "按 Enter 创建此文件夹并添加为项目。",
+  "Searching thread messages…": "正在搜索会话消息…",
 
   // Theme and appearance
   "Change theme": "切换主题",
   "Change appearance": "切换外观",
+  "Appearance: {mode}": "外观：{mode}",
   "Toggle theme editor": "开关主题编辑器",
   Current: "当前",
   System: "跟随系统",
@@ -134,38 +178,15 @@ export const commandPaletteUiMessages = {
   "Open Settings -> Source control": "打开 设置 -> 源代码管理",
 } as const;
 
-const NESTED = /^(.+?)(: |：)(.+)$/;
-const SETTINGS_CRUMB = /^Settings · (.+)$/;
-const NEW_THREAD_IN = /^(New thread in)(?:\.\.\.|…)?$/;
-const NEW_THREAD_NAMED = /^New thread in (.+)$/;
+export type CommandPaletteUiKey = keyof typeof commandPaletteUiMessages;
 
 /**
- * Translates a palette label, including the nested "Parent: child" rows the palette
- * composes, and leaves user data such as project and thread names as written.
+ * The palette's own short labels — group headings and the search hint's field names —
+ * are a closed set, so they translate by name. Row titles, which may be user data, are
+ * localized where they are built instead.
  */
-export function translateCommandPaletteLabel(label: string, locale: Locale): string {
-  if (locale !== "zh-CN") return label;
-  const tr = (key: keyof typeof commandPaletteUiMessages, params?: Record<string, string>) =>
-    translate(locale, commandPaletteUiMessages, key, params);
-
-  if (Object.hasOwn(commandPaletteUiMessages, label))
-    return commandPaletteUiMessages[label as keyof typeof commandPaletteUiMessages];
-
-  const settingsCrumb = SETTINGS_CRUMB.exec(label);
-  if (settingsCrumb)
-    return `${tr("Settings")} · ${translateCommandPaletteLabel(settingsCrumb[1]!, locale)}`;
-
-  if (NEW_THREAD_IN.test(label)) return tr("New thread in...");
-
-  const namedThread = NEW_THREAD_NAMED.exec(label);
-  if (namedThread) return tr("New thread in {project}", { project: namedThread[1]! });
-
-  const nested = NESTED.exec(label);
-  if (nested) {
-    const parent = translateCommandPaletteLabel(nested[1]!, locale);
-    return parent === nested[1]
-      ? label
-      : tr("{prefix}: {name}", { prefix: parent, name: nested[3]! });
-  }
-  return label;
+export function translateCommandPaletteFixedLabel(label: string, locale: Locale): string {
+  return locale === "zh-CN" && Object.hasOwn(commandPaletteUiMessages, label)
+    ? commandPaletteUiMessages[label as CommandPaletteUiKey]
+    : label;
 }

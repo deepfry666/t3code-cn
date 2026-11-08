@@ -6,7 +6,9 @@ import {
   useCommandPaletteStore,
 } from "../commandPaletteStore";
 import { overlayModeForCommand } from "../components/CommandPalette.logic";
-import { APPEARANCE_OPTIONS, notifyThemeSaveFailure } from "../components/CommandPaletteThemeItems";
+import { notifyThemeSaveFailure } from "../components/CommandPaletteThemeItems";
+import { commandPaletteUiMessages } from "../components/commandPaletteUi.messages";
+import { translateNow } from "../i18n/useTranslation";
 import { toggleThemeEditorForTheme } from "../components/settings/themeEditorStore";
 import { toastManager } from "../components/ui/toast";
 import { getThemeSnapshot, setAppearanceMode } from "../hooks/useTheme";
@@ -71,9 +73,12 @@ export function installCommandPaletteCommands(
           notifyThemeSaveFailure();
           return;
         }
+        const modeKey = nextMode === "light" ? "Light" : nextMode === "dark" ? "Dark" : "System";
         toastManager.add({
           id: "appearance-cycle",
-          title: `Appearance: ${APPEARANCE_OPTIONS.find((option) => option.mode === nextMode)?.label}`,
+          title: translateNow(commandPaletteUiMessages, "Appearance: {mode}", {
+            mode: translateNow(commandPaletteUiMessages, modeKey),
+          }),
           timeout: 1500,
         });
       },

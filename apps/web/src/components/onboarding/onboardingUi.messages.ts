@@ -46,10 +46,11 @@ export const onboardingUiMessages = {
   "Some history was not imported": "部分历史未导入",
   "Imported {count} thread": "已导入 {count} 个会话",
   "Imported {count} threads": "已导入 {count} 个会话",
-  "Imported {imported} threads. {skipped} threads could not be imported.":
-    "已导入 {imported} 个会话，{skipped} 个会话无法导入。",
-  "Imported {imported} threads. Some thread history could not be imported.":
-    "已导入 {imported} 个会话，部分会话历史无法导入。",
+  "Imported {count} thread.": "已导入 {count} 个会话。",
+  "Imported {count} threads.": "已导入 {count} 个会话。",
+  "{count} thread could not be imported.": "{count} 个会话无法导入。",
+  "{count} threads could not be imported.": "{count} 个会话无法导入。",
+  "Some thread history could not be imported.": "部分会话历史无法导入。",
   "Could not import thread history.": "无法导入会话历史。",
   "Could not finish setup": "无法完成设置",
   "Your settings could not be saved. Try again.": "无法保存你的设置，请重试。",
@@ -66,6 +67,43 @@ export const onboardingUiMessages = {
   "Import {count} project": "导入 {count} 个项目",
   "Import {count} projects": "导入 {count} 个项目",
 } as const;
+
+/**
+ * The warning after an import that could not bring every thread across. The import does
+ * not fail, so the toast keeps its counts in one sentence per count.
+ */
+export function threadImportWarning(
+  locale: Locale,
+  counts: { readonly imported: number; readonly skipped: number },
+): string {
+  const tr = (
+    key: keyof typeof onboardingUiMessages,
+    params?: Readonly<Record<string, string | number>>,
+  ) => translate(locale, onboardingUiMessages, key, params);
+  const sentences: string[] = [];
+  if (counts.imported > 0) {
+    sentences.push(
+      tr(counts.imported === 1 ? "Imported {count} thread." : "Imported {count} threads.", {
+        count: counts.imported,
+      }),
+    );
+  }
+  if (counts.skipped > 0) {
+    sentences.push(
+      tr(
+        counts.skipped === 1
+          ? "{count} thread could not be imported."
+          : "{count} threads could not be imported.",
+        { count: counts.skipped },
+      ),
+    );
+  } else if (counts.imported > 0) {
+    sentences.push(tr("Some thread history could not be imported."));
+  }
+  if (sentences.length === 0) return tr("Could not import thread history.");
+  // Chinese sentences carry their own full stop; English needs a space between them.
+  return sentences.join(locale === "zh-CN" ? "" : " ");
+}
 
 const SKIPPED_SETUP =
   /^Not connected, so setup skips (.+)\. You can set (?:it|them) up later from Settings\.$/;

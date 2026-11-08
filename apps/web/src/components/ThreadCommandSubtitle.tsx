@@ -3,6 +3,8 @@ import { FolderGit2Icon, FolderIcon, GitBranchIcon } from "lucide-react";
 import { ProjectFavicon, type ProjectFaviconProject } from "./ProjectFavicon";
 import { ProviderInstanceIcon } from "./chat/ProviderInstanceIcon";
 import { cn } from "~/lib/utils";
+import { useTranslation } from "~/i18n/useTranslation";
+import { commandPaletteUiMessages } from "./commandPaletteUi.messages";
 
 import { MiddleTruncate } from "./ui/middle-truncate";
 
@@ -43,6 +45,7 @@ export function ThreadCommandSubtitle(props: {
   variant?: ThreadCommandSubtitleVariant;
   className?: string;
 }) {
+  const t = useTranslation(commandPaletteUiMessages);
   const variant = props.variant ?? THREAD_COMMAND_SUBTITLE_VARIANT;
   const isWorktree = props.worktreePath != null && props.worktreePath.trim().length > 0;
   const showHarness =
@@ -103,7 +106,7 @@ export function ThreadCommandSubtitle(props: {
       {props.isCurrent ? (
         <>
           {projectLabel || branchLabel || showHarness ? <CommandPaletteMetaDot /> : null}
-          <span className="shrink-0">Current thread</span>
+          <span className="shrink-0">{t("Current thread")}</span>
         </>
       ) : null}
     </span>

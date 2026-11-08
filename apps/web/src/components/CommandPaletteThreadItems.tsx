@@ -38,6 +38,8 @@ import { formatRelativeTimeLabel } from "../timestampFormat";
 import { buildThreadActionItems, ITEM_ICON_CLASS } from "./CommandPalette.logic";
 import { useEnvironmentLookups, useProjectLookups } from "./CommandPaletteLookups";
 import { ThreadCommandSubtitle } from "./ThreadCommandSubtitle";
+import { useTranslation } from "~/i18n/useTranslation";
+import { commandPaletteUiMessages } from "./commandPaletteUi.messages";
 import {
   ThreadRowLeadingStatus,
   ThreadRowTrailingStatus,
@@ -98,6 +100,7 @@ export function useCommandPaletteThreadItems(input: {
   readonly threadSearchQuery: string;
 }) {
   const { activeThread, threadSearchQuery } = input;
+  const t = useTranslation(commandPaletteUiMessages);
   const navigate = useNavigate();
   const threads = useVisibleThreadShells();
   const { projectEnvironmentLocationById } = useEnvironmentLookups();
@@ -142,7 +145,7 @@ export function useCommandPaletteThreadItems(input: {
           project={projectByKey.get(`${thread.environmentId}:${thread.projectId}`) ?? null}
           projectTitle={projectTitle ?? null}
           environmentLabel={
-            projectEnvironmentLocationById.get(thread.environmentId)?.label ?? "Remote"
+            projectEnvironmentLocationById.get(thread.environmentId)?.label ?? t("Remote")
           }
           branch={thread.branch}
           worktreePath={thread.worktreePath}

@@ -2,6 +2,7 @@ import { EnvironmentId, ProjectId, ThreadId } from "@t3tools/contracts";
 import { describe, expect, it, vi } from "vite-plus/test";
 import { page } from "vite-plus/test/browser";
 
+import { setLocale } from "../i18n/useTranslation";
 import { render } from "../../test/render";
 import { openCommandPalette } from "../commandPaletteBus";
 import { useCommandPaletteStore } from "../commandPaletteStore";
@@ -90,5 +91,66 @@ describe("CommandPalette open intents", () => {
     await page.getByRole("option", { name: /Acme/ }).first().click();
 
     await vi.waitFor(() => expect(screen.router?.state.location.pathname).toBe("/local/parent"));
+  });
+});
+
+describe("CommandPalette in Simplified Chinese", () => {
+  it("finds a command by its Chinese label", async () => {
+    using _locale = { [Symbol.dispose]: () => setLocale("en") };
+    setLocale("zh-CN");
+    setup();
+    await using _screen = await render(<CommandPalette>{null}</CommandPalette>);
+
+    openCommandPalette({ query: "设置" });
+
+    await expect.element(page.getByRole("option", { name: /打开设置/ })).toBeVisible();
+  });
+
+  it("still finds the same command by its English name", async () => {
+    using _locale = { [Symbol.dispose]: () => setLocale("en") };
+    setLocale("zh-CN");
+    setup();
+    await using _screen = await render(<CommandPalette>{null}</CommandPalette>);
+
+    openCommandPalette({ query: "open settings" });
+
+    await expect.element(page.getByRole("option", { name: /打开设置/ })).toBeVisible();
+  });
+
+  it("shows user thread and project names as written", async () => {
+    using _locale = { [Symbol.dispose]: () => setLocale("en") };
+    setLocale("zh-CN");
+    const environmentId = EnvironmentId.make("local");
+    const projectId = ProjectId.make("projects");
+    setup({
+      projects: [
+        {
+          id: projectId,
+          environmentId,
+          title: "Settings",
+          workspaceRoot: "/work/settings",
+          repositoryIdentity: null,
+          defaultModelSelection: null,
+          createdAt: "2026-03-01T00:00:00.000Z",
+          updatedAt: "2026-03-01T00:00:00.000Z",
+          scripts: [],
+        },
+      ],
+      threads: [
+        makeThreadFixture({
+          id: ThreadId.make("projects"),
+          environmentId,
+          projectId,
+          title: "Projects",
+        }),
+      ],
+    });
+    await using _screen = await render(<CommandPalette>{null}</CommandPalette>);
+
+    openCommandPalette({ query: "Projects" });
+
+    // "Projects" is also a localized group heading; the thread keeps its own name.
+    await expect.element(page.getByRole("option", { name: /^Projects/ })).toBeVisible();
+    expect(page.getByText("Projects", { exact: true }).elements()).toHaveLength(1);
   });
 });

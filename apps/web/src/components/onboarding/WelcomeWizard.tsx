@@ -104,7 +104,11 @@ import { Spinner } from "../ui/spinner";
 import { WizardPanel, WizardSteps, WizardPopup, WizardHeader } from "../ui/wizard";
 import { Dialog } from "../ui/dialog";
 import { translateNow, useLocale, useTranslation } from "~/i18n/useTranslation";
-import { onboardingUiMessages, translateOnboardingLabel } from "./onboardingUi.messages";
+import {
+  onboardingUiMessages,
+  threadImportWarning,
+  translateOnboardingLabel,
+} from "./onboardingUi.messages";
 import { toastManager } from "../ui/toast";
 import { cn } from "../../lib/utils";
 import { formatRelativeTime } from "../../timestampFormat";
@@ -1238,6 +1242,7 @@ function ImportStep({
   ) => Promise<boolean>;
 }) {
   const t = useTranslation(onboardingUiMessages);
+  const locale = useLocale();
   const { environments } = useEnvironments();
   const writableEnvironments = useEnvironmentsWithScope(scans, AuthOrchestrationOperateScope);
   const createProject = useAtomCommand(projectEnvironment.create, { reportFailure: false });
@@ -1448,21 +1453,10 @@ function ImportStep({
     setIsImporting(false);
     importedThreadCountRef.current = importedThreadCount;
     if (importedProjectsCount < selection.length) {
-      if (importedThreadCount > 0 && skippedThreadCount > 0) {
-        importWarningRef.current = t(
-          "Imported {imported} threads. {skipped} threads could not be imported.",
-          { imported: importedThreadCount, skipped: skippedThreadCount },
-        );
-      } else if (skippedThreadCount > 0) {
-        importWarningRef.current = `${skippedThreadCount} ${skippedThreadCount === 1 ? "thread could" : "threads could"} not be imported.`;
-      } else if (importedThreadCount > 0) {
-        importWarningRef.current = t(
-          "Imported {imported} threads. Some thread history could not be imported.",
-          { imported: importedThreadCount },
-        );
-      } else {
-        importWarningRef.current = t("Could not import thread history.");
-      }
+      importWarningRef.current = threadImportWarning(locale, {
+        imported: importedThreadCount,
+        skipped: skippedThreadCount,
+      });
     }
     finishAfterImport();
   };
