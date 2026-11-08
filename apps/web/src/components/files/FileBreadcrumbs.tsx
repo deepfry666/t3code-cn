@@ -30,6 +30,9 @@ import {
 } from "./filePath";
 import { useProjectEntriesQuery } from "./projectFilesQueryState";
 
+import { useTranslation } from "~/i18n/useTranslation";
+import { filesUiMessages } from "./filesUi.messages";
+
 interface FileBreadcrumbsProps {
   readonly cwd: string;
   readonly environmentId: EnvironmentId;
@@ -84,6 +87,7 @@ function BreadcrumbMenuContent(props: {
   readonly rootPath: string;
   readonly workspaceMutationId: string | null;
 }) {
+  const t = useTranslation(filesUiMessages);
   const entriesQuery = useProjectEntriesQuery(
     props.environmentId,
     props.cwd,
@@ -135,7 +139,7 @@ function BreadcrumbMenuContent(props: {
             <span className="min-w-0 flex-1 truncate">Retry loading folder</span>
           </MenuItem>
         ) : !directoryAvailable && !entriesTruncated ? (
-          <MenuItem disabled>This folder is no longer available.</MenuItem>
+          <MenuItem disabled>{t("This folder is no longer available.")}</MenuItem>
         ) : children.length === 0 ? (
           <MenuItem disabled>
             {entriesTruncated
@@ -200,14 +204,14 @@ function BreadcrumbMenuContent(props: {
           <MenuSeparator />
           <MenuItem closeOnClick={false} onClick={entriesQuery.refresh}>
             <RefreshIcon refreshing={entriesQuery.isPending} />
-            Refresh failed. Retry
+            {t("Refresh failed. Retry")}
           </MenuItem>
         </>
       ) : null}
       {entriesTruncated ? (
         <>
           <MenuSeparator />
-          <MenuItem disabled>Some workspace entries are not shown.</MenuItem>
+          <MenuItem disabled>{t("Some workspace entries are not shown.")}</MenuItem>
         </>
       ) : null}
     </MenuPopup>

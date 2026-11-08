@@ -67,5 +67,5 @@ export const projectScriptsUiMessages = {
   "Opening links is unavailable in this browser.": "此浏览器无法打开链接。",
   Single: "单栏",
   "Side by side": "并排",
-  Stacked: "上下排列",
+  "Stacked@@terminal layout": "上下排列",
 };

@@ -6,6 +6,9 @@ import { FileSurfaceFailure, FileSurfaceLoading, FileSurfaceNotice } from "./fil
 import { PREVIEW_PAGE_ROWS, type TextPreviewResult } from "./largeTextProtocol";
 import VirtualTablePreview from "./VirtualTablePreview";
 
+import { useTranslation } from "~/i18n/useTranslation";
+import { filesUiMessages } from "./filesUi.messages";
+
 const FIRST_SCREEN_BYTES = 16 * 1024;
 
 function firstScreen(text: string, delimiter: "," | "\t" | null, complete: boolean) {
@@ -39,6 +42,7 @@ export default function LargeTextViewer(props: {
   /** A preview's own wrap toggle; omitted follows the word wrap setting. */
   readonly wordWrap?: boolean;
 }) {
+  const t = useTranslation(filesUiMessages);
   const [meta, setMeta] = useState<Extract<TextPreviewResult, { type: "meta" }> | null>(null);
   const [pages, setPages] = useState(new Map<number, string[][]>());
   const [error, setError] = useState<string | null>(null);
@@ -230,7 +234,7 @@ export default function LargeTextViewer(props: {
       ) : null}
       {meta.columns === 1024 ? (
         <FileSurfaceNotice>
-          Showing the first 1,024 columns. Source and Save retain every column.
+          {t("Showing the first 1,024 columns. Source and Save retain every column.")}
         </FileSurfaceNotice>
       ) : null}
       {meta.count > 0 ? (
@@ -252,7 +256,7 @@ export default function LargeTextViewer(props: {
         />
       ) : (
         <div className="flex flex-1 items-center justify-center p-6 text-xs text-muted-foreground">
-          This file is empty.
+          {t("This file is empty.")}
         </div>
       )}
     </div>

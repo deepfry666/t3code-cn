@@ -1,4 +1,7 @@
 /* oxlint-disable react/no-array-index-key -- Spreadsheet rows and columns retain their source positions. */
+import { translateNow } from "~/i18n/useTranslation";
+import { filesUiMessages } from "./filesUi.messages";
+
 import { formatAttachmentSize } from "@t3tools/client-runtime/state/attachments";
 import type { OfficePreviewKind } from "@t3tools/shared/filePreview";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
@@ -144,7 +147,11 @@ function ExtendedOfficeViewer(props: {
         }
       })
       .catch((cause: unknown) =>
-        fail(cause instanceof Error ? cause.message : "Could not read this file."),
+        fail(
+          cause instanceof Error
+            ? cause.message
+            : translateNow(filesUiMessages, "Could not read this file."),
+        ),
       );
     return () => {
       controller.abort();

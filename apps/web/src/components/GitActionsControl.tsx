@@ -662,7 +662,7 @@ function PublishRepositoryDialog(props: PublishRepositoryDialogProps) {
                         />
                         <TooltipPopup side="top" align="end">
                           {readiness.hint ??
-                            "Open Settings -> Source control to configure this provider."}
+                            t("Open Settings -> Source control to configure this provider.")}
                         </TooltipPopup>
                       </Tooltip>
                     </div>
@@ -743,14 +743,14 @@ function PublishRepositoryDialog(props: PublishRepositoryDialogProps) {
                 {[
                   {
                     value: "private" as const,
-                    label: "Private",
-                    description: "Only invited people",
+                    label: t("Private"),
+                    description: t("Only invited people"),
                     Icon: LockIcon,
                   },
                   {
                     value: "public" as const,
-                    label: "Public",
-                    description: "Anyone on the web",
+                    label: t("Public"),
+                    description: t("Anyone on the web"),
                     Icon: GlobeIcon,
                   },
                 ].map((option) => {
@@ -865,13 +865,19 @@ function PublishRepositoryDialog(props: PublishRepositoryDialogProps) {
                   </span>
                   <h3 className="text-sm font-semibold text-foreground">
                     {publishResult.status === "pushed"
-                      ? "Repository published"
-                      : "Repository created"}
+                      ? t("Repository published")
+                      : t("Repository created")}
                   </h3>
                   <p className="max-w-xs text-pretty text-xs text-muted-foreground">
                     {publishResult.status === "pushed"
-                      ? `${publishResult.branch} is now live on ${publishProviderLabel}.`
-                      : `Remote "${publishResult.remoteName}" is set up. Make a commit and push it to share your code.`}
+                      ? t("{branch} is now live on {provider}.", {
+                          branch: publishResult.branch,
+                          provider: publishProviderLabel,
+                        })
+                      : t(
+                          'Remote "{remote}" is set up. Make a commit and push it to share your code.',
+                          { remote: publishResult.remoteName },
+                        )}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 rounded-lg border border-input bg-muted/40 px-3 py-2 dark:border-transparent dark:bg-white/[0.035]">
@@ -888,12 +894,12 @@ function PublishRepositoryDialog(props: PublishRepositoryDialogProps) {
                     void openLink(publishResult.repository.url).catch(() => undefined);
                   }}
                 >
-                  Open on {publishProviderLabel}
+                  {t("Open on {provider}", { provider: publishProviderLabel })}
                 </Button>
               </>
             ) : (
               <div className="rounded-md border border-input bg-background px-3 py-2 text-xs text-muted-foreground dark:border-transparent dark:bg-white/[0.035]">
-                Publish result unavailable.
+                {t("Publish result unavailable.")}
               </div>
             )}
           </div>
@@ -915,14 +921,14 @@ function PublishRepositoryDialog(props: PublishRepositoryDialogProps) {
                   setPublishWizardStep((step) => Math.max(0, step - 1));
                 }}
               >
-                {publishWizardStep === 0 ? "Cancel" : "Back"}
+                {publishWizardStep === 0 ? t("Cancel") : t("Back")}
               </Button>
               {publishWizardStep < 1 ? (
                 <Button
                   disabled={!hasReadyPublishProvider || !selectedPublishProviderReadiness.ready}
                   onClick={() => setPublishWizardStep((step) => Math.min(1, step + 1))}
                 >
-                  Next
+                  {t("Next@@wizard")}
                 </Button>
               ) : (
                 <Button disabled={!canSubmitPublishRepository} onClick={submitPublishRepository}>
@@ -1485,7 +1491,7 @@ export default function GitActionsControl({
           }}
         >
           <CloudUploadIcon />
-          <MenuItemLabel>Publish repository...</MenuItemLabel>
+          <MenuItemLabel>{t("Publish repository...")}</MenuItemLabel>
         </MenuItem>
       ) : null}
       {gitStatusForActions?.refName === null && (
@@ -1841,11 +1847,11 @@ export default function GitActionsControl({
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-medium">Commit message (optional)</p>
+              <p className="text-sm font-medium">{t("Commit message (optional)")}</p>
               <Textarea
                 value={dialogCommitMessage}
                 onChange={(event) => setDialogCommitMessage(event.target.value)}
-                placeholder="Leave empty to auto-generate"
+                placeholder={t("Leave empty to auto-generate")}
                 size="sm"
               />
             </div>

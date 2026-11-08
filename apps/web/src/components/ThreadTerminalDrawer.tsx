@@ -1465,7 +1465,7 @@ function TerminalSidebarGroup({
   const groupLabel = !isSplitGroup
     ? translateNow(projectScriptsUiMessages, "Single")
     : terminalGroup.splitDirection === "vertical"
-      ? translateNow(projectScriptsUiMessages, "Stacked")
+      ? translateNow(projectScriptsUiMessages, "Stacked@@terminal layout")
       : translateNow(projectScriptsUiMessages, "Side by side");
   const GroupIcon = !isSplitGroup
     ? Square
