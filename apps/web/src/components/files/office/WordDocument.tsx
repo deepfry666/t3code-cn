@@ -2,7 +2,9 @@
 /* oxlint-disable react/no-unstable-nested-components -- These callbacks return overlays, and are invoked as render functions. */
 import { Tooltip, TooltipTrigger, TooltipPopup } from "~/components/ui/tooltip";
 import { Fragment, useEffect, useRef, useState } from "react";
+import { translateNow, useTranslation } from "~/i18n/useTranslation";
 import { FileSurfaceLoading } from "../fileSurfaceChrome";
+import { filesUiMessages } from "../filesUi.messages";
 import { OfficePages, type PaintPage } from "./OfficePages";
 import { createWorkerClient } from "./worker-rpc";
 import {
@@ -26,6 +28,7 @@ export default function WordDocument(props: {
   onError: (cause: unknown) => void;
 }) {
   const { onError, bytes, onDetails } = props;
+  const t = useTranslation(filesUiMessages);
   const [opened, setOpened] = useState<Opened>();
   const scroll = useRef<((index: number, y?: number) => void) | null>(null);
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- Own the document worker and cancel its layout and painting requests when the document changes or unmounts.
@@ -63,15 +66,20 @@ export default function WordDocument(props: {
       .then(async (first) => {
         if (controller.signal.aborted) return;
         setOpened({ pages: first.pages, paint, engine });
-        onDetails(`${first.pages.length}${first.loading ? "+" : ""} pages`);
+        onDetails(
+          translateNow(filesUiMessages, "{count} pages", {
+            count: `${first.pages.length}${first.loading ? "+" : ""}`,
+          }),
+        );
         if (!first.loading) return;
         await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
         while (!controller.signal.aborted) {
           const step = await engine.call("layout", undefined, { signal: controller.signal });
           if (!step.done) continue;
-          if (step.pages.length > 1000) throw new Error("Preview limited to 1,000 pages.");
+          if (step.pages.length > 1000)
+            throw new Error(translateNow(filesUiMessages, "Preview limited to 1,000 pages."));
           setOpened({ pages: step.pages, paint, engine });
-          onDetails(`${step.pages.length} pages`);
+          onDetails(translateNow(filesUiMessages, "{count} pages", { count: step.pages.length }));
           break;
         }
       })
@@ -98,7 +106,7 @@ export default function WordDocument(props: {
     <OfficePages
       pages={opened.pages}
       paint={opened.paint}
-      label="Page"
+      label={t("Page")}
       scrollRef={scroll}
       onError={onError}
       overlay={(index) => (
