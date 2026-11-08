@@ -234,7 +234,7 @@ export const timelineUiMessages = {
   "Permission request": "权限请求",
   "App access approval": "应用访问审批",
   "App access request": "应用访问请求",
-  "Waiting for approval": "等待审批",
+  "Waiting for approval": "等待批准",
   "Provider process is gone. Interrupt or restart the run to respond.":
     "提供方进程已退出。请中断或重新开始这次运行后再回应。",
   "Why am I being asked this?": "为什么要问我这个？",
