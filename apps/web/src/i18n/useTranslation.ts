@@ -5,7 +5,8 @@ import { LOCALE_STORAGE_KEY, resolveLocale, translate, type Locale } from "./loc
 const listeners = new Set<() => void>();
 let memoryLocale: Locale | undefined;
 
-function readLocale(): Locale {
+/** For toasts raised outside React; components use `useLocale`. */
+export function readLocale(): Locale {
   if (memoryLocale) return memoryLocale;
   try {
     return resolveLocale(localStorage.getItem(LOCALE_STORAGE_KEY), navigator.languages);

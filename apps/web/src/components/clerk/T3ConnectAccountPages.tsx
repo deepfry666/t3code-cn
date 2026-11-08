@@ -3,6 +3,8 @@ import { MessageSquareIcon, ServerIcon, SmartphoneIcon } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { useTranslation } from "../../i18n/useTranslation";
+import { clerkUiMessages } from "./clerkUi.messages";
 import { MobileClientsUserProfilePage } from "./MobileClientsUserProfilePage";
 import { T3ChatUserProfilePage } from "./T3ChatUserProfilePage";
 import { T3ConnectUserProfilePage } from "./T3ConnectUserProfilePage";
@@ -28,6 +30,14 @@ export const T3_CONNECT_ACCOUNT_PAGES = [
   },
 ] as const;
 
+/** T3 Connect and T3 Chat are product names, so only the mobile page label is translated. */
+export function t3ConnectAccountPageLabel(
+  page: (typeof T3_CONNECT_ACCOUNT_PAGES)[number],
+  t: (key: keyof typeof clerkUiMessages) => string,
+): string {
+  return page.url === "mobile-clients" ? t("Mobile clients") : page.label;
+}
+
 export type T3ConnectAccountPageUrl = (typeof T3_CONNECT_ACCOUNT_PAGES)[number]["url"];
 
 type PortalTargets = Readonly<Record<string, HTMLDivElement | undefined>>;
@@ -40,6 +50,7 @@ export function useT3ConnectAccountPage(): {
   const clerk = useClerk();
   const { isSignedIn } = useAuth();
   const [targets, setTargets] = useState<PortalTargets>({});
+  const t = useTranslation(clerkUiMessages);
 
   const open = (page: T3ConnectAccountPageUrl = "t3-connect") => {
     const setTarget = (key: string, element: HTMLDivElement | undefined) =>
@@ -47,7 +58,7 @@ export function useT3ConnectAccountPage(): {
     clerk.openUserProfile({
       __experimental_startPath: `/${page}`,
       customPages: T3_CONNECT_ACCOUNT_PAGES.map((page) => ({
-        label: page.label,
+        label: t3ConnectAccountPageLabel(page, t),
         url: page.url,
         mount: (element: HTMLDivElement) => setTarget(`content:${page.url}`, element),
         unmount: () => setTarget(`content:${page.url}`, undefined),

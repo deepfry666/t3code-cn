@@ -17,7 +17,9 @@ import * as Schema from "effect/Schema";
 import * as Stream from "effect/Stream";
 import { Atom } from "effect/reactivity";
 
+import { translate, type Locale } from "../../i18n/locale";
 import type { TurnItemSource } from "../chat/timelineRowContext";
+import { guestUiMessages } from "./guestUi.messages";
 
 /** What an expanded guest row says when it cannot read the item. */
 class GuestItemReadError extends Schema.TaggedError<GuestItemReadError>()("GuestItemReadError", {
@@ -45,18 +47,21 @@ async function fetchGuestItemDetail(
 
 // Keys are JSON so a share id or item id can never run into the next part.
 const guestItemDetailAtom = Atom.family((key: string) => {
-  const [shareId, itemId] = JSON.parse(key) as [string, string, string];
+  const [shareId, itemId, , locale] = JSON.parse(key) as [string, string, string, Locale];
   return Atom.make(
     Effect.tryPromise({
       try: () => fetchGuestItemDetail(shareId, itemId),
-      catch: () => new GuestItemReadError({ message: "Could not load this item." }),
+      catch: () =>
+        new GuestItemReadError({
+          message: translate(locale, guestUiMessages, "Could not load this item."),
+        }),
     }),
   );
 });
 
 /** Ends after the frame of a settled command, so the browser does not reconnect to it. */
 const guestCommandOutputAtom = Atom.family((key: string) => {
-  const [shareId, itemId] = JSON.parse(key) as [string, string];
+  const [shareId, itemId, locale] = JSON.parse(key) as [string, string, Locale];
   const frames = Stream.callback<OrchestrationV2CommandOutputFrame, GuestItemReadError>((queue) =>
     Effect.acquireRelease(
       Effect.sync(() => {
@@ -75,7 +80,11 @@ const guestCommandOutputAtom = Atom.family((key: string) => {
           if (source.readyState === EventSource.CLOSED) {
             Queue.failCauseUnsafe(
               queue,
-              Cause.fail(new GuestItemReadError({ message: "Output is no longer available." })),
+              Cause.fail(
+                new GuestItemReadError({
+                  message: translate(locale, guestUiMessages, "Output is no longer available."),
+                }),
+              ),
             );
           }
         });
@@ -94,8 +103,8 @@ const guestCommandOutputAtom = Atom.family((key: string) => {
 });
 
 /** Expanded rows on the guest page read through the guest routes, with the page's share cookie. */
-export const guestTurnItemSource = (shareId: string): TurnItemSource => ({
+export const guestTurnItemSource = (shareId: string, locale: Locale): TurnItemSource => ({
   detail: ({ itemId, revision }) =>
-    guestItemDetailAtom(JSON.stringify([shareId, itemId, revision])),
-  commandOutput: ({ itemId }) => guestCommandOutputAtom(JSON.stringify([shareId, itemId])),
+    guestItemDetailAtom(JSON.stringify([shareId, itemId, revision, locale])),
+  commandOutput: ({ itemId }) => guestCommandOutputAtom(JSON.stringify([shareId, itemId, locale])),
 });
