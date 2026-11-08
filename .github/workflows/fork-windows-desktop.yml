@@ -40,7 +40,11 @@ jobs:
         shell: bash
         run: grep -E '^T3CODE_(CLERK_PUBLISHABLE_KEY|CLERK_JWT_TEMPLATE|CLERK_CLI_OAUTH_CLIENT_ID|RELAY_URL)=' .env.example >> "$GITHUB_ENV"
 
+      # GitHub release downloads of electron-builder-binaries returned 504s on 2026-11-08;
+      # electron-builder pins each tool's sha256, so a mirror cannot swap the files.
       - name: Build installer
+        env:
+          ELECTRON_BUILDER_BINARIES_MIRROR: https://npmmirror.com/mirrors/electron-builder-binaries/
         run: node scripts/build-desktop-artifact.ts --platform win --target nsis --arch x64 --verbose
 
       - name: Upload installer
