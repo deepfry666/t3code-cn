@@ -1,6 +1,8 @@
 import type { DesktopPreviewRecordingInput } from "@t3tools/contracts";
 
 import { readPreviewAnnotationTheme } from "./annotationTheme";
+import { translateNow } from "~/i18n/useTranslation";
+import { browserUiMessages } from "./browserUi.messages";
 
 interface RecordingDecorationOptions {
   readonly showKeyPresses: boolean;
@@ -16,7 +18,8 @@ export async function createRecordingCompositor(
   if (!options.showKeyPresses && !options.showMousePresses) return null;
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d", { alpha: false });
-  if (!context) throw new Error("Recording canvas is unavailable.");
+  if (!context)
+    throw new Error(translateNow(browserUiMessages, "Recording canvas is unavailable."));
   const video = document.createElement("video");
   video.muted = true;
   video.playsInline = true;

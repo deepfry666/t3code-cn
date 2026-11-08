@@ -3,6 +3,8 @@ import type { PreviewViewportSetting, ScopedThreadRef } from "@t3tools/contracts
 import * as Schema from "effect/Schema";
 
 import { toastManager } from "~/components/ui/toast";
+import { translateNow } from "~/i18n/useTranslation";
+import { browserUiMessages } from "./browserUi.messages";
 import { updatePreviewServerSnapshot } from "~/previewStateStore";
 import { appAtomRegistry } from "~/rpc/atomRegistry";
 import { previewEnvironment } from "~/state/preview";
@@ -81,8 +83,11 @@ async function resizeBrowserViewport(
     const error = squashAtomCommandFailure(result);
     toastManager.add({
       type: "error",
-      title: "Unable to resize browser viewport",
-      description: error instanceof Error ? error.message : "An error occurred.",
+      title: translateNow(browserUiMessages, "Unable to resize browser viewport"),
+      description:
+        error instanceof Error
+          ? error.message
+          : translateNow(browserUiMessages, "An error occurred."),
     });
     throw error;
   }

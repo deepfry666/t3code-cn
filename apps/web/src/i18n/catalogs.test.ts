@@ -22,6 +22,12 @@ import { settingsCodeMessages } from "../components/settings/settingsCode.messag
 import { settingsVoiceMessages } from "../components/settings/settingsVoice.messages";
 import { settingsMaintenanceMessages } from "../components/settings/settingsMaintenance.messages";
 import { deviceToolVersionsMessages } from "../components/device/deviceToolVersions.messages";
+import { mediaUiMessages } from "../components/media/mediaUi.messages";
+import { previewUiMessages } from "../components/preview/previewUi.messages";
+import { browserUiMessages } from "../browser/browserUi.messages";
+import { deviceUiMessages } from "../components/device/deviceUi.messages";
+import { usagePricesMessages } from "../components/usage/usagePrices.messages";
+import { usageUiMessages } from "../components/usage/usageUi.messages";
 import { translate } from "./locale";
 
 const catalogs: Record<string, Readonly<Record<string, string>>> = {
@@ -47,6 +53,12 @@ const catalogs: Record<string, Readonly<Record<string, string>>> = {
   settingsCode: settingsCodeMessages,
   settingsVoice: settingsVoiceMessages,
   settingsMaintenance: settingsMaintenanceMessages,
+  usageUi: usageUiMessages,
+  usagePrices: usagePricesMessages,
+  deviceUi: deviceUiMessages,
+  mediaUi: mediaUiMessages,
+  previewUi: previewUiMessages,
+  browserUi: browserUiMessages,
 };
 const placeholders = (value: string) =>
   [...value.matchAll(/\{(\w+)\}/g)].map((match) => match[1]).sort();

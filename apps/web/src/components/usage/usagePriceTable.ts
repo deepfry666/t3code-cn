@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { usagePricesMessages } from "./usagePrices.messages";
 import {
   parseUsagePriceForm,
   usagePriceForm,
@@ -7,6 +9,20 @@ import {
 import type { UsagePriceChange, UsagePriceTarget } from "./usagePriceTargets";
 
 export type UsagePriceField = (typeof USAGE_PRICE_FIELDS)[number]["key"];
+
+/** Untranslated cell placeholders; the price table passes the words through `t()`. */
+export type UsagePriceCellPlaceholder =
+  | "Unavailable"
+  | "Mixed"
+  | "None"
+  | "Automatic"
+  | "Input rate"
+  | "0.00";
+
+export interface UsagePriceCell {
+  readonly value: string;
+  readonly placeholder: UsagePriceCellPlaceholder;
+}
 
 export interface UsagePriceDraft {
   readonly id: string;
@@ -35,7 +51,10 @@ function modelAlias(target: UsagePriceTarget, model: string) {
   return target.aliases && Object.hasOwn(target.aliases, model) ? target.aliases[model] : undefined;
 }
 
-export function usageAliasCell(targets: readonly UsagePriceTarget[], model: string) {
+export function usageAliasCell(
+  targets: readonly UsagePriceTarget[],
+  model: string,
+): UsagePriceCell {
   if (targets.some((target) => target.aliases === null))
     return { value: "", placeholder: "Unavailable" };
   const values = targets.map((target) => modelAlias(target, model) ?? "");
@@ -47,7 +66,7 @@ export function usagePriceCell(
   targets: readonly UsagePriceTarget[],
   model: string,
   field: UsagePriceField,
-) {
+): UsagePriceCell {
   const optional = USAGE_PRICE_FIELDS.find((entry) => entry.key === field)!.optional;
   const values = targets.map((target) =>
     modelPrice(target, model) ? usagePriceForm(model, modelPrice(target, model))[field] : null,
@@ -81,12 +100,18 @@ export function usagePriceTableChanges(
       if (draft.alias === undefined && Object.keys(draft.values).length > 0) {
         errors.set(
           draft.id,
-          `${target.label} maps this model. Remove it from "Apply to" or clear its mapping first.`,
+          translateNow(
+            usagePricesMessages,
+            '{target} maps this model. Remove it from "Apply to" or clear its mapping first.',
+            { target: target.label },
+          ),
         );
         continue;
       }
-      if (model === "") errors.set(draft.id, "Enter a model ID.");
-      else if (alias === model) errors.set(draft.id, "Map to a different model.");
+      if (model === "")
+        errors.set(draft.id, translateNow(usagePricesMessages, "Enter a model ID."));
+      else if (alias === model)
+        errors.set(draft.id, translateNow(usagePricesMessages, "Map to a different model."));
       else {
         if (alias !== currentAlias) changes.push({ model, alias });
         if (modelPrice(target, model)) changes.push({ model, price: null });
@@ -111,10 +136,13 @@ export function usagePriceTableChanges(
       errors.set(
         draft.id,
         model === ""
-          ? "Enter a model ID."
+          ? translateNow(usagePricesMessages, "Enter a model ID.")
           : missing
-            ? `${missing.label} is required on ${target.label}.`
-            : "Use non-negative numbers for prices.",
+            ? translateNow(usagePricesMessages, "{label} is required on {target}.", {
+                label: translateNow(usagePricesMessages, missing.label),
+                target: target.label,
+              })
+            : translateNow(usagePricesMessages, "Use non-negative numbers for prices."),
       );
       continue;
     }
@@ -135,7 +163,12 @@ export function usagePriceTableChanges(
     const seen = new Set<string>();
     while (aliases.has(model)) {
       if (seen.has(model)) {
-        errors.set(draft.id, `Model mappings cannot form a cycle on ${target.label}.`);
+        errors.set(
+          draft.id,
+          translateNow(usagePricesMessages, "Model mappings cannot form a cycle on {target}.", {
+            target: target.label,
+          }),
+        );
         break;
       }
       seen.add(model);

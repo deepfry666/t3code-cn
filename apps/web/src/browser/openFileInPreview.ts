@@ -14,6 +14,8 @@ import {
 import * as Cause from "effect/Cause";
 import * as Schema from "effect/Schema";
 import { AsyncResult } from "effect/reactivity";
+import { translateNow } from "~/i18n/useTranslation";
+import { browserUiMessages } from "./browserUi.messages";
 
 import { resolveAssetUrl } from "~/assets/assetUrls";
 import { isPreviewAvailableFor, previewRuntimeFor } from "~/browser/previewRuntime";
@@ -127,7 +129,10 @@ export async function openFileInPreview<AssetError, PreviewError>(input: {
     return AsyncResult.failure(
       Cause.fail(
         new BrowserPreviewUnavailableError({
-          message: "The integrated browser is unavailable in this runtime.",
+          message: translateNow(
+            browserUiMessages,
+            "The integrated browser is unavailable in this runtime.",
+          ),
         }),
       ),
     );

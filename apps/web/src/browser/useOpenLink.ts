@@ -7,6 +7,8 @@ import { recordVisitForThread } from "~/browserHistoryStore";
 import { readLocalApi } from "~/localApi";
 import { previewEnvironment } from "~/state/preview";
 import { useAtomCommand } from "~/state/use-atom-command";
+import { translateNow } from "~/i18n/useTranslation";
+import { browserUiMessages } from "./browserUi.messages";
 
 import {
   canOpenLinksInApp,
@@ -50,7 +52,7 @@ export function useOpenLink(threadRef: ScopedThreadRef | null | undefined): (
       console.error(result.cause);
     }
     const api = readLocalApi();
-    if (!api) throw new Error("Link opening is unavailable.");
+    if (!api) throw new Error(translateNow(browserUiMessages, "Link opening is unavailable."));
     await api.shell.openExternal(url);
   };
 }

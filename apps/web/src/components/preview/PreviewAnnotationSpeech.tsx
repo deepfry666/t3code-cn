@@ -10,6 +10,8 @@ import { useEffect, useRef, useState } from "react";
 import { resolveSpeechPresentation } from "~/components/chat/ComposerSpeechButton";
 import { VoiceInputSetup } from "~/components/chat/VoiceInputSetup";
 import { toastManager } from "~/components/ui/toast";
+import { translateNow } from "~/i18n/useTranslation";
+import { previewUiMessages } from "./previewUi.messages";
 import { useComposerDraftStore } from "~/composerDraftStore";
 import { useStableCallback } from "~/hooks/useStableCallback";
 import { useDictationShortcut, type DictationKeyHandlers } from "~/speech/useDictationShortcut";
@@ -115,7 +117,7 @@ export function PreviewAnnotationSpeech({
         current.current.speech.cancel();
         toastManager.add({
           type: "error",
-          title: "Could not update annotation voice input",
+          title: translateNow(previewUiMessages, "Could not update annotation voice input"),
           description: error instanceof Error ? error.message : String(error),
         });
       }
