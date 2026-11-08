@@ -3,6 +3,10 @@ import {
   type EnvironmentConnectionPresentation,
 } from "@t3tools/client-runtime/connection";
 
+import { translate, type Locale } from "../../i18n/locale";
+import { translateConnectionLabel } from "../settings/settingsConnections.messages";
+import { cloudUiMessages } from "./cloudUi.messages";
+
 export interface SavedCloudEnvironmentConnectionPresentation {
   readonly buttonLabel: string;
   readonly statusText: string;
@@ -11,48 +15,51 @@ export interface SavedCloudEnvironmentConnectionPresentation {
 
 export function presentSavedCloudEnvironmentConnection(
   connection: EnvironmentConnectionPresentation,
+  locale: Locale = "en",
 ): SavedCloudEnvironmentConnectionPresentation {
+  const label = (key: keyof typeof cloudUiMessages) => translate(locale, cloudUiMessages, key);
+  const statusText = translateConnectionLabel(connectionStatusText(connection), locale);
   switch (connection.phase) {
     case "connected":
       return {
-        buttonLabel: "Connected",
-        statusText: connectionStatusText(connection),
+        buttonLabel: label("Connected"),
+        statusText,
         tone: "connected",
       };
     case "connecting":
       return {
-        buttonLabel: "Connecting…",
-        statusText: connectionStatusText(connection),
+        buttonLabel: label("Connecting…"),
+        statusText,
         tone: "connecting",
       };
     case "reconnecting":
       return {
-        buttonLabel: "Reconnecting…",
-        statusText: connectionStatusText(connection),
+        buttonLabel: label("Reconnecting…"),
+        statusText,
         tone: "connecting",
       };
     case "unsupported":
       return {
-        buttonLabel: "Client not supported",
-        statusText: connectionStatusText(connection),
+        buttonLabel: label("Client not supported"),
+        statusText,
         tone: "idle",
       };
     case "error":
       return {
-        buttonLabel: "Connection failed",
-        statusText: connectionStatusText(connection),
+        buttonLabel: label("Connection failed"),
+        statusText,
         tone: "error",
       };
     case "offline":
       return {
-        buttonLabel: "Offline",
-        statusText: connectionStatusText(connection),
+        buttonLabel: label("Offline"),
+        statusText,
         tone: "idle",
       };
     case "available":
       return {
-        buttonLabel: "Not connected",
-        statusText: connectionStatusText(connection),
+        buttonLabel: label("Not connected"),
+        statusText,
         tone: "idle",
       };
   }
