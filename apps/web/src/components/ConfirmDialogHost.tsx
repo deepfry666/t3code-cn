@@ -15,6 +15,8 @@ import {
   AlertDialogPopup,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
+import { useTranslation } from "~/i18n/useTranslation";
+import { globalUiMessages } from "./globalUi.messages";
 import { Button } from "./ui/button";
 
 type ConfirmationCopy = {
@@ -22,7 +24,7 @@ type ConfirmationCopy = {
   readonly description: string | null;
 };
 
-function resolveConfirmDialogCopy(message: string): ConfirmationCopy {
+function resolveConfirmDialogCopy(message: string, fallback: ConfirmationCopy): ConfirmationCopy {
   const normalizedMessage = message.trim();
   const lines = normalizedMessage.split("\n");
   const questionLineIndex = lines.findIndex((line) => line.trim().endsWith("?"));
@@ -45,19 +47,23 @@ function resolveConfirmDialogCopy(message: string): ConfirmationCopy {
   }
 
   return {
-    title: "Confirm action",
-    description: normalizedMessage || "This action requires your confirmation.",
+    title: fallback.title,
+    description: normalizedMessage || fallback.description,
   };
 }
 
 export function ConfirmDialogHost() {
+  const t = useTranslation(globalUiMessages);
   const state = useSyncExternalStore(
     subscribeConfirmDialogHost,
     readConfirmDialogState,
     readConfirmDialogState,
   );
 
-  const copy = resolveConfirmDialogCopy(state.status === "idle" ? "" : state.message);
+  const copy = resolveConfirmDialogCopy(state.status === "idle" ? "" : state.message, {
+    title: t("Confirm action"),
+    description: t("This action requires your confirmation."),
+  });
   const confirmVariant = state.status === "idle" ? "default" : state.variant;
   const onCancel = () => respondToConfirmDialog(false);
   const onConfirm = () => respondToConfirmDialog(true);
@@ -82,9 +88,9 @@ export function ConfirmDialogHost() {
           ) : null}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogClose render={<Button variant="outline" />}>Cancel</AlertDialogClose>
+          <AlertDialogClose render={<Button variant="outline" />}>{t("Cancel")}</AlertDialogClose>
           <Button variant={confirmVariant} onClick={onConfirm}>
-            Confirm
+            {t("Confirm")}
           </Button>
         </AlertDialogFooter>
       </AlertDialogPopup>

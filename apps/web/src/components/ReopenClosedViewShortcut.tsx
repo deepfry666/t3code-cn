@@ -41,6 +41,8 @@ import {
   buildThreadRouteParams,
   resolveThreadRouteTarget,
 } from "../threadRoutes";
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "./globalUi.messages";
 import { toastManager } from "./ui/toast";
 
 const PREVIEW_FORWARDED_COMMANDS = [
@@ -146,7 +148,7 @@ export function ReopenClosedViewShortcut() {
       .catch((error: unknown) => {
         toastManager.add({
           type: "error",
-          title: "Could not reopen view",
+          title: translateNow(globalUiMessages, "Could not reopen view"),
           description: error instanceof Error ? error.message : String(error),
         });
       });

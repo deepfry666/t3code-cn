@@ -2,7 +2,12 @@ import { type ResolvedKeybindingsConfig } from "@t3tools/contracts";
 import { LegendList, type LegendListRef } from "@legendapp/list/react";
 import { ChevronRightIcon } from "lucide-react";
 import { type ReactNode, type RefObject, useState } from "react";
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { cn } from "~/lib/utils";
+import {
+  commandPaletteUiMessages,
+  translateCommandPaletteLabel,
+} from "./commandPaletteUi.messages";
 import { textDirection } from "~/textDirection";
 import { shortcutLabelForCommand } from "../keybindings";
 import {
@@ -35,17 +40,19 @@ interface CommandPaletteResultsProps {
 }
 
 function CommandPaletteEmptyState(props: { emptyStateMessage?: string; isActionsOnly: boolean }) {
+  const t = useTranslation(commandPaletteUiMessages);
   return (
     <div className="py-10 text-center text-sm text-muted-foreground">
       {props.emptyStateMessage ??
         (props.isActionsOnly
-          ? "No matching actions."
-          : "No matching commands, projects, or threads.")}
+          ? t("No matching actions.")
+          : t("No matching commands, projects, or threads."))}
     </div>
   );
 }
 
 export function CommandPaletteResults(props: CommandPaletteResultsProps) {
+  const locale = useLocale();
   if (props.groups.length === 0) {
     return <CommandPaletteEmptyState {...props} />;
   }
@@ -54,7 +61,11 @@ export function CommandPaletteResults(props: CommandPaletteResultsProps) {
     <CommandList>
       {props.groups.map((group) => (
         <CommandGroup items={group.items} key={group.value}>
-          {group.label ? <CommandGroupLabel>{group.label}</CommandGroupLabel> : null}
+          {group.label ? (
+            <CommandGroupLabel>
+              {translateCommandPaletteLabel(group.label, locale)}
+            </CommandGroupLabel>
+          ) : null}
           <CommandCollection>
             {(item) =>
               item.disabled ? (
@@ -94,6 +105,7 @@ interface CommandPaletteVirtualizedResultsProps extends Omit<CommandPaletteResul
  * unmounted rows. */
 export function CommandPaletteVirtualizedResults(props: CommandPaletteVirtualizedResultsProps) {
   const { listRef } = props;
+  const locale = useLocale();
   const [scrollFade, setScrollFade] = useState({ top: false, bottom: false });
   const updateScrollFade = () => {
     const scrollElement = listRef.current?.getScrollableNode?.();
@@ -121,7 +133,9 @@ export function CommandPaletteVirtualizedResults(props: CommandPaletteVirtualize
         renderItem={({ item: row }) =>
           row.kind === "label" ? (
             <div className={row.first ? undefined : "pt-1.5"}>
-              <CommandListHeading>{row.label}</CommandListHeading>
+              <CommandListHeading>
+                {translateCommandPaletteLabel(row.label, locale)}
+              </CommandListHeading>
             </div>
           ) : row.itemIndex === null ? (
             <DisabledCommandPaletteResultRow item={row.item} />
@@ -158,10 +172,11 @@ function CommandPaletteTitle({
 }: {
   item: Pick<CommandPaletteActionItem | CommandPaletteSubmenuItem, "title">;
 }) {
+  const locale = useLocale();
   const { title } = item;
   return (
     <span className="truncate" dir={typeof title === "string" ? textDirection(title) : undefined}>
-      {title}
+      {typeof title === "string" ? translateCommandPaletteLabel(title, locale) : title}
     </span>
   );
 }
@@ -190,6 +205,7 @@ function ThreadRowContext({
 function DisabledCommandPaletteResultRow(props: {
   item: CommandPaletteActionItem | CommandPaletteSubmenuItem;
 }) {
+  const locale = useLocale();
   return (
     <div className="flex min-h-8 select-none items-center gap-2 rounded-sm px-2 py-1.5 text-base opacity-64 sm:min-h-7 sm:text-sm">
       <CommandPaletteTitleIcon>{props.item.icon}</CommandPaletteTitleIcon>
@@ -206,7 +222,9 @@ function DisabledCommandPaletteResultRow(props: {
             <SearchMatchHintLine hint={props.item.matchHint} />
           ) : props.item.description ? (
             <span className="min-w-0 text-muted-foreground/70 text-xs">
-              {props.item.description}
+              {typeof props.item.description === "string"
+                ? translateCommandPaletteLabel(props.item.description, locale)
+                : props.item.description}
             </span>
           ) : null}
         </span>
@@ -228,6 +246,7 @@ function CommandPaletteResultRow(props: {
   keybindings: ResolvedKeybindingsConfig;
   onExecuteItem: (item: CommandPaletteActionItem | CommandPaletteSubmenuItem) => void;
 }) {
+  const locale = useLocale();
   const shortcutLabel = props.item.shortcutCommand
     ? shortcutLabelForCommand(props.keybindings, props.item.shortcutCommand)
     : null;
@@ -258,7 +277,9 @@ function CommandPaletteResultRow(props: {
             <SearchMatchHintLine hint={props.item.matchHint} />
           ) : props.item.description ? (
             <span className="min-w-0 text-muted-foreground/70 text-xs">
-              {props.item.description}
+              {typeof props.item.description === "string"
+                ? translateCommandPaletteLabel(props.item.description, locale)
+                : props.item.description}
             </span>
           ) : null}
         </span>

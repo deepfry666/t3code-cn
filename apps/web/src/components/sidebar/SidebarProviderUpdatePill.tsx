@@ -1,3 +1,4 @@
+import { useTranslation } from "~/i18n/useTranslation";
 import { Spinner } from "~/components/ui/spinner";
 import { useNavigate } from "@tanstack/react-router";
 import { useAtomValue } from "@effect/atom-react";
@@ -11,6 +12,7 @@ import {
   type ProviderUpdateSidebarPillView,
 } from "../ProviderUpdateLaunchNotification.logic";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
+import { sidebarUiMessages } from "./sidebarUi.messages";
 
 // Matches the pill's `duration-180` class.
 const PROVIDER_UPDATE_PILL_EXIT_MS = 180;
@@ -43,6 +45,7 @@ function latestProviderCheckedAt(
 }
 
 export function SidebarProviderUpdatePill() {
+  const t = useTranslation(sidebarUiMessages);
   const navigate = useNavigate();
   const providers = useAtomValue(primaryServerProvidersAtom);
   const [dismissedKeys, setDismissedKeys] = useState<ReadonlySet<string>>(() => new Set());
@@ -194,7 +197,7 @@ export function SidebarProviderUpdatePill() {
             render={
               <button
                 type="button"
-                aria-label="Dismiss provider update notice"
+                aria-label={t("Dismiss provider update notice")}
                 className="relative z-[1] mr-1 flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-md opacity-70 outline-none hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
                 onClick={() => startExit(displayedView.key, null, displayedView.key)}
               >
@@ -202,7 +205,7 @@ export function SidebarProviderUpdatePill() {
               </button>
             }
           />
-          <TooltipPopup side="top">Dismiss until provider status changes</TooltipPopup>
+          <TooltipPopup side="top">{t("Dismiss until provider status changes")}</TooltipPopup>
         </Tooltip>
       )}
     </div>

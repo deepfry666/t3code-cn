@@ -3,6 +3,8 @@ import { primaryEnvironmentIdAtom } from "../state/primaryEnvironment";
 import { primaryServerConfigAtom, primaryServerConfigEventAtom } from "../state/server";
 import { KeybindingsConfigWarning } from "./KeybindingsConfigWarning";
 import { createKeybindingsUpdateToastController } from "./KeybindingsUpdateToast.logic";
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "./globalUi.messages";
 import { stackedThreadToast, toastManager } from "./ui/toast";
 
 /** Toasts each keybindings reload the primary server reports. */
@@ -15,8 +17,11 @@ export function startKeybindingsUpdateToasts(): () => void {
     if (decision._tag === "Success") {
       toastManager.add({
         type: "success",
-        title: "Keybindings updated",
-        description: "Keybindings configuration reloaded successfully.",
+        title: translateNow(globalUiMessages, "Keybindings updated"),
+        description: translateNow(
+          globalUiMessages,
+          "Keybindings configuration reloaded successfully.",
+        ),
       });
       return;
     }
@@ -25,7 +30,7 @@ export function startKeybindingsUpdateToasts(): () => void {
     toastManager.add(
       stackedThreadToast({
         type: "warning",
-        title: "Invalid keybindings configuration",
+        title: translateNow(globalUiMessages, "Invalid keybindings configuration"),
         description: (
           <KeybindingsConfigWarning
             message={decision.message}

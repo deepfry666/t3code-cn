@@ -7,6 +7,8 @@ import { getLocalStorageItem, setLocalStorageItem } from "../hooks/useLocalStora
 import { readLocalApi } from "../localApi";
 import { appAtomRegistry } from "../rpc/atomRegistry";
 import { sourceControlEnvironment } from "../state/sourceControl";
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "./globalUi.messages";
 import { toastManager } from "./ui/toast";
 
 // Separate keys so a count written by another tab can never undo a dismissal.
@@ -36,14 +38,19 @@ function showStarPrompt(environmentId: EnvironmentId) {
       .catch(() => undefined);
   };
   const starInPlace = async () => {
-    toastManager.update(id, { actionProps: { children: "Starring…", disabled: true } });
+    toastManager.update(id, {
+      actionProps: {
+        children: translateNow(globalUiMessages, "Starring…"),
+        disabled: true,
+      },
+    });
     if (await starRepository(environmentId)) {
       // Thank them in place: a closing and opening toast would slide under the confetti.
       dismiss();
       toastManager.update(id, {
         type: "success",
-        title: "Thanks for the star!",
-        description: "It really helps T3 Code grow.",
+        title: translateNow(globalUiMessages, "Thanks for the star!"),
+        description: translateNow(globalUiMessages, "It really helps T3 Code grow."),
         timeout: 5_000,
         actionProps: undefined,
         data: {},
@@ -54,18 +61,29 @@ function showStarPrompt(environmentId: EnvironmentId) {
     // Browsers block new tabs once the click's activation expires; desktop opens through its bridge.
     if (window.desktopBridge || navigator.userActivation?.isActive !== false)
       return openInBrowser();
-    toastManager.update(id, { actionProps: { children: "Open GitHub", onClick: openInBrowser } });
+    toastManager.update(id, {
+      actionProps: {
+        children: translateNow(globalUiMessages, "Open GitHub"),
+        onClick: openInBrowser,
+      },
+    });
   };
   const id = toastManager.add({
-    title: "Enjoying T3 Code?",
-    description: "Give us a star on GitHub to let us know!",
+    title: translateNow(globalUiMessages, "Enjoying T3 Code?"),
+    description: translateNow(globalUiMessages, "Give us a star on GitHub to let us know!"),
     timeout: 0,
     onClose: dismiss,
-    actionProps: { children: "Star on GitHub", onClick: () => void starInPlace() },
+    actionProps: {
+      children: translateNow(globalUiMessages, "Star on GitHub"),
+      onClick: () => void starInPlace(),
+    },
     data: {
       actionLayout: "stacked-end",
       leadingIcon: <StarIcon aria-hidden className="size-4 text-warning-foreground" />,
-      secondaryActionProps: { children: "Dismiss", onClick: close },
+      secondaryActionProps: {
+        children: translateNow(globalUiMessages, "Dismiss"),
+        onClick: close,
+      },
       secondaryActionVariant: "ghost",
     },
   });

@@ -28,10 +28,22 @@ import { browserUiMessages } from "../browser/browserUi.messages";
 import { deviceUiMessages } from "../components/device/deviceUi.messages";
 import { usagePricesMessages } from "../components/usage/usagePrices.messages";
 import { usageUiMessages } from "../components/usage/usageUi.messages";
+import { sidebarUiMessages } from "../components/sidebar/sidebarUi.messages";
+import { commandPaletteUiMessages } from "../components/commandPaletteUi.messages";
+import { globalUiMessages } from "../components/globalUi.messages";
+import { rightPanelTabsUiMessages } from "../components/rightPanelTabsUi.messages";
+import { onboardingUiMessages } from "../components/onboarding/onboardingUi.messages";
+import { desktopUiMessages } from "../components/desktop/desktopUi.messages";
 import { translate } from "./locale";
 
 const catalogs: Record<string, Readonly<Record<string, string>>> = {
   deviceToolVersions: deviceToolVersionsMessages,
+  sidebar: sidebarUiMessages,
+  commandPalette: commandPaletteUiMessages,
+  global: globalUiMessages,
+  rightPanelTabs: rightPanelTabsUiMessages,
+  onboarding: onboardingUiMessages,
+  desktop: desktopUiMessages,
   chat: chatUiMessages,
   timeline: timelineUiMessages,
   threadPanel: threadPanelUiMessages,

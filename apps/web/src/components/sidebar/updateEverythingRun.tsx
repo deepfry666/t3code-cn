@@ -6,12 +6,14 @@ import * as Schema from "effect/Schema";
 import { AsyncResult, Atom } from "effect/reactivity";
 
 import { APP_VERSION } from "~/branding";
+import { readLocale, translateNow } from "~/i18n/useTranslation";
 import { appAtomRegistry } from "~/rpc/atomRegistry";
 import { desktopUpdateStateAtom } from "~/state/desktopUpdate";
 import { serverEnvironment } from "~/state/server";
 import { resolveVersionMismatch } from "~/versionSkew";
 import type { ServerUpdateOutcome, ServerUpdateTarget } from "../ServerUpdateAction";
 import { stackedThreadToast, toastManager } from "../ui/toast";
+import { sidebarUiMessages, translateSidebarLabel } from "./sidebarUi.messages";
 import {
   closeFinishedUpdateRun,
   getUpdateEverythingToastView,
@@ -91,7 +93,7 @@ export function retryFailedUpdateRunServers(
           ? providerFailure
           : outcome.status === "failed"
             ? outcome.message
-            : "Could not start the update",
+            : translateNow(sidebarUiMessages, "Could not start the update"),
         { serverUpdated: outcome.status === "updated" },
       ),
     );
@@ -235,12 +237,19 @@ function takeSavedUpdateEverythingResult(): typeof SavedResult.Type | null {
 export function showUpdateEverythingResult(result: UpdateEverythingResult): void {
   const view = getUpdateEverythingToastView(result, APP_VERSION);
   if (!view) return;
+  const locale = readLocale();
   toastManager.add(
     stackedThreadToast({
       type: view.type,
-      title: view.title,
+      title: translateSidebarLabel(view.title, locale),
       ...(view.description
-        ? { description: <span className="whitespace-pre-line">{view.description}</span> }
+        ? {
+            description: (
+              <span className="whitespace-pre-line">
+                {translateSidebarLabel(view.description, locale)}
+              </span>
+            ),
+          }
         : {}),
     }),
   );
@@ -303,7 +312,12 @@ function followHandedOffServers(servers: ReadonlyArray<HandedOffServer>): void {
       }
     };
     const timer = setTimeout(
-      () => settle(`Not back after ${HANDOFF_TIMEOUT_MS / 60_000} minutes`),
+      () =>
+        settle(
+          translateNow(sidebarUiMessages, "Not back after {minutes} minutes", {
+            minutes: HANDOFF_TIMEOUT_MS / 60_000,
+          }),
+        ),
       server.startedAt + HANDOFF_TIMEOUT_MS - Date.now(),
     );
     const unsubscribe = appAtomRegistry.subscribe(
@@ -341,8 +355,12 @@ export function startDesktopUpdateLaunchNotice(): () => void {
       toastManager.add(
         stackedThreadToast({
           type: "error",
-          title: "Update did not apply",
-          description: `T3 Code is still on ${APP_VERSION}. Install ${notAppliedVersion} again from the update button.`,
+          title: translateNow(sidebarUiMessages, "Update did not apply"),
+          description: translateNow(
+            sidebarUiMessages,
+            "T3 Code is still on {version}. Install {next} again from the update button.",
+            { version: APP_VERSION, next: notAppliedVersion },
+          ),
         }),
       );
     },

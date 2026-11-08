@@ -13,9 +13,11 @@ import { AtomRegistry } from "effect/reactivity";
 import * as Stream from "effect/Stream";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 
+import { translateNow } from "~/i18n/useTranslation";
 import { openFileInPreview, openUrlInPreview } from "../../browser/openFileInPreview";
 import { isPreviewAvailableFor } from "../../browser/previewRuntime";
 import { requestConfirmDialog } from "../../confirmDialog";
+import { desktopUiMessages } from "./desktopUi.messages";
 import { connectPairing } from "../../connection/onboarding";
 import { isLocalEnvironmentDisabled } from "../../localEnvironment";
 import { useComposerDraftStore } from "../../composerDraftStore";
@@ -107,15 +109,22 @@ export function DesktopWebLinkCoordinator() {
 
   const reportFailure = (url: string, description = url) =>
     toastManager.add(
-      stackedThreadToast({ type: "error", title: "Could not open the link", description }),
+      stackedThreadToast({
+        type: "error",
+        title: translateNow(desktopUiMessages, "Could not open the link"),
+        description,
+      }),
     );
 
   const reportPairingFailure = (error: unknown) =>
     toastManager.add(
       stackedThreadToast({
         type: "error",
-        title: "Could not add backend",
-        description: error instanceof Error ? error.message : "Failed to add backend.",
+        title: translateNow(desktopUiMessages, "Could not add backend"),
+        description:
+          error instanceof Error
+            ? error.message
+            : translateNow(desktopUiMessages, "Failed to add backend."),
       }),
     );
 
@@ -131,7 +140,10 @@ export function DesktopWebLinkCoordinator() {
       reportPairingFailure(error);
       return;
     }
-    const confirmed = (await requestConfirmDialog(`Add the backend at ${origin}?`)) ?? false;
+    const confirmed =
+      (await requestConfirmDialog(
+        translateNow(desktopUiMessages, "Add the backend at {origin}?", { origin }),
+      )) ?? false;
     if (!confirmed) return;
     const result = await connectPairingEnvironment({ pairingUrl });
     if (result._tag === "Failure") {
@@ -141,8 +153,11 @@ export function DesktopWebLinkCoordinator() {
     pairedUrlsRef.current.add(pairingUrl);
     toastManager.add({
       type: "success",
-      title: "Backend added",
-      description: "The environment is saved and will reconnect on app startup.",
+      title: translateNow(desktopUiMessages, "Backend added"),
+      description: translateNow(
+        desktopUiMessages,
+        "The environment is saved and will reconnect on app startup.",
+      ),
     });
   };
 

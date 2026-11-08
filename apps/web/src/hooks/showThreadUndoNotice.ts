@@ -5,6 +5,8 @@ import {
 } from "@t3tools/client-runtime/state/runtime";
 import { create } from "zustand";
 
+import { translateNow } from "~/i18n/useTranslation";
+import { sidebarUiMessages } from "../components/sidebar/sidebarUi.messages";
 import { stackedThreadToast, toastManager } from "../components/ui/toast";
 import { shortcutLabelForCommand } from "../keybindings";
 import { announce, cancelAnnouncement } from "../lib/announce";
@@ -35,7 +37,9 @@ function threadUndoNoticeSummary(notice: Pick<UndoNotice, "action" | "count">): 
 
 export function threadUndoLabel(keybindings: Parameters<typeof shortcutLabelForCommand>[0]) {
   const shortcut = shortcutLabelForCommand(keybindings, "thread.undo");
-  return shortcut ? `${shortcut} to undo` : "Undo";
+  return shortcut
+    ? translateNow(sidebarUiMessages, "{shortcut} to undo", { shortcut })
+    : translateNow(sidebarUiMessages, "Undo");
 }
 
 let announcedSummary: string | null = null;
@@ -94,7 +98,10 @@ function refreshNotice() {
               stackedThreadToast({
                 type: "error",
                 title: failureTitle,
-                description: error instanceof Error ? error.message : "An error occurred.",
+                description:
+                  error instanceof Error
+                    ? error.message
+                    : translateNow(sidebarUiMessages, "An error occurred."),
               }),
             );
           };

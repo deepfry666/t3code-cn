@@ -22,6 +22,8 @@ import {
 import { CircleArrowUpIcon } from "lucide-react";
 import { type ComponentProps, useRef, useState } from "react";
 
+import { translateNow, useTranslation } from "~/i18n/useTranslation";
+import { globalUiMessages } from "./globalUi.messages";
 import { requestConfirmDialog } from "~/confirmDialog";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import { serverEnvironment, updateOutdatedServer } from "~/state/server";
@@ -37,15 +39,15 @@ import { Button } from "./ui/button";
 import { toastManager } from "./ui/toast";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "./ui/tooltip";
 
-const UPDATE_STAGE_LABELS: Record<ServerUpdateStage, string> = {
+const UPDATE_STAGE_KEYS = {
   downloading: "Downloading…",
   installing: "Downloading…",
   resuming: "Restarting…",
-};
+} as const;
 const pendingUpdateEnvironmentIds = new Set<EnvironmentId>();
 
 export function serverUpdateStageLabel(stage: ServerUpdateStage): string {
-  return UPDATE_STAGE_LABELS[stage];
+  return translateNow(globalUiMessages, UPDATE_STAGE_KEYS[stage]);
 }
 
 /** Why the environment's policy refuses server updates, read outside render. */
@@ -76,11 +78,17 @@ function refusedCrossing(
 }
 
 function CrossTrackNote() {
-  return <span className="text-muted-foreground text-xs">{CROSS_TRACK_NOTE}</span>;
+  return (
+    <span className="text-muted-foreground text-xs">
+      {translateNow(globalUiMessages, CROSS_TRACK_NOTE)}
+    </span>
+  );
 }
 
 function updateFailureMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Server update failed.";
+  return error instanceof Error
+    ? error.message
+    : translateNow(globalUiMessages, "Server update failed.");
 }
 
 export interface ServerUpdateTarget {
@@ -149,7 +157,7 @@ export function useServerUpdate() {
       if (!quiet) {
         toastManager.add({
           type: "error",
-          title: `${serverLabel} update failed`,
+          title: translateNow(globalUiMessages, "{server} update failed", { server: serverLabel }),
           description: message,
         });
       }
@@ -158,11 +166,15 @@ export function useServerUpdate() {
     if (!quiet) {
       toastManager.add({
         type: "success",
-        title: `${serverLabel} updated`,
+        title: translateNow(globalUiMessages, "{server} updated", { server: serverLabel }),
         description:
           selfUpdate === "desktop-managed"
-            ? `Desktop app relaunched on ${result.value.targetVersion}.`
-            : `Reconnected on t3@${result.value.targetVersion}.`,
+            ? translateNow(globalUiMessages, "Desktop app relaunched on {version}.", {
+                version: result.value.targetVersion,
+              })
+            : translateNow(globalUiMessages, "Reconnected on t3@{version}.", {
+                version: result.value.targetVersion,
+              }),
       });
     }
     return { status: "updated" };
@@ -171,7 +183,7 @@ export function useServerUpdate() {
 
 export function ServerUpdatesAction({
   targets,
-  label = "Update all",
+  label,
   variant = "outline",
   size = "xs",
   className,
@@ -201,7 +213,11 @@ export function ServerUpdatesAction({
       if (desktopTargets.length > 0) {
         const confirmed =
           (await requestConfirmDialog(
-            `Update the T3 Code desktop apps on ${desktopTargets.map((target) => target.serverLabel).join(", ")}? They will close and relaunch on those machines.`,
+            translateNow(
+              globalUiMessages,
+              "Update the T3 Code desktop apps on {servers}? They will close and relaunch on those machines.",
+              { servers: desktopTargets.map((target) => target.serverLabel).join(", ") },
+            ),
           )) ?? true;
         if (!confirmed) return;
       }
@@ -218,7 +234,7 @@ export function ServerUpdatesAction({
       disabled={isPending || eligible.length === 0}
       onClick={() => void handleUpdate()}
     >
-      {label}
+      {label ?? translateNow(globalUiMessages, "Update all")}
     </Button>
   );
 }
@@ -263,12 +279,13 @@ export function ServerUpdateAction({
   desktopAppUpdate = false,
   targetVersion,
   channel,
-  label = "Update",
+  label,
   variant = "outline",
   size = "xs",
   className,
   appearance = "button",
 }: ServerUpdateTarget & UpdateButtonProps) {
+  const t = useTranslation(globalUiMessages);
   const isDesktopAppUpdate = selfUpdate === "desktop-managed";
   const serverVersion = useServerConfigs().get(environmentId)?.environment.serverVersion;
   const sessionStateAtom = environmentSession.sessionStateAtom(environmentId);
@@ -281,17 +298,27 @@ export function ServerUpdateAction({
       toastManager.add({
         type: "success",
         title:
-          installation?.kind === "npm-global" ? "Update command copied" : "Relaunch command copied",
+          installation?.kind === "npm-global"
+            ? translateNow(globalUiMessages, "Update command copied")
+            : translateNow(globalUiMessages, "Relaunch command copied"),
         description:
           installation?.kind === "npm-global"
-            ? `Run \`${command}\` on ${serverLabel}, then restart t3 with your usual options.`
-            : `Stop t3 on ${serverLabel}, then relaunch with \`${command}\` using the same subcommand and options. This does not update an installed t3 command.`,
+            ? translateNow(
+                globalUiMessages,
+                "Run `{command}` on {server}, then restart t3 with your usual options.",
+                { command, server: serverLabel },
+              )
+            : translateNow(
+                globalUiMessages,
+                "Stop t3 on {server}, then relaunch with `{command}` using the same subcommand and options. This does not update an installed t3 command.",
+                { command, server: serverLabel },
+              ),
       });
     },
     onError: (error) => {
       toastManager.add({
         type: "error",
-        title: "Could not copy update command",
+        title: translateNow(globalUiMessages, "Could not copy update command"),
         description: error.message,
       });
     },
@@ -307,7 +334,11 @@ export function ServerUpdateAction({
     if (isDesktopAppUpdate) {
       const confirmed =
         (await requestConfirmDialog(
-          `Update the T3 Code desktop app that runs the ${serverLabel}? It will close and relaunch on that machine.`,
+          translateNow(
+            globalUiMessages,
+            "Update the T3 Code desktop app that runs the {server}? It will close and relaunch on that machine.",
+            { server: serverLabel },
+          ),
         )) ?? true;
       if (!confirmed) {
         return;
@@ -338,7 +369,10 @@ export function ServerUpdateAction({
   if (selfUpdate === "desktop-managed" && !desktopAppUpdate) {
     return (
       <span className="text-muted-foreground text-xs">
-        Update the desktop app on that machine to update this server.
+        {translateNow(
+          globalUiMessages,
+          "Update the desktop app on that machine to update this server.",
+        )}
       </span>
     );
   }
@@ -352,9 +386,9 @@ export function ServerUpdateAction({
   const actionLabel =
     manualCommand !== null
       ? installation?.kind === "npm-global"
-        ? "Copy update command"
-        : "Copy relaunch command"
-      : label;
+        ? t("Copy update command")
+        : t("Copy relaunch command")
+      : (label ?? t("Update"));
   const onClick =
     manualCommand !== null
       ? () => copyToClipboard(manualCommand, { command: manualCommand })
@@ -401,7 +435,7 @@ export function OutdatedServerUpdateAction({
   serverLabel,
   fromVersion,
   targetVersion,
-  label = "Update",
+  label,
 }: {
   readonly environmentId: EnvironmentId;
   readonly serverLabel: string;
@@ -409,6 +443,7 @@ export function OutdatedServerUpdateAction({
   readonly targetVersion: string;
   readonly label?: string;
 }) {
+  const t = useTranslation(globalUiMessages);
   const update = useAtomCommand(updateOutdatedServer, { reportFailure: false });
   const handleUpdate = async () => {
     if (pendingUpdateEnvironmentIds.has(environmentId)) return;
@@ -423,15 +458,17 @@ export function OutdatedServerUpdateAction({
       if (isAtomCommandInterrupted(result)) return;
       toastManager.add({
         type: "error",
-        title: `${serverLabel} update failed`,
+        title: translateNow(globalUiMessages, "{server} update failed", { server: serverLabel }),
         description: updateFailureMessage(squashAtomCommandFailure(result)),
       });
       return;
     }
     toastManager.add({
       type: "success",
-      title: `${serverLabel} updated`,
-      description: `Reconnected on t3@${result.value.targetVersion}.`,
+      title: translateNow(globalUiMessages, "{server} updated", { server: serverLabel }),
+      description: translateNow(globalUiMessages, "Reconnected on t3@{version}.", {
+        version: result.value.targetVersion,
+      }),
     });
   };
   if (fromVersion !== undefined && crossesReleaseTrack(fromVersion, targetVersion)) {
@@ -439,7 +476,7 @@ export function OutdatedServerUpdateAction({
   }
   return (
     <Button size="xs" variant="outline" onClick={() => void handleUpdate()}>
-      {label}
+      {label ?? t("Update")}
     </Button>
   );
 }

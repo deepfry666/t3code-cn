@@ -1,4 +1,5 @@
 import { BUILT_IN_THEMES } from "@t3tools/shared/themePalettes";
+import { translateNow, useTranslation } from "~/i18n/useTranslation";
 import { MonitorIcon, MoonIcon, PaletteIcon, SunIcon } from "lucide-react";
 
 import { useCustomThemes } from "../hooks/useCustomThemes";
@@ -17,6 +18,7 @@ import {
   getThemeCardDefinition,
   ThemePreviewCircle,
 } from "./settings/ThemePreviewCircles";
+import { commandPaletteUiMessages } from "./commandPaletteUi.messages";
 import { stackedThreadToast, toastManager } from "./ui/toast";
 
 export const APPEARANCE_OPTIONS = [
@@ -29,8 +31,8 @@ export function notifyThemeSaveFailure(): void {
   toastManager.add(
     stackedThreadToast({
       type: "error",
-      title: "Couldn't save theme selection",
-      description: "Try again.",
+      title: translateNow(commandPaletteUiMessages, "Couldn't save theme selection"),
+      description: translateNow(commandPaletteUiMessages, "Try again."),
     }),
   );
 }
@@ -54,6 +56,7 @@ function useThemeCards() {
 }
 
 export function useCommandPaletteThemeItems() {
+  const t = useTranslation(commandPaletteUiMessages);
   const {
     theme,
     themeHalves,
@@ -87,7 +90,7 @@ export function useCommandPaletteThemeItems() {
           titleTrailingContent: (
             <span className="flex shrink-0 items-center gap-2">
               {(themeHalves?.[resolvedTheme] ?? getThemeDefinition(theme)?.id ?? null) === id ? (
-                <span className="text-xs text-muted-foreground/70">Current</span>
+                <span className="text-xs text-muted-foreground/70">{t("Current")}</span>
               ) : null}
               <span className="flex items-center gap-1" aria-hidden>
                 {previews.map((preview) => (
@@ -133,7 +136,7 @@ export function useCommandPaletteThemeItems() {
           icon: <Icon className={ITEM_ICON_CLASS} />,
           titleTrailingContent:
             appearanceMode === mode ? (
-              <span className="text-xs text-muted-foreground/70">Current</span>
+              <span className="text-xs text-muted-foreground/70">{t("Current")}</span>
             ) : undefined,
           run: async () => {
             if (!setAppearanceMode(mode)) notifyThemeSaveFailure();

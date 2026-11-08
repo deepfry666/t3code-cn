@@ -7,6 +7,8 @@ import { useId, useRef, useState, useSyncExternalStore } from "react";
 import { useDeadlinePassed } from "../../hooks/useDeadline";
 import { useNowSecond } from "../../hooks/useNowSecond";
 
+import { translateNow, useTranslation } from "~/i18n/useTranslation";
+import { desktopUiMessages } from "./desktopUi.messages";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -28,9 +30,12 @@ function formatRemainingSeconds(seconds: number): string {
 }
 
 function getPromptErrorMessage(error: unknown): string {
-  const message = error instanceof Error ? error.message : "SSH verification prompt failed.";
+  const message =
+    error instanceof Error
+      ? error.message
+      : translateNow(desktopUiMessages, "SSH verification prompt failed.");
   return message.includes("expired") || message.includes("no longer pending")
-    ? "This SSH verification prompt expired. Try connecting again."
+    ? translateNow(desktopUiMessages, "This SSH verification prompt expired. Try connecting again.")
     : message;
 }
 
@@ -83,6 +88,7 @@ function ActiveSshPasswordPrompt({
 }: {
   readonly request: DesktopSshPasswordPromptRequest;
 }) {
+  const t = useTranslation(desktopUiMessages);
   const [password, setPassword] = useState("");
   const [isResponding, setIsResponding] = useState(false);
   const [responseError, setResponseError] = useState<string | null>(null);
@@ -102,7 +108,7 @@ function ActiveSshPasswordPrompt({
   const remainingLabel =
     remainingSeconds === null ? null : formatRemainingSeconds(remainingSeconds);
   const visibleResponseError = isExpired
-    ? "This SSH verification prompt expired. Try connecting again."
+    ? translateNow(desktopUiMessages, "This SSH verification prompt expired. Try connecting again.")
     : responseError;
 
   const respond = async (nextPassword: string | null) => {
@@ -112,7 +118,7 @@ function ActiveSshPasswordPrompt({
 
     const requestId = request.requestId;
     if (nextPassword !== null && isExpired) {
-      setResponseError("This SSH verification prompt expired. Try connecting again.");
+      setResponseError(t("This SSH verification prompt expired. Try connecting again."));
       return;
     }
 
@@ -156,9 +162,9 @@ function ActiveSshPasswordPrompt({
     >
       <DialogPopup className="max-w-md" initialFocus={inputRef} showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle>SSH verification required</DialogTitle>
+          <DialogTitle>{t("SSH verification required")}</DialogTitle>
           <DialogDescription>
-            Enter the password or verification code required by <code>{target}</code>. T3 Code
+            {t("Enter the password or verification code required by {target}.", { target })} T3 Code
             passes your response to the local SSH process and keeps it in memory to reuse for this
             host. T3 Code does not write it to disk.
           </DialogDescription>
@@ -183,7 +189,7 @@ function ActiveSshPasswordPrompt({
                         : "shrink-0 text-xs text-muted-foreground"
                     }
                   >
-                    {isExpired ? "Expired" : remainingLabel}
+                    {isExpired ? t("Expired") : remainingLabel}
                   </span>
                 ) : null}
               </div>
@@ -201,18 +207,19 @@ function ActiveSshPasswordPrompt({
               <p className="text-sm text-destructive">{visibleResponseError}</p>
             ) : (
               <p className="text-sm text-muted-foreground">
-                SSH keys may replace a password, but your server can still require a verification
-                code.
+                {t(
+                  "SSH keys may replace a password, but your server can still require a verification code.",
+                )}
               </p>
             )}
           </form>
         </DialogPanel>
         <DialogFooter>
           <Button disabled={isResponding} type="button" variant="outline" onClick={cancelPrompt}>
-            {isExpired ? "Dismiss" : "Cancel"}
+            {isExpired ? t("Dismiss") : t("Cancel")}
           </Button>
           <Button disabled={isResponding || isExpired} form={formId} type="submit">
-            Continue
+            {t("Continue")}
           </Button>
         </DialogFooter>
       </DialogPopup>

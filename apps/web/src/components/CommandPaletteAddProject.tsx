@@ -12,6 +12,8 @@ import { ITEM_ICON_CLASS } from "./CommandPalette.logic";
 import { CommandPaletteTitleIcon } from "./CommandPaletteResults";
 import { Button } from "./ui/button";
 import { Kbd, KbdGroup } from "./ui/kbd";
+import { useTranslation } from "~/i18n/useTranslation";
+import { commandPaletteUiMessages } from "./commandPaletteUi.messages";
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "./ui/select";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "./ui/tooltip";
 
@@ -80,6 +82,7 @@ export function NewProjectPublishHostPicker(props: {
   readonly value: SourceControlProviderKind;
   readonly onValueChange: (kind: SourceControlProviderKind) => void;
 }) {
+  const t = useTranslation(commandPaletteUiMessages);
   const [open, setOpen] = useState(false);
   return (
     <span
@@ -101,7 +104,7 @@ export function NewProjectPublishHostPicker(props: {
           if (kind !== null) props.onValueChange(kind);
         }}
       >
-        <SelectTrigger size="xs" variant="ghost" aria-label="Host for the new repository">
+        <SelectTrigger size="xs" variant="ghost" aria-label={t("Host for the new repository")}>
           <SelectValue>
             {(kind: SourceControlProviderKind) => sourceControlClients.get(kind).label}
           </SelectValue>

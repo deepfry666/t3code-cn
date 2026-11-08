@@ -4,6 +4,8 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { PanelLeft, PanelLeftClose } from "lucide";
 import * as React from "react";
 import { cn } from "~/lib/utils";
+import { useTranslation } from "~/i18n/useTranslation";
+import { sidebarUiMessages } from "~/components/sidebar/sidebarUi.messages";
 import { Button } from "~/components/ui/button";
 import { Input, type InputProps } from "~/components/ui/input";
 import { MorphIcon } from "~/components/MorphIcon";
@@ -282,6 +284,7 @@ function Sidebar({
   collapsible?: "offcanvas" | "icon" | "none";
   resizable?: boolean | SidebarResizableOptions;
 }) {
+  const t = useTranslation(sidebarUiMessages);
   const { isMobile, state, openMobile, setOpenMobile, setMobileSheetElement } = useSidebar();
   const offcanvasCollapsed = !isMobile && collapsible === "offcanvas" && state === "collapsed";
 
@@ -327,8 +330,8 @@ function Sidebar({
             }
           >
             <SheetHeader className="sr-only">
-              <SheetTitle>{props["aria-label"] ?? "Sidebar"}</SheetTitle>
-              <SheetDescription>Displays the mobile sidebar.</SheetDescription>
+              <SheetTitle>{props["aria-label"] ?? t("Sidebar")}</SheetTitle>
+              <SheetDescription>{t("Displays the mobile sidebar.")}</SheetDescription>
             </SheetHeader>
             <div
               className={cn(
@@ -399,6 +402,7 @@ function Sidebar({
 }
 
 function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<typeof Button>) {
+  const t = useTranslation(sidebarUiMessages);
   const { toggleSidebar } = useSidebar();
   const isOpen = useSidebarVisibility();
 
@@ -420,7 +424,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
       {...props}
     >
       <MorphIcon className="size-4" icon={isOpen ? PanelLeftClose : PanelLeft} />
-      <span className="sr-only">Toggle Sidebar</span>
+      <span className="sr-only">{t("Toggle Sidebar")}</span>
     </Button>
   );
 }
@@ -439,13 +443,14 @@ function SidebarRail({
   onPointerUp,
   ...props
 }: React.ComponentProps<"button">) {
+  const t = useTranslation(sidebarUiMessages);
   const { open, toggleSidebar, onCollapse } = useSidebar();
   const sidebarInstance = React.use(SidebarInstanceContext);
   const suppressClickRef = React.useRef(false);
   const resolvedResizable = sidebarInstance?.resizable ?? null;
   const canResize = resolvedResizable !== null && open;
-  const railLabel = canResize ? "Resize Sidebar" : "Toggle Sidebar";
-  const railTitle = canResize ? "Drag to resize sidebar" : "Toggle Sidebar";
+  const railLabel = canResize ? t("Resize Sidebar") : t("Toggle Sidebar");
+  const railTitle = canResize ? t("Drag to resize sidebar") : t("Toggle Sidebar");
   const resize = useResizeDrag<HTMLButtonElement>((event) => {
     const options = resolvedResizable;
     if (!options || !open) return null;

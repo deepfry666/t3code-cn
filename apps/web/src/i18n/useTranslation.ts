@@ -9,9 +9,9 @@ let memoryLocale: Locale | undefined;
 export function readLocale(): Locale {
   if (memoryLocale) return memoryLocale;
   try {
-    return resolveLocale(localStorage.getItem(LOCALE_STORAGE_KEY), navigator.languages);
+    return resolveLocale(localStorage.getItem(LOCALE_STORAGE_KEY), navigator.languages ?? []);
   } catch {
-    return resolveLocale(null, typeof navigator === "undefined" ? [] : navigator.languages);
+    return resolveLocale(null, typeof navigator === "undefined" ? [] : (navigator.languages ?? []));
   }
 }
 

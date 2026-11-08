@@ -1,4 +1,5 @@
 import { useAtomValue } from "@effect/atom-react";
+import { useLocale } from "~/i18n/useTranslation";
 import { Undo2Icon } from "lucide-react";
 import { useState } from "react";
 
@@ -11,17 +12,17 @@ import { cn } from "../../lib/utils";
 import { primaryServerKeybindingsAtom } from "../../state/server";
 import { InlineButton } from "../ui/button";
 import { SidebarMenuItem } from "../ui/sidebar";
+import { translateSidebarLabel } from "./sidebarUi.messages";
 
 /** Fills the free space in the sidebar footer's utility row, so it never moves or covers the list. */
 export function SidebarThreadUndoNotice() {
+  const locale = useLocale();
   const notice = useThreadUndoNotice((state) => state.notice);
   const keybindings = useAtomValue(primaryServerKeybindingsAtom);
   // Short enough to fit beside the utility icons; screen readers hear the full summary.
-  const summary = notice
-    ? notice.count === 1
-      ? notice.action
-      : `${notice.action} ${notice.count}`
-    : null;
+  const action = notice ? translateSidebarLabel(notice.action, locale) : null;
+  const summary =
+    action === null || !notice ? null : notice.count === 1 ? action : `${action} ${notice.count}`;
 
   // Keeps the last text on screen while it fades out, then unmounts on transitionend.
   const [shownSummary, setShownSummary] = useState(summary);
@@ -52,7 +53,7 @@ export function SidebarThreadUndoNotice() {
               clipped space; once the label is too wide it wraps away and the icon shows. */}
           <span className="flex h-6 min-w-0 flex-wrap justify-end overflow-hidden">
             <Undo2Icon className="-ml-4 h-6 w-4 @max-[1rem]:invisible" />
-            <span>{threadUndoLabel(keybindings)}</span>
+            <span>{translateSidebarLabel(threadUndoLabel(keybindings), locale)}</span>
           </span>
         </InlineButton>
         <span>{text},</span>

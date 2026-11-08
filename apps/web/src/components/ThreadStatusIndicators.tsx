@@ -6,6 +6,8 @@ import {
 } from "@t3tools/client-runtime/environment";
 import { useSupportsMultiplePullRequests } from "~/hooks/useSupportsMultiplePullRequests";
 import { useStableCallback } from "~/hooks/useStableCallback";
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "./globalUi.messages";
 
 import { pullRequestDetailToVcsStatus } from "@t3tools/client-runtime/state/pull-requests";
 import {
@@ -69,7 +71,7 @@ export interface PrStatusIndicator {
 }
 
 export interface TerminalStatusIndicator {
-  label: "Terminal process running";
+  label: string;
   colorClass: string;
   pulse: boolean;
 }
@@ -504,7 +506,7 @@ export function terminalStatusFromRunningIds(
     return null;
   }
   return {
-    label: "Terminal process running",
+    label: translateNow(globalUiMessages, "Terminal process running"),
     colorClass: "text-teal-600 dark:text-teal-300/90",
     pulse: true,
   };
@@ -760,7 +762,8 @@ export function ThreadRowTrailingStatus({ thread }: { thread: SidebarThreadSumma
   const primaryEnvironmentId = usePrimaryEnvironmentId();
   const isRemoteThread = thread.environmentId !== primaryEnvironmentId;
   const remoteEnvLabel = environment?.label ?? null;
-  const threadEnvironmentLabel = isRemoteThread ? (remoteEnvLabel ?? "Remote") : null;
+  const remoteLabel = translateNow(globalUiMessages, "Remote");
+  const threadEnvironmentLabel = isRemoteThread ? (remoteEnvLabel ?? remoteLabel) : null;
   const remoteMachine = resolveEnvironmentMachineKind(environment?.serverConfig ?? null);
   const terminalStatus = terminalStatusFromRunningIds(runningTerminalIds);
 
@@ -794,7 +797,7 @@ export function ThreadRowTrailingStatus({ thread }: { thread: SidebarThreadSumma
           <TooltipTrigger
             render={
               <span
-                aria-label={threadEnvironmentLabel ?? "Remote"}
+                aria-label={threadEnvironmentLabel ?? remoteLabel}
                 className="inline-flex items-center justify-center"
               />
             }
