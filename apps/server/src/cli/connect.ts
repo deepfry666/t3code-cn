@@ -9,6 +9,7 @@ import {
   type RelayClientInstallProgressStage,
 } from "@t3tools/contracts";
 import { RelayOkResponse } from "@t3tools/contracts/relay";
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as RelayClient from "@t3tools/shared/relayClient";
 import { withRelayClientTracing } from "@t3tools/shared/relayTracing";
 import * as Cause from "effect/Cause";
@@ -215,7 +216,9 @@ function formatCloudStatus(status: CloudCliStatus, options?: { readonly json?: b
       : status.reachability === null
         ? [
             "",
-            "No running server answered, so reachability was not checked. Check the background service with `t3 service status`.",
+            "No running server answered, so reachability was not checked. Check the background service with `" +
+              FORK_IDENTITY.cliName +
+              " service status`.",
           ]
         : status.reachability.status === "reachable"
           ? [
@@ -387,7 +390,11 @@ export const waitForReachability = Effect.fn("cloud.cli.wait_for_reachability")(
   yield* Console.error(
     formatAlertBox(
       last === null
-        ? "✕ Could not check T3 Connect\n  The T3 server on this machine did not answer.\n  Fix: run `t3 service status`, then `t3 connect status`."
+        ? "✕ Could not check T3 Connect\n  The T3 server on this machine did not answer.\n  Fix: run `" +
+            FORK_IDENTITY.cliName +
+            " service status`, then `" +
+            FORK_IDENTITY.cliName +
+            " connect status`."
         : formatReachabilityFailure(last),
     ),
   );
@@ -513,7 +520,9 @@ export const disconnectCloud = Effect.fn("cloud.cli.disconnect")(function* (opti
 
   if (options.clearAuthorization) {
     yield* Console.log(
-      "Signed out of T3 Connect locally.\nThe background service is managed separately with `t3 service`.",
+      "Signed out of T3 Connect locally.\nThe background service is managed separately with `" +
+        FORK_IDENTITY.cliName +
+        " service`.",
     );
   }
   return liveResult;
