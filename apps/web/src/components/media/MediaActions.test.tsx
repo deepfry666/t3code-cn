@@ -231,7 +231,7 @@ it("words a failed copy in Chinese", async () => {
     expect.objectContaining({
       type: "error",
       title: "无法复制相对路径",
-      description: "无法将文件路径复制到剪贴板。",
+      description: "无法将 文件路径 复制到剪贴板。",
     }),
   ]);
 });

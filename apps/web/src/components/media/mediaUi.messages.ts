@@ -41,8 +41,8 @@ export const mediaUiMessages = {
   "Image copying is unavailable. Use a secure browser connection or save the image.":
     "无法复制图片。请使用安全的浏览器连接，或改为保存图片。",
   "The media action failed.": "媒体操作失败。",
-  "Clipboard API is unavailable while copying {target}.": "复制{target}时剪贴板 API 不可用。",
-  "Failed to copy {target} to the clipboard.": "无法将{target}复制到剪贴板。",
+  "Clipboard API is unavailable while copying {target}.": "复制 {target} 时无法使用剪贴板 API。",
+  "Failed to copy {target} to the clipboard.": "无法将 {target} 复制到剪贴板。",
   "Open original": "打开原始链接",
   "Download video": "下载视频",
   "Open in browser": "在浏览器中打开",
