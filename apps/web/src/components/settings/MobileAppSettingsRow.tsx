@@ -1,9 +1,14 @@
+import { useLocalizedSetting } from "./useLocalizedSetting";
+import { useTranslation, useLocale } from "~/i18n/useTranslation";
+import {
+  settingsMaintenanceMessages,
+  translateMaintenanceLabel,
+} from "./settingsMaintenance.messages";
 import { AndroidIcon, AppleIcon } from "../Icons";
 import { Button } from "../ui/button";
 import { Popover, PopoverPopup, PopoverTitle, PopoverTrigger } from "../ui/popover";
 import { QRCodeSvg } from "../ui/qr-code";
 import { SettingsRow } from "./settingsLayout";
-import { searchableSetting } from "./settingsSearch";
 
 const stores = [
   {
@@ -21,29 +26,34 @@ const stores = [
 ];
 
 export function MobileAppSettingsRow() {
+  const localizedSetting = useLocalizedSetting();
+  const t = useTranslation(settingsMaintenanceMessages);
+  const locale = useLocale();
   return (
     <SettingsRow
-      {...searchableSetting("mobile-app")}
-      description="Connect to your server from your phone or tablet."
+      {...localizedSetting("mobile-app")}
+      description={t("Connect to your server from your phone or tablet.")}
       control={
         <div className="flex items-center gap-2">
           {stores.map(({ label, store, url, Icon }) => (
             <Popover key={store}>
               <PopoverTrigger render={<Button size="sm" variant="outline" />}>
                 <Icon />
-                {label}
+                {translateMaintenanceLabel(label, locale)}
               </PopoverTrigger>
               <PopoverPopup align="end">
                 <div className="flex flex-col items-center gap-3">
                   <PopoverTitle>{store}</PopoverTitle>
-                  <p className="text-xs text-muted-foreground">Scan with your phone camera.</p>
+                  <p className="text-xs text-muted-foreground">
+                    {t("Scan with your phone camera.")}
+                  </p>
                   <div className="rounded-lg bg-white p-1.5">
                     <QRCodeSvg
                       value={url}
                       size={128}
                       level="M"
                       marginSize={1}
-                      title={`${store} link`}
+                      title={t("{store} link", { store })}
                     />
                   </div>
                   <Button
@@ -51,7 +61,7 @@ export function MobileAppSettingsRow() {
                     variant="outline"
                     render={<a href={url} target="_blank" rel="noreferrer noopener" />}
                   >
-                    Open {store}
+                    {t("Open {store}", { store })}
                   </Button>
                 </div>
               </PopoverPopup>
