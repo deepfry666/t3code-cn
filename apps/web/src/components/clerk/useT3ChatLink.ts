@@ -10,20 +10,26 @@ import {
   unlinkManagedRelayT3ChatCommand,
   useManagedRelayT3ChatLink,
 } from "../../cloud/managedRelayState";
+import { useTranslation } from "../../i18n/useTranslation";
 import { readLocalApi } from "../../localApi";
 import { useAtomCommand } from "../../state/use-atom-command";
 import { toastManager } from "../ui/toast";
+import { clerkUiMessages } from "./clerkUi.messages";
 
-function reportFailure(title: string, cause: unknown) {
+function reportFailure(
+  title: string,
+  cause: unknown,
+  t: ReturnType<typeof useTranslation<typeof clerkUiMessages>>,
+) {
   const traceId = findErrorTraceId(cause);
   toastManager.add({
     type: "error",
     title,
-    description: cause instanceof Error ? cause.message : "Try again.",
+    description: cause instanceof Error ? cause.message : t("Try again."),
     data: traceId
       ? {
           secondaryActionProps: {
-            children: "Copy trace ID",
+            children: t("Copy trace ID"),
             onClick: () => void navigator.clipboard?.writeText(traceId),
           },
         }
@@ -33,6 +39,7 @@ function reportFailure(title: string, cause: unknown) {
 
 /** Starts and removes the T3 Chat link that raises the T3 Connect tunnel cap. */
 export function useT3ChatLink() {
+  const t = useTranslation(clerkUiMessages);
   const linkState = useManagedRelayT3ChatLink();
   const createLinkRequest = useAtomCommand(createManagedRelayT3ChatLinkRequestCommand, {
     reportFailure: false,
@@ -53,7 +60,7 @@ export function useT3ChatLink() {
         ?.shell.openExternal(result.value)
         .catch(() => undefined);
     } else if (!isAtomCommandInterrupted(result)) {
-      reportFailure("Could not start linking", squashAtomCommandFailure(result));
+      reportFailure(t("Could not start linking"), squashAtomCommandFailure(result), t);
     }
     setPending(null);
   };
@@ -67,7 +74,7 @@ export function useT3ChatLink() {
       setLinkUrl(null);
       linkState.refresh();
     } else if (!isAtomCommandInterrupted(result)) {
-      reportFailure("Could not unlink T3 Chat", squashAtomCommandFailure(result));
+      reportFailure(t("Could not unlink T3 Chat"), squashAtomCommandFailure(result), t);
     }
     setPending(null);
   };

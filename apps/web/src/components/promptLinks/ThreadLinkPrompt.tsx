@@ -3,9 +3,12 @@ import { parseThreadLinkPrompt, withoutPromptLinkParams } from "@t3tools/shared/
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 
+import { translate } from "../../i18n/locale";
+import { readLocale } from "../../i18n/useTranslation";
 import { isThreadRoutePathname } from "../../threadRoutes";
 import { stackedThreadToast, toastManager } from "../ui/toast";
 import { placeLinkedPrompt } from "./linkedPrompt";
+import { promptLinksUiMessages } from "./promptLinksUi.messages";
 
 const handledLinkKeys = new Set<string>();
 
@@ -32,7 +35,11 @@ export function ThreadLinkPrompt({ threadRef }: { readonly threadRef: ScopedThre
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Could not open the linked prompt",
+            title: translate(
+              readLocale(),
+              promptLinksUiMessages,
+              "Could not open the linked prompt",
+            ),
             description: parsed.error,
           }),
         );

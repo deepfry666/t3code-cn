@@ -39,6 +39,8 @@ import { useIncrementalTimelineEntries } from "~/hooks/useIncrementalTimelineEnt
 import { useNowMinute } from "~/hooks/useNowMinute";
 import { useStableCallback } from "~/hooks/useStableCallback";
 import { useTheme } from "~/hooks/useTheme";
+import { translate, type Locale } from "~/i18n/locale";
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { observeResize } from "~/lib/observeResize";
 import { cn } from "~/lib/utils";
 import { deriveActiveWorkStartedAt, derivePhase } from "~/session-logic";
@@ -71,6 +73,7 @@ import {
   unplacedGuestMessages,
 } from "./guestStream.logic";
 import { guestTurnItemSource } from "./guestTurnItemSource";
+import { guestUiMessages } from "./guestUi.messages";
 
 interface GuestEntry {
   /** Unspent invite from the URL hash, if this load came from a link. */
@@ -141,8 +144,9 @@ const decodeHistoryPage = Schema.decodeUnknownOption(
 async function fetchGuestHistoryPage(
   shareId: string,
   cursor: string,
+  locale: Locale,
 ): Promise<OrchestrationV2ThreadHistoryPage | string> {
-  const failed = "Could not load earlier turns. Try again.";
+  const failed = translate(locale, guestUiMessages, "Could not load earlier turns. Try again.");
   try {
     const response = await fetch(
       `${GUEST_HISTORY_ROUTE}?${GUEST_SHARE_PARAM}=${encodeURIComponent(shareId)}&cursor=${encodeURIComponent(cursor)}`,
@@ -156,7 +160,7 @@ async function fetchGuestHistoryPage(
     }
     return Option.getOrElse(decodeHistoryPage(json), () => failed);
   } catch {
-    return "Could not reach the server.";
+    return translate(locale, guestUiMessages, "Could not reach the server.");
   }
 }
 
@@ -164,6 +168,7 @@ async function fetchGuestHistoryPage(
 async function postGuest(
   path: "redeem" | `messages?${string}`,
   body: typeof GuestRedeemRequest.Encoded | FormData,
+  locale: Locale,
 ): Promise<string | null> {
   try {
     const response = await fetch(
@@ -179,15 +184,15 @@ async function postGuest(
     if (response.ok) return null;
     const json: unknown = await response.json().catch(() => null);
     return Option.match(decodeErrorBody(json), {
-      onNone: () => "Something went wrong. Try again.",
+      onNone: () => translate(locale, guestUiMessages, "Something went wrong. Try again."),
       onSome: ({ message }) => message,
     });
   } catch {
-    return "Could not reach the server.";
+    return translate(locale, guestUiMessages, "Could not reach the server.");
   }
 }
 
-const STATUS_LABEL: Record<ThreadGuestMessageStatus, string> = {
+const STATUS_LABEL: Record<ThreadGuestMessageStatus, keyof typeof guestUiMessages> = {
   pending: "Waiting for approval",
   sent: "Sent",
   dismissed: "Not sent",
@@ -199,6 +204,7 @@ const LANE = "chat-content-lane px-4";
 type GuestAccess = "checking" | "session" | "name" | "none";
 
 export function GuestPage() {
+  const t = useTranslation(guestUiMessages);
   const [{ credential, shareId }] = useState(takeGuestEntry);
   // A browser that already joined this share goes straight back in, even from the spent link.
   // Sessions are per share, so one for another link never stands in for this one.
@@ -236,7 +242,7 @@ export function GuestPage() {
   return (
     <div className="flex h-dvh flex-col bg-background text-foreground">
       {access === "checking" ? (
-        <Notice title="Connecting..." />
+        <Notice title={t("Connecting...")} />
       ) : access === "name" && credential !== null ? (
         <NameForm
           credential={credential}
@@ -250,8 +256,8 @@ export function GuestPage() {
         <GuestSession shareId={shareId} />
       ) : (
         <Notice
-          title="This link has ended or is not valid"
-          detail="Ask the owner for a new link. Each link works in one browser."
+          title={t("This link has ended or is not valid")}
+          detail={t("Ask the owner for a new link. Each link works in one browser.")}
         />
       )}
     </div>
@@ -259,6 +265,8 @@ export function GuestPage() {
 }
 
 function GuestSession({ shareId }: { readonly shareId: string }) {
+  const t = useTranslation(guestUiMessages);
+  const locale = useLocale();
   const [stream, dispatch] = useReducer(applyGuestStreamEvent, null, () => ({
     ...initialGuestStreamState,
     awaitingRowIds: readAwaitingRowIds(),
@@ -281,7 +289,7 @@ function GuestSession({ shareId }: { readonly shareId: string }) {
   const loadEarlier = async () => {
     if (historyCursor === null || loadingHistory) return;
     setHistoryLoad({ cursor: historyCursor, error: null });
-    const result = await fetchGuestHistoryPage(shareId, historyCursor);
+    const result = await fetchGuestHistoryPage(shareId, historyCursor, locale);
     if (typeof result === "string") setHistoryLoad({ cursor: historyCursor, error: result });
     else dispatch({ type: "history-page", cursor: historyCursor, page: result });
   };
@@ -318,10 +326,15 @@ function GuestSession({ shareId }: { readonly shareId: string }) {
   }, [shareId]);
 
   if (stream.ended || (rejected && stream.view !== null)) {
-    return <Notice title="This link has ended" detail="The owner stopped sharing this thread." />;
+    return (
+      <Notice
+        title={t("This link has ended")}
+        detail={t("The owner stopped sharing this thread.")}
+      />
+    );
   }
   if (stream.view !== null) {
-    if (stream.projection === null) return <Notice title="Connecting..." />;
+    if (stream.projection === null) return <Notice title={t("Connecting...")} />;
     return (
       <GuestThread
         view={stream.view}
@@ -331,11 +344,11 @@ function GuestSession({ shareId }: { readonly shareId: string }) {
       />
     );
   }
-  if (!rejected) return <Notice title="Connecting..." />;
+  if (!rejected) return <Notice title={t("Connecting...")} />;
   return (
     <Notice
-      title="This link has ended or is not valid"
-      detail="Ask the owner for a new link. Each link works in one browser."
+      title={t("This link has ended or is not valid")}
+      detail={t("Ask the owner for a new link. Each link works in one browser.")}
     />
   );
 }
@@ -356,6 +369,8 @@ function NameForm({
   readonly credential: string;
   readonly onJoined: () => void;
 }) {
+  const t = useTranslation(guestUiMessages);
+  const locale = useLocale();
   const [name, setName] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -364,16 +379,16 @@ function NameForm({
     const trimmed = name.trim();
     if (trimmed === "" || submitting) return;
     setSubmitting(true);
-    const failure = await postGuest("redeem", { credential, name: trimmed });
+    const failure = await postGuest("redeem", { credential, name: trimmed }, locale);
     setSubmitting(false);
     if (failure === null) onJoined();
     else setError(failure);
   };
   return (
     <form className="m-auto flex w-full max-w-xs flex-col gap-3 p-6" onSubmit={submit}>
-      <h1 className="text-base font-medium">Join a shared thread</h1>
+      <h1 className="text-base font-medium">{t("Join a shared thread")}</h1>
       <label className="flex flex-col gap-1.5 text-sm" htmlFor="guest-name">
-        Your name
+        {t("Your name")}
         <Input
           id="guest-name"
           autoFocus
@@ -389,10 +404,10 @@ function NameForm({
         </p>
       ) : null}
       <Button type="submit" disabled={submitting || name.trim() === ""}>
-        Join
+        {t("Join")}
       </Button>
       <p className="text-xs text-muted-foreground">
-        The owner sees your name and approves each message before the agent gets it.
+        {t("The owner sees your name and approves each message before the agent gets it.")}
       </p>
     </form>
   );
@@ -430,7 +445,8 @@ function GuestThread({
   // Files load through the guest route.
   const [attachmentUrls] = useState(() => createGuestAttachmentUrls(shareId));
   // Expanded rows read detail and command output through the guest routes.
-  const [turnItemSource] = useState(() => guestTurnItemSource(shareId));
+  const locale = useLocale();
+  const [turnItemSource] = useState(() => guestTurnItemSource(shareId, locale));
   const attachmentUrlById = attachmentUrls(items);
   const entries = useIncrementalTimelineEntries(threadKey, {
     visibleTurnItems: items,
@@ -568,9 +584,10 @@ function GuestThread({
 
 function ExpiryLabel({ expiresAt }: { readonly expiresAt: string }) {
   const nowMinute = useNowMinute();
+  const locale = useLocale();
   return (
     <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-      {formatGuestExpiry(expiresAt, Date.parse(`${nowMinute}Z`))}
+      {formatGuestExpiry(expiresAt, Date.parse(`${nowMinute}Z`), locale)}
     </span>
   );
 }
@@ -593,12 +610,13 @@ function UnplacedGuestMessage({
   readonly shareId: GuestShareView["shareId"];
   readonly message: ThreadGuestMessage;
 }) {
+  const t = useTranslation(guestUiMessages);
   // A dismissed message's files are deleted, so only their names remain.
   const served = message.status !== "dismissed";
   const url = (attachment: { readonly id: string }) => guestAttachmentUrl(shareId, attachment.id);
   return (
     <div className="flex flex-col items-end gap-1">
-      <GuestMessageName name="You" />
+      <GuestMessageName name={t("You")} />
       <div
         className={cn(
           BUBBLE,
@@ -614,19 +632,20 @@ function UnplacedGuestMessage({
         />
         {message.text ? <span>{message.text}</span> : null}
       </div>
-      <p className="me-1 text-2xs text-muted-foreground">{STATUS_LABEL[message.status]}</p>
+      <p className="me-1 text-2xs text-muted-foreground">{t(STATUS_LABEL[message.status])}</p>
     </div>
   );
 }
 
 /** The thread's model, labeled as the owner's composer labels it, with no way to change it. */
 function GuestModelLabel({ model }: { readonly model: GuestThreadModel }) {
+  const t = useTranslation(guestUiMessages);
   const label = getTriggerDisplayModelName({ slug: model.name, ...model }, model.driver);
   const fullLabel = getDisplayModelName({ slug: model.name, ...model });
   return (
     <ComposerControl
       render={<span />}
-      aria-label={`Model: ${fullLabel}`}
+      aria-label={t("Model: {model}", { model: fullLabel })}
       className="pointer-events-none min-w-0 shrink"
     >
       {model.driver === null ? null : (
@@ -672,6 +691,8 @@ function GuestComposer({
   readonly shareId: GuestShareView["shareId"];
   readonly model: GuestThreadModel;
 }) {
+  const t = useTranslation(guestUiMessages);
+  const locale = useLocale();
   const [text, setText] = useState("");
   const [files, setFiles] = useState<ReadonlyArray<StagedFile>>([]);
   const [sending, setSending] = useState(false);
@@ -685,7 +706,10 @@ function GuestComposer({
       ...files,
       ...added.map((file) => ({ key: `staged-${nextFileKey.current++}`, file })),
     ];
-    const problem = guestFilesProblem(next.map((staged) => staged.file));
+    const problem = guestFilesProblem(
+      next.map((staged) => staged.file),
+      locale,
+    );
     setError(problem);
     if (problem === null) setFiles(next);
   };
@@ -701,6 +725,7 @@ function GuestComposer({
     const failure = await postGuest(
       `messages?${GUEST_SHARE_PARAM}=${encodeURIComponent(shareId)}`,
       form,
+      locale,
     );
     setSending(false);
     setError(failure);
@@ -744,7 +769,7 @@ function GuestComposer({
       }}
     >
       {files.length > 0 ? (
-        <ul className="flex flex-wrap gap-2" aria-label="Attached files">
+        <ul className="flex flex-wrap gap-2" aria-label={t("Attached files")}>
           {files.map((staged) => (
             <li
               key={staged.key}
@@ -766,7 +791,7 @@ function GuestComposer({
               <Button
                 size="icon-xs"
                 variant="ghost-muted"
-                aria-label={`Remove ${staged.file.name}`}
+                aria-label={t("Remove {file}", { file: staged.file.name })}
                 onClick={() => {
                   setError(null);
                   setFiles((current) => current.filter((candidate) => candidate !== staged));
@@ -779,8 +804,8 @@ function GuestComposer({
         </ul>
       ) : null}
       <textarea
-        aria-label="Message"
-        placeholder="Message"
+        aria-label={t("Message")}
+        placeholder={t("Message")}
         rows={2}
         maxLength={GUEST_MESSAGE_MAX_LENGTH}
         value={text}
@@ -795,14 +820,17 @@ function GuestComposer({
           type="file"
           multiple
           hidden
-          aria-label="Files to attach"
+          aria-label={t("Files to attach")}
           onChange={(event) => {
             addFiles(Array.from(event.target.files ?? []));
             // The same file can be picked again after it is removed.
             event.target.value = "";
           }}
         />
-        <ComposerControl aria-label="Attach files" onClick={() => fileInputRef.current?.click()}>
+        <ComposerControl
+          aria-label={t("Attach files")}
+          onClick={() => fileInputRef.current?.click()}
+        >
           <ComposerControlIcon icon={PaperclipIcon} />
         </ComposerControl>
         <GuestModelLabel model={model} />
@@ -812,12 +840,12 @@ function GuestComposer({
           </p>
         ) : (
           <p className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
-            The owner approves each message
+            {t("The owner approves each message")}
           </p>
         )}
         <button
           type="submit"
-          aria-label="Send"
+          aria-label={t("Send")}
           disabled={sending || (text.trim() === "" && files.length === 0)}
           className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-message-action text-message-action-foreground shadow-xs hover:bg-message-action-hover focus-visible:outline-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-64"
         >
