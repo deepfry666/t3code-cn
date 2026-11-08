@@ -1,5 +1,7 @@
 # Fork-only: release.yml runs only in pingdotgg/t3code on Blacksmith runners, so this
 # builds an unsigned Windows installer on a GitHub-hosted runner for manual testing.
+# Like release-desktop.yml it cross-builds on Linux; native Windows hosts install extra
+# optional natives and fail the packaged payload file limit.
 #
 #   gh workflow run fork-windows-desktop.yml --ref main
 name: Fork Windows desktop
@@ -14,7 +16,7 @@ jobs:
   build:
     name: Build Windows x64 installer
     if: github.repository == 'deepfry666/t3code-cn'
-    runs-on: windows-2025
+    runs-on: ubuntu-24.04
     timeout-minutes: 75
     steps:
       - name: Checkout
@@ -29,7 +31,6 @@ jobs:
         uses: voidzero-dev/setup-vp@v1
         with:
           node-version-file: package.json
-          cache: false
           run-install: false
 
       - name: Install
@@ -37,13 +38,26 @@ jobs:
 
       # Same public sign-in and relay ids that official preview builds take from .env.example.
       - name: Load public T3 Code config
-        shell: bash
         run: grep -E '^T3CODE_(CLERK_PUBLISHABLE_KEY|CLERK_JWT_TEMPLATE|CLERK_CLI_OAUTH_CLIENT_ID|RELAY_URL)=' .env.example >> "$GITHUB_ENV"
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Install cargo-xwin
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-xwin@0.23.1
+
+      - name: Build resource monitor
+        run: cargo xwin build --locked --release --manifest-path native/resource-monitor/Cargo.toml --target x86_64-pc-windows-msvc
 
       # GitHub release downloads of Electron and electron-builder-binaries returned 504s on
       # 2026-11-08. Builder tools are sha256-pinned; Electron is checked against the mirror's SHASUMS.
       - name: Build installer
         env:
+          T3CODE_DESKTOP_REUSE_RESOURCE_MONITOR: true
           ELECTRON_BUILDER_BINARIES_MIRROR: https://npmmirror.com/mirrors/electron-builder-binaries/
           ELECTRON_MIRROR: https://npmmirror.com/mirrors/electron/
           ELECTRON_CUSTOM_DIR: "{{ version }}"
