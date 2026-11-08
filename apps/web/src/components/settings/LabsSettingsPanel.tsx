@@ -1,3 +1,4 @@
+import { useLocalizedSetting } from "./useLocalizedSetting";
 import { useTranslation } from "~/i18n/useTranslation";
 import { settingsDetailUiMessages } from "./settingsDetailUi.messages";
 import { useAuth } from "@clerk/react";
@@ -13,7 +14,6 @@ import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "../
 import { Switch } from "../ui/switch";
 import { ScopedSwitch } from "./ScopedSwitch";
 import { SettingsPageContainer, SettingsRow, SettingsSection } from "./settingsLayout";
-import { searchableSetting } from "./settingsSearch";
 import { LegacyFeaturesSection } from "./SettingsPanels";
 import { useScopedSettings, useUpdateScopedSettings } from "./useScopedSettings";
 import { useOptionalSettingsScope } from "./SettingsScopeContext";
@@ -40,11 +40,12 @@ export function LabsSettingsPanel() {
 
 function BoringSidebarRow() {
   const t = useTranslation(settingsDetailUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const settings = useScopedSettings();
   const updateSettings = useUpdateScopedSettings();
   return (
     <SettingsRow
-      {...searchableSetting("boring-sidebar")}
+      {...localizedSetting("boring-sidebar")}
       title={t("Boring sidebar (group by project)")}
       description={t(
         "Group sidebar threads into project folders. Pinned threads stay on top, and Snoozed and Settled stay below the folders.",
@@ -65,11 +66,12 @@ function BoringSidebarRow() {
 
 function BoringSidebarMultilineRow() {
   const t = useTranslation(settingsDetailUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const settings = useScopedSettings();
   const updateSettings = useUpdateScopedSettings();
   return (
     <SettingsRow
-      {...searchableSetting("boring-sidebar-multiline")}
+      {...localizedSetting("boring-sidebar-multiline")}
       title={t("Two-line folder rows")}
       description={t(
         "In the boring sidebar, show folder threads on two lines: the title, then the branch, pull request, and agent.",
@@ -98,11 +100,12 @@ const isToolCallVisibility = Schema.is(ToolCallVisibility);
 
 function ToolCallVisibilityRow() {
   const t = useTranslation(settingsDetailUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const settings = useScopedSettings();
   const updateSettings = useUpdateScopedSettings();
   return (
     <SettingsRow
-      {...searchableSetting("tool-call-visibility")}
+      {...localizedSetting("tool-call-visibility")}
       title={t("Tool calls in chat")}
       description={t(
         "Hide the commands, edits, and searches agents run. Hide successful keeps failures. Zen shows only final answers. Approvals, questions, and errors always show.",
@@ -140,13 +143,14 @@ function ToolCallVisibilityRow() {
 /** Signed out of T3 Connect, the row offers to sign in instead of its switch. */
 function GuestLinksRowWithSignIn() {
   const t = useTranslation(settingsDetailUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const { isSignedIn } = useAuth();
   const { openAuthPrompt } = useT3ConnectAuthPrompt();
   // `isSignedIn` is undefined until Clerk loads.
   if (isSignedIn !== false) return <GuestLinksRow />;
   return (
     <SettingsRow
-      {...searchableSetting("guest-links")}
+      {...localizedSetting("guest-links")}
       title={t("Guest links")}
       description={t(
         "Share a thread with a guest who watches it live in a browser and sends messages you approve. Sign in to T3 Connect to use guest links.",
@@ -162,6 +166,7 @@ function GuestLinksRowWithSignIn() {
 
 function GuestLinksRow() {
   const t = useTranslation(settingsDetailUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const settings = useScopedSettings();
   const updateSettings = useUpdateScopedSettings();
   const scope = useOptionalSettingsScope();
@@ -176,7 +181,7 @@ function GuestLinksRow() {
   return (
     <SettingsRow
       serverScoped
-      {...searchableSetting("guest-links")}
+      {...localizedSetting("guest-links")}
       title={t("Guest links")}
       settingKeys={["guestSharingEnabled"]}
       // Turning guest links off still works without T3 Connect.
@@ -206,12 +211,13 @@ function GuestLinksRow() {
 
 function LinkedEnvironmentsRow() {
   const t = useTranslation(settingsDetailUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const settings = useScopedSettings();
   const updateSettings = useUpdateScopedSettings();
   return (
     <SettingsRow
       serverScoped
-      {...searchableSetting("linked-environments-beta")}
+      {...localizedSetting("linked-environments-beta")}
       title={t("Linked environments")}
       settingKeys={["linkedEnvironmentsEnabled"]}
       description={
@@ -241,12 +247,13 @@ function LinkedEnvironmentsRow() {
 
 function SimlockHostsRow() {
   const t = useTranslation(settingsDetailUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const settings = useScopedSettings();
   const updateSettings = useUpdateScopedSettings();
   return (
     <SettingsRow
       serverScoped
-      {...searchableSetting("simlock-hosts")}
+      {...localizedSetting("simlock-hosts")}
       title={t("Simlock device hosts (alpha)")}
       settingKeys={["simlockDeviceHostsEnabled"]}
       description={

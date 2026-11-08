@@ -1,3 +1,4 @@
+import { useLocalizedSetting } from "./useLocalizedSetting";
 import { translateSettingsLabel } from "./settingsMessages";
 import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { themeUiMessages } from "./themeUi.messages";
@@ -48,28 +49,30 @@ import {
 } from "./settingsSearch";
 
 function useFontDefaultFamilies() {
+  const t = useTranslation(themeUiMessages);
   const settings = useScopedSettings();
   const [defaults] = useState(() => ({
-    sans: resolveDefaultFamilyLabel(DEFAULT_SANS_FONT_STACK) ?? "System default",
-    code: resolveDefaultFamilyLabel(DEFAULT_CODE_FONT_STACK) ?? "System monospace",
-    reply: resolveDefaultFamilyLabel(DEFAULT_REPLY_FONT_STACK) ?? "System serif",
+    sans: resolveDefaultFamilyLabel(DEFAULT_SANS_FONT_STACK),
+    code: resolveDefaultFamilyLabel(DEFAULT_CODE_FONT_STACK),
+    reply: resolveDefaultFamilyLabel(DEFAULT_REPLY_FONT_STACK),
   }));
   return {
-    sans: defaults.sans,
-    code: defaults.code,
-    reply: defaults.reply,
-    interfaceFamily: settings.fontFamilySans.trim() || defaults.sans,
+    sans: defaults.sans ?? t("System default"),
+    code: defaults.code ?? t("System monospace"),
+    reply: defaults.reply ?? t("System serif"),
+    interfaceFamily: settings.fontFamilySans.trim() || defaults.sans || t("System default"),
   };
 }
 
 function InterfaceFontRow({ preview }: { preview?: ReactNode }) {
   const t = useTranslation(themeUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const settings = useScopedSettings();
   const updateSettings = useUpdateScopedSettings();
   const defaults = useFontDefaultFamilies();
   return (
     <FontFamilySettingsRow
-      {...searchableSetting("interface-font")}
+      {...localizedSetting("interface-font")}
       description={t("Everything outside code blocks and the terminal.")}
       defaultFamily={defaults.sans}
       defaultValue={DEFAULT_UNIFIED_SETTINGS.fontFamilySans}
@@ -96,12 +99,13 @@ function InterfaceFontRow({ preview }: { preview?: ReactNode }) {
 
 function ReplyFontRow() {
   const t = useTranslation(themeUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const settings = useScopedSettings();
   const updateSettings = useUpdateScopedSettings();
   const defaults = useFontDefaultFamilies();
   return (
     <FontFamilySettingsRow
-      {...searchableSetting("reply-font")}
+      {...localizedSetting("reply-font")}
       description={t("Agent replies in the chat. Sizes follow the interface font.")}
       defaultFamily={defaults.reply}
       defaultValue={DEFAULT_UNIFIED_SETTINGS.fontFamilyReply}
@@ -114,12 +118,13 @@ function ReplyFontRow() {
 
 function PromptFontRow() {
   const t = useTranslation(themeUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const settings = useScopedSettings();
   const updateSettings = useUpdateScopedSettings();
   const defaults = useFontDefaultFamilies();
   return (
     <FontFamilySettingsRow
-      {...searchableSetting("prompt-font")}
+      {...localizedSetting("prompt-font")}
       description={t("Only the box you write prompts in. Mono works well here.")}
       defaultFamily={defaults.interfaceFamily}
       defaultValue={DEFAULT_UNIFIED_SETTINGS.fontFamilyComposer}
@@ -154,12 +159,13 @@ function CodeFontRow({
   preview?: ReactNode;
 }) {
   const t = useTranslation(themeUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const settings = useScopedSettings();
   const updateSettings = useUpdateScopedSettings();
   const defaults = useFontDefaultFamilies();
   return (
     <FontFamilySettingsRow
-      {...searchableSetting("code-font")}
+      {...localizedSetting("code-font")}
       {...(title !== undefined ? { title } : {})}
       description={description ?? t("Code blocks, diffs, and file previews.")}
       defaultFamily={defaults.code}
@@ -188,12 +194,13 @@ function CodeFontRow({
 
 function TerminalFontRow() {
   const t = useTranslation(themeUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const settings = useScopedSettings();
   const updateSettings = useUpdateScopedSettings();
   const defaults = useFontDefaultFamilies();
   return (
     <FontFamilySettingsRow
-      {...searchableSetting("terminal-font")}
+      {...localizedSetting("terminal-font")}
       description={t("Terminal output, independent from code blocks and diffs.")}
       defaultFamily={defaults.code}
       defaultValue={DEFAULT_UNIFIED_SETTINGS.fontFamilyTerminal}
@@ -230,12 +237,13 @@ function TerminalFontRow() {
 
 function FontSmoothingRow() {
   const t = useTranslation(themeUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const settings = useScopedSettings();
   const updateSettings = useUpdateScopedSettings();
   if (!isMacPlatform(navigator.platform)) return null;
   return (
     <SettingsRow
-      {...searchableSetting("font-smoothing")}
+      {...localizedSetting("font-smoothing")}
       description={t("Use thinner grayscale text smoothing instead of the macOS default.")}
       resetAction={
         settings.fontSmoothing !== DEFAULT_UNIFIED_SETTINGS.fontSmoothing ? (
@@ -260,11 +268,12 @@ function FontSmoothingRow() {
 
 function WordWrapRow() {
   const t = useTranslation(themeUiMessages);
+  const localizedSetting = useLocalizedSetting();
   const settings = useScopedSettings();
   const updateSettings = useUpdateScopedSettings();
   return (
     <SettingsRow
-      {...searchableSetting("word-wrap")}
+      {...localizedSetting("word-wrap")}
       description={t("Wrap long lines in code blocks, diffs, and file previews by default.")}
       resetAction={
         settings.wordWrap !== DEFAULT_UNIFIED_SETTINGS.wordWrap ? (
@@ -305,9 +314,10 @@ function SeparateFontsRow({
   readonly onCheckedChange: (checked: boolean) => void;
 }) {
   const t = useTranslation(themeUiMessages);
+  const localizedSetting = useLocalizedSetting();
   return (
     <SettingsRow
-      {...searchableSetting("separate-fonts")}
+      {...localizedSetting("separate-fonts")}
       description={t(
         "Set the prompt, code, and terminal fonts separately instead of one monospace font.",
       )}

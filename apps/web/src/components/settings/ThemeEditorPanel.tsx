@@ -634,7 +634,10 @@ export function ThemeEditorPanel({
       hoverInspection = inspection;
       showThemeInspectorHover(
         inspection,
-        getThemeEditorColorFamily(inspection.role)?.label ?? getThemeRoleLabel(inspection.role),
+        translateThemeEditorLabel(
+          getThemeEditorColorFamily(inspection.role)?.label ?? getThemeRoleLabel(inspection.role),
+          locale,
+        ),
       );
     };
     const handlePointerOver = (event: PointerEvent) => {
@@ -700,8 +703,11 @@ export function ThemeEditorPanel({
         if (hoverInspection) {
           showThemeInspectorHover(
             hoverInspection,
-            getThemeEditorColorFamily(hoverInspection.role)?.label ??
-              getThemeRoleLabel(hoverInspection.role),
+            translateThemeEditorLabel(
+              getThemeEditorColorFamily(hoverInspection.role)?.label ??
+                getThemeRoleLabel(hoverInspection.role),
+              locale,
+            ),
           );
         }
       });
@@ -727,7 +733,7 @@ export function ThemeEditorPanel({
       if (hoverFrame !== null) cancelAnimationFrame(hoverFrame);
       clearThemeInspectorHover();
     };
-  }, [clearInspectorSelection, isInspecting, open, selectThemeRole]);
+  }, [clearInspectorSelection, isInspecting, locale, open, selectThemeRole]);
 
   const handleAdvancedChange = (checked: boolean) => {
     setIsAdvanced(checked);
@@ -901,7 +907,7 @@ export function ThemeEditorPanel({
           setName(event.currentTarget.value);
           setError(null);
         }}
-        placeholder={isEditing ? t("Theme name") : "e.g. Aurora"}
+        placeholder={isEditing ? t("Theme name") : t("e.g. Aurora")}
         value={name}
       />
     </label>
@@ -1165,7 +1171,16 @@ export function ThemeEditorPanel({
               {isInspecting
                 ? t("Select an element · Esc to cancel")
                 : selectedRole
-                  ? `${translateThemeEditorLabel(isAdvanced ? (getThemeEditorColorFamily(selectedRole)?.label ?? getThemeRoleLabel(selectedRole)) : getThemeRoleLabel(selectedRole), locale)} · ${usageCount ?? 0} ${usageCount === 1 ? t("use") : t("uses")}`
+                  ? t(usageCount === 1 ? "{label} · {count} use" : "{label} · {count} uses", {
+                      label: translateThemeEditorLabel(
+                        isAdvanced
+                          ? (getThemeEditorColorFamily(selectedRole)?.label ??
+                              getThemeRoleLabel(selectedRole))
+                          : getThemeRoleLabel(selectedRole),
+                        locale,
+                      ),
+                      count: usageCount ?? 0,
+                    })
                   : t("Select a color below")}
             </p>
           )}

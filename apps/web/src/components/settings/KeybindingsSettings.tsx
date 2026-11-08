@@ -1,3 +1,4 @@
+import { useLocalizedSetting } from "./useLocalizedSetting";
 import { useLocale, useTranslation } from "../../i18n/useTranslation";
 import { settingsContentMessages, translateSettingsContent } from "./settingsContent.messages";
 import { useEnvironmentScope } from "../../state/session";
@@ -75,9 +76,20 @@ import {
 } from "./KeybindingsSettings.logic";
 import { SettingsGroup } from "./SettingsGroup";
 import { SettingsPageContainer, SettingsRow, SettingsSection } from "./settingsLayout";
-import { keybindingSearchAnchorId, searchableSetting } from "./settingsSearch";
+import { keybindingSearchAnchorId } from "./settingsSearch";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 import { useAtomCommand } from "../../state/use-atom-command";
+
+function useCommandLabel() {
+  const locale = useLocale();
+  const t = useTranslation(settingsContentMessages);
+  return (command: KeybindingCommand) => {
+    const label = commandLabel(command);
+    return command.startsWith("script.")
+      ? t("Run Script: {name}", { name: label.slice("Run Script: ".length) })
+      : translateSettingsContent(label, locale);
+  };
+}
 
 function KeybindingPill({ value }: { value: string }) {
   // Keys dedupe repeated parts; a literal "+" in a shortcut splits into empty strings.
@@ -266,15 +278,27 @@ function UnknownWhenVariableWarning({
 
 function KeybindingConflictWarning({ labels }: { labels: ReadonlyArray<string> }) {
   const t = useTranslation(settingsContentMessages);
+  const locale = useLocale();
   if (labels.length === 0) return null;
   const description = t(
     labels.length > 3 ? "Conflicts with {labels}, and more." : "Conflicts with {labels}.",
-    { labels: labels.slice(0, 3).join(", ") },
+    {
+      labels: labels
+        .slice(0, 3)
+        .map((label) =>
+          label.startsWith("Run Script: ")
+            ? t("Run Script: {name}", { name: label.slice("Run Script: ".length) })
+            : translateSettingsContent(label, locale),
+        )
+        .join(locale === "zh-CN" ? "、" : ", "),
+    },
   );
 
   return (
     <WarningTooltipIcon label={description}>
-      {description} {t("The most recent matching binding wins when both conditions can apply.")}
+      {description}
+      {locale === "zh-CN" ? "" : " "}
+      {t("The most recent matching binding wins when both conditions can apply.")}
     </WarningTooltipIcon>
   );
 }
@@ -810,6 +834,7 @@ function KeybindingKeyControl({
   isSaving: boolean;
   pillClassName?: string | undefined;
 }) {
+  const localizedCommandLabel = useCommandLabel();
   const t = useTranslation(settingsContentMessages);
   const {
     keyDraft,
@@ -840,7 +865,7 @@ function KeybindingKeyControl({
           type="button"
           onClick={() => setDraft({ isRecording: true })}
           aria-label={t("Edit shortcut for {command}: {shortcut}", {
-            command: commandLabel(row.command),
+            command: localizedCommandLabel(row.command),
             shortcut: formatShortcutLabel(row.binding.shortcut),
           })}
           className={cn(
@@ -854,7 +879,9 @@ function KeybindingKeyControl({
         <Input
           data-keybinding-capture=""
           autoFocus={isRecording}
-          aria-label={t("Keybinding for {command}", { command: commandLabel(row.command) })}
+          aria-label={t("Keybinding for {command}", {
+            command: localizedCommandLabel(row.command),
+          })}
           value={isRecording ? "" : keyDraft}
           placeholder={t(isRecording ? "Press shortcut" : "Unassigned")}
           size="sm"
@@ -929,6 +956,7 @@ function KeybindingRowMenu({
   onReset: (row: KeybindingRow) => void;
   onRemove: (row: KeybindingRow) => void;
 }) {
+  const localizedCommandLabel = useCommandLabel();
   const t = useTranslation(settingsContentMessages);
   const canReset = row.source === "Custom" && row.defaultKey !== null;
   const canRemove = row.source !== "Default";
@@ -943,7 +971,7 @@ function KeybindingRowMenu({
             variant="ghost-muted"
             size="icon-sm"
             disabled={isSaving}
-            aria-label={t("Actions for {command}", { command: commandLabel(row.command) })}
+            aria-label={t("Actions for {command}", { command: localizedCommandLabel(row.command) })}
           />
         }
       >
@@ -976,10 +1004,11 @@ function KeybindingSourceBadge({ source }: { source: KeybindingRow["source"] }) 
 }
 
 function KeybindingRowTitle({ row }: { row: KeybindingRow }) {
+  const localizedCommandLabel = useCommandLabel();
   return (
     <Tooltip>
       <TooltipTrigger render={<span className="flex items-center gap-2" />}>
-        {commandLabel(row.command)}
+        {localizedCommandLabel(row.command)}
         <KeybindingSourceBadge source={row.source} />
       </TooltipTrigger>
       <TooltipPopup side="top">{row.command}</TooltipPopup>
@@ -996,12 +1025,13 @@ function KeybindingRowWhen({
   editor: KeybindingRowEditor;
   variables: ReadonlyArray<WhenVariableOption>;
 }) {
+  const localizedCommandLabel = useCommandLabel();
   const t = useTranslation(settingsContentMessages);
   return (
     <span className="flex h-6 items-center gap-1.5">
       <span className="text-xs leading-none text-muted-foreground/70">{t("When")}</span>
       <WhenClauseControl
-        label={commandLabel(row.command)}
+        label={localizedCommandLabel(row.command)}
         expression={editor.whenDraftExpression}
         value={editor.whenDraft}
         variables={variables}
@@ -1063,6 +1093,7 @@ function useNewKeybindingDraft({
   allRows: ReadonlyArray<KeybindingRow>;
   onSave: (input: ServerUpsertKeybindingInput) => void;
 }) {
+  const localizedCommandLabel = useCommandLabel();
   const t = useTranslation(settingsContentMessages);
   const [commandDraft, setCommandDraft] = useState<KeybindingCommand | "">("");
   const [draft, setDraft] = useReducer(keybindingRowDraftReducer, {
@@ -1078,7 +1109,7 @@ function useNewKeybindingDraft({
     key: keyDraft,
     when: whenDraftExpression,
   });
-  const commandLabelText = commandDraft ? commandLabel(commandDraft) : t("new keybinding");
+  const commandLabelText = commandDraft ? localizedCommandLabel(commandDraft) : t("new keybinding");
   const canSave = Boolean(commandDraft) && keyDraft.trim().length > 0 && isWhenDraftValid;
 
   const save = () => {
@@ -1143,6 +1174,7 @@ function NewKeybindingCommandSelect({
   commandOptions: ReadonlyArray<KeybindingCommandOption>;
   className?: string | undefined;
 }) {
+  const localizedCommandLabel = useCommandLabel();
   const t = useTranslation(settingsContentMessages);
   return (
     <Select
@@ -1155,7 +1187,7 @@ function NewKeybindingCommandSelect({
       <SelectContent alignItemWithTrigger={false} matchTriggerWidth={false} className="max-h-72">
         {commandOptions.map((command) => (
           <SelectItem key={command} value={command} className="w-full">
-            <span className="truncate">{commandLabel(command)}</span>
+            <span className="truncate">{localizedCommandLabel(command)}</span>
           </SelectItem>
         ))}
       </SelectContent>
@@ -1345,7 +1377,10 @@ function useKeybindingCatalog() {
 }
 
 export function KeybindingsSettingsPanel() {
+  const locale = useLocale();
+  const localizedCommandLabel = useCommandLabel();
   const t = useTranslation(settingsContentMessages);
+  const localizedSetting = useLocalizedSetting();
   const { environment: primaryEnvironment, connectedEnvironments } = useSettingsScope();
   const canOpenKeybindingsFile = useEnvironmentScope(
     primaryEnvironment?.environmentId ?? null,
@@ -1380,7 +1415,17 @@ export function KeybindingsSettingsPanel() {
   }
   const whenVariables = buildWhenVariableOptions();
   const { commandOptions, allRows } = useKeybindingCatalog();
-  const rows = filterKeybindingRows(allRows, query);
+  const matchingRows = filterKeybindingRows(allRows, query);
+  const matchingIds = new Set(matchingRows.map((row) => row.id));
+  const normalizedQuery = query.trim().toLowerCase();
+  const rows =
+    locale === "zh-CN"
+      ? allRows.filter(
+          (row) =>
+            matchingIds.has(row.id) ||
+            localizedCommandLabel(row.command).toLowerCase().includes(normalizedQuery),
+        )
+      : matchingRows;
   const groups = groupKeybindingRows(rows);
   const anchorIds = keybindingAnchorIds(rows);
 
@@ -1503,7 +1548,7 @@ export function KeybindingsSettingsPanel() {
   return (
     <SettingsPageContainer>
       <SettingsSection
-        {...searchableSetting("keybindings")}
+        {...localizedSetting("keybindings")}
         headerAction={!isElectron ? <BrowserKeybindingNotice /> : null}
       >
         <div className="flex flex-wrap items-center gap-2 px-3 py-3 sm:px-4">

@@ -234,8 +234,10 @@ function AboutVersionSection() {
       let confirmed = false;
       try {
         confirmed = await ensureLocalApi().dialogs.confirm(
-          getDesktopUpdateInstallConfirmationMessage(
-            updateState ?? { availableVersion: null, downloadedVersion: null },
+          tl(
+            getDesktopUpdateInstallConfirmationMessage(
+              updateState ?? { availableVersion: null, downloadedVersion: null },
+            ),
           ),
         );
       } catch (error) {
@@ -297,7 +299,7 @@ function AboutVersionSection() {
   };
 
   const action = updateState ? resolveDesktopUpdateButtonAction(updateState) : "none";
-  const buttonTooltip = updateState ? getDesktopUpdateButtonTooltip(updateState) : null;
+  const buttonTooltip = updateState ? tl(getDesktopUpdateButtonTooltip(updateState)) : null;
   const buttonDisabled =
     action === "none"
       ? !canCheckForUpdate(updateState)
@@ -323,7 +325,7 @@ function AboutVersionSection() {
       <SettingsRow
         id={searchableSetting("app-version").id}
         title={<AboutVersionTitle />}
-        description={description}
+        description={tl(description)}
         managed={updatesDenial}
         control={
           <Tooltip>
@@ -425,7 +427,7 @@ function AboutVersionSection() {
               }}
             >
               <SelectTrigger size="sm" className="w-full sm:w-40" aria-label={t("Update track")}>
-                <SelectValue>{HOSTED_APP_CHANNEL_LABEL}</SelectValue>
+                <SelectValue>{tl(HOSTED_APP_CHANNEL_LABEL ?? "")}</SelectValue>
               </SelectTrigger>
               <SelectPopup align="end" alignItemWithTrigger={false}>
                 <SelectItem hideIndicator value="latest">
@@ -1132,6 +1134,7 @@ export function GeneralSettingsPanel() {
 }
 
 export function ChatSettingsPanel() {
+  const locale = useLocale();
   const { t, localizedSetting } = usePanelText();
   const modifierLabel = isMacPlatform(navigator.platform) ? "⌘" : "Ctrl";
   const sendShortcutOptions = [
@@ -1255,7 +1258,8 @@ export function ChatSettingsPanel() {
         <SettingsRow
           {...localizedSetting("follow-up-behavior")}
           description={
-            `${t("Queue follow-ups while the agent runs or steer the current run.")} ` +
+            t("Queue follow-ups while the agent runs or steer the current run.") +
+            (locale === "zh-CN" ? "" : " ") +
             (settings.sendShortcut === "mod-enter-multiline"
               ? t(
                   "Press {modifier} + Enter for single-line prompts or {modifier} + Shift + Enter for multiline prompts to do the opposite for one message.",

@@ -15,10 +15,7 @@ import * as Equal from "effect/Equal";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { createContext, type ComponentPropsWithoutRef, type ReactNode, useContext } from "react";
 
-import {
-  PRIMARY_SETTINGS_UNAVAILABLE_MESSAGE,
-  usePrimarySettingsAvailable,
-} from "../../hooks/useSettings";
+import { usePrimarySettingsAvailable } from "../../hooks/useSettings";
 import { cn } from "../../lib/utils";
 import { WorkspacePageContainer, type WorkspacePageWidth } from "../WorkspacePageContainer";
 import { Button } from "../ui/button";
@@ -450,7 +447,9 @@ export function SettingsRow({
                   })
                 : context
                   ? t("Reconnect the selected environment to change this setting.")
-                  : PRIMARY_SETTINGS_UNAVAILABLE_MESSAGE,
+                  : t(
+                      "This setting is saved on a server, and the hosted app is not anchored to one. Change it from the desktop app or from the server's own address.",
+                    ),
             )
           : environmentWide && control
             ? inertControl(t("Environment-wide setting. Select an environment to change it."))

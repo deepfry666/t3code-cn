@@ -242,10 +242,20 @@ export function ArchivedThreadsPanel() {
                   description={
                     <span className={hasMultipleEnvironments ? "block truncate" : undefined}>
                       {hasMultipleEnvironments ? `${thread.environmentLabel} · ` : null}
-                      {t("Archived ")}
-                      <RelativeTime timestamp={thread.archivedAt ?? thread.createdAt} />
-                      {t(" · Created ")}
-                      <RelativeTime timestamp={thread.createdAt} />
+                      {t("Archived {archivedAt} · Created {createdAt}")
+                        .split(/(\{archivedAt\}|\{createdAt\})/)
+                        .map((part) =>
+                          part === "{archivedAt}" ? (
+                            <RelativeTime
+                              key={part}
+                              timestamp={thread.archivedAt ?? thread.createdAt}
+                            />
+                          ) : part === "{createdAt}" ? (
+                            <RelativeTime key={part} timestamp={thread.createdAt} />
+                          ) : (
+                            part
+                          ),
+                        )}
                     </span>
                   }
                   control={

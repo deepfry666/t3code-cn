@@ -206,6 +206,24 @@ export const settingsMessages = {
   "Secret providers": "凭据提供方",
   "Add secret provider": "添加凭据提供方",
   "Archived threads": "已归档会话",
+  Theme: "主题",
+  "Follow system": "跟随系统",
+  "Theme mix": "主题混搭",
+  "Project Grouping": "项目分组",
+  "Diff whitespace changes": "差异空白字符改动",
+  "Context window indicator": "上下文窗口指示器",
+  "New thread mode": "新会话模式",
+  "New worktrees start from remote": "新工作树从远程分支开始",
+  "Add project base directory": "添加项目的起始目录",
+  "Browser viewport": "浏览器视口",
+  "Browser zoom": "浏览器缩放",
+  "Browser appearance": "浏览器外观",
+  "Recording frame rate": "录屏帧率",
+  "Recording key presses": "录制按键",
+  "Recording mouse presses": "录制鼠标点击",
+  "Floating preview": "浮动预览",
+  "This setting is saved on a server, and the hosted app is not anchored to one. Change it from the desktop app or from the server's own address.":
+    "此设置保存在服务器上，而托管应用未固定连接某台服务器。请从桌面应用或服务器自身的地址修改。",
 } as const;
 
 // This lookup is only for application-owned settings metadata, never user content.

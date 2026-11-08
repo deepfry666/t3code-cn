@@ -8,6 +8,7 @@ import { chatUiMessages } from "../components/chat/chatUi.messages";
 import { coreUiMessages } from "../components/coreUi.messages";
 import { settingsContentMessages } from "../components/settings/settingsContent.messages";
 import { generalMessages } from "../components/settings/generalMessages";
+import { settingsShellMessages } from "../components/settings/settingsShell.messages";
 import { settingsMessages } from "../components/settings/settingsMessages";
 import { settingsPanelsMessages } from "../components/settings/settingsPanels.messages";
 import { translate } from "./locale";
@@ -20,6 +21,7 @@ const catalogs: Record<string, Readonly<Record<string, string>>> = {
   settingsDetail: settingsDetailUiMessages,
   core: coreUiMessages,
   settings: settingsMessages,
+  settingsShell: settingsShellMessages,
   settingsContent: settingsContentMessages,
   general: generalMessages,
   settingsPanels: settingsPanelsMessages,
