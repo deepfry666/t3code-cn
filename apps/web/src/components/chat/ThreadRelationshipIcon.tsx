@@ -4,7 +4,25 @@ import { cn } from "../../lib/utils";
 import { shouldShowInstanceBadge, type ProviderInstanceEntry } from "../../providerInstances";
 import { ProviderInstanceIcon } from "./ProviderInstanceIcon";
 
-export function threadRelationshipStatusLabel(status: string | null): string {
+export type ThreadRelationshipStatusLabel =
+  | "Starting"
+  | "Running"
+  | "Queued"
+  | "Waiting"
+  | "Done"
+  | "Failed"
+  | "Stopped"
+  | "Reverted"
+  | "Resolved (native)"
+  | "Resolved (portable)"
+  | "Consumed"
+  | "Superseded"
+  | "Idle"
+  | "Unknown";
+
+export function threadRelationshipStatusLabel(
+  status: string | null,
+): ThreadRelationshipStatusLabel {
   switch (status) {
     case "preparing":
     case "starting":
