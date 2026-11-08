@@ -42,6 +42,7 @@ const clientSettings: ClientSettings = {
   favorites: [],
   fontFamilyCode: "",
   fontFamilyComposer: "",
+  fontFamilyReply: "",
   fontFamilySans: "",
   fontFamilyTerminal: "",
   fontSizeCode: 13,

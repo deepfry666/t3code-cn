@@ -385,6 +385,12 @@ export const SETTINGS_SEARCH_ITEMS = [
     searchTerms: ["typography family size system sans"],
   },
   {
+    id: "reply-font",
+    title: "Reply font",
+    to: "/settings/appearance",
+    searchTerms: ["typography family serif assistant agent message chat reading"],
+  },
+  {
     id: "prompt-font",
     title: "Prompt font",
     to: "/settings/appearance",
