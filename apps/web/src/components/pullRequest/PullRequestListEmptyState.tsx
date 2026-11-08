@@ -154,7 +154,7 @@ export function PullRequestListEmptyState({
         ) : null}
         <Button size="sm" variant="outline" disabled={refreshing} onClick={onRefresh}>
           <RefreshIcon size="sm" refreshing={refreshing} />
-          {refreshing ? "Checking..." : "Check again"}
+          {refreshing ? t("Checking...") : t("Check again")}
         </Button>
       </div>
     </Empty>

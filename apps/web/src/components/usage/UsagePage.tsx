@@ -198,6 +198,7 @@ export function UsagePage() {
   }));
   const metric = preferences.metric;
   const showingLimits = metric === "limits";
+  const { days: windowDays, window } = windowSelection;
   const selectedWindowOption = WINDOW_OPTIONS.find((option) => option.days === windowDays);
   const selectedMetricOption = METRIC_OPTIONS.find((option) => option.value === metric);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -207,7 +208,6 @@ export function UsagePage() {
   const [selectedEnvironmentIds, setSelectedEnvironmentIds] =
     useState<ReadonlySet<EnvironmentId> | null>(null);
   const hiddenProviders = new Set(preferences.hiddenProviders);
-  const { days: windowDays, window } = windowSelection;
   const isPast24Hours = windowDays === 1;
   const {
     merged: answeredUsage,
