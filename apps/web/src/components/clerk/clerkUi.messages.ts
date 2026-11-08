@@ -49,10 +49,10 @@ export const clerkUiMessages = {
   "Mobile devices that get notifications from your environments.":
     "接收你的环境所发通知的移动设备。",
   "Could not load mobile clients": "无法加载移动客户端",
-  approvals: "审批",
-  "input requests": "输入请求",
-  completions: "任务完成",
-  failures: "任务失败",
+  "approvals@@alert": "审批",
+  "input requests@@alert": "输入请求",
+  "completions@@alert": "任务完成",
+  "failures@@alert": "任务失败",
   "Push notifications are disabled on this device.": "此设备已关闭推送通知。",
   "Alerts enabled for {types}.": "已开启以下提醒：{types}。",
   "Push notifications are enabled, but no alert types are selected.":

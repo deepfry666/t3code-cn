@@ -9,10 +9,10 @@ const mobileClientUpdatedAtFormatters = {
 } satisfies Record<Locale, Intl.DateTimeFormat>;
 
 const NOTIFICATION_PREFERENCES = [
-  ["notifyOnApproval", "approvals"],
-  ["notifyOnInput", "input requests"],
-  ["notifyOnCompletion", "completions"],
-  ["notifyOnFailure", "failures"],
+  ["notifyOnApproval", "approvals@@alert"],
+  ["notifyOnInput", "input requests@@alert"],
+  ["notifyOnCompletion", "completions@@alert"],
+  ["notifyOnFailure", "failures@@alert"],
 ] as const satisfies ReadonlyArray<
   readonly [keyof RelayClientDeviceRecord["notifications"], keyof typeof clerkUiMessages]
 >;

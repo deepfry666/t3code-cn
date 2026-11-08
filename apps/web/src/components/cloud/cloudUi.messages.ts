@@ -88,7 +88,7 @@ export const cloudUiMessages = {
   "T3 Connect route added": "已添加 T3 Connect 线路",
   "Environment added": "已添加环境",
   "{environment} falls back to T3 Connect when its other routes are unreachable.":
-    "当 {environment} 的其他线路无法访问时，会改用 T3 Connect。",
+    "当其他线路无法访问时，{environment} 会改用 T3 Connect。",
   "Connecting to {environment} through T3 Connect.": "正在通过 T3 Connect 连接 {environment}。",
   "Could not connect the T3 Connect environment.": "无法连接此 T3 Connect 环境。",
   "Could not connect environment": "无法连接环境",
