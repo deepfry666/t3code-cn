@@ -323,7 +323,7 @@ export const settingsThreadsMessages = {
   "Menu now: {options}": "当前菜单：{options}",
   "Add option": "添加选项",
   "Up to {max} options": "最多 {max} 个选项",
-  When: "生效条件",
+  "When@@snooze": "暂缓到",
   at: "时间",
   Time: "时间",
   Decrease: "减少",

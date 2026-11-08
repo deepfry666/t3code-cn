@@ -32,7 +32,7 @@ describe.each(Object.entries(catalogs))("%s localization catalog", (_name, catal
     for (const [source, localized] of Object.entries(catalog)) {
       expect(localized.trim(), source).not.toBe("");
       expect(placeholders(localized), source).toEqual(placeholders(source));
-      expect(translate("en", catalog, source), source).toBe(source);
+      expect(translate("en", catalog, source), source).toBe(source.split("@@")[0]);
     }
   });
 });

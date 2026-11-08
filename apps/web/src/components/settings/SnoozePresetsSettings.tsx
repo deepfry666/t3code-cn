@@ -382,7 +382,7 @@ function SnoozePresetFields(props: {
           onChange(next);
         }}
       >
-        <SelectTrigger size="sm" className="w-32" aria-label={t("When")}>
+        <SelectTrigger size="sm" className="w-32" aria-label={t("When@@snooze")}>
           <SelectValue />
         </SelectTrigger>
         <SelectPopup>

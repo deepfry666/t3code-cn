@@ -6,13 +6,18 @@ export function resolveLocale(saved: string | null, languages: readonly string[]
   return languages[0]?.toLowerCase().startsWith("zh") ? "zh-CN" : "en";
 }
 
+// "When@@snooze" lets one English word take a different Chinese meaning per context;
+// everything from "@@" on is dropped from the English text.
+const CONTEXT_SEPARATOR = "@@";
+const sourceText = (key: string) => key.split(CONTEXT_SEPARATOR, 1)[0] ?? key;
+
 export function translate<Messages extends Readonly<Record<string, string>>>(
   locale: Locale,
   messages: Messages,
   key: Extract<keyof Messages, string>,
   params: Readonly<Record<string, string | number>> = {},
 ): string {
-  const message = locale === "zh-CN" ? (messages[key] ?? key) : key;
+  const message = locale === "zh-CN" ? (messages[key] ?? sourceText(key)) : sourceText(key);
   return message.replace(/\{(\w+)\}/g, (placeholder, name: string) =>
     Object.hasOwn(params, name) ? String(params[name]) : placeholder,
   );

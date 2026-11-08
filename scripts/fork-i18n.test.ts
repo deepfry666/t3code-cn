@@ -110,7 +110,10 @@ describe("Chinese catalogs", () => {
   it("uses the glossary term for recurring concepts", () => {
     const misses = entries.flatMap((entry) => {
       // Placeholders and file names are not prose to translate.
-      const source = entry.source.replace(/\{\w+\}|[\w-]+\.[a-z]{2,4}\b/g, "");
+      const source = (entry.source.split("@@")[0] ?? "").replace(
+        /\{\w+\}|[\w-]+\.[a-z]{2,4}\b/g,
+        "",
+      );
       return GLOSSARY.filter(
         ([english, chinese]) => english.test(source) && !entry.localized.includes(chinese),
       ).map(
