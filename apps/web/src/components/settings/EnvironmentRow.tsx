@@ -1,7 +1,14 @@
+import { type Locale, translate } from "~/i18n/locale";
+import { useLocale } from "~/i18n/useTranslation";
+import {
+  settingsConnectionsMessages,
+  translateConnectionLabel,
+} from "./settingsConnections.messages";
 import {
   type ConnectionTarget,
   connectionRouteId,
   connectionRouteLabel,
+  connectionRouteKind,
   connectionRoutes,
 } from "@t3tools/client-runtime/connection";
 import type { DesktopSshEnvironmentTarget, EnvironmentMachineKind } from "@t3tools/contracts";
@@ -22,9 +29,11 @@ export function formatDesktopSshTarget(target: DesktopSshEnvironmentTarget): str
 export function environmentTransportLabel(
   environment: EnvironmentPresentation,
   activeTarget: ConnectionTarget | null = null,
+  locale: Locale = "en",
 ): string {
   const { entry } = environment;
-  if (entry.target._tag === "PrimaryConnectionTarget") return "This machine";
+  if (entry.target._tag === "PrimaryConnectionTarget")
+    return translate(locale, settingsConnectionsMessages, "This machine");
   const routes = connectionRoutes(entry);
   if (routes.length > 1) {
     const active =
@@ -33,9 +42,15 @@ export function environmentTransportLabel(
         : routes.find(
             (route) => connectionRouteId(route.target) === connectionRouteId(activeTarget),
           );
+    const route = active ?? routes[0]!;
+    const label = connectionRouteLabel(route);
+    const routeLabel =
+      connectionRouteKind(route) === "public" || connectionRouteKind(route) === "ssh"
+        ? label
+        : translateConnectionLabel(label, locale);
     return active === undefined
-      ? connectionRouteLabel(routes[0]!)
-      : `via ${connectionRouteLabel(active)}`;
+      ? routeLabel
+      : translate(locale, settingsConnectionsMessages, "via {route}", { route: routeLabel });
   }
   if (environment.relayManaged) return "T3 Connect";
   if (isDesktopLocalConnectionTarget(entry.target)) return "WSL";
@@ -46,16 +61,18 @@ export function environmentTransportLabel(
   ) {
     return `SSH ${formatDesktopSshTarget(entry.profile.value.target)}`;
   }
-  return environment.displayUrl ?? "Remote link";
+  return environment.displayUrl ?? translate(locale, settingsConnectionsMessages, "Remote link");
 }
 
 export function useEnvironmentTransportLabel(environment: EnvironmentPresentation): string {
+  const locale = useLocale();
   const prepared = usePreparedConnection(environment.environmentId);
   return environmentTransportLabel(
     environment,
     environment.connection.phase === "connected" && prepared._tag === "Some"
       ? prepared.value.target
       : null,
+    locale,
   );
 }
 

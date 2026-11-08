@@ -1,3 +1,5 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { settingsConnectionsMessages } from "./settingsConnections.messages";
 import type { LinkableMachine } from "@t3tools/client-runtime/link-request";
 import { useId } from "react";
 
@@ -10,17 +12,18 @@ export const ANOTHER_ADDRESS = "another-address";
 
 /** Whether a machine is linked already, or how this app knows it when not connected to it. */
 export function LinkMachineBadge({ machine }: { readonly machine: LinkableMachine }) {
+  const t = useTranslation(settingsConnectionsMessages);
   if (machine.linked) {
     return (
       <Badge variant="success" size="sm">
-        Linked
+        {t("Linked")}
       </Badge>
     );
   }
   if (machine.connected) return null;
   return (
     <Badge variant="outline" size="sm">
-      {machine.connectOnly ? "T3 Connect" : "Not connected"}
+      {machine.connectOnly ? "T3 Connect" : t("Not connected")}
     </Badge>
   );
 }
@@ -46,11 +49,12 @@ export function LinkMachineSelect({
   readonly onChange: (value: string) => void;
   readonly disabled: boolean;
 }) {
+  const t = useTranslation(settingsConnectionsMessages);
   const labelId = useId();
   return (
     <div className="space-y-1.5">
       <span id={labelId} className="block text-xs font-medium text-foreground">
-        Machine
+        {t("Machine")}
       </span>
       <Select
         value={value}
@@ -62,9 +66,13 @@ export function LinkMachineSelect({
         <SelectTrigger aria-labelledby={labelId}>
           <SelectValue>
             {(selected: string | null) => {
-              if (selected === ANOTHER_ADDRESS) return "Another address…";
+              if (selected === ANOTHER_ADDRESS) return t("Another address…");
               const machine = machines.find((candidate) => candidate.environmentId === selected);
-              return machine === undefined ? "Choose a machine" : <MachineName machine={machine} />;
+              return machine === undefined ? (
+                t("Choose a machine")
+              ) : (
+                <MachineName machine={machine} />
+              );
             }}
           </SelectValue>
         </SelectTrigger>
@@ -78,7 +86,7 @@ export function LinkMachineSelect({
             </SelectItem>
           ))}
           <SelectItem value={ANOTHER_ADDRESS} hideIndicator>
-            Another address…
+            {t("Another address…")}
           </SelectItem>
         </SelectPopup>
       </Select>
