@@ -33,7 +33,6 @@ describe("applyAppearanceFontVariables", () => {
       sans: "",
       code: "",
       composer: "",
-      reply: "",
       sizeInterface: 20,
       sizePrompt: 14,
       sizeCode: 13,

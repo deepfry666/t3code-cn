@@ -2,8 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import "@fontsource-variable/inter";
-import "@fontsource-variable/source-serif-4";
-import "@fontsource-variable/source-serif-4/wght-italic.css";
 import "./index.css";
 
 import { hasCloudPublicConfig } from "./cloud/publicConfig";

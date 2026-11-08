@@ -80,7 +80,6 @@ export const settingsMessages = {
   "Panel animations": "面板动画",
   "Environment identification": "环境标识",
   "Interface font": "界面字体",
-  "Reply font": "回复字体",
   "Prompt font": "提示词字体",
   "Code font": "代码字体",
   "Terminal font": "终端字体",

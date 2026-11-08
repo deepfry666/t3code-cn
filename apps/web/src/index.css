@@ -172,9 +172,6 @@ html[data-mobile-composer-route-transition="true"]::view-transition-old(t3-mobil
     -apple-system, BlinkMacSystemFont, "Inter Variable", "Segoe UI", system-ui, sans-serif;
   --font-mono:
     ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
-  --font-reply:
-    "Source Serif 4 Variable", "Source Han Serif SC", "Noto Serif CJK SC", "Noto Serif SC",
-    "Songti SC", STSong, "Microsoft YaHei", Georgia, serif;
 }
 
 @theme inline {

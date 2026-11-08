@@ -1,7 +1,5 @@
 export const themeUiMessages = {
   "Everything outside code blocks and the terminal.": "代码块和终端以外的界面。",
-  "Agent replies in the chat. Sizes follow the interface font.":
-    "聊天中智能体的回复，字号跟随界面字体。",
   "Only the box you write prompts in. Mono works well here.":
     "仅用于输入提示词的文本框，适合使用等宽字体。",
   "Code blocks, diffs, and file previews.": "代码块、差异和文件预览。",
@@ -85,5 +83,4 @@ export const themeUiMessages = {
   "{count} themes updated": "已更新 {count} 个主题",
   "System default": "系统默认",
   "System monospace": "系统等宽字体",
-  "System serif": "系统衬线字体",
 } as const;

@@ -13,10 +13,6 @@ import {
 export const DEFAULT_SANS_FONT_STACK =
   '-apple-system, BlinkMacSystemFont, "Inter Variable", "Segoe UI", system-ui, sans-serif';
 
-// Open-licensed serif for assistant replies. CJK uses an installed Song face, else YaHei on Windows.
-export const DEFAULT_REPLY_FONT_STACK =
-  '"Source Serif 4 Variable", "Source Han Serif SC", "Noto Serif CJK SC", "Noto Serif SC", "Songti SC", STSong, "Microsoft YaHei", Georgia, serif';
-
 // Some engines map `ui-monospace` to a proportional font, so prefer concrete names.
 export const DEFAULT_CODE_FONT_STACK =
   '"SF Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace';
@@ -66,7 +62,6 @@ export interface AppearanceFontPreferences {
   readonly sans: string;
   readonly code: string;
   readonly composer: string;
-  readonly reply: string;
   readonly sizeInterface: number;
   readonly sizePrompt: number;
   readonly sizeCode: number;
@@ -82,7 +77,6 @@ export function applyAppearanceFontVariables(
   const families: ReadonlyArray<readonly [variable: string, custom: string, fallback: string]> = [
     ["--font-sans", preferences.sans, DEFAULT_SANS_FONT_STACK],
     ["--font-mono", preferences.code, DEFAULT_CODE_FONT_STACK],
-    ["--font-reply", preferences.reply, DEFAULT_REPLY_FONT_STACK],
     ["--font-composer", preferences.separate ? preferences.composer : "", "var(--font-sans)"],
   ];
   for (const [variable, custom, fallback] of families) {

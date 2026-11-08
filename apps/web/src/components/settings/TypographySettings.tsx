@@ -22,7 +22,6 @@ import { isMacPlatform } from "../../lib/utils";
 import { Input } from "../ui/input";
 import {
   DEFAULT_CODE_FONT_STACK,
-  DEFAULT_REPLY_FONT_STACK,
   DEFAULT_SANS_FONT_STACK,
   isFontFamilyAvailable,
   isMonospaceFamily,
@@ -54,12 +53,10 @@ function useFontDefaultFamilies() {
   const [defaults] = useState(() => ({
     sans: resolveDefaultFamilyLabel(DEFAULT_SANS_FONT_STACK),
     code: resolveDefaultFamilyLabel(DEFAULT_CODE_FONT_STACK),
-    reply: resolveDefaultFamilyLabel(DEFAULT_REPLY_FONT_STACK),
   }));
   return {
     sans: defaults.sans ?? t("System default"),
     code: defaults.code ?? t("System monospace"),
-    reply: defaults.reply ?? t("System serif"),
     interfaceFamily: settings.fontFamilySans.trim() || defaults.sans || t("System default"),
   };
 }
@@ -93,25 +90,6 @@ function InterfaceFontRow({ preview }: { preview?: ReactNode }) {
         onChange: (fontSizeInterface) => updateSettings({ fontSizeInterface }),
       }}
       {...(preview !== undefined ? { preview } : {})}
-    />
-  );
-}
-
-function ReplyFontRow() {
-  const t = useTranslation(themeUiMessages);
-  const localizedSetting = useLocalizedSetting();
-  const settings = useScopedSettings();
-  const updateSettings = useUpdateScopedSettings();
-  const defaults = useFontDefaultFamilies();
-  return (
-    <FontFamilySettingsRow
-      {...localizedSetting("reply-font")}
-      description={t("Agent replies in the chat. Sizes follow the interface font.")}
-      defaultFamily={defaults.reply}
-      defaultValue={DEFAULT_UNIFIED_SETTINGS.fontFamilyReply}
-      value={settings.fontFamilyReply}
-      onValueChange={(fontFamilyReply) => updateSettings({ fontFamilyReply })}
-      onReset={() => updateSettings({ fontFamilyReply: DEFAULT_UNIFIED_SETTINGS.fontFamilyReply })}
     />
   );
 }
@@ -298,7 +276,6 @@ function FontSettingsGroup() {
   return (
     <>
       <InterfaceFontRow />
-      <ReplyFontRow />
       <PromptFontRow />
       <CodeFontRow />
       <TerminalFontRow />
@@ -338,7 +315,6 @@ function SimpleFontRows() {
   return (
     <>
       <InterfaceFontRow preview={<PromptFontPreview />} />
-      <ReplyFontRow />
       <CodeFontRow
         title={t("Monospace font")}
         description={t("Code blocks, diffs, file previews, and the terminal.")}
@@ -418,7 +394,7 @@ function FontFamilySettingsRow({
   onValueChange: (value: string) => void;
   onReset: () => void;
   requireMonospace?: boolean;
-  size?: {
+  size: {
     label: string;
     min: number;
     max: number;
@@ -478,7 +454,7 @@ function FontFamilySettingsRow({
     onReset();
   };
   const resetAction =
-    value !== defaultValue || (size !== undefined && size.value !== size.defaultValue) ? (
+    value !== defaultValue || size.value !== size.defaultValue ? (
       <SettingResetButton label={displayTitle.toLowerCase()} onClick={resetToDefault} />
     ) : null;
   const fontEnumeration = useFontEnumeration();
@@ -545,31 +521,29 @@ function FontFamilySettingsRow({
   const control = (
     <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto @min-[32rem]/settings-row:flex-nowrap">
       <div className="min-w-36 flex-1 sm:w-44 sm:flex-none">{familyControl}</div>
-      {size !== undefined ? (
-        <Select
-          value={String(size.value)}
-          onValueChange={(next) => {
-            if (typeof next !== "string") return;
-            const parsed = Number(next);
-            if (Number.isInteger(parsed) && parsed >= size.min && parsed <= size.max) {
-              size.onChange(parsed);
-            }
-          }}
-        >
-          <SelectTrigger size="sm" className="w-22 shrink-0" aria-label={size.label}>
-            <SelectValue>{size.value} px</SelectValue>
-          </SelectTrigger>
-          <SelectPopup align="end" alignItemWithTrigger={false}>
-            {Array.from({ length: size.max - size.min + 1 }, (_, index) => size.min + index).map(
-              (px) => (
-                <SelectItem hideIndicator key={px} value={String(px)}>
-                  {px} px
-                </SelectItem>
-              ),
-            )}
-          </SelectPopup>
-        </Select>
-      ) : null}
+      <Select
+        value={String(size.value)}
+        onValueChange={(next) => {
+          if (typeof next !== "string") return;
+          const parsed = Number(next);
+          if (Number.isInteger(parsed) && parsed >= size.min && parsed <= size.max) {
+            size.onChange(parsed);
+          }
+        }}
+      >
+        <SelectTrigger size="sm" className="w-22 shrink-0" aria-label={size.label}>
+          <SelectValue>{size.value} px</SelectValue>
+        </SelectTrigger>
+        <SelectPopup align="end" alignItemWithTrigger={false}>
+          {Array.from({ length: size.max - size.min + 1 }, (_, index) => size.min + index).map(
+            (px) => (
+              <SelectItem hideIndicator key={px} value={String(px)}>
+                {px} px
+              </SelectItem>
+            ),
+          )}
+        </SelectPopup>
+      </Select>
     </div>
   );
   return (
