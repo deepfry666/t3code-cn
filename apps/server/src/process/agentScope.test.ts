@@ -283,14 +283,35 @@ describe("AgentScope service", () => {
   it.effect("caps agent memory and yields CPU, disk, and tasks to the server", () =>
     withFakeSystemd(({ scope, calls }) =>
       Effect.gen(function* () {
-        yield* scope.wrap({ command: "agent", args: [], name: "t", threadId: "a" });
+        const agent = yield* scope.wrap({ command: "agent", args: [], name: "t", threadId: "a" });
+        const terminal = yield* scope.wrap({
+          command: "agent",
+          args: [],
+          name: "terminal",
+          survivesRestart: true,
+        });
+        expect(sliceOf(agent)).toMatch(/^app-t3codecn-agents-[a-f0-9]{12}\.slice$/);
+        expect(sliceOf(terminal)).toBe("app-t3codecn-agents.slice");
+        for (const launch of [agent, terminal]) {
+          expect(unitOf(launch)).toMatch(/^t3codecn-[a-z]+-[a-f0-9]{8}\.scope$/);
+        }
+        const slices = calls.flatMap((args) =>
+          args.map((arg) => arg.replace(/^--slice=/, "")).filter((arg) => arg.endsWith(".slice")),
+        );
+        for (const slice of [...slices, sliceOf(agent), sliceOf(terminal)]) {
+          const components = slice.slice(0, -".slice".length).split("-");
+          const hierarchy = components.map(
+            (_, index) => `${components.slice(0, index + 1).join("-")}.slice`,
+          );
+          expect(hierarchy).not.toContain("app-t3code.slice");
+        }
         const setProperties = calls.filter(([, verb]) => verb === "set-property");
         expect(setProperties).toEqual([
           [
             "--user",
             "set-property",
             "--runtime",
-            "app-t3code-agents.slice",
+            "app-t3codecn-agents.slice",
             expect.stringMatching(/^MemoryHigh=\d+$/),
             expect.stringMatching(/^MemoryMax=\d+$/),
           ],
@@ -298,7 +319,7 @@ describe("AgentScope service", () => {
             "--user",
             "set-property",
             "--runtime",
-            "app-t3code.slice",
+            "app-t3codecn.slice",
             "CPUWeight=10",
             "IOWeight=10",
             "TasksMax=25%",
@@ -323,7 +344,7 @@ describe("AgentScope service", () => {
           name: "terminal",
           survivesRestart: true,
         });
-        expect(sliceOf(terminal)).toBe("app-t3code-agents.slice");
+        expect(sliceOf(terminal)).toBe("app-t3codecn-agents.slice");
         expect(calls.filter(([, verb]) => verb === "stop")).toHaveLength(1);
       }),
     ),
@@ -336,6 +357,8 @@ describe("AgentScope service", () => {
         const unit = unitOf(agent);
         expect(agent.unit).toBe(unit);
 
+        yield* scope.stop("t3code-agent-12345678.scope");
+        expect(calls.some((args) => args.includes("t3code-agent-12345678.scope"))).toBe(false);
         yield* scope.stop("session-2.scope");
         expect(calls.some((args) => args.includes("session-2.scope"))).toBe(false);
         yield* scope.stop(unit);

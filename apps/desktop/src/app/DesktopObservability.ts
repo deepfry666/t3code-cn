@@ -1,4 +1,5 @@
 import { PRIMARY_LOCAL_ENVIRONMENT_ID } from "@t3tools/contracts";
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import {
   makeLocalFileTracer,
   makeTraceSink,
@@ -606,10 +607,10 @@ const layerTelemetry = Layer.unwrap(
       ? environment.appVersion
       : desktopPackageJson.version;
     const resource = {
-      serviceName: "t3code-desktop",
+      serviceName: `${FORK_IDENTITY.slug}-desktop`,
       serviceVersion,
       attributes: {
-        "service.namespace": "t3code",
+        "service.namespace": FORK_IDENTITY.slug,
         "service.runtime": "desktop",
         "t3code.desktop.mode": environment.isDevelopment ? "development" : "packaged",
         "service.instance.id": processServiceInstanceId(endpoints.resourceAttributes),

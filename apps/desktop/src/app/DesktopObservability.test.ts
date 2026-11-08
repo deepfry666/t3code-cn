@@ -368,6 +368,8 @@ describe("DesktopObservability", () => {
         `"key":"process.runtime.version","value":{"stringValue":"${process.versions.node}"}`,
       );
       assert.include(body, '"key":"t3code.desktop.mode","value":{"stringValue":"development"}');
+      assert.include(body, '"key":"service.name","value":{"stringValue":"t3code-cn-desktop"}');
+      assert.include(body, '"key":"service.namespace","value":{"stringValue":"t3code-cn"}');
       assert.notInclude(body, "service.mode");
     }).pipe(
       Effect.scoped,

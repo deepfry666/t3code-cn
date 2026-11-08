@@ -175,6 +175,8 @@ describe("ServerLoggerLive", () => {
 
       const body = requests.map((request) => request.body).join("\n");
       assert.include(body, '"key":"t3code.server.managed_by","value":{"stringValue":"desktop"}');
+      assert.include(body, '"key":"service.name","value":{"stringValue":"t3code-cn-server"}');
+      assert.include(body, '"key":"service.namespace","value":{"stringValue":"t3code-cn"}');
       assert.notInclude(body, "service.mode");
     }),
   );
