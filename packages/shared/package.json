@@ -435,6 +435,10 @@
       "types": "./src/cliRelease.ts",
       "import": "./src/cliRelease.ts"
     },
+    "./forkIdentity": {
+      "types": "./src/forkIdentity.ts",
+      "import": "./src/forkIdentity.ts"
+    },
     "./gitPatchPath": {
       "types": "./src/gitPatchPath.ts",
       "import": "./src/gitPatchPath.ts"
