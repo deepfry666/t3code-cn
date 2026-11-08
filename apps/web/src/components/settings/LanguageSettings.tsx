@@ -2,13 +2,7 @@ import { setLocale, useLocale, useTranslation } from "~/i18n/useTranslation";
 
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "../ui/select";
 import { SettingsRow, SettingsSection } from "./settingsLayout";
-
-const messages = {
-  Language: "语言",
-  "Interface language": "界面语言",
-  "Saved on this device. Model responses, terminal output, and project files are not translated.":
-    "仅保存在此设备。不会翻译模型回复、终端输出或项目文件。",
-} as const;
+import { settingsMessages } from "./settingsMessages";
 
 const languages = [
   { value: "en", label: "English" },
@@ -17,7 +11,7 @@ const languages = [
 
 export function LanguageSettings() {
   const locale = useLocale();
-  const t = useTranslation(messages);
+  const t = useTranslation(settingsMessages);
   return (
     <SettingsSection id="interface-language" title={t("Language")}>
       <SettingsRow

@@ -37,7 +37,7 @@ export const settingsDetailUiMessages = {
     "。此功能处于早期测试阶段，可能变更或失效。T3 Code 不会安装 Simlock。",
   Unarchive: "取消归档",
   Delete: "删除",
-  "Failed to unarchive thread": "取消归档失败",
+  "Failed to unarchive thread": "取消归档会话失败",
   "Failed to delete thread": "删除会话失败",
   "An error occurred.": "发生错误。",
   "Loading archived threads": "正在加载已归档会话",

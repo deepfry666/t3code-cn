@@ -57,7 +57,7 @@ export const coreUiMessages = {
   "This connection cannot change one or more selected threads.": "此连接无法修改选中的部分会话。",
   "Path copied": "路径已复制",
   "Failed to copy path": "复制路径失败",
-  "An error occurred.": "发生了错误。",
+  "An error occurred.": "发生错误。",
   "Branch copied": "分支名已复制",
   "Failed to copy branch": "复制分支名失败",
   "Thread ID copied": "会话 ID 已复制",

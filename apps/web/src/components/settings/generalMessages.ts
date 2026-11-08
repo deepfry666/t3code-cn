@@ -14,9 +14,9 @@ export const generalMessages = {
   "project order": "项目排序",
   "Project order": "项目排序",
   "Fold working and monitoring threads into a Working section. They return to the top of the inbox when they need you. The boring sidebar in Labs has no Working section.":
-    "将正在执行和监控的会话收起到“工作中”区域。需要你处理时，它们会回到收件箱顶部。实验室中的简洁侧边栏不显示此区域。",
-  "working section": "工作中区域",
-  "Working section": "工作中区域",
+    "将正在执行和监控的会话收起到“运行中”分组。需要你处理时，它们会回到收件箱顶部。实验室中的简洁侧边栏不显示此分组。",
+  "working section": "运行中分组",
+  "Working section": "运行中分组",
   "Ask before unpinning a thread from the pinned section.": "取消置顶会话前询问。",
   "unpin confirmation": "取消置顶确认",
   "Confirm thread unpinning": "确认取消置顶会话",

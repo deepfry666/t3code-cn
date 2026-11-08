@@ -7,6 +7,7 @@ import { themeUiMessages } from "../components/settings/themeUi.messages";
 import { chatUiMessages } from "../components/chat/chatUi.messages";
 import { coreUiMessages } from "../components/coreUi.messages";
 import { settingsContentMessages } from "../components/settings/settingsContent.messages";
+import { generalMessages } from "../components/settings/generalMessages";
 import { settingsMessages } from "../components/settings/settingsMessages";
 import { translate } from "./locale";
 
@@ -19,6 +20,7 @@ const catalogs: Record<string, Readonly<Record<string, string>>> = {
   core: coreUiMessages,
   settings: settingsMessages,
   settingsContent: settingsContentMessages,
+  general: generalMessages,
 };
 const placeholders = (value: string) =>
   [...value.matchAll(/\{(\w+)\}/g)].map((match) => match[1]).sort();
