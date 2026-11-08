@@ -91,7 +91,11 @@ import {
 import { PullRequestReactionBar } from "./PullRequestReactions";
 import { PullRequestConversationGhost } from "./PullRequestGhosts";
 import { sectionCollapseAnchorScrollTop } from "./pullRequestSummaryScroll.logic";
-import { pullRequestUiMessages, translatePullRequestLabel } from "./pullRequestUi.messages";
+import {
+  pullRequestUiMessages,
+  pullRequestTermAtStart,
+  translatePullRequestLabel,
+} from "./pullRequestUi.messages";
 
 function reviewerKey(login: string): string {
   return login.toLowerCase();
@@ -466,6 +470,7 @@ export function PullRequestSummaryTab({
   const locale = useLocale();
   const terminology = sourceControlClients.get(detail.provider).changeRequest;
   const noun = translatePullRequestLabel(terminology.singular, locale);
+  const nounAtStart = pullRequestTermAtStart(terminology.singular, locale);
   const [shown, setShown] = useState({ url: detail.url, count: COMMENT_PAGE });
   const shownConversations = shown.url === detail.url ? shown.count : COMMENT_PAGE;
   const [commentFilter, setCommentFilter] = useLocalStorage(
@@ -865,7 +870,7 @@ export function PullRequestSummaryTab({
               environmentId={environmentId}
               completionScope={completionScope}
               threadRef={threadRef}
-              label={t("{kind} description", { kind: noun })}
+              label={t("{kind} description", { kind: nounAtStart })}
               placeholder={t("Describe this {kind}", { kind: noun })}
               saving={descriptionSaving}
               onSave={(body) => void saveBody(body)}

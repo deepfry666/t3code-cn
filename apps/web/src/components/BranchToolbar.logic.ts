@@ -53,6 +53,21 @@ export function resolveEnvironmentOptionLabel(input: {
   return runtimeLabel ?? savedLabel ?? input.environmentId;
 }
 
+export function resolveRunContextLabel(input: {
+  autoEnvironmentLabel: string | undefined;
+  showEnvironmentIndicator: boolean;
+  activeEnvironmentLabel: string | undefined;
+  workspaceLabel: string;
+  runOnLabel: string;
+}): string {
+  return (
+    input.autoEnvironmentLabel ??
+    (input.showEnvironmentIndicator
+      ? (input.activeEnvironmentLabel ?? input.runOnLabel)
+      : input.workspaceLabel)
+  );
+}
+
 export function shouldShowEnvironmentIndicator(input: {
   activeEnvironment: Pick<EnvironmentOption, "isPrimary"> | null;
   canPickEnvironment: boolean;

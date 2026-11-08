@@ -1,3 +1,5 @@
+import { capitalizeTerm } from "@t3tools/client-runtime/source-control-clients";
+
 import type { Locale } from "~/i18n/locale";
 
 export const pullRequestUiMessages = {
@@ -259,10 +261,10 @@ export const pullRequestUiMessages = {
   "Nothing to preview.": "没有可预览的内容。",
   "The reaction could not be saved": "无法保存表情回应",
   "This branch is out-of-date with {branch}.": "此分支已落后于 {branch}。",
-  "This branch is out-of-date with {branch} by {count} commit":
-    "此分支已落后于 {branch}，相差 {count} 个提交",
-  "This branch is out-of-date with {branch} by {count} commits":
-    "此分支已落后于 {branch}，相差 {count} 个提交",
+  "This branch is out-of-date with {branch} by {count} commit.":
+    "此分支已落后于 {branch}，相差 {count} 个提交。",
+  "This branch is out-of-date with {branch} by {count} commits.":
+    "此分支已落后于 {branch}，相差 {count} 个提交。",
   "Changes can be cleanly merged.": "可以无冲突地合并。",
   "Update with rebase": "通过变基更新",
   "Update branch": "更新分支",
@@ -674,4 +676,17 @@ export function translatePullRequestLabel(label: string, locale: Locale): string
   return locale === "zh-CN" && Object.hasOwn(pullRequestUiMessages, label)
     ? pullRequestUiMessages[label as keyof typeof pullRequestUiMessages]
     : label;
+}
+
+export function pullRequestTermAtStart(term: string, locale: Locale): string {
+  return capitalizeTerm(translatePullRequestLabel(term, locale));
+}
+
+export function pullRequestFilterOptionLabel(
+  option: { readonly label: string; readonly translateLabel?: boolean },
+  locale: Locale,
+): string {
+  return option.translateLabel === true
+    ? translatePullRequestLabel(option.label, locale)
+    : option.label;
 }

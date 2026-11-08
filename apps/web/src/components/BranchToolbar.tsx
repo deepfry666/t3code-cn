@@ -32,6 +32,7 @@ import {
   resolveLockedWorkspaceLabel,
   resolvePreviousWorktreeLabel,
   resolvePreviousWorktreeSeed,
+  resolveRunContextLabel,
   shouldShowEnvironmentIndicator,
 } from "./BranchToolbar.logic";
 import {
@@ -262,9 +263,13 @@ const RunContextSelector = memo(function RunContextSelector({
     <>
       {icon}
       <ComposerContextLabel displayMode={displayMode}>
-        {(autoEnvironmentLabel ?? showEnvironmentIndicator)
-          ? (activeEnvironment?.label ?? t("Run on@@workspace"))
-          : workspaceLabel}
+        {resolveRunContextLabel({
+          autoEnvironmentLabel,
+          showEnvironmentIndicator,
+          activeEnvironmentLabel: activeEnvironment?.label,
+          workspaceLabel,
+          runOnLabel: t("Run on@@workspace"),
+        })}
       </ComposerContextLabel>
       {/* Trailing in the panel, so every row label starts on the same edge. */}
       {isPanel && showEnvironmentIndicator ? workspaceIcon : null}

@@ -47,7 +47,7 @@ import { PullRequestMarkdown } from "./PullRequestMarkdown";
 import { PullRequestMoreReplies } from "./PullRequestMoreReplies";
 import { PullRequestMarkdownEditor } from "./PullRequestMarkdownEditor";
 import { PullRequestReactionBar } from "./PullRequestReactions";
-import { pullRequestUiMessages, translatePullRequestLabel } from "./pullRequestUi.messages";
+import { pullRequestUiMessages, pullRequestTermAtStart } from "./pullRequestUi.messages";
 import {
   PullRequestActorAvatar,
   PullRequestDiffStat,
@@ -565,7 +565,7 @@ function CommitEvent({
 function LifecycleEvent({ event, term }: { event: PullRequestTimelineEvent; term: string }) {
   const t = useTranslation(pullRequestUiMessages);
   const locale = useLocale();
-  const title = translatePullRequestLabel(term, locale);
+  const title = pullRequestTermAtStart(term, locale);
   const presentation =
     event.kind === "opened"
       ? {

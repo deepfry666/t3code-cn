@@ -13,7 +13,7 @@ import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 import { PullRequestDetailTitleRow } from "./PullRequestDetailLayout";
 import { PullRequestEditButton } from "./PullRequestEditButton";
 import { readableFailure } from "./pullRequestDetail.logic";
-import { pullRequestUiMessages, translatePullRequestLabel } from "./pullRequestUi.messages";
+import { pullRequestUiMessages, pullRequestTermAtStart } from "./pullRequestUi.messages";
 import { canEditPullRequestChangeRequest } from "@t3tools/client-runtime/pull-request-editing";
 
 /** The pull request title, which the reader can rename in place when the host allows it. */
@@ -97,7 +97,7 @@ export function PullRequestTitleEditor({
         disabled={titleSaving}
         value={titleDraft}
         aria-label={t("{kind} title", {
-          kind: translatePullRequestLabel(
+          kind: pullRequestTermAtStart(
             sourceControlClients.get(detail.provider).changeRequest.singular,
             locale,
           ),

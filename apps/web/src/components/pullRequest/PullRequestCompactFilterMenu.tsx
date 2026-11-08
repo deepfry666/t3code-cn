@@ -10,7 +10,7 @@ import {
   PullRequestFilterOptionIcon,
   type PullRequestFilterOption,
 } from "./PullRequestListFilters";
-import { translatePullRequestLabel } from "./pullRequestUi.messages";
+import { pullRequestFilterOptionLabel } from "./pullRequestUi.messages";
 
 export function PullRequestCompactFilterMenu<Value extends string>({
   label,
@@ -35,8 +35,7 @@ export function PullRequestCompactFilterMenu<Value extends string>({
 }) {
   const locale = useLocale();
   const current = options.find((option) => option.value === value) ?? options[0];
-  const currentLabel =
-    current === undefined ? "" : translatePullRequestLabel(current.label, locale);
+  const currentLabel = current === undefined ? "" : pullRequestFilterOptionLabel(current, locale);
   if (!current) return null;
   return (
     <Menu>
@@ -78,7 +77,7 @@ export function PullRequestCompactFilterMenu<Value extends string>({
               >
                 <span className="flex min-w-0 items-center gap-2">
                   <PullRequestFilterOptionIcon option={option} />
-                  {translatePullRequestLabel(option.label, locale)}
+                  {pullRequestFilterOptionLabel(option, locale)}
                 </span>
               </MenuRadioItem>
             );

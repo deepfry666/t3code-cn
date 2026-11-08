@@ -58,11 +58,17 @@ import {
 } from "./pullRequestList.logic";
 import { PullRequestActorAvatar } from "./pullRequestPresentation";
 import { PullRequestGlyph } from "./pullRequestIcons";
-import { pullRequestUiMessages, translatePullRequestLabel } from "./pullRequestUi.messages";
+import {
+  pullRequestFilterOptionLabel,
+  pullRequestUiMessages,
+  translatePullRequestLabel,
+} from "./pullRequestUi.messages";
 
 export interface PullRequestFilterOption<Value extends string> {
   readonly value: Value;
   readonly label: string;
+  /** True only for application-owned labels; host, project and user data stay as written. */
+  readonly translateLabel?: boolean;
   readonly Icon: ElementType<{ className?: string }>;
   readonly project?: ProjectFaviconProject;
   readonly unavailable?: string | undefined;
@@ -148,23 +154,33 @@ export const pullRequestProjectKey = (project: {
 }) => JSON.stringify([project.environmentId, project.id]);
 
 const DRAFT_OPTIONS = [
-  { value: UNFILTERED_VALUE, label: "All", Icon: LayersIcon },
-  { value: "only", label: "Drafts only", Icon: PullRequestGlyph.draft },
-  { value: "hide", label: "Hide drafts", Icon: EyeOffIcon },
+  { value: UNFILTERED_VALUE, label: "All", Icon: LayersIcon, translateLabel: true },
+  { value: "only", label: "Drafts only", Icon: PullRequestGlyph.draft, translateLabel: true },
+  { value: "hide", label: "Hide drafts", Icon: EyeOffIcon, translateLabel: true },
 ] as const satisfies ReadonlyArray<PullRequestFilterOption<string>>;
 
 const REVIEW_OPTIONS = [
-  { value: UNFILTERED_VALUE, label: "All", Icon: LayersIcon },
-  { value: "approved", label: "Approved", Icon: CircleCheckIcon },
-  { value: "changes-requested", label: "Changes requested", Icon: CircleXIcon },
-  { value: "review-required", label: "Review required", Icon: CircleDashedIcon },
-  { value: "none", label: "No reviews", Icon: CircleSlashIcon },
+  { value: UNFILTERED_VALUE, label: "All", Icon: LayersIcon, translateLabel: true },
+  { value: "approved", label: "Approved", Icon: CircleCheckIcon, translateLabel: true },
+  {
+    value: "changes-requested",
+    label: "Changes requested",
+    Icon: CircleXIcon,
+    translateLabel: true,
+  },
+  {
+    value: "review-required",
+    label: "Review required",
+    Icon: CircleDashedIcon,
+    translateLabel: true,
+  },
+  { value: "none", label: "No reviews", Icon: CircleSlashIcon, translateLabel: true },
 ] as const satisfies ReadonlyArray<PullRequestFilterOption<string>>;
 
 const CHECKS_OPTIONS = [
-  { value: UNFILTERED_VALUE, label: "All", Icon: LayersIcon },
-  { value: "passing", label: "Passing", Icon: CircleCheckIcon },
-  { value: "failing", label: "Failing", Icon: CircleXIcon },
+  { value: UNFILTERED_VALUE, label: "All", Icon: LayersIcon, translateLabel: true },
+  { value: "passing", label: "Passing", Icon: CircleCheckIcon, translateLabel: true },
+  { value: "failing", label: "Failing", Icon: CircleXIcon, translateLabel: true },
 ] as const satisfies ReadonlyArray<PullRequestFilterOption<string>>;
 
 function PullRequestFilterRadioGroup<Value extends string>({
@@ -198,7 +214,7 @@ function PullRequestFilterRadioGroup<Value extends string>({
             <span className="flex min-w-0 items-center gap-2">
               <PullRequestFilterOptionIcon option={option} />
               <span className="min-w-0 flex-1 truncate">
-                {translatePullRequestLabel(option.label, locale)}
+                {pullRequestFilterOptionLabel(option, locale)}
               </span>
               {option.unavailable ? (
                 <span className="shrink-0">
@@ -241,7 +257,7 @@ function PullRequestFilterRadioSubmenu<Value extends string>({
         <PullRequestFilterOptionIcon option={current} />
         <span className="flex-1">{translatePullRequestLabel(label, locale)}</span>
         <span className="min-w-0 max-w-32 truncate text-xs text-muted-foreground">
-          {translatePullRequestLabel(current.label, locale)}
+          {pullRequestFilterOptionLabel(current, locale)}
         </span>
       </MenuSubTrigger>
       <MenuSubPopup>

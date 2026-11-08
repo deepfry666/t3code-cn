@@ -34,6 +34,11 @@ import { globalUiMessages } from "../components/globalUi.messages";
 import { rightPanelTabsUiMessages } from "../components/rightPanelTabsUi.messages";
 import { onboardingUiMessages } from "../components/onboarding/onboardingUi.messages";
 import { desktopUiMessages } from "../components/desktop/desktopUi.messages";
+import { diffsUiMessages } from "../components/diffs/diffsUi.messages";
+import { filesUiMessages } from "../components/files/filesUi.messages";
+import { gitUiMessages } from "../components/gitUi.messages";
+import { projectScriptsUiMessages } from "../components/projectScriptsUi.messages";
+import { pullRequestUiMessages } from "../components/pullRequest/pullRequestUi.messages";
 import { translate } from "./locale";
 
 const catalogs: Record<string, Readonly<Record<string, string>>> = {
@@ -44,6 +49,11 @@ const catalogs: Record<string, Readonly<Record<string, string>>> = {
   rightPanelTabs: rightPanelTabsUiMessages,
   onboarding: onboardingUiMessages,
   desktop: desktopUiMessages,
+  diffs: diffsUiMessages,
+  files: filesUiMessages,
+  git: gitUiMessages,
+  projectScripts: projectScriptsUiMessages,
+  pullRequest: pullRequestUiMessages,
   chat: chatUiMessages,
   timeline: timelineUiMessages,
   threadPanel: threadPanelUiMessages,

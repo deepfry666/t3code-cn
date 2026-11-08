@@ -16,7 +16,11 @@ import {
   usePullRequestReviewStore,
 } from "./pullRequestReviewStore";
 import { pullRequestCompletionScope } from "./PullRequestMarkdownTextarea";
-import { pullRequestUiMessages, translatePullRequestLabel } from "./pullRequestUi.messages";
+import {
+  pullRequestTermAtStart,
+  pullRequestUiMessages,
+  translatePullRequestLabel,
+} from "./pullRequestUi.messages";
 
 export function PullRequestComposer({
   environmentId,
@@ -117,7 +121,7 @@ export function PullRequestComposer({
         sideOffset={8}
         width="lg"
         initialFocus={mode === "review" ? reviewRef : commentRef}
-        aria-label={t("{kind} composer", { kind: term })}
+        aria-label={t("{kind} composer", { kind: pullRequestTermAtStart(term, locale) })}
       >
         <div className="mb-3 flex items-center justify-between gap-2">
           {canComment && verdicts.length > 0 ? (

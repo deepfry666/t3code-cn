@@ -117,6 +117,54 @@ export const gitUiMessages = {
   "Default branch": "默认分支",
   Files: "文件",
   Excluded: "已排除",
+  Advanced: "高级",
+  Protocol: "协议",
+  "Publishing repository to {provider}...": "正在将仓库发布到 {provider}…",
+  "Created {kind}": "已创建{kind}",
+  "Updated {ref} from {upstream}": "已从 {upstream} 更新 {ref}",
+  "{ref} is already synchronized.": "{ref} 已同步。",
+  upstream: "上游",
+  "(detached HEAD)": "（游离 HEAD）",
+  "{selected} of {total}": "已选 {selected} / 共 {total}",
+  "Open {path} in editor": "在编辑器中打开 {path}",
+  "vs {ref}": "对比 {ref}",
+  "Provider status unavailable. Open Settings -> Source control and rescan.":
+    "无法获取提供方状态。请打开“设置 → 源代码管理”并重新扫描。",
+  "{provider} is not authenticated. Open Settings -> Source control for setup guidance.":
+    "{provider} 尚未通过身份验证。请打开“设置 → 源代码管理”查看设置指引。",
+  Commit: "提交",
+  Push: "推送",
+  Pull: "拉取",
+  "Sync ref": "同步引用",
+  "Create {kind}": "创建{kind}",
+  "Commit & push": "提交并推送",
+  "Commit, push & {kind}": "提交、推送并创建{kind}",
+  "Push & create {kind}": "推送并创建{kind}",
+  "Create and checkout a ref before pushing or opening a {kind}.":
+    "推送或创建{kind}前，请先创建并检出一个引用。",
+  "Branch is up to date. No action needed.": "分支已是最新，无需操作。",
+  "Branch has diverged from upstream. Rebase/merge first.": "分支已与上游分叉。请先变基或合并。",
+  "Commit & push to default ref?": "提交并推送到默认引用？",
+  "This action will commit and push changes on {branch}. You can continue on this ref or create a feature ref and run the same action there.":
+    "此操作会在 {branch} 上提交并推送改动。你可以继续在此引用上操作，或创建功能引用后在那里执行相同操作。",
+  "Commit & push to {branch}": "提交并推送到 {branch}",
+  "Push to default ref?": "推送到默认引用？",
+  "This action will push local commits on {branch}. You can continue on this ref or create a feature ref and run the same action there.":
+    "此操作会在 {branch} 上推送本地提交。你可以继续在此引用上操作，或创建功能引用后在那里执行相同操作。",
+  "Push to {branch}": "推送到 {branch}",
+  "Commit, push & create {kind} from default ref?": "在默认引用上提交、推送并创建{kind}？",
+  "This action will commit, push, and create a {kind} on {branch}. You can continue on this ref or create a feature ref and run the same action there.":
+    "此操作会在 {branch} 上提交、推送并创建{kind}。你可以继续在此引用上操作，或创建功能引用后在那里执行相同操作。",
+  "Commit, push & create {kind}": "提交、推送并创建{kind}",
+  "Push & create {kind} from default ref?": "在默认引用上推送并创建{kind}？",
+  "This action will push local commits and create a {kind} on {branch}. You can continue on this ref or create a feature ref and run the same action there.":
+    "此操作会在 {branch} 上推送本地提交并创建{kind}。你可以继续在此引用上操作，或创建功能引用后在那里执行相同操作。",
+  "There are no changes to commit, so a feature branch can't be named. Create a branch yourself or continue on {branch}.":
+    "没有可提交的改动，因此无法命名功能分支。请自行创建分支，或继续在 {branch} 上操作。",
+  "Pulling latest changes...": "正在拉取最新改动…",
+  "Starting source control action...": "正在启动源代码管理操作…",
+  PR: "拉取请求",
+  MR: "合并请求",
 };
 
 // Labels are authored where the worktree is described, so read them through one lookup that

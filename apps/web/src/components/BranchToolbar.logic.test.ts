@@ -8,6 +8,7 @@ import {
   resolveEffectiveEnvMode,
   resolveBranchToolbarPrBranch,
   resolveLocalCheckoutBranchMismatch,
+  resolveRunContextLabel,
   sanitizeNewRefName,
   shouldIncludeBranchPickerItem,
 } from "./BranchToolbar.logic";
@@ -275,5 +276,36 @@ describe("sanitizeNewRefName", () => {
   it("does not collapse dashes the user typed", () => {
     expect(sanitizeNewRefName("new - branch")).toBe("new---branch");
     expect(sanitizeNewRefName("foo--bar")).toBe("foo--bar");
+  });
+});
+
+describe("resolveRunContextLabel", () => {
+  const labels = {
+    showEnvironmentIndicator: true,
+    activeEnvironmentLabel: "This device",
+    workspaceLabel: "Current worktree",
+    runOnLabel: "Run on",
+  };
+
+  it("shows the automatic environment label instead of the picked environment", () => {
+    expect(resolveRunContextLabel({ ...labels, autoEnvironmentLabel: "Auto balance" })).toBe(
+      "Auto balance",
+    );
+  });
+
+  it("falls back to the active environment label when no automatic label is set", () => {
+    expect(resolveRunContextLabel({ ...labels, autoEnvironmentLabel: undefined })).toBe(
+      "This device",
+    );
+  });
+
+  it("shows the workspace when the environment indicator is hidden", () => {
+    expect(
+      resolveRunContextLabel({
+        ...labels,
+        autoEnvironmentLabel: undefined,
+        showEnvironmentIndicator: false,
+      }),
+    ).toBe("Current worktree");
   });
 });

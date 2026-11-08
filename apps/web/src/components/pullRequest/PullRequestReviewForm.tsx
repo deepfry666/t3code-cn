@@ -22,7 +22,11 @@ import {
   PullRequestMarkdownTextarea,
   type PullRequestCompletionScope,
 } from "./PullRequestMarkdownTextarea";
-import { pullRequestUiMessages, translatePullRequestLabel } from "./pullRequestUi.messages";
+import {
+  pullRequestUiMessages,
+  pullRequestTermAtStart,
+  translatePullRequestLabel,
+} from "./pullRequestUi.messages";
 
 const VERDICTS: ReadonlyArray<{
   readonly value: PullRequestReviewVerdict;
@@ -140,7 +144,10 @@ export function PullRequestReviewForm({
       submittedComments.map((comment) => comment.id),
     );
     clearSummary(reviewKey, submittedBody);
-    toastManager.add({ type: "success", title: t(verdict.sent(), { kind: term }) });
+    toastManager.add({
+      type: "success",
+      title: t(verdict.sent(), { kind: pullRequestTermAtStart(term, locale) }),
+    });
     onSubmitted();
   };
 

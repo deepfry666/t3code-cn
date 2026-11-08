@@ -38,11 +38,11 @@ function PullRequestBaseFreshnessWarning({
     freshness.behindBy === null
       ? t("This branch is out-of-date with {branch}.", { branch: baseBranch })
       : freshness.behindBy === 1
-        ? t("This branch is out-of-date with {branch} by {count} commit", {
+        ? t("This branch is out-of-date with {branch} by {count} commit.", {
             branch: baseBranch,
             count: freshness.behindBy.toLocaleString(),
           })
-        : t("This branch is out-of-date with {branch} by {count} commits", {
+        : t("This branch is out-of-date with {branch} by {count} commits.", {
             branch: baseBranch,
             count: freshness.behindBy.toLocaleString(),
           });

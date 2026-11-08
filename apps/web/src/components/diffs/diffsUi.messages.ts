@@ -58,4 +58,21 @@ export const diffsUiMessages = {
     "此文件过大，无法完整显示。统计包含全部改动。",
   "Collapse all folders": "折叠全部文件夹",
   "Expand all folders": "展开全部文件夹",
+  Branch: "分支",
+  Remote: "远端",
+  Commits: "提交",
+  Turn: "轮次",
+  "No matching refs.": "没有匹配的引用。",
+  "Change comparison target. Currently {ref}": "更改比较目标。当前为 {ref}。",
+  "Totals include all changes.": "合计包含全部改动。",
+  "This preview exceeds the size limit. Changes shown are incomplete.":
+    "此预览超出大小限制。显示的改动不完整。",
+  "Select a thread to inspect turn diffs.": "选择一个会话以查看轮次差异。",
+  "Turn diffs are unavailable because this project is not a git repository.":
+    "此项目不是 Git 仓库，无法查看轮次差异。",
+  "No completed turns yet.": "尚无已完成的轮次。",
+  "The provider recorded file content without a diff.": "提供方记录了文件内容，但没有差异。",
+  "Show {count} hidden test file": "显示 {count} 个隐藏的测试文件",
+  "Show {count} hidden test files": "显示 {count} 个隐藏的测试文件",
+  "{title} files": "{title}文件",
 };
