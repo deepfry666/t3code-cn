@@ -284,7 +284,11 @@ it.layer(NodeServices.layer)("DesktopCliCommand", (it) => {
 
       registry.failReads = false;
       const launcherDir = DesktopCliShim.launcherPath(
-        environmentFor(yield* Path.Path, { home, baseDir: `${home}/.t3code-cn`, platform: "win32" }),
+        environmentFor(yield* Path.Path, {
+          home,
+          baseDir: `${home}/.t3code-cn`,
+          platform: "win32",
+        }),
       ).replace(/[\\/]t3-cn\.cmd$/, "");
       yield* command.install;
       expect(registry.path).toBe(`${userPath};${launcherDir}`);
