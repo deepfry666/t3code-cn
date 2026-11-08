@@ -1,155 +1,76 @@
-> **非官方简体中文分支（开发中）**：语言设置、覆盖范围及限制见 [中文使用说明](docs/user/chinese.md)。以下官方安装命令不会安装此分支。
+# T3 Code 中文版（非官方）
 
-# T3 Code
+这是 [T3 Code](https://github.com/pingdotgg/t3code) 的非官方简体中文分支。T3 Code 是一个开源的智能体控制台，可以在桌面、Web 和手机上操控你电脑上的 Claude Code、Codex、Cursor、OpenCode 等智能体，用的是你自己的订阅。
 
-T3 Code 是一个“智能体运行环境控制台”。你可以通过一流的移动应用（[iOS](https://apps.apple.com/us/app/t3-code-remote-claude-more/id6787819824)、[Android](https://play.google.com/store/apps/details?id=com.t3tools.t3code)）、[Web 应用](https://app.t3.codes)和[基于 Electron 的桌面应用](https://t3.codes)控制你电脑上的智能体。
+本分支只做一件事：给 T3 Code 加上可切换的简体中文界面，其余功能与官方保持一致，并持续合并官方更新。它不是官方发行版，也不代表原团队提供支持。
 
-支持使用你在 Claude Code、Codex、Cursor、Grok Build、OpenCode、Google Antigravity 和 fx 上的订阅。只要它们已在你的电脑上配置好，T3 Code 就能控制它们。
+## 汉化内容
 
-## “等等，你想卖我什么？”
+- Web 与桌面应用共用的界面：设置、侧边栏、会话操作、外观与主题、通知、快捷键、审批按钮等常用部分。
+- 桌面应用的原生菜单（系统语言为中文时）。
+- 尚未覆盖的页面继续显示英文；iOS / Android 原生客户端暂未汉化。
+- 项目名、文件路径、代码、终端输出、模型回复和第三方错误信息不会被翻译。界面语言也不影响模型回答所用的语言。
 
-什么都不卖。我们做 T3 Code，是因为想要与智能体协作时最好的开发体验。Codex 桌面应用、Conductor、Claude Desktop 和 Cursor Glass 等现有方案给了我们启发，但都没有达到我们的标准。
+完整的覆盖范围与已知限制见 [中文使用说明](docs/user/chinese.md)。
 
-我们想要的是高性能、支持远程、真正开放的工具。如果我们哪天走错了方向，希望你手里有一切所需，能够自行分叉并打造你想要的编辑器。
+## 切换语言
 
-## 安装
+打开 **设置 → 通用 → 语言 → 界面语言**（英文界面下为 **Settings → General → Language → Interface language**），选择 **简体中文**，无需重启。首次打开时会跟随浏览器或系统语言自动选择。
 
-> [!WARNING]
-> T3 Code 目前支持 Codex、Claude、Cursor、Grok Build、OpenCode、Antigravity 和 fx。使用前请至少安装并登录一个提供方：
->
-> - Codex：安装 [Codex CLI](https://developers.openai.com/codex/cli)，然后运行 `codex login`
-> - Claude：安装 [Claude Code](https://claude.com/product/claude-code)，然后运行 `claude auth login`
-> - Cursor：安装 [Cursor CLI](https://cursor.com/cli)，然后运行 `agent login`
-> - Grok Build：安装 [Grok Build CLI](https://x.ai/cli)，然后运行 `grok login`
-> - OpenCode：安装 [OpenCode](https://opencode.ai)，然后运行 `opencode auth login`
-> - Antigravity：在设置中启用，然后使用 **安装 Antigravity** 和 **Sign in with Google**。无需 CLI。
-> - fx：安装 [fx](https://fx.sh)，并在运行 T3 Code 服务端的机器上运行 `fx login`（[配置指南](./docs/user/providers-fx.md)）
+## 获取
 
-### 命令行
+目前还没有正式发布的安装包。
 
-```bash
-curl -fsSL https://t3.codes/install.sh | sh
-```
+- **Windows**：在本仓库的 [Actions → Fork Windows desktop](https://github.com/deepfry666/t3code-cn/actions/workflows/fork-windows-desktop.yml) 中打开最近一次成功的运行，下载 `t3code-cn-windows-x64` 安装包。需要登录 GitHub，文件保留 14 天；安装包未签名，Windows 可能弹出 SmartScreen 提示。
+- **macOS / Linux**：从源码构建，见下方[从源码构建](#从源码构建)。
 
-Windows 上在 PowerShell 中运行：
+注意：官方的安装命令（`t3.codes/install.sh`、winget、Homebrew 等）安装的是官方英文版，不是本分支。
 
-```powershell
-irm https://t3.codes/install.ps1 | iex
-```
+## 安装前必读
 
-然后运行 `t3` 启动服务端并打开本地 Web 应用。`t3 service install` 让它在后台持续运行，`t3 update` 升级到新版本，`t3 --help` 查看完整说明。
+本分支沿用官方的应用标识、`~/.t3` 数据目录和 `t3` 命令，因此登录、T3 Connect 和远程连接都按官方方式工作，并会直接读取官方版本已有的对话记录。
 
-不想安装、只想试用一次，可以改为运行 `npx t3@latest`。
+- 不能与官方桌面版同时安装：请先卸载官方桌面版，并备份 `~/.t3`。
+- 不要在两个版本之间来回切换，版本不一致时数据库可能无法回退。
+- 本分支没有官方签名，macOS 上的通行密钥（Passkey）登录可能不可用，可改用其他登录方式。
+- 桌面自动更新从本仓库的 Releases 获取，不会被官方更新覆盖回英文。
 
-### 桌面应用
+使用前还需至少安装并登录一个提供方（Codex、Claude Code、Cursor 等），步骤见官方的 [安装与首次运行](docs/user/install.md)。
 
-从 [GitHub Releases](https://github.com/pingdotgg/t3code/releases) 安装最新版桌面应用，或使用你常用的包管理器：
+## 从源码构建
 
-#### Windows（`winget`）
+先安装 [Vite+](https://viteplus.dev/guide/) 提供的 `vp` 命令：
 
 ```bash
-winget install T3Tools.T3Code
-```
-
-#### Windows（`scoop`）
-
-```bash
-scoop install extras/t3code
-```
-
-#### macOS（Homebrew）
-
-```bash
-brew install --cask t3-code
-```
-
-#### Debian、Ubuntu（`.deb`）
-
-从 [GitHub Releases](https://github.com/pingdotgg/t3code/releases) 下载 `.deb`，然后：
-
-```bash
-sudo apt install ./T3-Code-*.deb
-```
-
-#### Arch Linux（AUR）
-
-稳定版：
-
-```bash
-yay -S t3code-bin
-```
-
-每夜版：
-
-```bash
-yay -S t3code-nightly-bin
-```
-
-AUR 打包文件维护在本仓库的 [`packaging/aur`](./packaging/aur) 下。
-
-#### Nix（nixpkgs）
-
-```bash
-nix profile add github:NixOS/nixpkgs/nixos-unstable#t3code
-```
-
-该软件包维护在 [nixpkgs](https://github.com/NixOS/nixpkgs/tree/nixos-unstable/pkgs/by-name/t3/t3code) 中，
-包含桌面应用（`t3code-desktop`）和 `t3` 命令。
-NixOS 配置与更新方式见 [Nix 安装](./docs/user/install.md#nix-nixpkgs)。
-
-## 一些说明
-
-这个项目还处于非常非常早期的阶段，难免有 bug。
-
-我们（基本上）暂不接受贡献。小修复可能会考虑，大功能不会。
-
-## 文档
-
-完整文档位于 [docs/](./docs)，目前还没有文档站点。
-
-- [常见问题](./docs/user/faq.md)
-- [安装与首次运行](./docs/user/install.md)
-- [权限模式](./docs/user/permission-modes.md)
-- [快捷键](./docs/user/keybindings.md)
-- [项目设置](./docs/user/project-settings.md)
-- [外观偏好](./docs/user/appearance.md)
-- [从手机或其他机器远程访问](./docs/user/remote-access.md)
-- [通过 MCP 连接 Claude Code、Codex、ChatGPT 等智能体](./docs/user/outside-agents.md)
-- [保持应用与服务端同步](./docs/user/updating.md)
-- [源代码管理集成](./docs/user/source-control.md)
-- 多账号：[Codex](./docs/user/providers-codex.md) · [Claude](./docs/user/providers-claude.md)
-- [将 T3 Code 作为后台服务运行](./docs/user/background-service.md)
-
-想从源码构建？请从 [docs/internals/overview.md](./docs/internals/overview.md) 开始。
-
-## 如果你仍然真的想贡献……请先读这里
-
-### 安装 `vp`
-
-T3 Code 使用 Vite+，因此需要安装全局 `vp` 命令行工具。
-
-#### macOS / Linux
-
-```bash
+# macOS / Linux
 curl -fsSL https://vite.plus | bash
 ```
 
-#### Windows
-
-```bash
+```powershell
+# Windows（PowerShell）
 irm https://vite.plus/ps1 | iex
 ```
 
-更多信息请查看其入门指南：https://viteplus.dev/guide/
-
-### 安装依赖
+然后克隆本仓库并安装依赖：
 
 ```bash
+git clone https://github.com/deepfry666/t3code-cn.git
+cd t3code-cn
 vp i
 ```
 
-报告 bug 或提交 PR 前，请先阅读 [CONTRIBUTING.md](./CONTRIBUTING.md)。
+- 本地运行服务端与 Web 界面：`vp run dev`
+- 打包 macOS 桌面应用（未签名的 `.dmg`，输出到 `release/`）：`vp run dist:desktop:dmg`
 
-有功能建议？请发起一个 [Ideas 讨论](https://github.com/pingdotgg/t3code/discussions/categories/ideas)。
+更多架构说明见 [docs/internals/overview.md](docs/internals/overview.md)。
 
-需要帮助？加入 [Discord](https://discord.gg/jn4EGJjrvv)。
+## 与官方的关系
+
+- 本分支以官方代码为准，定期合并 [pingdotgg/t3code](https://github.com/pingdotgg/t3code) 的更新，只在其上叠加翻译和发布来源的改动。
+- 中文翻译、汉化遗漏或本分支特有的问题，请在 [本仓库的 Issues](https://github.com/deepfry666/t3code-cn/issues) 反馈，不要提交到官方仓库。
+- 与汉化无关的功能问题，请先确认官方版本是否也存在，再到官方仓库反馈。
+- 官方文档位于 [docs/](docs)，大部分仍为英文。
+
+## 许可证
+
+沿用原项目的 [MIT 许可证](LICENSE)，保留原作者版权声明。
