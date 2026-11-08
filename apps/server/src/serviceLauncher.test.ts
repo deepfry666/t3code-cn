@@ -118,7 +118,8 @@ const writeFakeRuntime = (
   childSource: string,
 ) =>
   Effect.gen(function* () {
-    const entryPath = path.join(versionDir, "t3-cn");
+    const platform = yield* HostProcess.Platform;
+    const entryPath = path.join(versionDir, platform === "win32" ? "t3.exe" : "t3");
     yield* fs.makeDirectory(versionDir, { recursive: true });
     yield* fs.writeFileString(entryPath, `#!${process.execPath}\n${childSource}`);
     yield* fs.chmod(entryPath, 0o755);

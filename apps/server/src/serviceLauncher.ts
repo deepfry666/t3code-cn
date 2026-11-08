@@ -8,8 +8,6 @@ import * as NodeFSP from "node:fs/promises";
 import * as NodePath from "node:path";
 import * as NodeUtil from "node:util";
 
-import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
-
 import type {
   PendingServiceUpdate,
   ServiceLauncherChildMessage,
@@ -52,8 +50,9 @@ interface ManagedChild {
 
 const runtimePaths = (baseDir: string, version: string) => {
   const versionDir = NodePath.join(baseDir, "runtime", "versions", version);
+  // The release archive always ships `t3`, not the fork's public launcher name.
   // oxlint-disable-next-line t3code/no-global-process-runtime -- Standalone launcher has no Effect runtime.
-  const executableName = `${FORK_IDENTITY.cliName}${process.platform === "win32" ? ".exe" : ""}`;
+  const executableName = process.platform === "win32" ? "t3.exe" : "t3";
   return {
     versionDir,
     entryPath: NodePath.join(versionDir, executableName),
