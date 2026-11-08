@@ -1,3 +1,5 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { composerUiMessages } from "./composerUi.messages";
 import { useLoadBalancedEnvironment } from "../../hooks/useLoadBalancedEnvironment";
 import { useLogicalProjectEnvironments } from "../../hooks/useLogicalProjectEnvironments";
 import { useScratchProject } from "../../hooks/useScratchProject";
@@ -48,6 +50,7 @@ interface DraftEnvironmentRoutingInput {
  * project on the target machine.
  */
 export function useDraftEnvironmentRouting(input: DraftEnvironmentRoutingInput) {
+  const t = useTranslation(composerUiMessages);
   const {
     draftId,
     draftThread,
@@ -138,9 +141,10 @@ export function useDraftEnvironmentRouting(input: DraftEnvironmentRoutingInput) 
       toastManager.add({
         type: "warning",
         id: "load-balancing-attachments",
-        title: "Keep attachments on this machine",
-        description:
+        title: t("Keep attachments on this machine"),
+        description: t(
           "Remove attachments before choosing automatic routing, then attach them on the selected machine.",
+        ),
       });
       return;
     }
@@ -157,12 +161,12 @@ export function useDraftEnvironmentRouting(input: DraftEnvironmentRoutingInput) 
   const onAutoEnvironmentStable = useStableCallback(onAutoEnvironment);
   const autoEnvironmentLabel = automaticEnvironment
     ? draftThread?.loadBalancedEnvironmentId
-      ? "Auto balance"
+      ? t("Auto balance")
       : loadBalancing.pending
-        ? "Checking machines…"
+        ? t("Checking machines…")
         : loadBalancing.failed
-          ? "Auto balance unavailable"
-          : "Auto balance"
+          ? t("Auto balance unavailable")
+          : t("Auto balance")
     : undefined;
 
   // A change in flight belongs to the draft and project it started on.
@@ -251,7 +255,7 @@ export function useDraftEnvironmentRouting(input: DraftEnvironmentRoutingInput) 
       return;
     }
     setBusyEnvironmentChange(request);
-    void openScratchProject(target.environmentId, "Could not switch machine")
+    void openScratchProject(target.environmentId, t("Could not switch machine"))
       .then((project) => {
         if (project) retarget(project);
       })

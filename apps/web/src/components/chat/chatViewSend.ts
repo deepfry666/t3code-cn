@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { composerUiMessages } from "./composerUi.messages";
 import {
   CommandId,
   type EnvironmentId,
@@ -87,7 +89,10 @@ export async function startFanoutThread(input: {
   try {
     if (uncertainThreadId) {
       throw new Error(
-        "The previous request may have started. Open its thread to check before sending again.",
+        translateNow(
+          composerUiMessages,
+          "The previous request may have started. Open its thread to check before sending again.",
+        ),
       );
     }
     requestMayHaveStarted = true;
@@ -108,18 +113,24 @@ export async function startFanoutThread(input: {
     const failureToastId = toastManager.add(
       stackedThreadToast({
         type: "error",
-        title: `Could not start ${input.model}`,
-        description: error instanceof Error ? error.message : "Failed to send message.",
+        title: translateNow(composerUiMessages, "Could not start {model}", { model: input.model }),
+        description:
+          error instanceof Error
+            ? error.message
+            : translateNow(composerUiMessages, "Failed to send message."),
         ...(retainedThreadId
           ? {
               timeout: 0,
               data: {
                 secondaryActionProps: {
-                  children: "Allow retry",
+                  children: translateNow(composerUiMessages, "Allow retry"),
                   onClick: () => {
                     void readLocalApi()
                       ?.dialogs.confirm(
-                        "The previous request may already be running. Check its thread first. Allow another send that could create a duplicate thread?",
+                        translateNow(
+                          composerUiMessages,
+                          "The previous request may already be running. Check its thread first. Allow another send that could create a duplicate thread?",
+                        ),
                       )
                       .then(
                         (confirmed) => {
@@ -137,7 +148,7 @@ export async function startFanoutThread(input: {
                 },
               },
               actionProps: {
-                children: "Open thread",
+                children: translateNow(composerUiMessages, "Open thread"),
                 onClick: () => input.openThread(retainedThreadId),
               },
             }
@@ -184,10 +195,16 @@ export async function rewindToMessage(input: {
   const { message, environmentId, draftTarget } = input;
   try {
     if (input.composerHasPendingAttachments) {
-      throw new Error("Wait for attachments to finish preparing before rewinding.");
+      throw new Error(
+        translateNow(
+          composerUiMessages,
+          "Wait for attachments to finish preparing before rewinding.",
+        ),
+      );
     }
     const connection = readPreparedConnection(environmentId);
-    if (!connection) throw new Error("The environment is not connected.");
+    if (!connection)
+      throw new Error(translateNow(composerUiMessages, "The environment is not connected."));
     const files = await prepareRevertedMessageAttachments({
       message,
       environmentId,
@@ -200,7 +217,12 @@ export async function rewindToMessage(input: {
       (draft?.images.length ?? 0) + (draft?.files.length ?? 0) + files.length >
       PROVIDER_SEND_TURN_MAX_ATTACHMENTS
     ) {
-      throw new Error("Make room for this message's attachments in the composer before rewinding.");
+      throw new Error(
+        translateNow(
+          composerUiMessages,
+          "Make room for this message's attachments in the composer before rewinding.",
+        ),
+      );
     }
     const commandId = CommandId.make(randomUUID());
     await waitForRevertedMessage(input.routeThreadRef, input.turnCount, commandId, async () => {
@@ -247,7 +269,12 @@ export async function rewindToMessage(input: {
     store.addFiles(draftTarget, restoredFiles, { allowDuplicates: true });
     return { error: null, prompt: nextPrompt };
   } catch (error) {
-    return { error: error instanceof Error ? error.message : "Failed to revert thread state." };
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : translateNow(composerUiMessages, "Failed to revert thread state."),
+    };
   }
 }
 
@@ -296,7 +323,11 @@ export function resolveMultipleModelTargets(input: {
       (entry) => entry.instanceId === selection.instanceId,
     );
     if (!provider?.enabled || !provider.isAvailable || provider.status !== "ready") {
-      return { error: `Provider for ${selection.model} is unavailable.` };
+      return {
+        error: translateNow(composerUiMessages, "Provider for {model} is unavailable.", {
+          model: selection.model,
+        }),
+      };
     }
     const providerBlockReason = getAntigravitySendBlockReason(provider.snapshot, selection.model);
     if (providerBlockReason) return { error: providerBlockReason };
@@ -345,12 +376,18 @@ export function prepareTurnAttachments(input: {
       if (usesAttachmentUploads) {
         const uploaded = getUploadedAttachments({ environmentId, images: [attachment] })?.[0];
         if (!uploaded) {
-          throw new Error(`Attachment '${attachment.name}' did not finish uploading.`);
+          throw new Error(
+            translateNow(composerUiMessages, "Attachment '{name}' did not finish uploading.", {
+              name: attachment.name,
+            }),
+          );
         }
         return uploaded;
       }
       if (attachment.type !== "image") {
-        throw new Error("This server does not support file attachments.");
+        throw new Error(
+          translateNow(composerUiMessages, "This server does not support file attachments."),
+        );
       }
       return {
         type: "image" as const,

@@ -1,3 +1,5 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { composerUiMessages } from "./composerUi.messages";
 import { formatProviderSkillDisplayName } from "@t3tools/shared/inlineSkills";
 import type { ComposerPathSearchTarget } from "@t3tools/client-runtime/state/threads";
 import {
@@ -101,6 +103,7 @@ export const ComposerCommandMenu = memo(function ComposerCommandMenu(props: {
   onHighlightedItemChange: (itemId: string | null) => void;
   onSelect: (item: ComposerCommandItem) => void;
 }) {
+  const t = useTranslation(composerUiMessages);
   const listRef = useRef<HTMLDivElement>(null);
 
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- scrolls the highlighted menu item's DOM node into view
@@ -130,7 +133,9 @@ export const ComposerCommandMenu = memo(function ComposerCommandMenu(props: {
         {props.items.length > 0 ? (
           <CommandList
             id={props.listId}
-            aria-label={props.triggerKind ? LISTBOX_LABEL_BY_TRIGGER[props.triggerKind] : undefined}
+            aria-label={
+              props.triggerKind ? t(LISTBOX_LABEL_BY_TRIGGER[props.triggerKind]) : undefined
+            }
             className="max-h-72 min-h-0 scroll-pb-6"
           >
             <CommandGroup>
@@ -153,16 +158,16 @@ export const ComposerCommandMenu = memo(function ComposerCommandMenu(props: {
             <p className="text-secondary-label text-xs">
               {props.isLoading
                 ? props.triggerKind === "skill" || props.triggerKind === "slash-command"
-                  ? "Searching workspace skills..."
+                  ? t("Searching workspace skills...")
                   : props.triggerKind === "pull-request"
-                    ? "Finding pull request..."
-                    : "Searching workspace files..."
+                    ? t("Finding pull request...")
+                    : t("Searching workspace files...")
                 : (props.emptyStateText ??
                   (props.triggerKind === "skill"
-                    ? "No skills found. Try / to browse provider commands."
+                    ? t("No skills found. Try / to browse provider commands.")
                     : props.triggerKind === "path"
-                      ? "No matching files or folders."
-                      : "No matching command."))}
+                      ? t("No matching files or folders.")
+                      : t("No matching command.")))}
             </p>
           </div>
         )}
@@ -258,7 +263,10 @@ export function composerSuggestionOptionId(listId: string, itemId: string): stri
   return `${listId}-${encodeURIComponent(JSON.stringify(itemId))}`;
 }
 
-const LISTBOX_LABEL_BY_TRIGGER: Record<ComposerTriggerKind, string> = {
+const LISTBOX_LABEL_BY_TRIGGER: Record<
+  ComposerTriggerKind,
+  "Files and folders" | "Pull requests" | "Commands" | "Skills"
+> = {
   path: "Files and folders",
   "pull-request": "Pull requests",
   "slash-command": "Commands",
@@ -274,22 +282,27 @@ const SKILL_SOURCE_ICON_BY_KIND: Record<ProviderSkillSourceKind, LucideIcon> = {
   other: PackageIcon,
 };
 
-const SKILL_SOURCE_LABEL_BY_KIND: Record<ProviderSkillSourceKind, string> = {
+const SKILL_SOURCE_LABEL_BY_KIND: Record<
+  ProviderSkillSourceKind,
+  "App" | "Repo" | "Project" | "Personal" | "System@@skill source" | "Provider"
+> = {
   app: "App",
   repo: "Repo",
   project: "Project",
   personal: "Personal",
-  system: "System",
+  system: "System@@skill source",
   other: "Provider",
 };
 
 function SkillSourceBadge(props: { kind: ProviderSkillSourceKind; showSkillSuffix: boolean }) {
+  const t = useTranslation(composerUiMessages);
   const Icon = SKILL_SOURCE_ICON_BY_KIND[props.kind];
   return (
     <Badge className="ms-auto" variant="secondary">
       <Icon aria-hidden="true" className="text-current" />
-      {SKILL_SOURCE_LABEL_BY_KIND[props.kind]}
-      {props.showSkillSuffix ? " Skill" : null}
+      {props.showSkillSuffix
+        ? t("{source} Skill", { source: t(SKILL_SOURCE_LABEL_BY_KIND[props.kind]) })
+        : t(SKILL_SOURCE_LABEL_BY_KIND[props.kind])}
     </Badge>
   );
 }

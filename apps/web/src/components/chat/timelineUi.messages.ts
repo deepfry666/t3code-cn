@@ -308,7 +308,7 @@ export const timelineUiMessages = {
   "Usage limit reached.": "已达到用量上限。",
   "Usage limit reached. Retry after {time}.": "已达到用量上限。请在 {time} 后重试。",
   "Open {title}": "打开 {title}",
-  "created thread": "新建的会话",
+  "created thread": "已创建会话",
   "Open chat": "打开对话",
   "Open subagent thread": "打开子智能体会话",
   "Open subagent": "打开子智能体",
@@ -334,7 +334,7 @@ export const timelineUiMessages = {
   Finished: "已完成",
   Updated: "已更新",
   "on {machine}": "在 {machine} 上",
-  "New session": "新会话",
+  "New session": "全新上下文",
   "Context handoff pending": "上下文交接待处理",
   "Context handoff": "上下文交接",
   "Worktree ready, setup script failed": "工作树已就绪，但设置脚本失败",
@@ -413,4 +413,6 @@ export const timelineUiMessages = {
   "Preview access is unavailable for this client.": "此客户端无法使用预览。",
   "Unable to open link in browser": "无法在浏览器中打开链接",
   "Environment is not connected.": "环境未连接。",
+  "This context is no longer available. Remove it or attach it again.":
+    "这段上下文已不可用。请移除它或重新添加。",
 } as const;

@@ -133,7 +133,7 @@ export function ThreadDetailsContext({ usage }: { readonly usage: ContextWindowS
               ) : null}
               {threshold !== null && threshold > 0 ? (
                 <span className="text-muted-foreground">
-                  {formatContextWindowCompactionMessage(null, threshold)}
+                  {formatContextWindowCompactionMessage(null, threshold, t)}
                 </span>
               ) : null}
             </>

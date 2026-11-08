@@ -1,5 +1,6 @@
 import { useTranslation } from "~/i18n/useTranslation";
 import { threadPanelUiMessages } from "./chat/threadPanelUi.messages";
+import { composerUiMessages } from "./chat/composerUi.messages";
 import { ChildThreadApprovals } from "./chat/ChildThreadApprovals";
 import { workspaceAreaProps } from "../lib/workspaceFocus";
 import { sourceControlClients } from "@t3tools/client-runtime/source-control-clients";
@@ -419,6 +420,7 @@ const DismissedFallbackWindowSchema = Schema.NullOr(Schema.String);
 
 export default function ChatView(props: ChatViewProps) {
   const t = useTranslation(threadPanelUiMessages);
+  const tComposer = useTranslation(composerUiMessages);
   const {
     environmentId,
     threadId,
@@ -2547,14 +2549,18 @@ export default function ChatView(props: ChatViewProps) {
   };
   const handleRestoreThreadBranchStable = useStableCallback(handleRestoreThreadBranch);
   const feedbackBannerItems = feedbackSubmissions.flatMap((submission) => {
-    const item = feedbackBannerItem(submission, () => {
-      setFeedbackSubmissionsByThreadKey((current) => ({
-        ...current,
-        [routeThreadKey]: (current[routeThreadKey] ?? []).filter(
-          (entry) => entry.id !== submission.id,
-        ),
-      }));
-    });
+    const item = feedbackBannerItem(
+      submission,
+      () => {
+        setFeedbackSubmissionsByThreadKey((current) => ({
+          ...current,
+          [routeThreadKey]: (current[routeThreadKey] ?? []).filter(
+            (entry) => entry.id !== submission.id,
+          ),
+        }));
+      },
+      tComposer,
+    );
     return item ? [item] : [];
   });
   const limitRecoveryBanner =
@@ -2569,6 +2575,7 @@ export default function ChatView(props: ChatViewProps) {
           recovery: activeThreadShell.limitRecovery ?? null,
           snoozedUntil: activeThreadShell.snoozedUntil,
           timestampFormat,
+          t,
           onChange: async (limitRecovery) => {
             const result = await updateThreadMetadata({
               environmentId,
@@ -2621,6 +2628,7 @@ export default function ChatView(props: ChatViewProps) {
               onUseDefault: () =>
                 onProviderModelSelectStable(defaultSelection.instanceId, defaultSelection.model),
               onDismiss: () => setDismissedFallbackWindow(fallbackWindow),
+              t: tComposer,
             }),
           ]
         : [];
@@ -2634,7 +2642,7 @@ export default function ChatView(props: ChatViewProps) {
     // An approval's feedback goes to that approval; the armed session waits for the next message.
     const freshSessionItems =
       freshSessionAvailable && freshSessionArmed && activePendingApproval === null
-        ? [freshSessionBannerItem(() => disarmFreshSession(routeThreadKey))]
+        ? [freshSessionBannerItem(() => disarmFreshSession(routeThreadKey), tComposer)]
         : [];
     if (!localCheckoutBranchMismatch || !showBranchMismatchBanner || !activeBranchMismatchKey) {
       return [
@@ -2658,6 +2666,7 @@ export default function ChatView(props: ChatViewProps) {
       ...freshSessionItems,
       ...systemComposerBannerItems,
       branchMismatchBannerItem({
+        t,
         mismatchKey: activeBranchMismatchKey,
         mismatch: localCheckoutBranchMismatch,
         restoreDisabled: !canWriteSourceControl || isRestoringThreadBranch,

@@ -1,3 +1,5 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { composerUiMessages } from "./composerUi.messages";
 import { MICROPHONE_PERMISSION_ERROR } from "@t3tools/client-runtime/voice-input";
 import { useNavigate } from "@tanstack/react-router";
 import { RotateCcwIcon, SettingsIcon, XIcon } from "lucide-react";
@@ -6,7 +8,9 @@ import { Button } from "../ui/button";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 import { VoiceInputPill } from "./VoiceInputPill";
 
-const VOICE_ERROR_LABELS: Record<string, string> = {
+type ComposerUiKey = Extract<keyof typeof composerUiMessages, string>;
+
+const VOICE_ERROR_LABELS: Record<string, ComposerUiKey> = {
   [MICROPHONE_PERMISSION_ERROR]: "Microphone access needed",
   "Microphone access is required for voice input.": "Microphone access needed",
   "This draft is no longer available.": "Draft unavailable",
@@ -26,7 +30,7 @@ const VOICE_ERROR_LABELS: Record<string, string> = {
   "The microphone disconnected.": "Microphone disconnected",
 };
 
-function voiceErrorLabel(error: string | null): string {
+function voiceErrorLabel(error: string | null): ComposerUiKey {
   return (error && VOICE_ERROR_LABELS[error]) || "Voice input failed";
 }
 
@@ -38,14 +42,17 @@ export function VoiceInputErrorPill(props: {
   onRetry(): void;
   onDismiss(): void;
 }) {
+  const t = useTranslation(composerUiMessages);
   const navigate = useNavigate();
   const openSettings = props.errorAction === "settings";
   const actionLabel = openSettings
-    ? "Open voice settings"
+    ? t("Open voice settings")
     : props.error === "Could not transcribe this recording." ||
         props.error === "Voice transcription on this environment failed."
-      ? "Retry transcription"
-      : "Record again";
+      ? t("Retry transcription")
+      : t("Record again");
+  // Errors come from the voice controller as English sentences; unknown ones show as they are.
+  const errorDetail = props.error ? t(props.error as ComposerUiKey) : t("Voice input failed");
   return (
     <VoiceInputPill>
       <Tooltip>
@@ -55,7 +62,7 @@ export function VoiceInputErrorPill(props: {
               type="button"
               size="icon-sm-pill"
               variant="ghost"
-              aria-label="Dismiss voice input error"
+              aria-label={t("Dismiss voice input error")}
               onPointerDown={(event) => event.preventDefault()}
               onClick={props.onDismiss}
             >
@@ -64,7 +71,7 @@ export function VoiceInputErrorPill(props: {
           }
         />
         <TooltipPopup side="top">
-          Dismiss voice input error
+          {t("Dismiss voice input error")}
           {props.cancelShortcutLabel ? ` (${props.cancelShortcutLabel})` : ""}
         </TooltipPopup>
       </Tooltip>
@@ -74,14 +81,14 @@ export function VoiceInputErrorPill(props: {
             <span
               tabIndex={0}
               role="status"
-              aria-label={props.error ?? "Voice input failed"}
+              aria-label={errorDetail}
               className="min-w-0 flex-1 truncate text-sm text-destructive"
             />
           }
         >
-          {voiceErrorLabel(props.error)}
+          {t(voiceErrorLabel(props.error))}
         </TooltipTrigger>
-        <TooltipPopup side="top">{props.error ?? "Voice input failed"}</TooltipPopup>
+        <TooltipPopup side="top">{errorDetail}</TooltipPopup>
       </Tooltip>
       {props.errorAction ? (
         <Tooltip>

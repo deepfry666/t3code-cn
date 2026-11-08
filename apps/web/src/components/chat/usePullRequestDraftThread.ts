@@ -1,3 +1,5 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { threadPanelUiMessages } from "./threadPanelUi.messages";
 import type { EnvironmentProject } from "@t3tools/client-runtime/state/shell";
 import type { UnifiedSettings } from "@t3tools/contracts";
 import { useStableCallback } from "../../hooks/useStableCallback";
@@ -29,6 +31,7 @@ interface PullRequestDraftThreadInput {
  * worktree on the project's draft thread, reusing the one already open when there is one.
  */
 export function usePullRequestDraftThread(input: PullRequestDraftThreadInput) {
+  const t = useTranslation(threadPanelUiMessages);
   const {
     routeKind,
     draftId,
@@ -64,7 +67,7 @@ export function usePullRequestDraftThread(input: PullRequestDraftThreadInput) {
     envMode: DraftThreadEnvMode;
   }) => {
     if (!activeProject) {
-      throw new Error("No active project is available for this pull request.");
+      throw new Error(t("No active project is available for this pull request."));
     }
     const activeProjectRef = scopeProjectRef(activeProject.environmentId, activeProject.id);
     const logicalProjectKey = deriveLogicalProjectKeyFromSettings(

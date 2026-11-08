@@ -1,3 +1,5 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { threadPanelUiMessages } from "./threadPanelUi.messages";
 import { workspaceAreaProps } from "../../lib/workspaceFocus";
 import {
   useLayoutEffect,
@@ -35,7 +37,8 @@ export function ThreadDetailsCard({
   onContextMenu?: MouseEventHandler<HTMLDivElement>;
   children: (density: "full" | "compact" | "essential") => ReactNode;
 }) {
-  const detailsArea = workspaceAreaProps("details", 3, "Thread details");
+  const t = useTranslation(threadPanelUiMessages);
+  const detailsArea = workspaceAreaProps("details", 3, t("Thread details"));
   const canvas = useChatCanvas();
   const preferredPlacement = canvas?.preferredDetailsCard ?? null;
   const placement = canvas?.detailsCardPlacement ?? null;
