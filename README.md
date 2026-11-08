@@ -6,7 +6,7 @@
 
 ## 汉化内容
 
-- Web 与桌面应用共用的界面：设置、侧边栏、会话操作、外观与主题、通知、快捷键、审批按钮等常用部分。
+- Web 与桌面应用共用的界面：设置、侧边栏、会话、命令面板、Git 与拉取请求、文件预览、设备和用量等常用部分。
 - 桌面应用的原生菜单（系统语言为中文时）。
 - 尚未覆盖的页面继续显示英文；iOS / Android 原生客户端暂未汉化。
 - 项目名、文件路径、代码、终端输出、模型回复和第三方错误信息不会被翻译。界面语言也不影响模型回答所用的语言。
@@ -19,10 +19,9 @@
 
 ## 获取
 
-目前还没有正式发布的安装包。
+从本仓库的 [Releases](https://github.com/deepfry666/t3code-cn/releases) 下载适合系统的安装包，查看每个版本的说明和已知限制。安装包未经官方签名，Windows 可能显示 SmartScreen 提示；macOS 可能阻止首次打开。
 
-- **Windows**：在本仓库的 [Actions → Fork Windows desktop](https://github.com/deepfry666/t3code-cn/actions/workflows/fork-windows-desktop.yml) 中打开最近一次成功的运行，下载 `t3code-cn-windows-x64` 安装包。需要登录 GitHub，文件保留 14 天；安装包未签名，Windows 可能弹出 SmartScreen 提示。
-- **macOS / Linux**：从源码构建，见下方[从源码构建](#从源码构建)。
+Linux 可从源码构建，见下方[从源码构建](#从源码构建)。
 
 注意：官方的安装命令（`t3.codes/install.sh`、winget、Homebrew 等）安装的是官方英文版，不是本分支。
 
@@ -33,7 +32,7 @@
 - 不能与官方桌面版同时安装：请先卸载官方桌面版，并备份 `~/.t3`。
 - 不要在两个版本之间来回切换，版本不一致时数据库可能无法回退。
 - 本分支没有官方签名，macOS 上的通行密钥（Passkey）登录可能不可用，可改用其他登录方式。
-- 桌面自动更新从本仓库的 Releases 获取，不会被官方更新覆盖回英文。
+- 桌面更新源指向本仓库；当前预发布版本的自动更新尚未完成验证，请手动下载安装新版本。
 
 使用前还需至少安装并登录一个提供方（Codex、Claude Code、Cursor 等），步骤见官方的 [安装与首次运行](docs/user/install.md)。
 
