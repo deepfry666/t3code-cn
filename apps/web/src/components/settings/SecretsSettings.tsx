@@ -1,3 +1,5 @@
+import { useTranslation, useLocale } from "~/i18n/useTranslation";
+import { settingsDevicesMessages, translateDevicesLabel } from "./settingsDevices.messages";
 import type { EnvironmentId, SecretProviderConfig, SecretProviderId } from "@t3tools/contracts";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
@@ -25,7 +27,7 @@ import {
 } from "./ProviderSettingsPanel.logic";
 import { useSettingsScope } from "./SettingsScopeContext";
 import { RedactedSensitiveText } from "./RedactedSensitiveText";
-import { searchableSetting } from "./settingsSearch";
+import { useLocalizedSetting } from "./useLocalizedSetting";
 import { SettingsPageContainer, SettingsRow, SettingsSection } from "./settingsLayout";
 
 const SECRET_PROVIDER_KINDS: Readonly<
@@ -35,6 +37,8 @@ const SECRET_PROVIDER_KINDS: Readonly<
 };
 
 export function SecretsSettingsPanel() {
+  const t = useTranslation(settingsDevicesMessages);
+  const localizedSetting = useLocalizedSetting();
   const { scope, environment } = useSettingsScope();
   const connected = environment?.connection.phase === "connected";
   return (
@@ -42,9 +46,11 @@ export function SecretsSettingsPanel() {
       {connected &&
       environment.serverConfig !== null &&
       environment.serverConfig.secretProviderSettings !== true ? (
-        <SettingsSection {...searchableSetting("secret-providers")}>
+        <SettingsSection {...localizedSetting("secret-providers")}>
           <p className="px-4 py-3 text-sm text-muted-foreground">
-            Update T3 Code on {environment.label} to manage its secret providers.
+            {t("Update T3 Code on {environment} to manage its secret providers.", {
+              environment: environment.label,
+            })}
           </p>
         </SettingsSection>
       ) : connected ? (
@@ -54,9 +60,11 @@ export function SecretsSettingsPanel() {
           projectScoped={scope.kind === "project" || scope.kind === "checkout"}
         />
       ) : (
-        <SettingsSection {...searchableSetting("secret-providers")}>
+        <SettingsSection {...localizedSetting("secret-providers")}>
           <p className="px-4 py-3 text-sm text-muted-foreground">
-            Connect an environment to manage the secret providers its provider variables read from.
+            {t(
+              "Connect an environment to manage the secret providers its provider variables read from.",
+            )}
           </p>
         </SettingsSection>
       )}
@@ -71,7 +79,9 @@ function EnvironmentSecretProviders({
   readonly environment: EnvironmentPresentation;
   readonly projectScoped: boolean;
 }) {
+  const localizedSetting = useLocalizedSetting();
   const environmentId = environment.environmentId;
+  const t = useTranslation(settingsDevicesMessages);
   const sessionState = useEnvironmentSessionState(environmentId);
   // The server requires the same grant for secret providers as for provider settings.
   const access = classifyProviderEnvironmentAccess({
@@ -98,25 +108,27 @@ function EnvironmentSecretProviders({
   return (
     <>
       <SettingsSection
-        {...searchableSetting("secret-providers")}
+        {...localizedSetting("secret-providers")}
         headerAction={
           !readOnly ? (
             <Button size="xs" variant="outline" onClick={() => setDialog({ mode: "add" })}>
               <PlusIcon className="size-3" aria-hidden />
-              Add provider
+              {t("Add provider")}
             </Button>
           ) : null
         }
       >
         {projectScoped ? (
           <p className="px-4 pt-3 text-xs text-muted-foreground">
-            Environment-wide setting. Select an environment to change it.
+            {t("Environment-wide setting. Select an environment to change it.")}
           </p>
         ) : null}
         {entries.length === 0 ? (
           <SettingsRow
-            title="No secret providers configured."
-            description="Add a 1Password account, then pick it as the source of a provider variable."
+            title={t("No secret providers configured.")}
+            description={t(
+              "Add a 1Password account, then pick it as the source of a provider variable.",
+            )}
           />
         ) : (
           entries.map(([id, config]) => {
@@ -142,14 +154,14 @@ function EnvironmentSecretProviders({
                       <span className="shrink-0">{kind.name} ·</span>
                       <RedactedSensitiveText
                         value={classified.account}
-                        ariaLabel="Toggle account visibility"
-                        revealTooltip="Click to reveal account"
-                        hideTooltip="Click to hide account"
+                        ariaLabel={t("Toggle account visibility")}
+                        revealTooltip={t("Click to reveal account")}
+                        hideTooltip={t("Click to hide account")}
                         className="max-w-full truncate"
                       />
                     </span>
                   ) : (
-                    `Unsupported provider (${config.kind})`
+                    t("Unsupported provider ({kind})", { kind: config.kind })
                   )
                 }
                 control={
@@ -161,7 +173,7 @@ function EnvironmentSecretProviders({
                           variant="ghost"
                           onClick={() => setDialog({ mode: "edit", id })}
                         >
-                          Edit
+                          {t("Edit")}
                         </Button>
                       ) : null}
                       <RemoveSecretProviderButton
@@ -203,19 +215,20 @@ function RemoveSecretProviderButton({
   readonly onConfirm: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  const t = useTranslation(settingsDevicesMessages);
   return (
     <>
       <Button size="xs" variant="ghost" onClick={() => setOpen(true)}>
-        Remove
+        {t("Remove")}
       </Button>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogPopup>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove {label}?</AlertDialogTitle>
+            <AlertDialogTitle>{t("Remove {label}?", { label })}</AlertDialogTitle>
             <SecretProviderUses environmentId={environmentId} id={id} label={label} />
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogClose render={<Button variant="outline" />}>Cancel</AlertDialogClose>
+            <AlertDialogClose render={<Button variant="outline" />}>{t("Cancel")}</AlertDialogClose>
             <Button
               variant="destructive"
               onClick={() => {
@@ -223,7 +236,7 @@ function RemoveSecretProviderButton({
                 onConfirm();
               }}
             >
-              Remove provider
+              {t("Remove provider")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogPopup>
@@ -242,22 +255,33 @@ function SecretProviderUses({
   readonly label: string;
 }) {
   const uses = secretProviderUses(useEnvironmentSettings(environmentId), id);
+  const t = useTranslation(settingsDevicesMessages);
+  const locale = useLocale();
+  const tl = (label: string) => translateDevicesLabel(label, locale);
   if (uses.length === 0) {
     return (
       <AlertDialogDescription>
-        Nothing reads from {label}. The secrets themselves are untouched.
+        {t("Nothing reads from {label}. The secrets themselves are untouched.", { label })}
       </AlertDialogDescription>
     );
   }
   return (
     <>
       <AlertDialogDescription>
-        These read from {label} and will be unset. The secrets themselves are untouched.
+        {t("These read from {label} and will be unset. The secrets themselves are untouched.", {
+          label,
+        })}
       </AlertDialogDescription>
       <ul className="max-h-48 list-disc space-y-0.5 overflow-y-auto ps-5 text-sm wrap-anywhere">
-        {uses.map((use) => (
-          <li key={use.id}>{use.label}</li>
-        ))}
+        {uses.map((use) => {
+          const separator = use.label.lastIndexOf(" · ");
+          const label = use.id.startsWith("voice:")
+            ? t("Voice · {provider}", { provider: use.label.slice(separator + 3) })
+            : use.id.endsWith(":")
+              ? `${use.label.slice(0, separator)} · ${tl(use.label.slice(separator + 3))}`
+              : use.label;
+          return <li key={use.id}>{label}</li>;
+        })}
       </ul>
     </>
   );

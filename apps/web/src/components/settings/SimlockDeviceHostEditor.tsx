@@ -1,3 +1,5 @@
+import { useTranslation, useLocale } from "~/i18n/useTranslation";
+import { settingsDevicesMessages, translateDevicesLabel } from "./settingsDevices.messages";
 import { useAtomValue } from "@effect/atom-react";
 import { useId, useState, type ReactNode } from "react";
 import {
@@ -59,6 +61,9 @@ export function SimlockDeviceHostEditor(props: {
   onClose: () => void;
 }) {
   const [draft, setDraft] = useState(props.host);
+  const t = useTranslation(settingsDevicesMessages);
+  const locale = useLocale();
+  const tl = (label: string) => translateDevicesLabel(label, locale);
   const [urlEdited, setUrlEdited] = useState(false);
   const machineGateways = useAtomValue(
     machineGatewaysAtom(
@@ -139,16 +144,22 @@ export function SimlockDeviceHostEditor(props: {
           }}
         >
           <DialogHeader>
-            <DialogTitle>{props.isNew ? "Add Simlock host" : "Edit Simlock host"}</DialogTitle>
+            <DialogTitle>
+              {props.isNew ? t("Add Simlock host") : t("Edit Simlock host")}
+            </DialogTitle>
             <DialogDescription>
               {several
-                ? "Each selected environment's server leases devices from your Simlock gateway with its own agent token, and releases them when they close."
-                : "The environment's server leases devices from your Simlock gateway and releases them when they close."}
+                ? t(
+                    "Each selected environment's server leases devices from your Simlock gateway with its own agent token, and releases them when they close.",
+                  )
+                : t(
+                    "The environment's server leases devices from your Simlock gateway and releases them when they close.",
+                  )}
             </DialogDescription>
           </DialogHeader>
           <DialogPanel>
             <label className="block space-y-1.5 text-sm">
-              <span>Name</span>
+              <span>{t("Name")}</span>
               <Input
                 autoFocus
                 required
@@ -161,7 +172,7 @@ export function SimlockDeviceHostEditor(props: {
               />
             </label>
             <label className="block space-y-1.5 text-sm">
-              <span>Gateway URL</span>
+              <span>{t("Gateway URL")}</span>
               <Input
                 required
                 type="url"
@@ -182,7 +193,11 @@ export function SimlockDeviceHostEditor(props: {
                   environmentId={environment.environmentId}
                   hostId={props.isNew ? null : props.host.id}
                   gatewayUrl={checkUrl}
-                  label={several ? `Agent token · ${environment.label}` : "Agent token"}
+                  label={
+                    several
+                      ? t("Agent token · {environment}", { environment: environment.label })
+                      : t("Agent token")
+                  }
                   token={tokens.get(environment.environmentId) ?? { kind: "cleared" }}
                   saved={savedValue(environment)}
                   busy={props.busy}
@@ -200,33 +215,46 @@ export function SimlockDeviceHostEditor(props: {
                 />
               ))}
               <p className="text-xs text-muted-foreground">
-                Leases, drives, and streams devices. Create one{several ? " per environment" : ""}{" "}
-                with <code>simlock --gateway token create --role agent</code>, or leave it blank to
-                add it later. A blank token uses the machine's{" "}
-                <code>AGENT_DEVICE_DAEMON_AUTH_TOKEN</code> when its{" "}
-                <code>AGENT_DEVICE_DAEMON_BASE_URL</code> is this gateway.
+                {t(
+                  several
+                    ? "Leases, drives, and streams devices. Create one per environment with {command}, or leave it blank to add it later. A blank token uses the machine's {authToken} when its {baseUrl} is this gateway."
+                    : "Leases, drives, and streams devices. Create one with {command}, or leave it blank to add it later. A blank token uses the machine's {authToken} when its {baseUrl} is this gateway.",
+                )
+                  .split(/(\{command\}|\{authToken\}|\{baseUrl\})/)
+                  .map((part) => {
+                    switch (part) {
+                      case "{command}":
+                        return <code key={part}>simlock --gateway token create --role agent</code>;
+                      case "{authToken}":
+                        return <code key={part}>AGENT_DEVICE_DAEMON_AUTH_TOKEN</code>;
+                      case "{baseUrl}":
+                        return <code key={part}>AGENT_DEVICE_DAEMON_BASE_URL</code>;
+                      default:
+                        return part;
+                    }
+                  })}
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              {limit("maxLeases", "Devices at once", 1, 20)}
-              {limit("maxLeaseMinutes", "Lease minutes", 5, 240)}
+              {limit("maxLeases", t("Devices at once"), 1, 20)}
+              {limit("maxLeaseMinutes", t("Lease minutes"), 5, 240)}
             </div>
             <p className="text-xs text-muted-foreground">
-              A lease ends after the lease minutes even while in use.
-              {props.isNew ? null : " Saving restarts this host, which releases its devices."}
+              {t("A lease ends after the lease minutes even while in use.")}
+              {props.isNew ? null : t(" Saving restarts this host, which releases its devices.")}
             </p>
             {problem === null || !gatewayUrl ? null : (
               <p className="text-xs text-destructive" role="alert">
-                {problem}
+                {tl(problem)}
               </p>
             )}
           </DialogPanel>
           <DialogFooter>
             <Button type="button" variant="ghost" disabled={props.busy} onClick={props.onClose}>
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button type="submit" disabled={props.busy || problem !== null}>
-              {props.busy ? <Spinner size="xs" /> : null} Save host
+              {props.busy ? <Spinner size="xs" /> : null} {t("Save host")}
             </Button>
           </DialogFooter>
         </form>
@@ -248,6 +276,7 @@ function SimlockTokenField(props: {
   onValidityChange: (valid: boolean) => void;
 }) {
   const id = useId();
+  const t = useTranslation(settingsDevicesMessages);
   const sources = useSecretSources(props.environmentId);
   const [inputKey, setInputKey] = useState(0);
   // Emptying the field or leaving a reference returns to a saved literal, never to a saved reference.
@@ -277,12 +306,14 @@ function SimlockTokenField(props: {
   const identity = AsyncResult.isSuccess(check) ? check.value : null;
   const status =
     props.gatewayUrl === null ? null : check._tag === "Initial" || check.waiting ? (
-      <span className="text-muted-foreground">Checking…</span>
+      <span className="text-muted-foreground">{t("Checking…")}</span>
     ) : identity ? (
       <span className="text-muted-foreground">
         {identity.tokenSource === "env"
-          ? `Using this machine's agent-device token (${identity.signedInAs}).`
-          : `Accepted as ${identity.signedInAs}.`}
+          ? t("Using this machine's agent-device token ({account}).", {
+              account: identity.signedInAs,
+            })
+          : t("Accepted as {account}.", { account: identity.signedInAs })}
       </span>
     ) : AsyncResult.isFailure(check) ? (
       <span
@@ -300,7 +331,7 @@ function SimlockTokenField(props: {
         <SecretSourceInput
           key={inputKey}
           id={id}
-          aria-label="Agent token"
+          aria-label={t("Agent token")}
           className="min-w-0 flex-1"
           configured={props.token.kind === "saved" && typeof props.saved === "string"}
           value={
@@ -339,7 +370,7 @@ function SimlockTokenField(props: {
             type="button"
             size="icon-sm"
             variant="ghost-destructive"
-            aria-label="Clear agent token"
+            aria-label={t("Clear agent token")}
             disabled={props.busy}
             onClick={() => {
               props.onChange({ kind: "cleared" });
