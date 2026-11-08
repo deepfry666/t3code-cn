@@ -13,6 +13,7 @@ import {
   type MessageBus,
 } from "dbus-next";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 
 const { connect, resize, imageSize } = vi.hoisted(() => ({
   connect: vi.fn(),
@@ -36,7 +37,7 @@ vi.mock("electron", () => ({
 import { captureLinuxWindow, getLinuxCaptureSupport, readPortalPng } from "./LinuxSnapShot.ts";
 
 const png = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 0]);
-const appId = "com.t3tools.T3Code";
+const appId = FORK_IDENTITY.slug;
 const metadata = {
   title: "Editor",
   appName: "Text Editor",
@@ -232,6 +233,13 @@ it("retains the authenticated connection until the compositor flight has landed"
   bus.portalVersion = 2;
   bus.extensionVersion = 2;
   const snapshot = await captureLinuxWindow(appId, { flash: false, animate: true });
+  const captureCall = bus.calls.find((call) => call.member === "CaptureWithFeedback");
+  expect(captureCall).toMatchObject({
+    destination: "org.gnome.Shell.Extensions.t3code_cn.SnapShot",
+    interface: "org.gnome.Shell.Extensions.t3code_cn.SnapShot",
+    path: "/org/gnome/Shell/Extensions/t3code_cn/SnapShot",
+  });
+  expect(bus.requestName).toHaveBeenCalledWith(`${FORK_IDENTITY.slug}.SnapShot`, expect.anything());
   const feedback = snapshot!.feedback!;
   expect(snapshot).toMatchObject({ png, window: metadata, feedback: { animationStarted: true } });
   expect(bus.disconnect).not.toHaveBeenCalled();

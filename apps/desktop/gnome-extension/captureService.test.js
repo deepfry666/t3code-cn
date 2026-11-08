@@ -1,5 +1,5 @@
 import { expect, it } from "vite-plus/test";
-import { CaptureService, CLIENT_NAMES, isWaylandSession } from "./captureService.js";
+import { CaptureService, isWaylandSession } from "./captureService.js";
 
 it("supports GNOME 50 without the removed X11 API, rejecting older X11 sessions", () => {
   expect(isWaylandSession({})).toBe(true);
@@ -10,7 +10,7 @@ it("supports GNOME 50 without the removed X11 API, rejecting older X11 sessions"
 function fixture(overrides = {}) {
   let snapshots = 0;
   const options = {
-    getNameOwner: async (name) => (name === CLIENT_NAMES[0] ? ":1.23" : null),
+    getNameOwner: async (name) => (name === "t3code-cn.SnapShot" ? ":1.23" : null),
     isAvailable: () => true,
     takeSnapshot: async () => {
       snapshots++;
@@ -21,12 +21,25 @@ function fixture(overrides = {}) {
   return { service: new CaptureService(options), snapshots: () => snapshots };
 }
 
-it("rejects other clients before looking at the active window", async () => {
-  const { service, snapshots } = fixture();
-  await expect(service.capture(":1.99")).rejects.toThrow("Only T3 Code");
-  expect(snapshots()).toBe(0);
-  expect(await service.capture(":1.23")).toBe("pixels");
-});
+it.each(["t3code-cn.SnapShot", "t3code-cn-dev.SnapShot"])(
+  "rejects other clients before looking at the active window (%s)",
+  async (clientName) => {
+    const { service, snapshots } = fixture({
+      getNameOwner: async (name) => (name === clientName ? ":1.23" : null),
+    });
+    await expect(service.capture(":1.99")).rejects.toThrow("Only T3 Code");
+    expect(snapshots()).toBe(0);
+    expect(await service.capture(":1.23")).toBe("pixels");
+    const official = fixture({
+      getNameOwner: async (name) =>
+        name === "com.t3tools.T3Code.SnapShot" || name === "com.t3tools.T3Code.Development.SnapShot"
+          ? ":1.23"
+          : null,
+    });
+    await expect(official.service.capture(":1.23")).rejects.toThrow("Only T3 Code");
+    expect(official.snapshots()).toBe(0);
+  },
+);
 
 it("rechecks the name owner on each capture", async () => {
   let owner = ":1.23";

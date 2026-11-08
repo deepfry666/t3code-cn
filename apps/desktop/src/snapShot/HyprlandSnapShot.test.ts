@@ -76,7 +76,12 @@ it("installs offline at a stable executable path and probes only capabilities", 
   ]);
 });
 it("updates explicitly and removes only its helper", async () => {
+  const official = NodePath.join(paths.dataHome, "t3code/hyprland-capture/t3-hyprland-snap-shot");
+  await NodeFSP.mkdir(NodePath.dirname(official), { recursive: true });
+  await NodeFSP.writeFile(official, "official helper");
+  expect((await setup.state()).status).toBe("not-installed");
   await setup.perform("install-hyprland-helper");
+  expect(hyprlandCaptureExecutable(paths)).toContain("/t3code-cn/hyprland-capture/");
   const unrelated = NodePath.join(paths.dataHome, "keep.txt");
   await NodeFSP.writeFile(unrelated, "keep");
   await NodeFSP.writeFile(paths.bundle, "update");
@@ -86,6 +91,10 @@ it("updates explicitly and removes only its helper", async () => {
   await setup.perform("remove-hyprland-helper");
   expect((await setup.state()).status).toBe("not-installed");
   expect(await NodeFSP.readFile(unrelated, "utf8")).toBe("keep");
+  expect(await NodeFSP.readFile(official, "utf8")).toBe("official helper");
+  await expect(NodeFSP.stat(hyprlandCaptureExecutable(paths))).rejects.toMatchObject({
+    code: "ENOENT",
+  });
 });
 it("updates a helper left stale by an app update before capturing", async () => {
   await setup.perform("install-hyprland-helper");

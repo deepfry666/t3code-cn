@@ -112,6 +112,53 @@ const read = (
   );
 
 describe("readManagedPolicy", () => {
+  it.effect("uses only fork policy locations even when official policies are present", () =>
+    Effect.gen(function* () {
+      assert.equal(
+        managedPolicyPath("darwin"),
+        "/Library/Application Support/T3CodeCN/policy.json",
+      );
+      assert.equal(managedPolicyPath("win32"), "C:\\Program Files\\T3CodeCN\\policy.json");
+      assert.equal(managedPolicyPath("linux"), "/etc/t3code-cn/policy.json");
+      assert.equal(
+        MACOS_MANAGED_PREFERENCES_PATH,
+        "/Library/Managed Preferences/io.github.deepfry666.t3codecn.plist",
+      );
+      assert.equal(WINDOWS_POLICY_KEY, "HKLM\\SOFTWARE\\Policies\\T3CodeCN");
+      const official = {
+        "/Library/Application Support/T3Code/policy.json": policy,
+        "/Library/Managed Preferences/com.t3tools.t3code.plist": "<binary plist>",
+        "C:\\Program Files\\T3Code\\policy.json": policy,
+        "/etc/t3code/policy.json": policy,
+      };
+      for (const platform of ["darwin", "win32", "linux"] as const) {
+        assert.isUndefined(yield* read(platform, official));
+        assert.equal(
+          yield* read(platform, { ...official, [managedPolicyPath(platform)]: policy }),
+          managedPolicyPath(platform),
+        );
+      }
+      const queried: Array<string> = [];
+      const found = yield* readManagedPolicy("win32").pipe(
+        Effect.provideService(
+          WindowsRegistry,
+          WindowsRegistry.of({
+            readMachineKey: (subkey) => {
+              queried.push(subkey);
+              return Effect.succeed(
+                subkey === "SOFTWARE\\Policies\\T3Tools\\T3Code"
+                  ? { values: [text("Policy", policy)], subkeys: [] }
+                  : undefined,
+              );
+            },
+          }),
+        ),
+        Effect.provide(machine({}, {}, {})),
+      );
+      assert.isUndefined(found);
+      assert.deepStrictEqual(queried, ["SOFTWARE\\Policies\\T3CodeCN"]);
+    }),
+  );
   it.effect("reads a macOS configuration profile, and refuses one beside a policy file", () =>
     Effect.gen(function* () {
       const plutil = { "/usr/bin/plutil": { stdout: policy, exitCode: 0 } };
