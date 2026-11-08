@@ -1,3 +1,5 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { composerUiMessages } from "./composerUi.messages";
 import { useStableCallback } from "~/hooks/useStableCallback";
 import { listBrowserMicrophones, type BrowserMicrophone } from "../../speech/browserMicrophones";
 import type {
@@ -35,6 +37,7 @@ export function VoiceInputSetup(props: {
   onCancelDownload(): void;
   onStartRecording(): void;
 }) {
+  const t = useTranslation(composerUiMessages);
   const navigate = useNavigate();
   const environment = useEnvironment(props.environmentId);
   const canManage = useEnvironmentScope(props.environmentId, AuthSettingsWriteScope);
@@ -49,7 +52,7 @@ export function VoiceInputSetup(props: {
       setMicrophones(await listBrowserMicrophones());
       setMicrophoneError(null);
     } catch {
-      setMicrophoneError("Could not list microphones. You can still use the system default.");
+      setMicrophoneError(t("Could not list microphones. You can still use the system default."));
     }
     setLoadingMicrophones(false);
   });
@@ -66,8 +69,8 @@ export function VoiceInputSetup(props: {
   );
   const selectedMicrophoneLabel = selectedMicrophone
     ? (microphones.find((device) => device.deviceId === selectedMicrophone)?.label ??
-      "Selected microphone (Unavailable)")
-    : "System default";
+      t("Selected microphone (Unavailable)"))
+    : t("System default");
   const status = props.status?.supported ? props.status : null;
   const model = props.model;
   const progress =
@@ -81,10 +84,13 @@ export function VoiceInputSetup(props: {
     <Dialog open={props.open} onOpenChange={props.onOpenChange}>
       <WizardPopup>
         <WizardHeader
-          title="Set up voice input"
-          description={`Transcribe speech on ${environment?.label ?? "your transcription environment"} and use voice input across environments.`}
+          title={t("Set up voice input")}
+          description={t(
+            "Transcribe speech on {environment} and use voice input across environments.",
+            { environment: environment?.label ?? t("your transcription environment") },
+          )}
         >
-          <WizardSteps steps={["Model", "Ready to dictate"]} currentStep={props.step} />
+          <WizardSteps steps={[t("Model"), t("Ready to dictate")]} currentStep={props.step} />
         </WizardHeader>
         <WizardPanel>
           {props.step === 0 ? (
@@ -95,24 +101,31 @@ export function VoiceInputSetup(props: {
                     <h3 className="font-medium">{model.name}</h3>
                     {model?.recommended && props.language ? (
                       <span className="text-xs font-medium text-primary">
-                        Recommended for {languageLabel(props.language)}
+                        {t("Recommended for {language}", {
+                          language: languageLabel(props.language),
+                        })}
                       </span>
                     ) : null}
                   </div>
                   <p className="mt-2 text-muted-foreground">
-                    Download the {Math.round(model.size / 1024 / 1024)} MB model to{" "}
-                    {environment?.label ?? "your transcription environment"}. Microphone audio is
-                    sent there for transcription, as chosen in Voice settings.
+                    {t(
+                      "Download the {size} MB model to {environment}. Microphone audio is sent there for transcription, as chosen in Voice settings.",
+                      {
+                        size: Math.round(model.size / 1024 / 1024),
+                        environment: environment?.label ?? t("your transcription environment"),
+                      },
+                    )}
                   </p>
                   <p className="mt-2 text-muted-foreground">
-                    Silero (1.2 MB), used for silence filtering and pause detection, downloads
-                    alongside the speech model. An installed copy is reused.
+                    {t(
+                      "Silero (1.2 MB), used for silence filtering and pause detection, downloads alongside the speech model. An installed copy is reused.",
+                    )}
                   </p>
                   {props.downloading ? (
                     <div role="status" className="mt-4 space-y-1 text-muted-foreground">
                       <div
                         role="progressbar"
-                        aria-label="Speech model download progress"
+                        aria-label={t("Speech model download progress")}
                         aria-valuemin={0}
                         aria-valuemax={100}
                         aria-valuenow={progress ?? undefined}
@@ -125,17 +138,17 @@ export function VoiceInputSetup(props: {
                       </div>
                       <p className="text-xs">
                         {model?.state === "verifying"
-                          ? "Verifying download…"
+                          ? t("Verifying download…")
                           : progress === null
-                            ? "Starting download…"
-                            : `${progress}% downloaded`}
+                            ? t("Starting download…")
+                            : t("{percent}% downloaded", { percent: progress })}
                       </p>
                     </div>
                   ) : null}
                 </div>
               ) : !props.error ? (
                 <p role="status" className="text-muted-foreground">
-                  Loading transcription models…
+                  {t("Loading transcription models…")}
                 </p>
               ) : null}
               {props.error ? (
@@ -148,7 +161,7 @@ export function VoiceInputSetup(props: {
             <section className="space-y-4 text-sm">
               <div className="space-y-2">
                 <label className="font-medium" htmlFor="voice-setup-microphone">
-                  Microphone
+                  {t("Microphone")}
                 </label>
                 <div className="flex items-center gap-2">
                   <Select
@@ -165,16 +178,16 @@ export function VoiceInputSetup(props: {
                     <SelectTrigger
                       id="voice-setup-microphone"
                       size="sm"
-                      aria-label="Microphone"
+                      aria-label={t("Microphone")}
                       className="min-w-0 flex-1"
                     >
                       <SelectValue>{selectedMicrophoneLabel}</SelectValue>
                     </SelectTrigger>
                     <SelectPopup align="end" alignItemWithTrigger={false}>
-                      <SelectItem value="system-default">System default</SelectItem>
+                      <SelectItem value="system-default">{t("System default")}</SelectItem>
                       {selectedIsUnavailable ? (
                         <SelectItem value={`device:${selectedMicrophone}`}>
-                          Selected microphone (Unavailable)
+                          {t("Selected microphone (Unavailable)")}
                         </SelectItem>
                       ) : null}
                       {microphones.map((device) => (
@@ -189,7 +202,7 @@ export function VoiceInputSetup(props: {
                     variant="ghost"
                     size="icon-sm"
                     disabled={loadingMicrophones}
-                    aria-label="Refresh microphones"
+                    aria-label={t("Refresh microphones")}
                     onClick={() => void refreshMicrophones()}
                   >
                     <RefreshCwIcon className="size-3.5" />
@@ -197,8 +210,9 @@ export function VoiceInputSetup(props: {
                 </div>
                 {selectedIsUnavailable ? (
                   <p className="text-xs text-destructive">
-                    The selected microphone is unavailable. Choose another or use the system
-                    default.
+                    {t(
+                      "The selected microphone is unavailable. Choose another or use the system default.",
+                    )}
                   </p>
                 ) : null}
                 {microphoneError ? (
@@ -208,8 +222,9 @@ export function VoiceInputSetup(props: {
                 ) : null}
               </div>
               <p className="text-muted-foreground">
-                Speak and transcribe in multiple languages or translate into English, and get names
-                and technical terms right with the dictionary in Voice settings.
+                {t(
+                  "Speak and transcribe in multiple languages or translate into English, and get names and technical terms right with the dictionary in Voice settings.",
+                )}
               </p>
             </section>
           )}
@@ -218,14 +233,14 @@ export function VoiceInputSetup(props: {
           {props.step === 0 ? (
             <>
               <Button variant="outline" onClick={() => openSettings("speech-models")}>
-                {model ? "Choose another model or language" : "Choose a model or language"}
+                {model ? t("Choose another model or language") : t("Choose a model or language")}
               </Button>
               {props.onRetryCatalog ? (
-                <Button onClick={props.onRetryCatalog}>Retry loading models</Button>
+                <Button onClick={props.onRetryCatalog}>{t("Retry loading models")}</Button>
               ) : null}
               {props.downloading ? (
                 <Button variant="outline" disabled={!canManage} onClick={props.onCancelDownload}>
-                  Cancel download
+                  {t("Cancel download")}
                 </Button>
               ) : null}
               {model ? (
@@ -234,21 +249,21 @@ export function VoiceInputSetup(props: {
                   onClick={props.onDownload}
                 >
                   {props.downloading
-                    ? "Downloading…"
+                    ? t("Downloading…")
                     : props.error
-                      ? "Try again"
+                      ? t("Try again")
                       : canManage
-                        ? "Download model"
-                        : "Ask an environment admin to download"}
+                        ? t("Download model")
+                        : t("Ask an environment admin to download")}
                 </Button>
               ) : null}
             </>
           ) : (
             <>
               <Button variant="outline" onClick={() => openSettings("")}>
-                Customize in Voice settings
+                {t("Customize in Voice settings")}
               </Button>
-              <Button onClick={props.onStartRecording}>Start dictating</Button>
+              <Button onClick={props.onStartRecording}>{t("Start dictating")}</Button>
             </>
           )}
         </WizardFooter>

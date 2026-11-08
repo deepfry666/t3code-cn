@@ -1,3 +1,5 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { timelineUiMessages } from "./timelineUi.messages";
 import { RefreshCwIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -33,6 +35,7 @@ function ThreadNowLine({
   /** Announces the line when it appears; only for something that needs the user. */
   readonly announce?: boolean;
 }) {
+  const t = useTranslation(timelineUiMessages);
   return (
     <div
       role={announce ? "alert" : undefined}
@@ -46,7 +49,9 @@ function ThreadNowLine({
           reachable; when it is cut, its details button shows all of it. */}
       <NoticeText
         detailsLabel={
-          typeof item.title === "string" ? `Show details: ${item.title}` : "Show details"
+          typeof item.title === "string"
+            ? t("Show details: {title}", { title: item.title })
+            : t("Show details")
         }
         className="min-w-0 truncate"
       >
@@ -68,10 +73,13 @@ function ThreadNowLine({
 }
 
 function ThreadSyncLine({ phase }: { readonly phase: ThreadSyncPhase }) {
+  const t = useTranslation(timelineUiMessages);
   return (
     <div className={lineClassName} role="status" data-composer-sync-status={phase}>
       <RefreshCwIcon aria-hidden />
-      <span className="truncate">{threadSyncLabel(phase)}</span>
+      <span className="truncate">
+        {t(threadSyncLabel(phase) as "Loading messages..." | "Syncing messages...")}
+      </span>
     </div>
   );
 }

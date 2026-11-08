@@ -1,3 +1,5 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { composerUiMessages } from "./composerUi.messages";
 import {
   buildTraitsTriggerDisplay,
   getDescriptorStringValue,
@@ -101,9 +103,10 @@ type TraitsPersistence =
     };
 
 function DefaultBadge() {
+  const t = useTranslation(composerUiMessages);
   return (
     <Badge variant="outline" size="sm" className="min-w-0">
-      Default
+      {t("Default")}
     </Badge>
   );
 }
@@ -373,6 +376,7 @@ export const ULTRATHINK_IN_BODY_NOTE =
   'Your prompt contains "ultrathink" in the text. Remove it to change this option.';
 
 const TraitsMenuContent = memo(function TraitsMenuContentImpl(props: TraitsSelectionInput) {
+  const t = useTranslation(composerUiMessages);
   const traits = useTraitsSelection(props);
   const {
     descriptors,
@@ -421,7 +425,7 @@ const TraitsMenuContent = memo(function TraitsMenuContentImpl(props: TraitsSelec
             </div>
             {ultrathinkInBodyText && descriptor.id === primarySelectDescriptor?.id ? (
               <div className="px-2 pb-1.5 text-muted-foreground/80 text-xs">
-                {ULTRATHINK_IN_BODY_NOTE}
+                {t(ULTRATHINK_IN_BODY_NOTE)}
               </div>
             ) : null}
             <MenuRadioGroup
@@ -467,7 +471,7 @@ const TraitsMenuContent = memo(function TraitsMenuContentImpl(props: TraitsSelec
               {(["on", "off"] as const).map((value) => (
                 <MenuRadioItem key={value} value={value} hideIndicator closeOnClick>
                   <span className="flex w-full min-w-0 items-center justify-between gap-3">
-                    <span>{value === "on" ? "On" : "Off"}</span>
+                    <span>{value === "on" ? t("On") : t("Off")}</span>
                   </span>
                 </MenuRadioItem>
               ))}

@@ -62,3 +62,12 @@ export function useTranslation<const Messages extends Readonly<Record<string, st
     params?: Readonly<Record<string, string | number>>,
   ) => translate(locale, messages, key, params);
 }
+
+// For imperative text outside render, such as toasts and native context menus.
+export function translateNow<const Messages extends Readonly<Record<string, string>>>(
+  messages: Messages,
+  key: Extract<keyof Messages, string>,
+  params?: Readonly<Record<string, string | number>>,
+): string {
+  return translate(readLocale(), messages, key, params);
+}

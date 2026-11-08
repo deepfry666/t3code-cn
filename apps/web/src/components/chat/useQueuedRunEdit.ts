@@ -1,3 +1,6 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { composerUiMessages } from "./composerUi.messages";
+import type { ComposerTranslator } from "./chatTranslators";
 import { useAtomValue } from "@effect/atom-react";
 import {
   makeQueuedRunEditStore,
@@ -93,20 +96,24 @@ async function submitQueuedRunEdit(input: {
   readonly editing: EditingQueuedRun;
   readonly content: QueuedRunEditContent;
   readonly editQueuedRun: ReturnType<typeof useEditQueuedRunCommand>;
+  readonly t: ComposerTranslator;
 }): Promise<string | null> {
-  const { environmentId, draftTarget, editing, content } = input;
+  const { environmentId, draftTarget, editing, content, t } = input;
   const editText = content.prompt.trim();
   const newAttachments = [...content.images, ...content.files];
   const uploadFiles = async (files: ReadonlyArray<ComposerFileAttachment>) => {
     const validateFiles = () => {
       const config = appAtomRegistry.get(environmentServerConfigsAtom).get(environmentId) ?? null;
-      const reason = fileAttachmentCapabilityBlockReason({
-        files,
-        attachmentUploadsCapabilityKnown: config !== null,
-        supportsAttachmentUploads: config !== null,
-        maxFileAttachmentBytes:
-          config?.environment.capabilities.fileAttachments?.maxUploadBytes ?? null,
-      });
+      const reason = fileAttachmentCapabilityBlockReason(
+        {
+          files,
+          attachmentUploadsCapabilityKnown: config !== null,
+          supportsAttachmentUploads: config !== null,
+          maxFileAttachmentBytes:
+            config?.environment.capabilities.fileAttachments?.maxUploadBytes ?? null,
+        },
+        t,
+      );
       if (reason !== null) throw new Error(reason);
     };
     validateFiles();
@@ -114,7 +121,7 @@ async function submitQueuedRunEdit(input: {
     await awaitAttachmentUploads(files.map((file) => file.id));
     validateFiles();
     const uploaded = getUploadedAttachments({ environmentId, images: files });
-    if (uploaded === null) throw new Error("Retry or remove failed uploads before saving.");
+    if (uploaded === null) throw new Error(t("Retry or remove failed uploads before saving."));
     return uploaded;
   };
   try {
@@ -124,6 +131,7 @@ async function submitQueuedRunEdit(input: {
       files: content.files,
       readImage: readFileAsDataUrl,
       uploadFiles,
+      failedUploadsMessage: t("Retry or remove failed uploads before saving."),
     });
     const keptRecords = (editing.context?.records ?? []).filter(
       (record) =>
@@ -166,9 +174,9 @@ async function submitQueuedRunEdit(input: {
         },
       },
     });
-    return result._tag === "Failure" ? "Could not save the edited queued message." : null;
+    return result._tag === "Failure" ? t("Could not save the edited queued message.") : null;
   } catch (error) {
-    return error instanceof Error ? error.message : "Could not save the edited queued message.";
+    return error instanceof Error ? error.message : t("Could not save the edited queued message.");
   }
 }
 
@@ -186,6 +194,7 @@ export function useQueuedRunEdit(input: {
   readonly promptRef: { current: string };
   readonly composerRef: RefObject<ChatComposerHandle | null>;
 }) {
+  const t = useTranslation(composerUiMessages);
   const {
     environmentId,
     routeThreadRef,
@@ -270,15 +279,19 @@ export function useQueuedRunEdit(input: {
           const title = appAtomRegistry.get(
             environmentThreadShells.threadShellAtom(threadRef),
           )?.title;
-          const where = title === undefined ? "" : ` in “${title}”`;
+          const keptOrDiscarded =
+            recovery === "kept"
+              ? title === undefined
+                ? t("Your unsaved edit was kept in the composer.")
+                : t("Your unsaved edit in “{title}” was kept in the composer.", { title })
+              : title === undefined
+                ? t("Your unsaved edit was discarded.")
+                : t("Your unsaved edit in “{title}” was discarded.", { title });
           toastManager.add(
             stackedThreadToast({
               type: recovery === "kept" ? "info" : "warning",
-              title: "Queued message is no longer queued",
-              description:
-                recovery === "kept"
-                  ? `Your unsaved edit${where} was kept in the composer.`
-                  : `Your unsaved edit${where} was discarded.`,
+              title: t("Queued message is no longer queued"),
+              description: keptOrDiscarded,
             }),
           );
         },
@@ -333,6 +346,7 @@ export function useQueuedRunEdit(input: {
       editing,
       content,
       editQueuedRun: editQueuedRunCommand,
+      t,
     });
     setThreadError(editing.threadId, error);
     const current = finishSave(error === null);

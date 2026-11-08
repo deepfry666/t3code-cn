@@ -50,16 +50,32 @@ export function resolveContextWindowModelDisplayName(
   return selectedModel ? getDisplayModelName(selectedModel) : selection.model;
 }
 
+type CompactionMessage =
+  | "Compacts automatically at about {tokens} tokens."
+  | "Context for {model} compacts automatically when needed."
+  | "Context compacts automatically when needed.";
+type TranslateCompactionMessage = (
+  key: CompactionMessage,
+  params?: Readonly<Record<string, string | number>>,
+) => string;
+const englishCompactionMessage: TranslateCompactionMessage = (key, params) =>
+  key.replace(/\{(\w+)\}/g, (placeholder, name: string) =>
+    params && Object.hasOwn(params, name) ? String(params[name]) : placeholder,
+  );
+
 export function formatContextWindowCompactionMessage(
   modelDisplayName: string | null | undefined,
   autoCompactThreshold?: number | null,
+  t: TranslateCompactionMessage = englishCompactionMessage,
 ): string {
   if (typeof autoCompactThreshold === "number" && autoCompactThreshold > 0) {
-    return `Compacts automatically at about ${autoCompactThreshold.toLocaleString("en-US")} tokens.`;
+    return t("Compacts automatically at about {tokens} tokens.", {
+      tokens: autoCompactThreshold.toLocaleString("en-US"),
+    });
   }
   return modelDisplayName
-    ? `Context for ${modelDisplayName} compacts automatically when needed.`
-    : "Context compacts automatically when needed.";
+    ? t("Context for {model} compacts automatically when needed.", { model: modelDisplayName })
+    : t("Context compacts automatically when needed.");
 }
 
 export function shouldReserveContextWindowMeter(input: {

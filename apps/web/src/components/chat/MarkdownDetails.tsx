@@ -1,3 +1,5 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { timelineUiMessages } from "./timelineUi.messages";
 import { ChevronRightIcon } from "lucide-react";
 import {
   Children,
@@ -15,6 +17,7 @@ export function MarkdownDetails({
   children,
   open = false,
 }: Pick<ComponentProps<"details">, "children" | "open">) {
+  const t = useTranslation(timelineUiMessages);
   const [isOpen, setIsOpen] = useState(open);
   const searching = use(MarkdownFindContext);
   const expanded = isOpen;
@@ -30,7 +33,7 @@ export function MarkdownDetails({
   const summary =
     isValidElement<{ children?: ReactNode }>(summaryNode) && summaryNode.props.children
       ? summaryNode.props.children
-      : "Details";
+      : t("Details");
   const content = childNodes.filter((_, index) => index !== summaryIndex);
 
   return (

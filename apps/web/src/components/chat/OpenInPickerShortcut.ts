@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { threadPanelUiMessages } from "./threadPanelUi.messages";
 import {
   buildRemoteOpenUrl,
   type EditorId,
@@ -83,7 +85,8 @@ export function useOpenFavoriteEditorShortcut({
         });
         if (url === undefined) return;
         void openRemoteEditorUrl(url).then((opened) => {
-          if (opened) announce(`Opened in ${label}`);
+          if (opened)
+            announce(translateNow(threadPanelUiMessages, "Opened in {editor}", { editor: label }));
         });
         return;
       }
@@ -94,7 +97,8 @@ export function useOpenFavoriteEditorShortcut({
           editor: preferredEditor,
         },
       }).then((result) => {
-        if (result._tag === "Success") announce(`Opened in ${label}`);
+        if (result._tag === "Success")
+          announce(translateNow(threadPanelUiMessages, "Opened in {editor}", { editor: label }));
       });
     };
     window.addEventListener("keydown", handler);

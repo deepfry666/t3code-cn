@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { timelineUiMessages } from "./timelineUi.messages";
 import type { LegendListRef } from "@legendapp/list/react";
 import type { AssistantCitation, MessageId, ScopedThreadRef } from "@t3tools/contracts";
 import { useEffect, useRef, type ReactNode, type RefObject } from "react";
@@ -194,8 +196,8 @@ function observeAssistantCitationSource({
             request.onComplete();
             toastManager.add({
               type: "warning",
-              title: "Could not open the cited response",
-              description: "Click the citation to try again.",
+              title: translateNow(timelineUiMessages, "Could not open the cited response"),
+              description: translateNow(timelineUiMessages, "Click the citation to try again."),
             });
           },
         );
@@ -207,8 +209,11 @@ function observeAssistantCitationSource({
       if (!range) {
         toastManager.add({
           type: "warning",
-          title: "The quoted text has changed",
-          description: "Showing the source response. The saved quote is unchanged.",
+          title: translateNow(timelineUiMessages, "The quoted text has changed"),
+          description: translateNow(
+            timelineUiMessages,
+            "Showing the source response. The saved quote is unchanged.",
+          ),
         });
       }
     }

@@ -1,3 +1,5 @@
+import { useTranslation } from "~/i18n/useTranslation";
+import { composerUiMessages } from "./composerUi.messages";
 import type { VoiceInputState } from "@t3tools/client-runtime/voice-input";
 import { CheckIcon, MicIcon, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -17,9 +19,24 @@ type SpeechPresentation = {
   showsSend: boolean;
 };
 
+type SpeechStatus =
+  | "Voice input failed"
+  | "Downloading speech model {percent}%"
+  | "Preparing"
+  | "Recording"
+  | "Transcribing"
+  | "Post-processing";
+type TranslateSpeechStatus = (
+  key: SpeechStatus,
+  params?: Readonly<Record<string, string | number>>,
+) => string;
+const englishSpeechStatus: TranslateSpeechStatus = (key, params) =>
+  key.replace("{percent}", String(params?.percent ?? ""));
+
 export function resolveSpeechPresentation(
   state: VoiceInputState,
   progress: { downloaded: number; total: number } | null,
+  t: TranslateSpeechStatus = englishSpeechStatus,
 ): SpeechPresentation {
   switch (state.phase) {
     case "idle":
@@ -32,7 +49,7 @@ export function resolveSpeechPresentation(
       };
     case "error":
       return {
-        status: state.error ?? "Voice input failed",
+        status: state.error ?? t("Voice input failed"),
         showsCancel: false,
         showsConfirm: false,
         confirmEnabled: false,
@@ -41,8 +58,10 @@ export function resolveSpeechPresentation(
     case "preparing":
       return {
         status: progress
-          ? `Downloading speech model ${Math.round((progress.downloaded / Math.max(1, progress.total)) * 100)}%`
-          : "Preparing",
+          ? t("Downloading speech model {percent}%", {
+              percent: Math.round((progress.downloaded / Math.max(1, progress.total)) * 100),
+            })
+          : t("Preparing"),
         showsCancel: true,
         showsConfirm: true,
         confirmEnabled: false,
@@ -50,7 +69,7 @@ export function resolveSpeechPresentation(
       };
     case "recording":
       return {
-        status: "Recording",
+        status: t("Recording"),
         showsCancel: true,
         showsConfirm: true,
         confirmEnabled: true,
@@ -58,7 +77,7 @@ export function resolveSpeechPresentation(
       };
     case "transcribing":
       return {
-        status: "Transcribing",
+        status: t("Transcribing"),
         showsCancel: true,
         showsConfirm: true,
         confirmEnabled: false,
@@ -66,7 +85,7 @@ export function resolveSpeechPresentation(
       };
     case "post-processing":
       return {
-        status: "Post-processing",
+        status: t("Post-processing"),
         showsCancel: true,
         showsConfirm: true,
         confirmEnabled: false,
@@ -112,7 +131,8 @@ function ComposerSpeechStatus(props: {
   level: number;
   recordingLimitSeconds?: number | undefined;
 }) {
-  const presentation = resolveSpeechPresentation(props.state, props.progress);
+  const t = useTranslation(composerUiMessages);
+  const presentation = resolveSpeechPresentation(props.state, props.progress, t);
 
   if (!presentation.status) return null;
   const isRecording = props.state.phase === "recording";
@@ -146,8 +166,10 @@ function ComposerSpeechCancelButton(props: {
   shortcutLabel?: string | null;
   onCancel(): void;
 }) {
+  const t = useTranslation(composerUiMessages);
   if (props.state.phase === "idle") return null;
-  const label = props.state.phase === "error" ? "Dismiss voice input error" : "Cancel voice input";
+  const label =
+    props.state.phase === "error" ? t("Dismiss voice input error") : t("Cancel voice input");
 
   return (
     <Tooltip>
@@ -182,8 +204,9 @@ export function ComposerSpeechButton(props: {
   onStart(): void;
   onCancel(): void;
 }) {
-  const presentation = resolveSpeechPresentation(props.state, props.progress);
-  const label = "Start voice input";
+  const t = useTranslation(composerUiMessages);
+  const presentation = resolveSpeechPresentation(props.state, props.progress, t);
+  const label = t("Start voice input");
 
   if (presentation.showsConfirm || props.state.phase === "error") return null;
 
@@ -229,7 +252,8 @@ export function ComposerSpeechRecordingPill(props: {
   onCancel(): void;
   onSkipPostProcessing(): void;
 }) {
-  const presentation = resolveSpeechPresentation(props.state, props.progress);
+  const t = useTranslation(composerUiMessages);
+  const presentation = resolveSpeechPresentation(props.state, props.progress, t);
   if (props.state.phase === "error") {
     return (
       <VoiceInputErrorPill
@@ -245,8 +269,8 @@ export function ComposerSpeechRecordingPill(props: {
   if (!presentation.showsConfirm) return null;
 
   const label = presentation.confirmEnabled
-    ? "Finish voice input"
-    : (presentation.status ?? "Voice input is busy");
+    ? t("Finish voice input")
+    : (presentation.status ?? t("Voice input is busy"));
 
   return (
     <VoiceInputPill>
