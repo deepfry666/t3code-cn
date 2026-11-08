@@ -15,22 +15,28 @@ import { DEFAULT_COMPOSER_PLACEHOLDER } from "../../composerPlaceholder";
 import { resolveDiffThemeName, type DiffThemeName } from "../../lib/diffRendering";
 import { PREFERRED_HIGHLIGHTER } from "../../lib/syntaxHighlighting";
 import { GhosttyTerminalSurface } from "~/terminal/ghostty/surface";
+import { useTranslation, useLocale } from "~/i18n/useTranslation";
+import { settingsThreadsMessages } from "./settingsThreads.messages";
 
 const PREVIEW_SKILLS: ReadonlyArray<ServerProviderSkill> = [
   { name: "frontend-design", path: ".agents/skills/frontend-design/SKILL.md", enabled: true },
 ];
 
 const PROMPT_PREVIEW_TEXT =
-  "Use $frontend-design to fix the flaky test in " +
-  "[surface.test.ts](apps/web/src/terminal/ghostty/surface.test.ts) and align the header with " +
-  "[SettingsPanels.tsx](apps/web/src/components/settings/SettingsPanels.tsx) before shipping.";
+  "Use $frontend-design to fix the flaky test in [surface.test.ts](apps/web/src/terminal/ghostty/surface.test.ts) and align the header with [SettingsPanels.tsx](apps/web/src/components/settings/SettingsPanels.tsx) before shipping.";
 
 function noop() {}
 
 export function PromptFontPreview() {
+  const locale = useLocale();
+  return <LocalizedPromptFontPreview key={locale} />;
+}
+
+function LocalizedPromptFontPreview() {
+  const t = useTranslation(settingsThreadsMessages);
   const editorRef = useRef<ComposerPromptEditorHandle>(null);
-  const [prompt, setPrompt] = useState(PROMPT_PREVIEW_TEXT);
-  const [cursor, setCursor] = useState(PROMPT_PREVIEW_TEXT.length);
+  const [prompt, setPrompt] = useState(t(PROMPT_PREVIEW_TEXT));
+  const [cursor, setCursor] = useState(t(PROMPT_PREVIEW_TEXT).length);
   const onChange = (nextValue: string, nextCursor: number) => {
     setPrompt(nextValue);
     setCursor(nextCursor);
@@ -38,14 +44,14 @@ export function PromptFontPreview() {
   return (
     <div className="mt-1 mb-2 rounded-lg border border-border bg-background px-3 py-2">
       <ComposerPromptEditor
-        ariaLabel="Prompt font preview"
+        ariaLabel={t("Prompt font preview")}
         editorRef={editorRef}
         value={prompt}
         cursor={cursor}
         contextRecords={EMPTY_COMPOSER_CONTEXT_RECORDS}
         skills={PREVIEW_SKILLS}
         disabled={false}
-        placeholder={DEFAULT_COMPOSER_PLACEHOLDER}
+        placeholder={t(DEFAULT_COMPOSER_PLACEHOLDER)}
         className="max-h-42"
         onChange={onChange}
         onPaste={noop}
@@ -153,6 +159,7 @@ function previewTerminalFont(family: string, size: number): { family?: string; s
 }
 
 export function TerminalFontPreview({ family, size }: { family: string; size: number }) {
+  const t = useTranslation(settingsThreadsMessages);
   const mountRef = useRef<HTMLDivElement>(null);
   const [surface, setSurface] = useState<GhosttyTerminalSurface | null>(null);
   const [initialFont] = useState(() => previewTerminalFont(family, size));
@@ -240,7 +247,7 @@ export function TerminalFontPreview({ family, size }: { family: string; size: nu
     <div
       ref={mountSurface}
       className="relative mt-1 mb-2 h-52 overflow-hidden rounded-lg border border-border"
-      aria-label="Terminal font preview"
+      aria-label={t("Terminal font preview")}
     />
   );
 }

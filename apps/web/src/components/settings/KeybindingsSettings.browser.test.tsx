@@ -2,6 +2,7 @@ import { RegistryProvider } from "@effect/atom-react";
 import { describe, expect, it, vi } from "vite-plus/test";
 import { page, userEvent, type Locator } from "vite-plus/test/browser";
 
+import { setLocale } from "../../i18n/useTranslation";
 import { render } from "../../../test/render";
 
 vi.mock(import("../../state/session"), async (original) => ({
@@ -105,23 +106,46 @@ describe("Esc in a shortcut recorder", () => {
   });
 });
 
-it("re-enables Save when a When editor closes on an expression it could not parse", async () => {
-  await using screen = await render(
-    <RegistryProvider>
-      <KeybindingsSettingsPanel />
-    </RegistryProvider>,
-  );
-  const whenTrigger = screen.getByRole("button", { name: "Edit when clause for Terminal: Toggle" });
-  const expression = screen.getByRole("textbox", { name: "When expression" });
+it.each([
+  {
+    locale: "en" as const,
+    search: "Search keybindings",
+    query: "Terminal",
+    trigger: "Edit when clause for Terminal: Toggle",
+    expression: "When expression",
+    save: "Save",
+  },
+  {
+    locale: "zh-CN" as const,
+    search: "搜索快捷键",
+    query: "终端",
+    trigger: "编辑 终端：切换显示 的生效条件",
+    expression: "生效条件表达式",
+    save: "保存",
+  },
+])(
+  "re-enables Save when a When editor closes on an expression it could not parse ($locale)",
+  async ({ locale, search, query, trigger, expression: expressionLabel, save }) => {
+    using _locale = { [Symbol.dispose]: () => setLocale("en") };
+    setLocale(locale);
+    await using screen = await render(
+      <RegistryProvider>
+        <KeybindingsSettingsPanel />
+      </RegistryProvider>,
+    );
+    await userEvent.fill(screen.getByRole("searchbox", { name: search }), query);
+    const whenTrigger = screen.getByRole("button", { name: trigger });
+    const expression = screen.getByRole("textbox", { name: expressionLabel });
 
-  await whenTrigger.click();
-  await userEvent.type(expression, "terminalFocus");
-  await userEvent.type(expression, " &&");
-  await expect.element(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+    await whenTrigger.click();
+    await userEvent.type(expression, "terminalFocus");
+    await userEvent.type(expression, " &&");
+    await expect.element(screen.getByRole("button", { name: save })).toBeDisabled();
 
-  await userEvent.keyboard("{Escape}");
-  await whenTrigger.click();
+    await userEvent.keyboard("{Escape}");
+    await whenTrigger.click();
 
-  await expect.element(expression).toHaveValue("terminalFocus");
-  await expect.element(screen.getByRole("button", { name: "Save" })).toBeEnabled();
-});
+    await expect.element(expression).toHaveValue("terminalFocus");
+    await expect.element(screen.getByRole("button", { name: save })).toBeEnabled();
+  },
+);

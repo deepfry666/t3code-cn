@@ -1,3 +1,5 @@
+import { useTranslation, useLocale } from "~/i18n/useTranslation";
+import { settingsDevicesMessages, translateDevicesLabel } from "./settingsDevices.messages";
 import {
   SecretReference,
   type EnvironmentId,
@@ -69,9 +71,10 @@ export function SecretSourceSelect(props: {
   readonly onValueChange: (provider: SecretProviderId | null) => void;
 }) {
   const { value, sources } = props;
+  const t = useTranslation(settingsDevicesMessages);
   const known = value === null || sources.some((source) => source.id === value);
   const title =
-    value === null ? "Value" : (sources.find((source) => source.id === value)?.label ?? value);
+    value === null ? t("Value") : (sources.find((source) => source.id === value)?.label ?? value);
   return (
     <Select
       value={value ?? STORED_VALUE}
@@ -85,7 +88,7 @@ export function SecretSourceSelect(props: {
       <SelectTrigger
         size="sm"
         className="w-auto min-w-0 shrink-0"
-        aria-label={`${props.label} source`}
+        aria-label={t("{label} source", { label: props.label })}
         title={title}
       >
         <SelectValue>
@@ -94,7 +97,7 @@ export function SecretSourceSelect(props: {
       </SelectTrigger>
       <SelectPopup align="start" alignItemWithTrigger={false}>
         <SelectItem value={STORED_VALUE}>
-          <SourceLabel icon={TypeIcon} label="Value" />
+          <SourceLabel icon={TypeIcon} label={t("Value")} />
         </SelectItem>
         {sources.map((source) => (
           <SelectItem key={source.id} value={source.id}>
@@ -133,6 +136,9 @@ export function SecretSourceInput({
   children,
   ...rest
 }: SecretSourceInputProps) {
+  const t = useTranslation(settingsDevicesMessages);
+  const locale = useLocale();
+  const tl = (label: string) => translateDevicesLabel(label, locale);
   // A provider picked here applies once a reference for it is committed.
   const [pendingProvider, setPendingProvider] = useState<SecretProviderId | null>(null);
   const [rejectedReference, setRejectedReference] = useState<string | null>(null);
@@ -142,7 +148,7 @@ export function SecretSourceInput({
   const reference = secret !== undefined && secret.provider === provider ? secret.reference : "";
   const providerSource = sources.find((source) => source.id === provider);
   const definition = providerSource && builtInSecretProviderDefinitions.find(providerSource.kind);
-  const label = input["aria-label"] ?? "Secret";
+  const label = input["aria-label"] ?? t("Secret");
   const source =
     sources.length === 0 && provider === null ? null : (
       <SecretSourceSelect
@@ -197,12 +203,12 @@ export function SecretSourceInput({
           autoComplete="off"
           placeholder={definition?.referencePlaceholder}
           spellCheck={false}
-          aria-label={`${label} reference`}
+          aria-label={t("{label} reference", { label })}
           aria-invalid={rejectedReference !== null}
         />
         {rejectedReference !== null ? (
           <p className="text-2xs text-destructive">
-            {definition?.invalidReferenceMessage ?? "Enter a valid secret reference."}
+            {tl(definition?.invalidReferenceMessage ?? "Enter a valid secret reference.")}
           </p>
         ) : null}
       </div>

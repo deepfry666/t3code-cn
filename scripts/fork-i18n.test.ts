@@ -15,7 +15,8 @@ const GLOSSARY: ReadonlyArray<readonly [english: RegExp, chinese: string]> = [
   [/\benvironments?\b/i, "环境"],
   [/\bproviders?\b/i, "提供方"],
   [/\bworktrees?\b/i, "工作树"],
-  [/\bagents?\b/i, "智能体"],
+  // SSH uses an authentication agent, not a coding agent.
+  [/(?<!SSH config, )\bagents?\b/i, "智能体"],
   [/\bkeybindings?\b/i, "快捷键"],
   [/\barchived?\b/i, "归档"],
   [/\bsnooz\w*/i, "暂缓"],
@@ -24,6 +25,7 @@ const GLOSSARY: ReadonlyArray<readonly [english: RegExp, chinese: string]> = [
   [/\bpull requests?\b/i, "拉取请求"],
   [/\bbeta\b/i, "测试版"],
   [/\blabs\b/i, "实验功能"],
+  [/\bcheckouts?\b/i, "工作副本"],
 ];
 
 const CJK = /[一-鿿]/;
@@ -87,6 +89,18 @@ describe("Chinese catalogs", () => {
     expect(unparsed).toEqual([]);
   });
 
+  it("keeps every placeholder and translates every entry", () => {
+    const placeholders = (text: string) => [...text.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+    const broken = entries
+      .filter(
+        (entry) =>
+          entry.localized.trim() === "" ||
+          placeholders(entry.localized).join() !== placeholders(entry.source).join(),
+      )
+      .map((entry) => `${entry.at} ${entry.source} → ${entry.localized}`);
+    expect(broken).toEqual([]);
+  });
+
   it("translates the same English text the same way everywhere", () => {
     const bySource = Map.groupBy(entries, (entry) => sourceKey(entry.source));
     const conflicts = [...bySource.values()]
@@ -98,7 +112,10 @@ describe("Chinese catalogs", () => {
   it("uses the glossary term for recurring concepts", () => {
     const misses = entries.flatMap((entry) => {
       // Placeholders and file names are not prose to translate.
-      const source = entry.source.replace(/\{\w+\}|[\w-]+\.[a-z]{2,4}\b/g, "");
+      const source = (entry.source.split("@@")[0] ?? "").replace(
+        /\{\w+\}|[\w-]+\.[a-z]{2,4}\b/g,
+        "",
+      );
       return GLOSSARY.filter(
         ([english, chinese]) => english.test(source) && !entry.localized.includes(chinese),
       ).map(

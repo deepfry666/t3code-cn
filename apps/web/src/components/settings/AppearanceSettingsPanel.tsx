@@ -1,3 +1,4 @@
+import { useLocalizedSetting } from "./useLocalizedSetting";
 import { useLocale, useTranslation } from "../../i18n/useTranslation";
 import { settingsContentMessages, translateSettingsContent } from "./settingsContent.messages";
 import type { CSSProperties } from "react";
@@ -89,6 +90,7 @@ const EFFORT_DISPLAY_LABELS: Record<EffortDisplay, string> = {
 export function AppearanceSettingsPanel() {
   const locale = useLocale();
   const t = useTranslation(settingsContentMessages);
+  const localizedSetting = useLocalizedSetting();
   const {
     appearanceMode,
     refreshTheme,
@@ -168,7 +170,7 @@ export function AppearanceSettingsPanel() {
 
       <SettingsSection id="appearance-interface" title={t("Interface")}>
         <SettingsRow
-          {...searchableSetting("setting-appearance-contrast")}
+          {...localizedSetting("setting-appearance-contrast")}
           description={t("Adjust the contrast of colors and borders across the interface.")}
           resetAction={
             settings.appearanceContrast !== DEFAULT_UNIFIED_SETTINGS.appearanceContrast ? (
@@ -216,7 +218,7 @@ export function AppearanceSettingsPanel() {
         />
 
         <SettingsRow
-          {...searchableSetting("setting-glass-opacity")}
+          {...localizedSetting("setting-glass-opacity")}
           description={t("Higher values make menus, dialogs, and the composer more solid.")}
           resetAction={
             settings.glassOpacity !== DEFAULT_UNIFIED_SETTINGS.glassOpacity ? (
@@ -262,7 +264,7 @@ export function AppearanceSettingsPanel() {
         />
 
         <SettingsRow
-          {...searchableSetting("chat-width")}
+          {...localizedSetting("chat-width")}
           description={t("Set how wide messages and the composer can grow on large screens.")}
           resetAction={
             settings.chatWidth !== DEFAULT_UNIFIED_SETTINGS.chatWidth ? (
@@ -297,7 +299,7 @@ export function AppearanceSettingsPanel() {
         />
         <ThreadDetailsItemsRow />
         <SettingsRow
-          {...searchableSetting("effort-display")}
+          {...localizedSetting("effort-display")}
           description={t(
             "Show reasoning effort in the composer as its name, such as High, or as bars.",
           )}
@@ -341,7 +343,7 @@ export function AppearanceSettingsPanel() {
           }
         />
         <SettingsRow
-          {...searchableSetting("math-rendering")}
+          {...localizedSetting("math-rendering")}
           description={t(
             "Typeset LaTeX math, such as $x^2$ or \\[x^2\\], in messages and Markdown previews. The composer keeps TeX source editable.",
           )}
@@ -377,7 +379,7 @@ export function AppearanceSettingsPanel() {
           ]}
         >
           <SettingsRow
-            {...searchableSetting("panel-animations")}
+            {...localizedSetting("panel-animations")}
             description={t("Set how fast panels open and close.")}
             control={
               <div className="grid w-full grid-cols-[5rem_minmax(0,1fr)] items-center gap-3 sm:w-auto sm:grid-cols-[7rem_13rem] sm:gap-4">
@@ -428,7 +430,7 @@ export function AppearanceSettingsPanel() {
             }
           />
           <SettingsRow
-            {...searchableSetting("environment-identification")}
+            {...localizedSetting("environment-identification")}
             description={translateSettingsContent(environmentIdentificationDescription, locale)}
             resetAction={
               settings.environmentIdentificationMode !== DEFAULT_ENVIRONMENT_IDENTIFICATION_MODE ? (
@@ -472,7 +474,7 @@ export function AppearanceSettingsPanel() {
             }
           />
           <SettingsRow
-            {...searchableSetting("composer-context")}
+            {...localizedSetting("composer-context")}
             description={t(
               "Keep branch and worktree controls below the composer after a thread starts.",
             )}

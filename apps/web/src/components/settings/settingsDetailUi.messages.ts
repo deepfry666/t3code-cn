@@ -47,6 +47,5 @@ export const settingsDetailUiMessages = {
   "Archived threads will appear here.": "已归档会话将显示在这里。",
   "Archived thread action failed": "已归档会话操作失败",
   Archive: "归档",
-  "Archived ": "归档于 ",
-  " · Created ": " · 创建于 ",
+  "Archived {archivedAt} · Created {createdAt}": "归档于 {archivedAt} · 创建于 {createdAt}",
 } as const;

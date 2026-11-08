@@ -1,3 +1,4 @@
+import { useLocalizedSetting } from "./useLocalizedSetting";
 import { useLocale, useTranslation } from "../../i18n/useTranslation";
 import { settingsContentMessages, translateSettingsContent } from "./settingsContent.messages";
 import { settlePromise } from "@t3tools/client-runtime/state/runtime";
@@ -11,12 +12,12 @@ import {
 } from "../../threadNotifications";
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "../ui/select";
 import { SettingsRow } from "./settingsLayout";
-import { searchableSetting } from "./settingsSearch";
 import { useScopedSettings, useUpdateScopedSettings } from "./useScopedSettings";
 
 export function NotificationSettings() {
   const locale = useLocale();
   const t = useTranslation(settingsContentMessages);
+  const localizedSetting = useLocalizedSetting();
   const mode = useScopedSettings((settings) => settings.notificationMode);
   const updateSettings = useUpdateScopedSettings();
   const [permissionMessage, setPermissionMessage] = useState<string | null>(null);
@@ -24,7 +25,7 @@ export function NotificationSettings() {
 
   return (
     <SettingsRow
-      {...searchableSetting("thread-notifications")}
+      {...localizedSetting("thread-notifications")}
       description={translateSettingsContent(
         permissionMessage ??
           "System alerts when a thread finishes, fails, or needs input or approval. Applies to this device while T3 Code is open.",

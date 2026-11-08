@@ -3,6 +3,8 @@ import { effectiveSpeechLanguage } from "@t3tools/shared/speech";
 import { updateClientSettings, useClientSettings } from "../../hooks/useSettings";
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "../ui/select";
 
+import { useTranslation } from "~/i18n/useTranslation";
+import { settingsVoiceMessages } from "./settingsVoice.messages";
 const languageNames = new Intl.DisplayNames(["en"], { type: "language" });
 export const languageLabel = (code: string) => languageNames.of(code) ?? code;
 
@@ -12,6 +14,7 @@ type ModelLanguages = Pick<
 >;
 
 export function SpeechLanguageSelect({ model }: { readonly model: ModelLanguages | null }) {
+  const t = useTranslation(settingsVoiceMessages);
   const preference = useClientSettings((settings) => settings.speechLanguage);
   const languages = model?.languages ?? [];
   const resolved = model
@@ -20,15 +23,15 @@ export function SpeechLanguageSelect({ model }: { readonly model: ModelLanguages
         preference,
       )
     : preference;
-  const effectiveLabel = resolved === "auto" ? "Auto-detect" : languageLabel(resolved);
+  const effectiveLabel = resolved === "auto" ? t("Auto-detect") : languageLabel(resolved);
   const unavailable =
     preference !== "auto" && preference !== resolved
-      ? `${languageLabel(preference)} unavailable`
+      ? t("{language} unavailable", { language: languageLabel(preference) })
       : null;
   const label = unavailable
-    ? `${effectiveLabel} (${unavailable})`
+    ? t("{language} ({unavailable})", { language: effectiveLabel, unavailable })
     : preference === "auto" && resolved !== "auto"
-      ? `Auto (${effectiveLabel})`
+      ? t("Auto ({language})", { language: effectiveLabel })
       : effectiveLabel;
   return (
     <Select
@@ -38,11 +41,11 @@ export function SpeechLanguageSelect({ model }: { readonly model: ModelLanguages
         if (value) void updateClientSettings({ speechLanguage: value });
       }}
     >
-      <SelectTrigger size="sm" aria-label="Transcription language" className="max-w-64">
+      <SelectTrigger size="sm" aria-label={t("Transcription language")} className="max-w-64">
         <SelectValue>{label}</SelectValue>
       </SelectTrigger>
       <SelectPopup align="end" alignItemWithTrigger={false}>
-        <SelectItem value="auto">Auto</SelectItem>
+        <SelectItem value="auto">{t("Auto")}</SelectItem>
         {unavailable ? (
           <SelectItem value={preference} disabled>
             {unavailable}

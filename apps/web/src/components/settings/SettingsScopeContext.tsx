@@ -1,3 +1,5 @@
+import { useLocale } from "~/i18n/useTranslation";
+import { translateSettingsShellLabel } from "./settingsShell.messages";
 import { type EnvironmentId, T3_PROJECT_FILE_NAME, type T3ProjectFile } from "@t3tools/contracts";
 import { parseT3ProjectFile } from "@t3tools/shared/t3ProjectFile";
 import { useAtomValue } from "@effect/atom-react";
@@ -56,6 +58,7 @@ function useMemberProjectFiles(scope: ReturnType<typeof resolveSettingsScope>) {
 }
 
 function useResolvedSettingsScope(rawSearch: SettingsScopeSearch, singleEnvironment: boolean) {
+  const locale = useLocale();
   const groups = useSettingsProjectGroups();
   const { environments: availableEnvironments } = useEnvironments();
   const primaryEnvironmentId = usePrimaryEnvironmentId();
@@ -67,7 +70,11 @@ function useResolvedSettingsScope(rawSearch: SettingsScopeSearch, singleEnvironm
         primaryEnvironmentId,
       )
     : rawSearch;
-  const scope = resolveSettingsScope(search, groups, availableEnvironments);
+  const resolvedScope = resolveSettingsScope(search, groups, availableEnvironments);
+  const scope =
+    resolvedScope.kind === "unavailable"
+      ? { ...resolvedScope, message: translateSettingsShellLabel(resolvedScope.message, locale) }
+      : resolvedScope;
   const projectFiles = useMemberProjectFiles(scope);
   const selected = selectScopedSettingsEnvironments(
     scope,

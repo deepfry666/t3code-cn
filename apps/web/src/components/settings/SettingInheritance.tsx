@@ -1,3 +1,6 @@
+import { translate, type Locale } from "~/i18n/locale";
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
+import { settingsShellMessages, translateSettingsShellLabel } from "./settingsShell.messages";
 import {
   DEFAULT_SERVER_SETTINGS,
   PROJECT_FILE_BACKED_SETTINGS,
@@ -44,56 +47,68 @@ const BACKGROUND_ACTIVITY_PROFILE_LABELS: Record<string, string> = {
   custom: "Advanced",
 };
 
-function formatValue(key: keyof ServerSettings, value: unknown): string {
+function formatValue(key: keyof ServerSettings, value: unknown, locale: Locale): string {
+  const t = (
+    key: keyof typeof settingsShellMessages,
+    params?: Readonly<Record<string, string | number>>,
+  ) => translate(locale, settingsShellMessages, key, params);
   if (value === null || value === undefined) {
     return key === "pullRequestMergeMethod"
-      ? "Last selected"
+      ? t("Last selected")
       : key === "sidebarAutoSettleAfterDays"
-        ? "Never"
+        ? t("Never")
         : key === "defaultModelSelection"
-          ? "Automatic"
+          ? t("Automatic")
           : key === "sourceControlWriterModelSelection"
-            ? "Text generation model"
+            ? t("Text generation model")
             : key === "reviewGuideModelSelection"
-              ? "Source control writer model"
+              ? t("Source control writer model")
               : key === "defaultThreadEnvMode" || key === "worktreeSubmodules"
-                ? "Inherit"
-                : "Not set";
+                ? t("Inherit")
+                : t("Not set");
   }
-  if (typeof value === "boolean") return value ? "On" : "Off";
+  if (typeof value === "boolean") return value ? t("On") : t("Off");
   if (typeof value === "number") {
     return key === "sidebarAutoSettleAfterDays"
-      ? `${value} ${value === 1 ? "day" : "days"}`
+      ? t(value === 1 ? "{count} day" : "{count} days", { count: value })
       : String(value);
   }
   if (typeof value === "string") {
     if (key === "defaultThreadEnvMode" && (value === "local" || value === "worktree")) {
-      return resolveEnvModeLabel(value);
+      return translateSettingsShellLabel(resolveEnvModeLabel(value), locale);
     }
     if (key === "worktreeSubmodules" && value in WORKTREE_SUBMODULES_LABELS) {
-      return WORKTREE_SUBMODULES_LABELS[value as WorktreeSubmodules];
+      return translateSettingsShellLabel(
+        WORKTREE_SUBMODULES_LABELS[value as WorktreeSubmodules],
+        locale,
+      );
     }
     if (key === "pullRequestMergeMethod" && value in PULL_REQUEST_MERGE_METHOD_LABELS) {
-      return PULL_REQUEST_MERGE_METHOD_LABELS[
-        value as keyof typeof PULL_REQUEST_MERGE_METHOD_LABELS
-      ];
+      return translateSettingsShellLabel(
+        PULL_REQUEST_MERGE_METHOD_LABELS[value as keyof typeof PULL_REQUEST_MERGE_METHOD_LABELS],
+        locale,
+      );
     }
-    return value === "" ? "Empty" : value;
+    return value === "" ? t("Empty") : value;
   }
-  if (Array.isArray(value)) return `${value.length} ${value.length === 1 ? "item" : "items"}`;
+  if (Array.isArray(value))
+    return t(value.length === 1 ? "{count} item" : "{count} items", { count: value.length });
   if (typeof value === "object") {
     if (key === "backgroundActivity" && "profile" in value && typeof value.profile === "string") {
-      return BACKGROUND_ACTIVITY_PROFILE_LABELS[value.profile] ?? value.profile;
+      return translateSettingsShellLabel(
+        BACKGROUND_ACTIVITY_PROFILE_LABELS[value.profile] ?? value.profile,
+        locale,
+      );
     }
     if ("model" in value && typeof value.model === "string") return value.model;
     if ("mode" in value && typeof value.mode === "string") {
-      if (key === "worktreeCleanup") return value.mode === "off" ? "Off" : "Custom";
+      if (key === "worktreeCleanup") return value.mode === "off" ? t("Off") : t("Custom");
       return key === "sourceControlWritingStyle"
-        ? (WRITING_STYLE_LABELS[value.mode] ?? value.mode)
+        ? translateSettingsShellLabel(WRITING_STYLE_LABELS[value.mode] ?? value.mode, locale)
         : value.mode;
     }
   }
-  return "Custom";
+  return t("Custom");
 }
 
 /** Matches resolveProjectSettings order. */
@@ -101,7 +116,10 @@ export function settingInheritanceLayers(
   target: ScopedSettingsTarget,
   environmentSettings: ServerSettings,
   key: keyof ServerSettings,
+  locale: Locale = "en",
 ): readonly InheritanceLayer[] {
+  const t = (key: keyof typeof settingsShellMessages) =>
+    translate(locale, settingsShellMessages, key);
   const environmentValue = environmentSettings[key];
   const source = isProjectScopedSettingKey(key) ? target.sources[key] : "environment";
   const environmentSet = !Equal.equals(environmentValue, DEFAULT_SERVER_SETTINGS[key]);
@@ -110,8 +128,8 @@ export function settingInheritanceLayers(
   if (target.projectId !== null && isProjectScopedSettingKey(key)) {
     layers.push({
       key: "project",
-      label: "Project",
-      value: source === "project" ? formatValue(key, target.settings[key]) : "Inherits",
+      label: t("Project"),
+      value: source === "project" ? formatValue(key, target.settings[key], locale) : t("Inherits"),
       effective: source === "project",
       set: source === "project",
     });
@@ -119,7 +137,7 @@ export function settingInheritanceLayers(
   layers.push({
     key: "environment",
     label: target.label,
-    value: environmentSet ? formatValue(key, environmentValue) : "Inherits",
+    value: environmentSet ? formatValue(key, environmentValue, locale) : t("Inherits"),
     effective: source === "environment" && environmentSet,
     set: environmentSet,
   });
@@ -127,7 +145,7 @@ export function settingInheritanceLayers(
     layers.push({
       key: "t3.json",
       label: "t3.json",
-      value: source === "t3.json" ? formatValue(key, target.settings[key]) : "Inherits",
+      value: source === "t3.json" ? formatValue(key, target.settings[key], locale) : t("Inherits"),
       effective: source === "t3.json",
       set: source === "t3.json",
     });
@@ -138,8 +156,8 @@ export function settingInheritanceLayers(
     : DEFAULT_SERVER_SETTINGS[key];
   layers.push({
     key: "built-in",
-    label: "Default",
-    value: formatValue(key, builtIn),
+    label: t("Default"),
+    value: formatValue(key, builtIn, locale),
     effective: source === "environment" && !environmentSet,
     set: true,
   });
@@ -184,13 +202,20 @@ export function SettingInheritance({
   overridingProjects?: readonly SettingOverridingProject[];
   onClearOverrides?: (entries: readonly ProjectOverrideEntry[]) => void;
 }) {
+  const t = useTranslation(settingsShellMessages);
+  const locale = useLocale();
   const scopeContext = useOptionalSettingsScope();
   const key = keys[0];
   if (!key || targets.length === 0) return null;
   const hasMultipleEnvironments = new Set(targets.map((target) => target.environmentId)).size > 1;
   const overrideSummary =
     overridingProjects.length > 0
-      ? `${summary} · ${overridingProjects.length} project ${overridingProjects.length === 1 ? "override" : "overrides"}`
+      ? t(
+          overridingProjects.length === 1
+            ? "{summary} · {count} project override"
+            : "{summary} · {count} project overrides",
+          { summary, count: overridingProjects.length },
+        )
       : summary;
   const chains = targets.flatMap((target) => {
     const environment = environments.find(
@@ -204,7 +229,7 @@ export function SettingInheritance({
     const secondary = [labels.secondary, path?.split(/[\\/]/).filter(Boolean).slice(-2).join("/")]
       .filter(Boolean)
       .join(" · ");
-    const layers = settingInheritanceLayers(target, environment.serverConfig.settings, key);
+    const layers = settingInheritanceLayers(target, environment.serverConfig.settings, key, locale);
     const winningLayer = layers.find((layer) => layer.effective);
     return [
       {
@@ -252,7 +277,9 @@ export function SettingInheritance({
                 <Button
                   size="icon-micro"
                   variant="ghost-muted"
-                  aria-label={`${overrideSummary}. Show where this value comes from`}
+                  aria-label={t("{summary}. Show where this value comes from", {
+                    summary: overrideSummary,
+                  })}
                 />
               }
             />
@@ -290,7 +317,7 @@ export function SettingInheritance({
                         layer.effective ? "font-medium text-foreground" : "text-muted-foreground",
                       )}
                     >
-                      {layer.key === "environment" ? "Environment" : layer.label}
+                      {layer.key === "environment" ? t("Environment") : layer.label}
                     </span>
                     <span
                       className={cn(
@@ -343,7 +370,7 @@ export function SettingInheritance({
                           </span>
                           <span className="text-xs text-muted-foreground">
                             {winningLayer?.key === "environment"
-                              ? "Environment"
+                              ? t("Environment")
                               : winningLayer?.label}
                           </span>
                           <ChevronRightIcon
@@ -377,7 +404,7 @@ export function SettingInheritance({
                     {chain}
                     {hasMultipleEnvironments ? (
                       <p className="px-2 pt-1.5 text-xs text-muted-foreground">
-                        Same on all machines
+                        {t("Same on all machines")}
                       </p>
                     ) : null}
                   </>
@@ -396,14 +423,14 @@ export function SettingInheritance({
                             aria-hidden
                             className="size-3 [[data-panel-open]_&]:rotate-90"
                           />
-                          Overridden by
+                          {t("Overridden by")}
                         </CollapsibleTrigger>
                       ) : (
-                        <span>Overridden by</span>
+                        <span>{t("Overridden by")}</span>
                       )}
                       {onClearOverrides ? (
                         <InlineButton onClick={() => onClearOverrides(overriding)}>
-                          Reset {overriding.length === 1 ? "it" : "all"}
+                          {t(overriding.length === 1 ? "Reset it" : "Reset all")}
                         </InlineButton>
                       ) : null}
                     </div>
@@ -439,6 +466,7 @@ export function SettingInheritance({
                                     (member) =>
                                       member.target.environmentId === project.environmentId,
                                   )?.overrides[project.projectId]?.[key],
+                                  locale,
                                 )
                               : null}
                           </span>

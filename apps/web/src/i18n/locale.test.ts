@@ -16,6 +16,13 @@ describe("interface locale", () => {
     expect(translate("en", messages, "New thread")).toBe("New thread");
     expect(translate("zh-CN", messages, "New thread")).toBe("新建会话");
   });
+
+  it("drops a context suffix from English and lets Chinese differ by context", () => {
+    const messages = { When: "生效条件", "When@@snooze": "暂缓到" } as const;
+    expect(translate("en", messages, "When@@snooze")).toBe("When");
+    expect(translate("zh-CN", messages, "When@@snooze")).toBe("暂缓到");
+    expect(translate("zh-CN", messages, "When")).toBe("生效条件");
+  });
   it("interpolates values as plain text without substituting missing or inherited keys", () => {
     const messages = {
       "Open {name} ({count})": "打开 {name}（{count}）",

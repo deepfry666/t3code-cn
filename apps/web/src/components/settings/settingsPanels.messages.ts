@@ -1,4 +1,4 @@
-import type { Locale } from "../../i18n/locale";
+import { translate, type Locale } from "../../i18n/locale";
 
 export const settingsPanelsMessages = {
   "Could not download update": "无法下载更新",
@@ -181,11 +181,63 @@ export const settingsPanelsMessages = {
   "Clone into host folders": "克隆到主机文件夹",
   "Response streaming": "流式响应",
   "Continue threads after restarts": "重启后继续会话",
+  "Update {version} did not apply. Click to retry.": "更新 {version} 未生效。点击重试。",
+  "Update {version} ready to download": "更新 {version} 已可下载",
+  "Downloading update": "正在下载更新",
+  "Downloading update ({percent}%)": "正在下载更新（{percent}%）",
+  "Update {version} downloaded. Click to restart and install.":
+    "更新 {version} 已下载。点击重启并安装。",
+  "Download failed for {version}. Click to retry.": "下载 {version} 失败。点击重试。",
+  "Install failed for {version}. Click to retry.": "安装 {version} 失败。点击重试。",
+  "Update failed": "更新失败",
+  "Up to date": "已是最新版本",
+  "Update available ready to download": "有可下载的更新",
+  "Update ready downloaded. Click to restart and install.": "更新已下载。点击重启并安装。",
+  "Install update and restart T3 Code?\n\nAny running tasks will be interrupted. Make sure you're ready before continuing.":
+    "安装更新并重启 T3 Code？\n\n正在运行的任务会被中断。请确认已准备好再继续。",
+  "Install update {version} and restart T3 Code?\n\nAny running tasks will be interrupted. Make sure you're ready before continuing.":
+    "安装更新 {version} 并重启 T3 Code？\n\n正在运行的任务会被中断。请确认已准备好再继续。",
 } as const;
+
+const UPDATE_TEXT_TEMPLATES = [
+  [
+    /^Update (.+) did not apply\. Click to retry\.$/,
+    "Update {version} did not apply. Click to retry.",
+    "version",
+  ],
+  [/^Update (.+) ready to download$/, "Update {version} ready to download", "version"],
+  [/^Downloading update \((.+)%\)$/, "Downloading update ({percent}%)", "percent"],
+  [
+    /^Update (.+) downloaded\. Click to restart and install\.$/,
+    "Update {version} downloaded. Click to restart and install.",
+    "version",
+  ],
+  [
+    /^Download failed for (.+)\. Click to retry\.$/,
+    "Download failed for {version}. Click to retry.",
+    "version",
+  ],
+  [
+    /^Install failed for (.+)\. Click to retry\.$/,
+    "Install failed for {version}. Click to retry.",
+    "version",
+  ],
+  [
+    /^Install update (.+) and restart T3 Code\?\n\nAny running tasks will be interrupted\. Make sure you're ready before continuing\.$/,
+    "Install update {version} and restart T3 Code?\n\nAny running tasks will be interrupted. Make sure you're ready before continuing.",
+    "version",
+  ],
+] as const;
 
 // Labels computed at run time (button states, option names) go through this lookup.
 export function translatePanelLabel(label: string, locale: Locale): string {
-  return locale === "zh-CN" && Object.hasOwn(settingsPanelsMessages, label)
-    ? settingsPanelsMessages[label as keyof typeof settingsPanelsMessages]
-    : label;
+  if (locale !== "zh-CN") return label;
+  if (Object.hasOwn(settingsPanelsMessages, label))
+    return settingsPanelsMessages[label as keyof typeof settingsPanelsMessages];
+  for (const [pattern, key, parameter] of UPDATE_TEXT_TEMPLATES) {
+    const match = pattern.exec(label);
+    if (match)
+      return translate(locale, settingsPanelsMessages, key, { [parameter]: match[1] ?? "" });
+  }
+  return label;
 }

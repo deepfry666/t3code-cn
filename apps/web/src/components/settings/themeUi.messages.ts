@@ -83,4 +83,7 @@ export const themeUiMessages = {
   "{name} updated": "已更新 {name}",
   "{count} themes added": "已添加 {count} 个主题",
   "{count} themes updated": "已更新 {count} 个主题",
+  "System default": "系统默认",
+  "System monospace": "系统等宽字体",
+  "System serif": "系统衬线字体",
 } as const;

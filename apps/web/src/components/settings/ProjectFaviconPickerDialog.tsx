@@ -1,3 +1,5 @@
+import { useTranslation, useLocale } from "~/i18n/useTranslation";
+import { settingsCodeMessages, translateCodeLabel } from "./settingsCode.messages";
 import { useAtomValue } from "@effect/atom-react";
 import type { EnvironmentId } from "@t3tools/contracts";
 import { isWindowsAbsolutePath } from "@t3tools/shared/path";
@@ -37,6 +39,8 @@ export function ProjectFaviconPickerDialog(props: {
   readonly open: boolean;
   readonly projectName: string;
 }) {
+  const locale = useLocale();
+  const t = useTranslation(settingsCodeMessages);
   const [query, setQuery] = useState("");
   const [highlightedItemValue, setHighlightedItemValue] = useState<string | null>(null);
   const [isPickingExternal, setIsPickingExternal] = useState(false);
@@ -77,15 +81,15 @@ export function ProjectFaviconPickerDialog(props: {
     <CommandDialog open={props.open} onOpenChange={props.onOpenChange}>
       {props.open ? (
         <CommandDialogPopup
-          aria-label="Choose project icon"
+          aria-label={t("Choose project icon")}
           className="overflow-hidden"
           onBackdropPointerDown={() => props.onOpenChange(false)}
         >
           <CommandPaletteContent
-            aria-label="Choose project icon"
+            aria-label={t("Choose project icon")}
             autoHighlight="always"
-            escapeLabel="Close"
-            footerActionLabel="Select icon"
+            escapeLabel={t("Close")}
+            footerActionLabel={t("Select icon")}
             footerTrailing={
               pickExternal ? (
                 <CommandFooterAction
@@ -101,19 +105,19 @@ export function ProjectFaviconPickerDialog(props: {
                       .catch((error: unknown) => {
                         toastManager.add({
                           type: "error",
-                          title: "Could not open image picker",
+                          title: t("Could not open image picker"),
                           description:
-                            error instanceof Error ? error.message : "An error occurred.",
+                            error instanceof Error ? error.message : t("An error occurred."),
                         });
                       })
                       .finally(() => setIsPickingExternal(false));
                   }}
                 >
-                  {`Open in ${fileManagerName}`}
+                  {t("Open in {fileManager}", { fileManager: fileManagerName })}
                 </CommandFooterAction>
               ) : null
             }
-            inputProps={{ placeholder: "Search image files…" }}
+            inputProps={{ placeholder: t("Search image files…") }}
             mode="none"
             onItemHighlighted={(value) => {
               setHighlightedItemValue(typeof value === "string" ? value : null);
@@ -140,7 +144,10 @@ export function ProjectFaviconPickerDialog(props: {
                 props.onOpenChange(false);
                 void item.run();
               }}
-              emptyStateMessage={emptyMessage(query, result.error, result.isPending)}
+              emptyStateMessage={translateCodeLabel(
+                emptyMessage(query, result.error, result.isPending),
+                locale,
+              )}
             />
           </CommandPaletteContent>
         </CommandDialogPopup>
