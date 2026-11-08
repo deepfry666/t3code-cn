@@ -30,6 +30,12 @@ it("reads the served T3 home back out of a rendered unit or plist", () => {
     unitPath: "/home/theo/.config/systemd/user/t3code-cn.service",
   });
 
+  expect(BootService.renderBootServiceUnit(plan("/fork-home"))).toContain(
+    "Environment=T3CODE_CN_HOME=/fork-home",
+  );
+  expect(BootService.renderBootServiceUnit(plan("/fork-home"))).not.toContain(
+    "Environment=T3CODE_HOME=",
+  );
   expect(
     BootService.bootServiceBaseDirOf(BootService.renderBootServiceUnit(plan("/home/theo/.t3"))),
   ).toBe("/home/theo/.t3");

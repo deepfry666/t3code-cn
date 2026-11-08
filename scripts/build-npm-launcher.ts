@@ -11,13 +11,14 @@ import * as Schema from "effect/Schema";
 import { Command, Flag } from "effect/cli";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
+import { FORK_IDENTITY } from "@t3tools/shared/forkIdentity";
 import * as HostProcess from "@t3tools/shared/HostProcess";
 import { fromJsonStringPretty } from "@t3tools/shared/schemaJson";
 import serverPackageJson from "../apps/server/package.json" with { type: "json" };
 
 import { windowsSystemTar } from "./lib/windows-tar.ts";
 
-export const NPM_LAUNCHER_PACKAGE_NAME = "t3";
+export const NPM_LAUNCHER_PACKAGE_NAME = FORK_IDENTITY.npmPackageName;
 
 const encodePackageJson = Schema.encodeEffect(fromJsonStringPretty(Schema.Unknown));
 
@@ -38,8 +39,11 @@ export function npmLauncherPackageManifest(version: string, databaseMigration: n
     description:
       "T3 Code CLI. Downloads the self-contained executable for this platform from the GitHub Release.",
     license: serverPackageJson.license,
-    repository: serverPackageJson.repository,
-    bin: { t3: "./bin/t3.mjs" },
+    repository: {
+      ...serverPackageJson.repository,
+      url: `https://github.com/${FORK_IDENTITY.releaseRepository}`,
+    },
+    bin: { [FORK_IDENTITY.cliName]: "./bin/t3.mjs" },
     files: ["bin", "dist"],
     engines: { node: ">=20.11" },
     t3code: { databaseMigration },

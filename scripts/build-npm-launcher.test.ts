@@ -111,7 +111,9 @@ it.layer(NodeServices.layer)("build-npm-launcher", (it) => {
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-npm-launcher-test-" });
+        const root = yield* fs
+          .makeTempDirectoryScoped({ prefix: "t3-npm-launcher-test-" })
+          .pipe(Effect.flatMap((directory) => fs.realPath(directory)));
         const output = yield* buildNpmLauncher({
           version: VERSION,
           outputDir: path.join(root, "out"),
@@ -120,9 +122,10 @@ it.layer(NodeServices.layer)("build-npm-launcher", (it) => {
         const manifest = yield* decodeManifest(
           yield* fs.readFileString(path.join(output.packageDir, "package.json")),
         );
-        assert.equal(manifest.name, "t3");
+        assert.equal(manifest.name, "t3-cn");
         assert.equal(manifest.version, VERSION);
-        assert.deepStrictEqual(manifest.bin, { t3: "./bin/t3.mjs" });
+        assert.deepStrictEqual(manifest.bin, { "t3-cn": "./bin/t3.mjs" });
+        assert.deepInclude(manifest.repository, { url: "https://github.com/deepfry666/t3code-cn" });
         assert.isUndefined(manifest.dependencies);
         assert.isUndefined(manifest.optionalDependencies);
         assert.isAbove(npmReleaseDatabaseMigration(manifest) ?? 0, 0);
@@ -140,7 +143,8 @@ it.layer(NodeServices.layer)("build-npm-launcher", (it) => {
         const home = path.join(root, "home");
         const env = {
           PATH: (yield* HostProcess.Environment).PATH,
-          T3CODE_HOME: home,
+          T3CODE_CN_HOME: home,
+          T3CODE_HOME: path.join(root, "official-do-not-use"),
           T3CODE_TEST_CALLS: path.join(root, "calls"),
           T3CODE_RELEASE_BASE_URL: release.baseUrl,
         };
@@ -155,6 +159,7 @@ it.layer(NodeServices.layer)("build-npm-launcher", (it) => {
           (yield* fs.readFileString(env.T3CODE_TEST_CALLS)).trim().split("\n"),
           ["--version|", `serve a b|${launcher}`],
         );
+        assert.isFalse(yield* fs.exists(env.T3CODE_HOME));
         const versionDir = path.join(home, "runtime/versions", VERSION);
         assert.equal(
           (yield* fs.readFileString(path.join(versionDir, ".install-complete"))).trim(),
@@ -212,7 +217,7 @@ it.layer(NodeServices.layer)("build-npm-launcher", (it) => {
         const raceHome = path.join(root, "race-home");
         const launch = run(process.execPath, [launcher, "--version"], {
           cwd: root,
-          env: { ...env, T3CODE_HOME: raceHome },
+          env: { ...env, T3CODE_CN_HOME: raceHome },
         });
         const [one, two] = yield* Effect.all([launch, launch], { concurrency: "unbounded" });
         assert.equal(one.exitCode, 0, one.stderr);
@@ -290,7 +295,7 @@ fs.readFileSync = (file, ...rest) => {
         const recovered = yield* run(
           process.execPath,
           ["--import", peerHook, launcher, "--version"],
-          { cwd: root, env: { ...env, T3CODE_HOME: staleHome } },
+          { cwd: root, env: { ...env, T3CODE_CN_HOME: staleHome } },
         );
         const checks = (yield* fs.readFileString(peerChecks)).trim().split("\n");
         assert.isAtLeast(checks.length, 2);
@@ -310,7 +315,7 @@ fs.readFileSync = (file, ...rest) => {
         yield* fs.makeDirectory(`${staleOnlyDir}.lock`);
         const locked = yield* run(process.execPath, [launcher, "--version"], {
           cwd: root,
-          env: { ...env, T3CODE_HOME: staleOnlyHome },
+          env: { ...env, T3CODE_CN_HOME: staleOnlyHome },
         });
         assert.equal(locked.exitCode, 1);
         assert.include(locked.stderr, `delete ${staleOnlyDir}.lock`);
@@ -320,7 +325,7 @@ fs.readFileSync = (file, ...rest) => {
         yield* fs.remove(`${staleOnlyDir}.lock`, { recursive: true });
         const replaced = yield* run(process.execPath, [launcher, "--version"], {
           cwd: root,
-          env: { ...env, T3CODE_HOME: staleOnlyHome },
+          env: { ...env, T3CODE_CN_HOME: staleOnlyHome },
         });
         assert.equal(replaced.stdout.trim(), VERSION, replaced.stderr);
         assert.equal(replaced.exitCode, 0);
@@ -332,7 +337,7 @@ fs.readFileSync = (file, ...rest) => {
         release.corruptChecksum();
         const corrupt = yield* run(process.execPath, [launcher, "--version"], {
           cwd: root,
-          env: { ...env, T3CODE_HOME: path.join(root, "other-home") },
+          env: { ...env, T3CODE_CN_HOME: path.join(root, "other-home") },
         });
         assert.equal(corrupt.exitCode, 1);
         assert.include(corrupt.stderr, "checksum mismatch");
@@ -375,7 +380,8 @@ syncBuiltinESMExports();
           );
           const env = {
             PATH: (yield* HostProcess.Environment).PATH,
-            T3CODE_HOME: home,
+            T3CODE_CN_HOME: home,
+            T3CODE_HOME: path.join(root, "official-do-not-use"),
             T3CODE_RELEASE_BASE_URL: release.baseUrl,
             T3CODE_TEST_READY: path.join(root, "probe-ready"),
             T3CODE_TEST_TERM: path.join(root, "probe-term"),

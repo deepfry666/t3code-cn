@@ -39,7 +39,7 @@ const run = (shim: string, args: ReadonlyArray<string>, env: NodeJS.ProcessEnv =
   });
 
 const REPORTER =
-  '#!/bin/sh\necho "node=$ELECTRON_RUN_AS_NODE cli=$T3CODE_CLI_PATH home=$T3CODE_HOME"\nprintf "%s\\n" "$@"\nexit 3\n';
+  '#!/bin/sh\necho "node=$ELECTRON_RUN_AS_NODE cli=$T3CODE_CLI_PATH home=$T3CODE_CN_HOME"\nprintf "%s\\n" "$@"\nexit 3\n';
 
 const fakeAppImage = (canMount = true) => {
   const root = tempRoot();
@@ -116,7 +116,9 @@ describe("renderCliShim", () => {
     });
     const lines = script.split("\r\n");
     expect(lines).toContain("setlocal EnableExtensions DisableDelayedExpansion");
-    expect(lines).toContain('if defined T3CODE_CN_HOME set "T3CODE_HOME=%T3CODE_CN_HOME%"');
+    expect(lines).toContain(
+      `if not defined T3CODE_CN_HOME set "T3CODE_CN_HOME=C:\\Users\\José\\.t3"`,
+    );
     expect(script).not.toContain("if not defined T3CODE_HOME");
     expect(lines).toContain("chcp 65001 >nul");
     expect(lines).toContain(

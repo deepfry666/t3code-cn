@@ -7,6 +7,7 @@ export const FORK_IDENTITY = {
   slug: "t3code-cn",
   homeDirName: ".t3code-cn",
   cliName: "t3-cn",
+  npmPackageName: "t3-cn",
   appId: "io.github.deepfry666.t3codecn",
   urlScheme: "t3code-cn",
   devUrlScheme: "t3code-cn-dev",

@@ -74,6 +74,7 @@ const emptyBackendObservabilitySettings: BackendObservabilitySettings = {
 
 const DESKTOP_BACKEND_ENV_NAMES = [
   "T3CODE_HOME",
+  "T3CODE_CN_HOME",
   "T3CODE_TRACE_FILE",
   "T3CODE_PORT",
   "T3CODE_MODE",
@@ -711,9 +712,11 @@ const resolveWslStartConfig = Effect.fn("desktop.backendConfiguration.resolveWsl
       ...distroArgs,
       "--exec",
       "env",
-      // A distro-level T3CODE_HOME would otherwise override the fork bootstrap.
+      // Distro-level home overrides must not supersede the fork bootstrap.
       "-u",
       "T3CODE_HOME",
+      "-u",
+      "T3CODE_CN_HOME",
       `PATH=${launchPath}`,
       ...command,
       "--bootstrap-fd",

@@ -67,9 +67,9 @@ const unescapeXmlText = (value: string) =>
   value.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&amp;", "&");
 
 export function bootServiceBaseDirOf(contents: string): string | undefined {
-  const systemd = /^Environment=T3CODE_HOME=(.*)$/m.exec(contents)?.[1];
+  const systemd = /^Environment=T3CODE_CN_HOME=(.*)$/m.exec(contents)?.[1];
   if (systemd !== undefined) return unquoteSystemdValue(systemd.trim());
-  const plist = /<key>T3CODE_HOME<\/key>\s*<string>([^<]*)<\/string>/.exec(contents)?.[1];
+  const plist = /<key>T3CODE_CN_HOME<\/key>\s*<string>([^<]*)<\/string>/.exec(contents)?.[1];
   return plist === undefined ? undefined : unescapeXmlText(plist);
 }
 
@@ -104,7 +104,7 @@ export function renderBootServiceUnit(plan: BootServicePlan): string {
     "[Service]",
     "Type=simple",
     "WorkingDirectory=%h",
-    `Environment=T3CODE_HOME=${quoteSystemdValue(plan.baseDir)}`,
+    `Environment=T3CODE_CN_HOME=${quoteSystemdValue(plan.baseDir)}`,
     `Environment=${BOOT_SERVICE_UNIT_ENV}=${BOOT_SERVICE_UNIT_FILE}`,
     `ExecStart=${plan.program.map(quoteSystemdValue).join(" ")}`,
     // Let the launcher mark an explicit stop before it signals the server.
@@ -161,7 +161,7 @@ export function renderBootServicePlist(
     `  <dict>`,
     `    <key>PATH</key>`,
     `    <string>${escapeXmlText(options.environmentPath)}</string>`,
-    `    <key>T3CODE_HOME</key>`,
+    `    <key>T3CODE_CN_HOME</key>`,
     `    <string>${escapeXmlText(plan.baseDir)}</string>`,
     `    <key>${BOOT_SERVICE_UNIT_ENV}</key>`,
     `    <string>${BOOT_SERVICE_PLIST_FILE}</string>`,
