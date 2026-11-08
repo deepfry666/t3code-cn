@@ -108,7 +108,7 @@ export const settingsCodeMessages = {
   "Agent access": "智能体访问权限",
   Browsing: "浏览",
   Recordings: "录制",
-  "Repository conventions": "仓库惯例",
+  "Repository conventions": "仓库规范",
   "Conventional Commits": "约定式提交",
   "In each project, matches recent change descriptions and change request titles.":
     "在每个项目中，沿用近期变更说明和变更请求标题的风格。",
@@ -245,20 +245,20 @@ export const settingsCodeMessages = {
   "Add a project from the sidebar to configure it here.": "从侧边栏添加项目后，即可在此配置。",
   "This project is no longer available.": "此项目已不可用。",
   "This checkout is no longer available in the selected project and environment.":
-    "所选项目和环境中的此检出目录已不可用。",
+    "此工作副本在所选项目和环境中已不可用。",
   "Project title cannot be empty": "项目名称不能为空",
   "Failed to rename project": "无法重命名项目",
   "Failed to update project icon": "无法更新项目图标",
   "Failed to remove project": "无法移除项目",
-  Checkouts: "检出目录",
+  Checkouts: "工作副本",
   "Grouping rule decides how each checkout joins project groups in the sidebar. Changing it can move a checkout to a different project.":
-    "分组规则决定每个检出目录如何加入侧边栏中的项目组。修改规则可能会将检出目录移到其他项目。",
+    "分组规则决定每个工作副本如何加入侧边栏中的项目组。修改规则可能会将工作副本移到其他项目。",
   Environment: "环境",
   "Can't find a setting? Keep this project picked above and hop to any other settings page.":
     "找不到某项设置？在上方保持选中此项目，然后前往其他设置页面。",
   Project: "项目",
   "Shared settings require permission to change every checkout in this group.":
-    "修改共享设置需要对本组中的每个检出目录都有修改权限。",
+    "修改共享设置需要对本组中的每个工作副本都有修改权限。",
   "This connection cannot change this project.": "此连接无法更改此项目。",
   Name: "名称",
   "The shared name for this project group in the sidebar and thread lists.":
@@ -286,11 +286,11 @@ export const settingsCodeMessages = {
   "Failed to archive project": "无法归档项目",
   Unarchive: "取消归档",
   Danger: "危险操作",
-  "Remove checkout": "移除检出目录",
+  "Remove checkout": "移除工作副本",
   "Remove this project everywhere": "从所有设备移除此项目",
   "Remove project": "移除项目",
   "Deletes the selected machine's checkout entries and their threads. Other machines and files on disk are not touched.":
-    "删除所选设备上的检出目录条目及其会话。其他设备和磁盘上的文件不受影响。",
+    "删除所选设备上的工作副本条目及其会话。其他设备和磁盘上的文件不受影响。",
   "Deletes the project entry and its threads. Files on disk are not touched.":
     "删除项目条目及其会话。磁盘上的文件不受影响。",
   "Remove all entries": "移除所有条目",
@@ -326,9 +326,9 @@ export const settingsCodeMessages = {
   "Default permissions": "默认权限",
   "Automatically pull": "自动拉取",
   "Keeps this project's default branch current when the checkout has no local changes or commits.":
-    "检出目录没有本地改动或提交时，自动更新此项目的默认分支。",
+    "工作副本没有本地改动或提交时，自动更新此项目的默认分支。",
   "Keeps the default branch current when the checkout has no local changes or commits. Projects can override it.":
-    "检出目录没有本地改动或提交时，自动更新默认分支。项目可以覆盖此设置。",
+    "工作副本没有本地改动或提交时，自动更新默认分支。项目可以覆盖此设置。",
   "default automatic pull": "默认自动拉取",
   "Reset automatic pull to off": "将自动拉取重置为关闭",
   "Default automatic pull": "默认自动拉取",
@@ -353,18 +353,18 @@ export const settingsCodeMessages = {
   "Failed to import action.": "无法导入操作。",
   Actions: "操作",
   "Commands that run in this project's checkout or its worktree, with optional shortcuts.":
-    "在此项目的检出目录或工作树中运行的命令，可设置快捷键。",
+    "在此项目的工作副本或工作树中运行的命令，可设置快捷键。",
   "Import scripts": "导入脚本",
   "Import from t3.json": "从 t3.json 导入",
   "Add actions declared by this checkout without editing them first.":
-    "直接添加此检出目录声明的操作，无需先编辑。",
+    "直接添加此工作副本声明的操作，无需先编辑。",
   "Add action": "添加操作",
   "Different actions across environments": "各环境的操作不同",
   "Choose one environment to edit its list. Adding an action here adds it on every selected environment.":
     "选择一个环境以编辑其列表。在此添加操作会添加到所有所选环境。",
   "t3.json is invalid": "t3.json 无效",
   "A t3.json exists in this checkout but fails to parse, so every action and icon it declares is ignored. Check the JSON syntax and icon values.":
-    "此检出目录的 t3.json 无法解析，其中声明的所有操作和图标都会忽略。请检查 JSON 语法和图标值。",
+    "此工作副本的 t3.json 无法解析，其中声明的所有操作和图标都会忽略。请检查 JSON 语法和图标值。",
   "Choose project icon": "选择项目图标",
   "Choose an icon, emoji, or monogram.": "选择图标、表情或字母图标。",
   "Icon type": "图标类型",
@@ -472,9 +472,9 @@ export const settingsCodeMessages = {
   "Grouping rule for {path} on {environment}": "{environment} 上 {path} 的分组规则",
   "Default ({mode})": "默认（{mode}）",
   'Failed to remove "{title}"': "无法移除“{title}”",
-  "Remove checkout {path}": "移除检出目录 {path}",
+  "Remove checkout {path}": "移除工作副本 {path}",
   "Deletes all {count} checkout entries and their threads on every machine. Files on disk are not touched.":
-    "删除所有设备上的全部 {count} 个检出目录条目及其会话。磁盘上的文件不受影响。",
+    "删除所有设备上的全部 {count} 个工作副本条目及其会话。磁盘上的文件不受影响。",
   "Open in {fileManager}": "在 {fileManager} 中打开",
   "{environment} pull request routing": "{environment} 的拉取请求路由",
   "{environments} {permission}": "{environments} {permission}",
@@ -503,7 +503,7 @@ export const settingsCodeMessages = {
   "There were no cookies to import for {environment}.": "没有可为 {environment} 导入的 Cookie。",
   "Couldn’t import from {source}": "无法从 {source} 导入",
   "New worktree": "新工作树",
-  "Current checkout": "当前检出目录",
+  "Current checkout": "当前工作副本",
   Recursive: "递归",
   "Top level only": "仅顶层",
   Skip: "跳过",
@@ -593,14 +593,14 @@ export const settingsCodeMessages = {
   "The browser's cookie database could not be read.": "无法读取浏览器的 Cookie 数据库。",
   "Browser profile data is not available to clear.": "无法清除浏览器配置数据。",
   'Remove checkout "{title}" and delete its {count} thread?':
-    "移除检出目录“{title}”并删除其中的 {count} 个会话？",
+    "移除工作副本“{title}”并删除其中的 {count} 个会话？",
   'Remove checkout "{title}" and delete its {count} threads?':
-    "移除检出目录“{title}”并删除其中的 {count} 个会话？",
+    "移除工作副本“{title}”并删除其中的 {count} 个会话？",
   'Remove project "{title}" and delete its {count} thread?':
     "移除项目“{title}”并删除其中的 {count} 个会话？",
   'Remove project "{title}" and delete its {count} threads?':
     "移除项目“{title}”并删除其中的 {count} 个会话？",
-  'Remove checkout "{title}"?': "移除检出目录“{title}”？",
+  'Remove checkout "{title}"?': "移除工作副本“{title}”？",
   'Remove project "{title}"?': "移除项目“{title}”？",
   "Path: {path}": "路径：{path}",
   "Environment: {environment}": "环境：{environment}",
