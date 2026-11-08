@@ -1,3 +1,5 @@
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
+import { settingsProvidersMessages, translateProviderLabel } from "./settingsProviders.messages";
 import { useState, type ReactNode } from "react";
 import * as Option from "effect/Option";
 import * as Schema from "effect/Schema";
@@ -210,6 +212,9 @@ function ProviderCommandArguments({
 }: Pick<ProviderSettingsFormProps, "value" | "onChange"> & {
   readonly managedReason: string | undefined;
 }) {
+  const t = useTranslation(settingsProvidersMessages);
+  const locale = useLocale();
+  const tl = (label: string) => translateProviderLabel(label, locale);
   const args = configuredCommandArgs(value);
   const [storedDraft, setDraft] = useState(() => seedRowsDraft(args, toCommandArgumentRows));
   const draft = reconcileRowsDraft(storedDraft, args, commandArgumentsEqual, toCommandArgumentRows);
@@ -226,9 +231,9 @@ function ProviderCommandArguments({
 
   return (
     <SettingsRow
-      title="Arguments"
-      description="One literal argument per row, in launch order."
-      managed={managedReason}
+      title={t("Arguments")}
+      description={t("One literal argument per row, in launch order.")}
+      managed={managedReason ? tl(managedReason) : undefined}
       control={
         <Button
           type="button"
@@ -237,7 +242,7 @@ function ProviderCommandArguments({
           onClick={() => updateArguments([...rows, makeCommandArgumentDraftRow("")])}
         >
           <PlusIcon />
-          Add argument
+          {t("Add argument")}
         </Button>
       }
     >
@@ -261,7 +266,7 @@ function ProviderCommandArguments({
                       ),
                     )
                   }
-                  aria-label={`Argument ${index + 1}`}
+                  aria-label={t("Argument {index}", { index: index + 1 })}
                   spellCheck={false}
                 />
                 <Button
@@ -271,7 +276,7 @@ function ProviderCommandArguments({
                   onClick={() =>
                     updateArguments(rows.filter((current) => current.id !== argument.id))
                   }
-                  aria-label={`Remove argument ${index + 1}`}
+                  aria-label={t("Remove argument {index}", { index: index + 1 })}
                 >
                   <XIcon />
                 </Button>
@@ -355,6 +360,9 @@ function SecretSettingsControl({
   readonly environmentId: EnvironmentId;
   readonly onChange: ProviderSettingsFormProps["onChange"];
 }) {
+  const t = useTranslation(settingsProvidersMessages);
+  const locale = useLocale();
+  const tl = (label: string) => translateProviderLabel(label, locale);
   const sources = useSecretSources(environmentId);
   const saved =
     value !== null && typeof value === "object"
@@ -367,7 +375,7 @@ function SecretSettingsControl({
       <SecretSourceInput
         id={inputId}
         aria-describedby={descriptionId}
-        aria-label={field.label}
+        aria-label={tl(field.label)}
         size="sm"
         className="min-w-0 flex-1"
         value={reference ?? ""}
@@ -384,7 +392,7 @@ function SecretSettingsControl({
           size="icon-sm"
           variant="ghost-destructive"
           onClick={() => onChange(nextProviderConfigWithFieldValue(value, field, ""))}
-          aria-label={`Clear ${field.label}`}
+          aria-label={t("Clear {label}", { label: tl(field.label) })}
         >
           <XIcon className="size-3.5" />
         </Button>
@@ -408,6 +416,8 @@ function ProviderSettingsSelect({
   readonly className?: string | undefined;
   readonly onChange: ProviderSettingsFormProps["onChange"];
 }) {
+  const locale = useLocale();
+  const tl = (label: string) => translateProviderLabel(label, locale);
   const options = field.options ?? [];
   const fallback = options[0]?.value ?? "";
   const current = readProviderConfigString(value, field.key) || fallback;
@@ -420,13 +430,13 @@ function ProviderSettingsSelect({
         onChange(nextProviderConfigWithFieldValue(value, field, next === fallback ? "" : next));
       }}
     >
-      <SelectTrigger id={inputId} size={size} className={className} aria-label={field.label}>
-        <SelectValue>{label}</SelectValue>
+      <SelectTrigger id={inputId} size={size} className={className} aria-label={tl(field.label)}>
+        <SelectValue>{tl(label)}</SelectValue>
       </SelectTrigger>
       <SelectPopup align="start" alignItemWithTrigger={false}>
         {options.map((option) => (
           <SelectItem key={option.value} value={option.value}>
-            {option.label}
+            {tl(option.label)}
           </SelectItem>
         ))}
       </SelectPopup>
@@ -463,14 +473,17 @@ function ProviderSettingsFieldRow({
   managedReason,
   environmentId,
 }: ProviderSettingsFieldRowProps) {
+  const t = useTranslation(settingsProvidersMessages);
+  const locale = useLocale();
+  const tl = (label: string) => translateProviderLabel(label, locale);
   const inputId = `${idPrefix}-${field.key}`;
   const descriptionClassName =
     variant === "dialog"
       ? "text-2xs text-muted-foreground"
       : "mt-1 block text-xs text-muted-foreground";
-  const label = <span className="text-xs font-medium text-foreground">{field.label}</span>;
+  const label = <span className="text-xs font-medium text-foreground">{tl(field.label)}</span>;
   const description = field.description ? (
-    <span className={descriptionClassName}>{field.description}</span>
+    <span className={descriptionClassName}>{tl(field.description)}</span>
   ) : null;
 
   if (variant === "settings") {
@@ -484,7 +497,7 @@ function ProviderSettingsFieldRow({
           onCheckedChange={(checked) =>
             onChange(nextProviderConfigWithFieldValue(value, field, Boolean(checked)))
           }
-          aria-label={field.label}
+          aria-label={tl(field.label)}
           aria-describedby={descriptionId}
         />
       ) : field.control === "select" ? (
@@ -505,7 +518,7 @@ function ProviderSettingsFieldRow({
           onChange={(event) =>
             onChange(nextProviderConfigWithFieldValue(value, field, event.target.value))
           }
-          placeholder={field.placeholder}
+          placeholder={field.placeholder ? tl(field.placeholder) : undefined}
           spellCheck={false}
         />
       ) : field.acceptsSecretReference && environmentId !== undefined ? (
@@ -534,7 +547,7 @@ function ProviderSettingsFieldRow({
               size="icon-sm"
               variant="ghost-destructive"
               onClick={() => onChange(nextProviderConfigWithFieldValue(value, field, ""))}
-              aria-label={`Clear ${field.label}`}
+              aria-label={t("Clear {label}", { label: tl(field.label) })}
             >
               <XIcon className="size-3.5" />
             </Button>
@@ -549,7 +562,7 @@ function ProviderSettingsFieldRow({
           type={field.control === "password" ? "password" : undefined}
           autoComplete={field.control === "password" ? "off" : undefined}
           value={readProviderConfigString(value, field.key)}
-          placeholder={field.placeholder}
+          placeholder={field.placeholder ? tl(field.placeholder) : undefined}
           onCommit={(next) => {
             onChange(nextProviderConfigWithFieldValue(value, field, next));
           }}
@@ -560,13 +573,17 @@ function ProviderSettingsFieldRow({
     return (
       <SettingsRow
         title={
-          field.control === "switch" ? field.label : <label htmlFor={inputId}>{field.label}</label>
+          field.control === "switch" ? (
+            tl(field.label)
+          ) : (
+            <label htmlFor={inputId}>{tl(field.label)}</label>
+          )
         }
         description={
-          field.description ? <span id={descriptionId}>{field.description}</span> : undefined
+          field.description ? <span id={descriptionId}>{tl(field.description)}</span> : undefined
         }
         control={control}
-        managed={managedReason}
+        managed={managedReason ? tl(managedReason) : undefined}
       />
     );
   }
@@ -584,7 +601,7 @@ function ProviderSettingsFieldRow({
             onCheckedChange={(checked) =>
               onChange(nextProviderConfigWithFieldValue(value, field, Boolean(checked)))
             }
-            aria-label={field.label}
+            aria-label={tl(field.label)}
           />
         </div>
       </FieldFrame>
@@ -622,7 +639,7 @@ function ProviderSettingsFieldRow({
             onChange={(event) =>
               onChange(nextProviderConfigWithFieldValue(value, field, event.target.value))
             }
-            placeholder={field.placeholder}
+            placeholder={field.placeholder ? tl(field.placeholder) : undefined}
             spellCheck={false}
           />
           {description}
@@ -647,7 +664,7 @@ function ProviderSettingsFieldRow({
             autoComplete={!field.secret && field.control === "password" ? "off" : undefined}
             value={readProviderConfigString(value, field.key)}
             onCommit={(next) => onChange(nextProviderConfigWithFieldValue(value, field, next))}
-            placeholder={field.placeholder}
+            placeholder={field.placeholder ? tl(field.placeholder) : undefined}
             spellCheck={false}
           />
         ) : (
@@ -659,7 +676,7 @@ function ProviderSettingsFieldRow({
             onChange={(event) =>
               onChange(nextProviderConfigWithFieldValue(value, field, event.target.value))
             }
-            placeholder={field.placeholder}
+            placeholder={field.placeholder ? tl(field.placeholder) : undefined}
             spellCheck={false}
           />
         )}
