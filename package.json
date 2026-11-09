@@ -30,6 +30,7 @@
     "tc": "vp run -r --cache --concurrency-limit 4 typecheck",
     "check:changed": "node scripts/check-changed.ts",
     "i18n:untranslated": "node scripts/i18n-untranslated.ts",
+    "i18n:export": "node scripts/i18n-export.ts",
     "report:renders": "node scripts/render-metrics.ts",
     "lint": "vp lint --report-unused-disable-directives",
     "knip": "knip --preprocessor ./scripts/knip-schemas.ts",

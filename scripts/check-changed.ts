@@ -336,6 +336,10 @@ const checkChanged = Effect.fn("checkChanged")(function* (input: {
   for (const test of docReaderTests(files)) tests.add(test);
   // It reads files other than the ones beside it, so no changed file selects it.
   if (affected.includes("t3")) tests.add("apps/server/src/provider/AgentContextBudget.test.ts");
+  // The fork's zh-CN checks read every catalog, so no catalog sits beside them.
+  if (files.some((file) => /(?:\.messages|Messages|menuLocalization)\.ts$|^i18n\//.test(file))) {
+    tests.add("scripts/fork-i18n.test.ts");
+  }
   const { vitestTests, nodeTests } = splitTests(tests);
 
   // React Compiler coverage compiles every client source file, so run only the
