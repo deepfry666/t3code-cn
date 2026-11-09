@@ -458,7 +458,7 @@ export const settingsMaintenanceMessages = {
   "Thread is running or has pending work": "会话正在运行或有待处理的工作",
   "A subagent thread's branch differs from this worktree's branch":
     "子智能体会话的分支与此工作树的分支不同",
-  "Open terminal": "有打开的终端",
+  "Open terminal": "打开终端",
   "Worktree is a symbolic link": "工作树是符号链接",
   "Outside the managed worktree folder": "不在受管理的工作树文件夹内",
   "Contains a project checkout": "包含项目工作副本",

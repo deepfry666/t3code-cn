@@ -8,7 +8,7 @@ export const settingsConnectionsMessages = {
   "Ask before commands and file changes.": "执行命令和修改文件前询问。",
   "Auto-approve edits, ask before other actions.": "自动批准编辑，其他操作前询问。",
   "Supported providers approve routine actions; others still ask.":
-    "支持此模式的提供方会批准常规操作，其他提供方仍会询问。",
+    "支持此模式的提供方会自动批准常规操作，其他提供方仍会询问。",
   "Allow commands and edits without prompts.": "允许执行命令和编辑，无需确认。",
   "An agent never gets more access there than its own mode here. Below full access, it can change only threads this link started, not that machine's own threads, projects or settings.":
     "智能体在另一环境中的权限不会高于它在这里的运行模式。未授予完全访问权限时，它只能更改通过此连接启动的会话，不能更改该机器自身的会话、项目或设置。",

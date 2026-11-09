@@ -374,7 +374,7 @@ export const timelineUiMessages = {
   Path: "路径",
   Setup: "设置",
   "Worktree setup": "工作树设置",
-  "Open terminal": "有打开的终端",
+  "Open terminal": "打开终端",
   "Work locally": "在本地工作",
   "Output is no longer available.": "输出已不可用。",
   "Tool output image": "工具输出图片",

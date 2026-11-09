@@ -10,7 +10,7 @@ export const guestUiMessages = {
   "Ask the owner for a new link. Each link works in one browser.":
     "请向所有者索取新链接。每个链接只能在一个浏览器中使用。",
   "This link has ended": "此链接已结束",
-  "The owner stopped sharing this thread.": "所有者已停止分享此会话。",
+  "The owner stopped sharing this thread.": "所有者已停止共享此会话。",
   "Join a shared thread": "加入共享会话",
   "Your name": "你的名字",
   Join: "加入",

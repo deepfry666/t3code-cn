@@ -13,7 +13,7 @@ export const projectScriptsUiMessages = {
   "Edit Action": "编辑操作",
   "Add Action": "添加操作",
   "Actions are project-scoped commands you can run from the top bar or keybindings.":
-    "操作是属于项目的命令，可从顶栏或快捷键运行。",
+    "操作是项目内的命令，可从顶栏或通过快捷键运行。",
   Name: "名称",
   "Choose icon": "选择图标",
   Keybinding: "快捷键",
@@ -46,7 +46,7 @@ export const projectScriptsUiMessages = {
   "Unable to open path": "无法打开路径",
   "Terminal write failed": "终端写入失败",
   "Unable to initialize libghostty-vt": "无法初始化 libghostty-vt",
-  "No terminal sessions for this thread yet.": "此会话还没有终端会话。",
+  "No terminal sessions for this thread yet.": "此会话还没有终端。",
   "An error occurred.": "发生错误。",
   Cancel: "取消",
   "Add project script": "添加项目脚本",

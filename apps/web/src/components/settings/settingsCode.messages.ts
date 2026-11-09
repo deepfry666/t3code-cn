@@ -242,7 +242,7 @@ export const settingsCodeMessages = {
     "此处信任的机器可借助彼此的版本控制访问权限读取 PR 数据。需要在两台机器上都启用。“读取并操作”可能使用比权限所属机器更广的权限。此设置仅适用于当前设备。",
   "Could not save pull request routing permission": "无法保存 pull request 路由权限",
   "Uses the latest commit of the base branch’s tracked remote branch, even if its name differs. Otherwise uses the same-named branch on origin. Uses your local branch if that remote branch is missing.":
-    "使用基础分支所跟踪远程分支的最新提交，即使名称不同。未跟踪远程分支时，使用 origin 上的同名分支。远程分支不存在时，使用本地分支。",
+    "使用基准分支所跟踪的远程分支的最新提交，即使名称不同。未跟踪远程分支时，使用 origin 上的同名分支。远程分支不存在时，使用本地分支。",
   "new worktrees start from remote": "新工作树从远程分支开始",
   "Start new worktrees from remote by default": "默认从远程分支创建新工作树",
   Creation: "创建",
@@ -526,7 +526,7 @@ export const settingsCodeMessages = {
   "Ask before commands and file changes.": "执行命令和修改文件前询问。",
   "Auto-approve edits, ask before other actions.": "自动批准编辑，其他操作前询问。",
   "Supported providers approve routine actions; others still ask.":
-    "支持此模式的提供方会批准常规操作，其他提供方仍会询问。",
+    "支持此模式的提供方会自动批准常规操作，其他提供方仍会询问。",
   "Allow commands and edits without prompts.": "允许执行命令和编辑，无需确认。",
   "Group by repository": "按仓库分组",
   "Group by repository path": "按仓库路径分组",

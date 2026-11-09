@@ -103,7 +103,7 @@ export const settingsVoiceMessages = {
   "Close model test": "关闭模型测试",
   "Test transcript": "测试转写文本",
   "No speech recognized. Try again.": "未识别到语音，请重试。",
-  "Selected microphone (unavailable)": "已选择的麦克风（不可用）",
+  "Selected microphone (unavailable)": "所选麦克风（不可用）",
   "System default": "系统默认",
   "Manage OpenRouter": "管理 OpenRouter",
   "Manage key": "管理密钥",

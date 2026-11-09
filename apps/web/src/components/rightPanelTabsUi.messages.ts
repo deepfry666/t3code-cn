@@ -7,11 +7,11 @@ export const rightPanelTabsUiMessages = {
   Diff: "差异",
   "Pull request": "Pull request",
   "Pull requests": "Pull requests",
-  "Linked pull requests": "已关联的 pull request",
+  "Linked pull requests": "已关联 pull request",
   Device: "设备",
   "Device host": "设备主机",
   "Side chat": "侧聊",
-  "Watch an iOS Simulator or Android Emulator.": "观看 iOS 模拟器或 Android 模拟器。",
+  "Watch an iOS Simulator or Android Emulator.": "查看 iOS 模拟器或 Android 模拟器。",
   "Ask a side question while this thread keeps working.": "在会话继续运行的同时追问一个旁支问题。",
   "Open a surface": "打开面板",
   "Open browser in a profile": "在指定配置中打开浏览器",
@@ -49,11 +49,11 @@ export const rightPanelTabsUiMessages = {
   "Browser previews are only available in the T3 Code desktop app.":
     "浏览器预览仅在 T3 Code 桌面应用中可用。",
   "Terminal surfaces are only available from a project thread.": "终端面板仅在项目会话中可用。",
-  "Files are only available when a project is open.": "仅在打开项目时可用文件面板。",
+  "Files are only available when a project is open.": "打开项目后才能使用文件面板。",
   "Diff is only available for server threads in Git repositories.":
     "差异仅在 Git 仓库的服务器会话中可用。",
   "This thread's branch has no pull request yet.": "此会话的分支尚无 pull request。",
-  "No linked pull requests are available for this thread.": "此会话没有可关联的 pull request。",
+  "No linked pull requests are available for this thread.": "此会话没有可用的已关联 pull request。",
   "Devices are only available from a thread.": "设备仅在会话中可用。",
   "Side chats start after the first message.": "发送第一条消息后才能开始侧聊。",
 } as const;

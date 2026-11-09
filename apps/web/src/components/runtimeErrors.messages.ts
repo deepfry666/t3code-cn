@@ -133,7 +133,7 @@ export const runtimeErrorsMessages = {
   "This connection does not have access to diagnostics and usage.":
     "此连接没有诊断和用量访问权限。",
   "Source control action failed.": "版本控制操作失败。",
-  "Voice transcription was cancelled.": "语音转录已取消。",
+  "Voice transcription was cancelled.": "语音转写已取消。",
   "The expanded archive exceeds the preview size or compression ratio limit.":
     "解压后的压缩包超出预览大小或压缩比限制。",
   "Remote environment endpoint returned an invalid response from {url}.":
@@ -143,7 +143,7 @@ export const runtimeErrorsMessages = {
   "Relay returned status for a different environment.": "中继返回了其他环境的状态。",
   "Relay returned status for a different environment endpoint.": "中继返回了其他环境端点的状态。",
   "Relay returned a descriptor for a different environment.": "中继返回了其他环境的描述。",
-  "Relay DPoP access token exchange timed out.": "中继交换 DPoP 访问 token超时。",
+  "Relay DPoP access token exchange timed out.": "中继交换 DPoP 访问 token 超时。",
   "Relay environment listing timed out.": "中继列出环境超时。",
   "Relay client device listing timed out.": "中继列出客户端设备超时。",
   "Relay environment link challenge timed out.": "中继获取环境关联质询超时。",
@@ -161,8 +161,8 @@ export const runtimeErrorsMessages = {
   "Could not exchange relay DPoP access token.": "无法通过中继交换 DPoP 访问 token。",
   "Could not exchange relay DPoP access token: {error}":
     "无法通过中继交换 DPoP 访问 token：{error}",
-  "Could not list relay-managed environments.": "无法通过中继列出环境。",
-  "Could not list relay-managed environments: {error}": "无法通过中继列出环境：{error}",
+  "Could not list relay-managed environments.": "无法列出中继托管的环境。",
+  "Could not list relay-managed environments: {error}": "无法列出中继托管的环境：{error}",
   "Could not list relay client devices.": "无法通过中继列出客户端设备。",
   "Could not list relay client devices: {error}": "无法通过中继列出客户端设备：{error}",
   "Could not create relay environment link challenge.": "无法通过中继获取环境关联质询。",
@@ -185,8 +185,8 @@ export const runtimeErrorsMessages = {
   "Could not read relay agent activity snapshot.": "无法通过中继获取智能体活动快照。",
   "Could not read relay agent activity snapshot: {error}":
     "无法通过中继获取智能体活动快照：{error}",
-  "Could not read linked T3 Chat account.": "无法通过中继查询 T3 Chat 关联。",
-  "Could not read linked T3 Chat account: {error}": "无法通过中继查询 T3 Chat 关联：{error}",
+  "Could not read linked T3 Chat account.": "无法读取已关联的 T3 Chat 账户。",
+  "Could not read linked T3 Chat account: {error}": "无法读取已关联的 T3 Chat 账户：{error}",
   "Could not start T3 Chat linking.": "无法通过中继请求 T3 Chat 关联。",
   "Could not start T3 Chat linking: {error}": "无法通过中继请求 T3 Chat 关联：{error}",
   "Could not unlink T3 Chat account.": "无法通过中继取消 T3 Chat 关联。",
