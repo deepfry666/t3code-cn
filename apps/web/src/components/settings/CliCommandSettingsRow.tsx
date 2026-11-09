@@ -1,6 +1,9 @@
 import { useLocalizedSetting } from "./useLocalizedSetting";
-import { useTranslation } from "~/i18n/useTranslation";
-import { settingsMaintenanceMessages } from "./settingsMaintenance.messages";
+import { readLocale, useTranslation } from "~/i18n/useTranslation";
+import {
+  settingsMaintenanceMessages,
+  translateMaintenanceLabel,
+} from "./settingsMaintenance.messages";
 import { useState } from "react";
 
 import {
@@ -31,7 +34,10 @@ export function CliCommandSettingsRow() {
           stackedThreadToast({
             type: "error",
             title: action === "install" ? t("Could not install t3") : t("Could not remove t3"),
-            description: error instanceof Error ? error.message : t("Something went wrong."),
+            description:
+              error instanceof Error
+                ? translateMaintenanceLabel(error.message, readLocale())
+                : t("Something went wrong."),
           }),
         );
       })

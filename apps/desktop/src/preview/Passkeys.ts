@@ -7,6 +7,8 @@ import * as FileSystem from "effect/FileSystem";
 import * as Layer from "effect/Layer";
 import * as Schema from "effect/Schema";
 
+import { localizeDesktopText } from "../window/menuLocalization.ts";
+
 import * as DesktopEnvironment from "../app/DesktopEnvironment.ts";
 import { PASSKEY_CREATE_CHANNEL, PASSKEY_GET_CHANNEL } from "./GuestProtocol.ts";
 import type { PasskeyBackend, PasskeyCeremonyContext } from "./PasskeyBackend.ts";
@@ -53,7 +55,9 @@ const notAllowed: PasskeyCeremonyResult = { success: false, error: "NotAllowedEr
 const accountLabel = (account: Electron.WebAuthnAccount) =>
   account.displayName && account.name && account.displayName !== account.name
     ? `${account.displayName} (${account.name})`
-    : (account.name ?? account.displayName ?? "Unnamed passkey");
+    : (account.name ??
+      account.displayName ??
+      localizeDesktopText("Unnamed passkey", app.getPreferredSystemLanguages()));
 
 const ownerWindow = (frame: WebFrameMain | null) => {
   const contents = frame ? electronWebContents.fromFrame(frame) : undefined;
@@ -67,9 +71,12 @@ const chooseAccount = async (details: Electron.SelectWebauthnAccountDetails) => 
   if (details.accounts.length === 1) return onlyAccount?.credentialId;
   const options: Electron.MessageBoxOptions = {
     type: "none",
-    message: "Choose a passkey",
+    message: localizeDesktopText("Choose a passkey", app.getPreferredSystemLanguages()),
     detail: details.relyingPartyId,
-    buttons: [...details.accounts.map(accountLabel), "Cancel"],
+    buttons: [
+      ...details.accounts.map(accountLabel),
+      localizeDesktopText("Cancel", app.getPreferredSystemLanguages()),
+    ],
     cancelId: details.accounts.length,
     defaultId: 0,
     noLink: true,

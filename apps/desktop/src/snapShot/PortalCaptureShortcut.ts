@@ -1,6 +1,8 @@
 // @effect-diagnostics nodeBuiltinImport:off -- Stable shortcut IDs and unique portal request tokens.
 // @effect-diagnostics globalTimers:off -- Bounded D-Bus calls and user-consent requests at the native boundary.
 import * as NodeCrypto from "node:crypto";
+import { app } from "electron";
+import { localizeDesktopText } from "../window/menuLocalization.ts";
 import {
   DBusError,
   Message,
@@ -411,7 +413,10 @@ export class PortalCaptureShortcut {
         [
           this.shortcutId,
           {
-            description: new Variant("s", "Capture a window"),
+            description: new Variant(
+              "s",
+              localizeDesktopText("Capture a window", app.getPreferredSystemLanguages()),
+            ),
             ...(!this.managedByHyprland ? { preferred_trigger: new Variant("s", trigger) } : {}),
           },
         ],

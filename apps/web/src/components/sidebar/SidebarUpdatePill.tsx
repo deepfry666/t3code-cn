@@ -3,7 +3,7 @@ import {
   type DesktopUpdateState,
   managedUpdatesDenial,
 } from "@t3tools/contracts";
-import { translateNow, useLocale, useTranslation } from "~/i18n/useTranslation";
+import { readLocale, translateNow, useLocale, useTranslation } from "~/i18n/useTranslation";
 import { TriangleAlertIcon } from "lucide-react";
 import { type ComponentProps, useId, useRef, useState } from "react";
 import { flushSync } from "react-dom";
@@ -140,7 +140,13 @@ function SidebarUpdateArchitectureWarningContent() {
 }
 
 const toastUpdateError: ReportLocalUpdateError = (title, description) => {
-  toastManager.add(stackedThreadToast({ type: "error", title, description }));
+  toastManager.add(
+    stackedThreadToast({
+      type: "error",
+      title,
+      description: translateSidebarLabel(description, readLocale()),
+    }),
+  );
 };
 
 export async function downloadLocalUpdate(
@@ -324,7 +330,10 @@ function SidebarUpdateControl() {
           stackedThreadToast({
             type: "error",
             title: t("Could not confirm update"),
-            description: error instanceof Error ? error.message : t("Update confirmation failed."),
+            description:
+              error instanceof Error
+                ? translateSidebarLabel(error.message, readLocale())
+                : t("Update confirmation failed."),
           }),
         );
         return;
@@ -351,7 +360,9 @@ function SidebarUpdateControl() {
             title: t("Could not check for updates"),
             description:
               updatesDenial ??
-              result.state.message ??
+              (result.state.message
+                ? translateSidebarLabel(result.state.message, readLocale())
+                : null) ??
               t("Automatic updates are not available in this build."),
           }),
         );
@@ -361,7 +372,10 @@ function SidebarUpdateControl() {
           stackedThreadToast({
             type: "error",
             title: t("Could not check for updates"),
-            description: error instanceof Error ? error.message : t("Update check failed."),
+            description:
+              error instanceof Error
+                ? translateSidebarLabel(error.message, readLocale())
+                : t("Update check failed."),
           }),
         );
       })
@@ -391,7 +405,10 @@ function SidebarUpdateControl() {
         stackedThreadToast({
           type: "error",
           title: t("Could not update everything"),
-          description: error instanceof Error ? error.message : t("An unexpected error occurred."),
+          description:
+            error instanceof Error
+              ? translateSidebarLabel(error.message, readLocale())
+              : t("An unexpected error occurred."),
         }),
       );
     }

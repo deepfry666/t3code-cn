@@ -634,9 +634,85 @@ export const settingsConnectionsMessages = {
   Bot: "机器人",
   "tailscale set --exit-node=   (or allow outbound {port} on that network)":
     "tailscale set --exit-node=   （或允许该网络上端口 {port} 的出站连接）",
+  "Loopback endpoint for this desktop app.": "此桌面应用的回环端点。",
+  "Reachable from devices on the same network.": "同一网络中的设备可访问。",
+  "User-configured HTTPS endpoint for this desktop backend.": "用户为此桌面后端配置的 HTTPS 端点。",
+  "User-configured endpoint for this desktop backend.": "用户为此桌面后端配置的端点。",
+  "Reachable from devices on the same Tailnet.": "同一 Tailnet 中的设备可访问。",
+  "HTTPS endpoint served by Tailscale Serve.": "由 Tailscale Serve 提供的 HTTPS 端点。",
+  "MagicDNS hostname. Configure Tailscale Serve for HTTPS access.":
+    "MagicDNS 主机名。请配置 Tailscale Serve 以使用 HTTPS 访问。",
+  "SSH authentication cancelled.": "SSH 身份验证已取消。",
+  "Secure randomness is unavailable.": "无法获取安全随机数。",
+  "T3 Code window is not available for SSH authentication.":
+    "T3 Code 窗口不可用，无法进行 SSH 身份验证。",
+  "SSH authentication timed out for {destination}.": "{destination} 的 SSH 身份验证超时。",
+  "SSH authentication cancelled for {destination}.": "{destination} 的 SSH 身份验证已取消。",
+  "SSH authentication was cancelled because the app window closed.":
+    "应用窗口已关闭，SSH 身份验证已取消。",
+  "SSH password prompt service stopped.": "SSH 密码提示服务已停止。",
+  "Invalid SSH password prompt id.": "SSH 密码提示 ID 无效。",
+  "SSH password prompt expired. Try connecting again.": "SSH 密码提示已过期。请重新连接。",
+  "WSL is not available on this system": "此系统不支持 WSL",
+  "Unable to list WSL distributions: {error}": "无法列出 WSL 发行版：{error}",
+  "WSL distro is not installed: {distro}": "未安装 WSL 发行版：{distro}",
+  "WSL has no installed distributions": "WSL 尚未安装任何发行版",
+  "WSL has no default distribution": "WSL 尚未设置默认发行版",
+  "WSL node-pty unavailable: {error}": "WSL node-pty 不可用：{error}",
+  "WSL runtime unavailable: {error}": "WSL 运行时不可用：{error}",
+  "WSL backend is still unavailable": "WSL 后端仍不可用",
+  "WSL backend couldn't start": "WSL 后端无法启动",
+  "The server started but did not become ready in time.": "服务器已启动，但未能及时就绪。",
+  "The server could not start ({error}).": "服务器无法启动（{error}）。",
+  "This T3 home is unavailable": "此 T3 主目录不可用",
+  "Local backend is not configured.": "尚未配置本地后端。",
+  "Failed to create the local desktop bearer session.": "无法创建桌面端本地 bearer 会话。",
+  "WSL backend preflight could not start wsl.exe to probe for {subject}. Check that WSL is installed and the distro is accessible.":
+    "WSL 后端预检无法启动 wsl.exe 以探测 {subject}。请确认已安装 WSL 且发行版可访问。",
+  "WSL backend preflight lost communication with wsl.exe while probing for {subject}. Retry, or check that the distro is healthy.":
+    "WSL 后端预检在探测 {subject} 时与 wsl.exe 失去连接。请重试，或检查发行版是否正常。",
+  "WSL support is missing from this T3 Code build: the packaged Linux node-pty binary was not included. Install a build that includes WSL support.":
+    "此 T3 Code 版本缺少 WSL 支持：未包含打包的 Linux node-pty 二进制文件。请安装支持 WSL 的版本。",
+  "WSL distro is missing required tools: {tools}. Install {commands}, then retry.":
+    "WSL 发行版缺少必要工具：{tools}。请安装 {commands} 后重试。",
+  "WSL login-shell PATH could not be resolved during backend preflight.":
+    "后端预检无法解析 WSL 登录 shell 的 PATH。",
+  "Node.js was not found in the WSL distro. Install it (e.g. via nvm) and restart the desktop app.":
+    "WSL 发行版中未找到 Node.js。请安装（例如通过 nvm）后重启桌面应用。",
+  'WSL server dependencies could not be loaded (for example "node-pty"). The native packages the server needs are not unpacked where the WSL distro\'s Node can read them. This is a packaging problem with this build. Please report it.':
+    "无法加载 WSL 服务器依赖（例如“node-pty”）。服务器所需的原生软件包未解压到 WSL 发行版的 Node 可读取的位置。这是此版本的打包问题，请报告。",
+  "WSL Node.js {version} does not satisfy the server's required engine range ({range}). Install a compatible version, and restart the desktop app.":
+    "WSL Node.js {version} 不符合服务器要求的版本范围（{range}）。请安装兼容版本后重启桌面应用。",
+  "WSL runtime installation timed out. Check that the distro has free disk space, then retry.":
+    "WSL 运行时安装超时。请确认发行版有可用磁盘空间后重试。",
+  "WSL runtime installation lost communication with wsl.exe. Retry, or check that the distro is healthy.":
+    "WSL 运行时安装过程中与 wsl.exe 失去连接。请重试，或检查发行版是否正常。",
+  "WSL runtime installation failed (exit {code}): {error}":
+    "WSL 运行时安装失败（退出码 {code}）：{error}",
+  "WSL runtime installation completed without reporting its cache path.":
+    "WSL 运行时安装已完成，但未报告缓存路径。",
+  "Failed to run wsl.exe --list --verbose: {error}": "运行 wsl.exe --list --verbose 失败：{error}",
+  "Another T3 Code server, such as the background service, is using this data directory, or an older background service is set up for it. Stop that server or try `t3 update`. If the older launcher cannot update, run `t3 service uninstall` and optionally reinstall with `t3 service install` from a current CLI. Use `npx t3@latest` if `t3` is missing or outdated, and pass `--base-dir` with the service's T3 home to each command. Then reopen T3 Code. You can also set a separate T3CODE_HOME and pair with the running server.":
+    "另一个 T3 Code 服务器（例如后台服务）正在使用此数据目录，或此目录已配置旧版后台服务。请停止该服务器，或尝试 `t3 update`。如果旧版启动器无法更新，请运行 `t3 service uninstall`，并可使用当前 CLI 运行 `t3 service install` 重新安装。如果 `t3` 缺失或过旧，请使用 `npx t3@latest`，并在每条命令中通过 `--base-dir` 指定该服务的 T3 主目录。然后重新打开 T3 Code。你也可以设置单独的 T3CODE_HOME，并与正在运行的服务器配对。",
+  "Another T3 Code server is using this distro's T3 home, or an older background service is set up for it. Stop that server or pair with it, or try `t3 update` in the distro. If the older launcher cannot update, run `t3 service uninstall` and optionally reinstall with `t3 service install` from a current CLI in the distro. Use `npx t3@latest` if `t3` is missing or outdated, and pass `--base-dir` with the service's T3 home to each command.":
+    "另一个 T3 Code 服务器正在使用此发行版的 T3 主目录，或此目录已配置旧版后台服务。请停止该服务器或与其配对，或在发行版中尝试 `t3 update`。如果旧版启动器无法更新，请运行 `t3 service uninstall`，并可在发行版中使用当前 CLI 运行 `t3 service install` 重新安装。如果 `t3` 缺失或过旧，请使用 `npx t3@latest`，并在每条命令中通过 `--base-dir` 指定该服务的 T3 主目录。",
 } as const;
 
 const dynamicLabels = [
+  "SSH authentication timed out for {destination}.",
+  "SSH authentication cancelled for {destination}.",
+  "Unable to list WSL distributions: {error}",
+  "WSL distro is not installed: {distro}",
+  "WSL node-pty unavailable: {error}",
+  "WSL runtime unavailable: {error}",
+  "The server could not start ({error}).",
+  "WSL backend preflight could not start wsl.exe to probe for {subject}. Check that WSL is installed and the distro is accessible.",
+  "WSL backend preflight lost communication with wsl.exe while probing for {subject}. Retry, or check that the distro is healthy.",
+  "WSL distro is missing required tools: {tools}. Install {commands}, then retry.",
+  "WSL Node.js {version} does not satisfy the server's required engine range ({range}). Install a compatible version, and restart the desktop app.",
+  "WSL runtime installation failed (exit {code}): {error}",
+  "Failed to run wsl.exe --list --verbose: {error}",
+
   "tailscale set --exit-node=   (or allow outbound {port} on that network)",
   "{organization}'s policy does not allow connecting from other devices.",
   "{organization}'s policy does not allow T3 Connect.",
@@ -680,6 +756,16 @@ const labelPatterns = dynamicLabels.map((key) => {
 
 export function translateConnectionLabel(label: string, locale: Locale): string {
   if (locale !== "zh-CN") return label;
+  // Electron prefixes rejected IPC errors with the channel and error class.
+  const ipcError =
+    /^(?:Error invoking remote method 'desktop:[^']+':\s*(?:\w*Error:\s*)?|\w*Error:\s*)([\s\S]+)$/u.exec(
+      label,
+    );
+  if (ipcError) {
+    const message = ipcError[1]!;
+    const translated = translateConnectionLabel(message, locale);
+    if (translated !== message) return translated;
+  }
   if (label === "Direct") return translate(locale, settingsConnectionsMessages, "Direct@@route");
   if (Object.hasOwn(settingsConnectionsMessages, label)) {
     return translate(

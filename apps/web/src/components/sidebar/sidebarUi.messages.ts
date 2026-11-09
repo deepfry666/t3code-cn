@@ -1,3 +1,4 @@
+import { translateMaintenanceLabel } from "../settings/settingsMaintenance.messages";
 import { translate, type Locale } from "../../i18n/locale";
 
 export const sidebarUiMessages = {
@@ -235,6 +236,8 @@ function translateList(value: string, locale: Locale): string {
  */
 export function translateSidebarLabel(label: string, locale: Locale): string {
   if (locale !== "zh-CN") return label;
+  const desktopUpdate = translateMaintenanceLabel(label, locale);
+  if (desktopUpdate !== label) return desktopUpdate;
   if (Object.hasOwn(sidebarUiMessages, label))
     return sidebarUiMessages[label as keyof typeof sidebarUiMessages];
 

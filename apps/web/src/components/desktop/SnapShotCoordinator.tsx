@@ -34,8 +34,8 @@ import {
   countQuestionRequestAttachments,
   openQuestionAttachmentDraft,
 } from "../../questionAttachments";
-import { translateNow } from "~/i18n/useTranslation";
-import { desktopUiMessages } from "./desktopUi.messages";
+import { readLocale, translateNow } from "~/i18n/useTranslation";
+import { desktopUiMessages, translateDesktopLabel } from "./desktopUi.messages";
 import { stackedThreadToast, toastManager } from "../ui/toast";
 
 type CaptureTarget = DraftId | ScopedThreadRef;
@@ -382,7 +382,7 @@ export function SnapShotCoordinator() {
                 title: translateNow(desktopUiMessages, "Snapshot failed"),
                 description: `Capture ${item.id}: ${
                   error instanceof Error
-                    ? error.message
+                    ? translateDesktopLabel(error.message, readLocale())
                     : translateNow(desktopUiMessages, "Try the capture again.")
                 }`,
               }),
@@ -400,7 +400,7 @@ export function SnapShotCoordinator() {
             title: translateNow(desktopUiMessages, "Snapshot failed"),
             description:
               error instanceof Error
-                ? error.message
+                ? translateDesktopLabel(error.message, readLocale())
                 : translateNow(desktopUiMessages, "Try the capture again."),
           }),
         );
@@ -469,8 +469,10 @@ export function SnapShotCoordinator() {
               stackedThreadToast({
                 type: "error",
                 title: translateNow(desktopUiMessages, "Snapshot failed"),
-                description:
+                description: translateDesktopLabel(
                   state.message ?? translateNow(desktopUiMessages, "Try the capture again."),
+                  readLocale(),
+                ),
               }),
             );
           });

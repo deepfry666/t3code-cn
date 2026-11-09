@@ -1,4 +1,4 @@
-import type { Locale } from "../../i18n/locale";
+import { translate, type Locale } from "../../i18n/locale";
 
 export const settingsVoiceMessages = {
   "Auto: press to toggle, hold to record": "自动：点按切换，按住录音",
@@ -519,7 +519,196 @@ export const settingsVoiceMessages = {
   "Set up KDE Plasma capture": "设置 KDE Plasma 截图",
   "Set up Niri capture": "设置 Niri 截图",
   "Set up Hyprland capture": "设置 Hyprland 截图",
+  "Snapshot request was rejected.": "截图请求被拒绝。",
+  "Desktop config": "桌面配置",
+  "Niri couldn't validate the proposed config. Nothing was changed. Check your config in Advanced.":
+    "Niri 无法验证拟议配置，未做任何更改。请在“高级”中检查配置。",
+  "Couldn't check Hyprland's current shortcuts. Try again from your Hyprland session.":
+    "无法检查 Hyprland 当前的快捷键。请在 Hyprland 桌面会话中重试。",
+  "Couldn't read an included Niri config. Check its location in Advanced.":
+    "无法读取引用的 Niri 配置。请在“高级”中检查其位置。",
+  "Your config changed since this preview. Review changes again before saving.":
+    "配置在预览后发生了变化。请重新审查更改后再保存。",
+  "Your config changed since this preview. Nothing was saved. Review changes again before saving.":
+    "配置在预览后发生了变化，未保存任何内容。请重新审查更改后再保存。",
+  "Config saved, but Hyprland couldn't reload it cleanly. Check hyprctl configerrors, then run hyprctl reload.":
+    "配置已保存，但 Hyprland 无法正常重新加载。请检查 hyprctl configerrors，然后运行 hyprctl reload。",
+  "Modifier-pair shortcuts aren't available in this Wayland session. Choose another shortcut or use Take snapshot from the command palette.":
+    "此 Wayland 桌面会话不支持双修饰键快捷键。请选择其他快捷键，或使用命令面板中的“截图”。",
+  "Allow Screen Recording in System Settings, then restart T3 Code.":
+    "请在系统设置中允许屏幕录制，然后重启 T3 Code。",
+  "Allow Accessibility in System Settings, then restart T3 Code.":
+    "请在系统设置中允许辅助功能，然后重启 T3 Code。",
+  "Allow Accessibility and Screen Recording in System Settings, then restart T3 Code.":
+    "请在系统设置中允许辅助功能和屏幕录制，然后重启 T3 Code。",
+  "Could not list pending snapshots.": "无法列出待处理的截图。",
+  "Could not read the snapshot.": "无法读取截图。",
+  "Could not remove the snapshot.": "无法移除截图。",
+  "SnapShots are not supported here.": "此处不支持截图。",
+  "Enable SnapShots in Settings first.": "请先在设置中启用截图。",
+  "No window was selected.": "未选择窗口。",
+  "The active window is not available for capture.": "无法截取当前活动窗口。",
+  "Finish SnapShot setup in Settings → SnapShots.": "请在“设置 → 截图”中完成截图设置。",
+  "Could not capture the active window.": "无法截取当前活动窗口。",
+  "Could not register the SnapShot shortcut.": "无法注册截图快捷键。",
+  "Test capture requires macOS.": "测试截图需要 macOS。",
+  "Could not capture a test snapshot.": "无法截取测试截图。",
+  "Finding the front window": "查找前台窗口",
+  "Capturing the window": "截取窗口",
+  "Config setup requires a Niri or Hyprland session.": "配置设置需要 Niri 或 Hyprland 桌面会话。",
+  "Couldn't prepare your capture shortcut changes.": "无法准备截图快捷键更改。",
+  "Couldn't save your capture shortcut.": "无法保存截图快捷键。",
+  "Helper setup requires a Hyprland Wayland session outside a sandbox.":
+    "辅助程序设置需要在沙盒外的 Hyprland Wayland 桌面会话中进行。",
+  "Helper setup requires a KDE Plasma Wayland session outside a sandbox.":
+    "辅助程序设置需要在沙盒外的 KDE Plasma Wayland 桌面会话中进行。",
+  "Extension setup requires a GNOME Wayland session outside a sandbox.":
+    "扩展设置需要在沙盒外的 GNOME Wayland 桌面会话中进行。",
+  "Could not open shortcut permissions.": "无法打开快捷键权限设置。",
+  "Could not set up Hyprland capture.": "无法设置 Hyprland 截图。",
+  "Could not set up KDE capture.": "无法设置 KDE 截图。",
+  "Could not set up the GNOME extension.": "无法设置 GNOME 扩展。",
+  "Active window": "活动窗口",
+  "This shortcut is already used by the system or another app.": "此快捷键已被系统或其他应用占用。",
+  "The system could not register this shortcut.": "系统无法注册此快捷键。",
+  "SnapShots are not supported on this platform.": "此平台不支持截图。",
+  "Configure the capture shortcut in your Niri config, not in T3 Code.":
+    "请在 Niri 配置中设置截图快捷键，而非在 T3 Code 中设置。",
+  "Change the capture binding in your Hyprland config, then save it.":
+    "请在 Hyprland 配置中更改截图快捷键，然后保存。",
+  "Your desktop will confirm this shortcut when you save it.":
+    "保存时，桌面系统会请求确认此快捷键。",
+  "Unsupported shortcut.": "不支持此快捷键。",
+  "SnapShots require a Wayland session. X11 capture is not supported.":
+    "截图需要 Wayland 桌面会话，不支持 X11 截图。",
+  "The Niri capture endpoint disconnected. Restart T3 Code.":
+    "Niri 截图端点已断开。请重启 T3 Code。",
+  "Set up the shortcut to add it to your Niri config.": "设置快捷键，将其添加到 Niri 配置。",
+  "Could not start the Niri capture endpoint. Another T3 Code instance may be using it.":
+    "无法启动 Niri 截图端点，可能被另一个 T3 Code 实例占用。",
+  "Could not connect to your desktop's shortcut service.": "无法连接桌面系统的快捷键服务。",
+  "Could not check desktop capture support. Check your desktop session and try again.":
+    "无法检查桌面截图支持情况。请检查桌面会话后重试。",
+  "The extension installation is not a regular directory. Manage it in GNOME Extensions instead.":
+    "扩展安装位置不是普通目录。请在 GNOME 扩展应用中管理。",
+  "GNOME did not respond. Sign in to a GNOME Wayland session and try again.":
+    "GNOME 未响应。请登录 GNOME Wayland 桌面会话后重试。",
+  "The bundled extension supports GNOME {versions}. This session runs GNOME {major}.":
+    "内置扩展支持 GNOME {versions}，当前桌面会话运行 GNOME {major}。",
+  "Install the bundled extension to capture the active window without a picker. No download or administrator password is needed.":
+    "安装内置扩展，即可直接截取活动窗口，无需选择窗口、下载或输入管理员密码。",
+  "Installed. Save your work, sign out of GNOME and sign back in, then return here to enable the extension. Restarting T3 Code alone is not enough.":
+    "已安装。请保存工作，退出 GNOME 后重新登录，再返回此处启用扩展。仅重启 T3 Code 无法生效。",
+  "A newer extension is bundled with this app. Install it, then sign out and back in to load the update.":
+    "此应用内置了更新版本的扩展。请安装后退出并重新登录，以加载更新。",
+  "GNOME has disabled user extensions. Turn on Extensions in the GNOME Extensions app, then check again. T3 Code will not enable your other extensions for you.":
+    "GNOME 已停用用户扩展。请在 GNOME 扩展应用中开启扩展，然后重新检查。T3 Code 不会替你启用其他扩展。",
+  "The T3 Code extension is running. Active-window snapshots are available.":
+    "T3 Code 扩展正在运行，可以截取活动窗口。",
+  "GNOME could not load the extension. Check GNOME Extensions for details, or sign out and back in.":
+    "GNOME 无法加载扩展。请在 GNOME 扩展应用中查看详情，或退出后重新登录。",
+  "Enable the T3 Code extension to allow active-window snapshots. You can disable it here at any time.":
+    "启用 T3 Code 扩展以截取活动窗口。你可以随时在此停用。",
+  "Could not check GNOME extension setup.": "无法检查 GNOME 扩展设置。",
+  "Hyprland capture did not respond. Check capture setup and try again.":
+    "Hyprland 截图未响应。请检查截图设置后重试。",
+  "Install the bundled helper to capture the window you're using.":
+    "安装内置辅助程序，以截取当前使用的窗口。",
+  "The Hyprland capture helper is missing from this build. Update or reinstall T3 Code.":
+    "此版本缺少 Hyprland 截图辅助程序。请更新或重新安装 T3 Code。",
+  "Update the bundled capture helper to continue.": "请更新内置截图辅助程序以继续。",
+  "Helper ready. Hyprland may ask for screen-sharing permission on your first capture.":
+    "辅助程序已就绪。首次截图时，Hyprland 可能会请求屏幕共享权限。",
+  "Couldn't check Hyprland capture access.": "无法检查 Hyprland 截图权限。",
+  "KDE couldn't register the capture helper. Make sure KDE's service tools (kbuildsycoca6) are installed, then reinstall the helper.":
+    "KDE 无法注册截图辅助程序。请确认已安装 KDE 服务工具（kbuildsycoca6），然后重新安装辅助程序。",
+  "KDE hasn't granted capture access. Reinstall the capture helper in setup, then try again.":
+    "KDE 尚未授予截图权限。请在设置中重新安装截图辅助程序后重试。",
+  "The KDE capture helper did not respond. Reopen capture setup and check access.":
+    "KDE 截图辅助程序未响应。请重新打开截图设置并检查权限。",
+  "Capture helper files must be regular files. Remove the conflicting link before trying again.":
+    "截图辅助程序文件必须是普通文件。请移除冲突的链接后重试。",
+  "Install the bundled helper to capture the window you're using without a picker.":
+    "安装内置辅助程序，即可直接截取当前使用的窗口，无需选择窗口。",
+  "The capture helper is missing from this build. Update or reinstall T3 Code.":
+    "此版本缺少截图辅助程序。请更新或重新安装 T3 Code。",
+  "KDE capture access is ready. Next, choose your shortcut.":
+    "KDE 截图权限已就绪。接下来请选择快捷键。",
+  "Couldn't check KDE capture access.": "无法检查 KDE 截图权限。",
+  "Another desktop entry uses the capture helper's name. Rename it before continuing.":
+    "另一个桌面条目使用了截图辅助程序的名称。请先将其重命名再继续。",
+  "Waiting for shortcut permission. Approve the desktop prompt if one appears.":
+    "正在等待快捷键权限。如果桌面弹出提示，请批准。",
+  "Connecting to Hyprland shortcuts…": "正在连接 Hyprland 快捷键…",
+  "Open your desktop's shortcut settings and allow T3 Code's capture shortcut.":
+    "请打开桌面系统的快捷键设置，允许 T3 Code 的截图快捷键。",
+  "Couldn't connect to Hyprland shortcuts. Make sure xdg-desktop-portal-hyprland is running, then restart T3 Code.":
+    "无法连接 Hyprland 快捷键。请确认 xdg-desktop-portal-hyprland 正在运行，然后重启 T3 Code。",
+  "Could not register the capture shortcut.": "无法注册截图快捷键。",
+  "Shortcut permission wasn't granted. Open shortcut permissions to allow it.":
+    "未获得快捷键权限。请打开快捷键权限设置并授予权限。",
+  "Shortcut permission wasn't granted. Allow T3 Code in your desktop's shortcut settings.":
+    "未获得快捷键权限。请在桌面系统的快捷键设置中允许 T3 Code。",
+  "Managed by Hyprland. Add the binding to your config and save it.":
+    "由 Hyprland 管理。请将快捷键添加到配置并保存。",
+  "Hyprland did not register the capture action. Check that xdg-desktop-portal-hyprland is running, then restart T3 Code.":
+    "Hyprland 未注册截图操作。请确认 xdg-desktop-portal-hyprland 正在运行，然后重启 T3 Code。",
+  "Desktop shortcut: {label}": "桌面快捷键：{label}",
+  "No shortcut is assigned. Open shortcut permissions to choose one.":
+    "尚未分配快捷键。请打开快捷键权限设置进行选择。",
+  "No shortcut is assigned. Choose one in your desktop's shortcut settings.":
+    "尚未分配快捷键。请在桌面系统的快捷键设置中选择。",
+  "This Lua config needs a manual edit. Choose your bindings file or use manual setup in Advanced.":
+    "此 Lua 配置需要手动编辑。请选择快捷键配置文件，或使用“高级”中的手动设置。",
+  "Shift combinations are used for typing and text selection. Add another modifier.":
+    "Shift 组合键用于输入和文本选择。请添加另一个修饰键。",
+  "This shortcut is {action} in most apps.": "此快捷键在大多数应用中用于{action}。",
+  "This shortcut controls running commands in terminals.": "此快捷键用于控制终端中运行的命令。",
+  "The system uses Alt+Tab to switch apps.": "系统使用 Alt+Tab 切换应用。",
+  "The system already uses this shortcut.": "系统已使用此快捷键。",
+  "{shortcut} is not available on this system.": "此系统不支持 {shortcut}。",
+  "Select All": "全选",
+  Copy: "复制",
+  Find: "查找",
+  New: "新建",
+  Open: "打开",
+  Print: "打印",
+  Quit: "退出",
+  "New Tab": "新标签页",
+  Paste: "粘贴",
+  "Close Window": "关闭窗口",
+  Cut: "剪切",
+  Undo: "撤销",
+  "Could not show the permission helper.": "无法显示权限助手。",
+  "Could not capture a test snapshot. No window is available to capture.":
+    "无法截取测试截图，没有可截图的窗口。",
+  "{task} timed out.": "{task}超时。",
+  "{task} failed: {command} exited with code {exitCode}.":
+    "{task}失败：{command} 已退出，退出码为 {exitCode}。",
+  "{task} failed.": "{task}失败。",
+  'Could not capture a test snapshot. {failure} macOS grants Screen Recording and Accessibility to each app separately. In System Settings, open Privacy & Security and check that "{appName}" is allowed for both.':
+    "无法截取测试截图。{failure} macOS 会分别为每个应用授予屏幕录制和辅助功能权限。请在系统设置中打开“隐私与安全性”，确认“{appName}”已获得这两项权限。",
 } as const;
+
+const desktopMessagePatterns = (
+  Object.keys(settingsVoiceMessages) as Array<keyof typeof settingsVoiceMessages>
+)
+  .filter((key) => key.includes("{"))
+  .sort((a, b) => b.length - a.length)
+  .map((key) => {
+    const parameters: string[] = [];
+    const pattern = key
+      .split(/(\{\w+\})/u)
+      .map((part) => {
+        if (/^\{\w+\}$/u.test(part)) {
+          parameters.push(part.slice(1, -1));
+          return "([\\s\\S]+?)";
+        }
+        return part.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+      })
+      .join("");
+    return { key, parameters, pattern: new RegExp(`^${pattern}$`, "u") };
+  });
 
 export function translateVoiceLabel(label: string, locale: Locale): string;
 export function translateVoiceLabel(label: string | null, locale: Locale): string | null;
@@ -532,7 +721,38 @@ export function translateVoiceLabel(
   label: string | null | undefined,
   locale: Locale,
 ): string | null | undefined {
-  return label != null && locale === "zh-CN" && Object.hasOwn(settingsVoiceMessages, label)
-    ? settingsVoiceMessages[label as keyof typeof settingsVoiceMessages]
-    : label;
+  if (label == null || locale !== "zh-CN") return label;
+  // Electron prefixes rejected IPC errors with the channel and error class.
+  const ipcError =
+    /^(?:Error invoking remote method 'desktop:[^']+':\s*(?:\w*Error:\s*)?|\w*Error:\s*)([\s\S]+)$/u.exec(
+      label,
+    );
+  if (ipcError) {
+    const message = ipcError[1]!;
+    const translated = translateVoiceLabel(message, locale);
+    if (translated !== message) return translated;
+  }
+  if (Object.hasOwn(settingsVoiceMessages, label))
+    return settingsVoiceMessages[label as keyof typeof settingsVoiceMessages];
+  for (const { key, pattern, parameters } of desktopMessagePatterns) {
+    const match = pattern.exec(label);
+    if (!match) continue;
+    return translate(
+      locale,
+      settingsVoiceMessages,
+      key,
+      Object.fromEntries(
+        parameters.map((name, index) => [
+          name,
+          ["action", "task", "summary", "failure"].includes(name)
+            ? translateVoiceLabel(match[index + 1]!, locale)
+            : match[index + 1]!,
+        ]),
+      ),
+    );
+  }
+  const testFailure = /^(Could not capture a test snapshot\.) (.+)$/.exec(label);
+  if (testFailure)
+    return `${translateVoiceLabel(testFailure[1]!, locale)} ${translateVoiceLabel(testFailure[2]!, locale)}`;
+  return label;
 }

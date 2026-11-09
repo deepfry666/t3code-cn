@@ -506,9 +506,70 @@ export const settingsMaintenanceMessages = {
   "No expired files": "没有过期文件",
   "Removed {count} browser artifacts": "已移除 {count} 个浏览器产物",
   "Removed {count} rotated logs": "已移除 {count} 个轮转日志",
+  "Could not read your PATH, so it was left unchanged.": "无法读取 PATH，未做更改。",
+  "Could not update your PATH.": "无法更新 PATH。",
+  "The t3 command needs an installed app.": "t3 命令需要已安装的应用。",
+  "Added t3 to your PATH but could not record it.": "已将 t3 添加到 PATH，但无法记录此更改。",
+  "Could not set up the t3 launcher at {path}.": "无法在 {path} 设置 t3 启动器。",
+  "Could not replace {path}.": "无法替换 {path}。",
+  "Could not remove {path}.": "无法移除 {path}。",
+  "Another t3 at {path} runs first in a new terminal. Remove it, or run the launcher directly at {launcher}.":
+    "新终端会优先运行 {path} 处的另一个 t3。请移除它，或直接运行 {launcher} 处的启动器。",
+  "Another t3 command is already installed, or no folder on your PATH is writable. Run the launcher directly at {launcher}.":
+    "已安装另一个 t3 命令，或 PATH 中没有可写文件夹。请直接运行 {launcher} 处的启动器。",
+  "The desktop app failed to install the update.": "桌面应用安装更新失败。",
+  "A prepared desktop update is already in progress.": "已有准备好的桌面更新正在进行。",
+  "This desktop app also runs WSL backends, whose databases a remote switch cannot check. Switch it on that machine.":
+    "此桌面应用还运行 WSL 后端，远程切换无法检查其数据库。请在该机器上切换。",
+  "The desktop app lost the downloaded update.": "桌面应用找不到已下载的更新。",
+  "The desktop app found no build of {version}.": "桌面应用未找到 {version} 的构建版本。",
+  "This desktop update is no longer prepared.": "此桌面更新已不处于准备就绪状态。",
+  "The desktop app could not start the install.": "桌面应用无法开始安装。",
+  "Updates are off because T3 Code cannot use the managed policy at {path}. Contact your administrator.":
+    "T3 Code 无法使用 {path} 处的受管理策略，已停用更新。请联系管理员。",
+  "Your administrator manages T3 Code updates.": "T3 Code 更新由管理员管理。",
+  "Automatic updates are disabled on this machine.": "此机器已停用自动更新。",
+  "Update {version} did not apply on this machine. Retry it from the desktop app there.":
+    "更新 {version} 未在此机器上生效。请在该机器的桌面应用中重试。",
+  "The desktop app failed to download the update.": "桌面应用下载更新失败。",
+  "The desktop app update failed.": "桌面应用更新失败。",
+  "The desktop app did not report an update result.": "桌面应用未报告更新结果。",
 } as const;
 
 const DYNAMIC_LABELS = [
+  [
+    /^Could not set up the t3 launcher at ([\s\S]+?)\.$/,
+    "Could not set up the t3 launcher at {path}.",
+    ["path"],
+  ],
+  [/^Could not replace ([\s\S]+?)\.$/, "Could not replace {path}.", ["path"]],
+  [/^Could not remove ([\s\S]+?)\.$/, "Could not remove {path}.", ["path"]],
+  [
+    /^Another t3 at ([\s\S]+?) runs first in a new terminal\. Remove it, or run the launcher directly at ([\s\S]+?)\.$/,
+    "Another t3 at {path} runs first in a new terminal. Remove it, or run the launcher directly at {launcher}.",
+    ["path", "launcher"],
+  ],
+  [
+    /^Another t3 command is already installed, or no folder on your PATH is writable\. Run the launcher directly at ([\s\S]+?)\.$/,
+    "Another t3 command is already installed, or no folder on your PATH is writable. Run the launcher directly at {launcher}.",
+    ["launcher"],
+  ],
+  [
+    /^The desktop app found no build of ([\s\S]+?)\.$/,
+    "The desktop app found no build of {version}.",
+    ["version"],
+  ],
+  [
+    /^Updates are off because T3 Code cannot use the managed policy at ([\s\S]+?)\. Contact your administrator\.$/,
+    "Updates are off because T3 Code cannot use the managed policy at {path}. Contact your administrator.",
+    ["path"],
+  ],
+  [
+    /^Update ([\s\S]+?) did not apply on this machine\. Retry it from the desktop app there\.$/,
+    "Update {version} did not apply on this machine. Retry it from the desktop app there.",
+    ["version"],
+  ],
+
   [/^(\d+(?:[.,]\d+)?) second$/, "{count} second", ["count"]],
   [/^(\d+(?:[.,]\d+)?) seconds$/, "{count} seconds", ["count"]],
   [/^(\d+)m[\s\u00a0]ago$/, "{count}m ago", ["count"]],
@@ -580,6 +641,16 @@ const DYNAMIC_LABELS = [
 
 export function translateMaintenanceLabel(label: string, locale: Locale): string {
   if (locale !== "zh-CN") return label;
+  // Electron prefixes rejected IPC errors with the channel and error class.
+  const ipcError =
+    /^(?:Error invoking remote method 'desktop:[^']+':\s*(?:\w*Error:\s*)?|\w*Error:\s*)([\s\S]+)$/u.exec(
+      label,
+    );
+  if (ipcError) {
+    const message = ipcError[1]!;
+    const translated = translateMaintenanceLabel(message, locale);
+    if (translated !== message) return translated;
+  }
   if (Object.hasOwn(settingsMaintenanceMessages, label))
     return settingsMaintenanceMessages[label as keyof typeof settingsMaintenanceMessages];
   for (const [pattern, key, parameters] of DYNAMIC_LABELS) {

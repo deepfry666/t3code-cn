@@ -1,2 +1,84 @@
 # 刻意保留英文、不翻译的界面文字，每行一条。
 # vp run i18n:untranslated 不再报告这里列出的文字。写法同源码，${...} 或 {name} 占位符等价。
+
+# Desktop startup recovery remains English (docs/user/chinese.md); fatal startup details are for bug reports.
+T3 Code failed to start
+Stage: ${stage}\n${message}${detail}
+Checking for a newer version…
+Version ${offer.version} is available. It can contain a fix.
+Version ${offer.version} started correctly on this computer. Download it and install it to go back.
+Get a different version from the releases page.
+Open releases
+Your organization's managed policy stopped T3 Code from starting. Send the details below to your IT administrator.
+Copy details
+The server wrote no output.
+T3 Code ${environment.appVersion} (${environment.platform} ${environment.processArch}) could not start.\n${failure.value.reason}\n\n${failure.value.output}
+T3 Code could not start
+
+# CLI launcher/config text and activation protocol diagnostics; not rendered in the web UI.
+The desktop app request is too large.
+The desktop app request is not valid JSON.
+The desktop app request is invalid.
+T3 Code could not process the desktop app request.
+T3 Code is shutting down.
+The request id is already in use.
+The desktop app did not finish opening the project in time.
+The T3 Code window closed before it opened the project.
+The command closed before T3 Code was ready.
+Written by T3 Code: runs the desktop app's bundled t3 CLI.
+T3 Code has moved or been removed. Open the app once to update this command.
+
+# Product/browser/font names and OS filesystem/keychain identifiers.
+T3 Code
+Application Support
+T3 Code (Alpha)
+Local Storage
+T3 Code (Dev)
+Local State
+T3 Code Desktop
+Chrome Safe Storage
+Microsoft Edge
+Tailscale IP
+Microsoft Edge Safe Storage
+Brave Safe Storage
+Vivaldi Safe Storage
+Opera Safe Storage
+Arc Safe Storage
+User Data
+Helium Storage Key
+T3 Code Snapshot Animation
+Segoe UI
+Google Chrome
+
+# Internal diagnostics, logs, protocol errors and agent-facing CDP input guidance.
+T3CODE_PORT is required in desktop development.
+Refusing to unregister the primary backend from the pool.
+Failed to open the Electron folder picker for ${owner} with ${defaultPath}.
+Failed to open the Electron file picker for ${owner} with ${defaultPath}.
+Electron safe storage failed to check encryption availability.
+Electron safe storage failed to encrypt a string.
+Electron safe storage failed to decrypt a string.
+Failed to create Electron BrowserWindow${title}${dimensions}.
+Imported cookies could not be flushed to disk.
+CDP payload too large
+The page's focus is inside a cross-site frame, which takes typed input only while the preview has focus. Click the field first.
+The operation was aborted.
+Current display surface not available for capture
+The compositor could not activate T3 Code after the snapshot
+Windows window capture failed.
+Could not write the update restart marker.
+Could not record the update install.
+Desktop update install recovery could not restart every backend.
+Desktop update install recovery failed unexpectedly.
+Could not copy the context-menu image.
+No loopback port available for WSL backend between ${startPort} and ${MAX_TCP_PORT}.
+WSL backend already registered, skipping start
+
+# Authentication details are logged or replaced by the existing localized sign-in UI fallback.
+Could not receive hosted web ChatGPT sign-in. Retry or use the redirect URL in the web app.
+Could not receive ChatGPT sign-in on this computer. Try again or paste the redirect URL.
+
+# Already localized native application menu templates and escaped WSL source literal (scanner false positives).
+Hide ${environment.displayName}
+Quit ${environment.displayName}
+WSL server dependencies could not be loaded (for example "node-pty"). The native packages the server needs are not unpacked where the WSL distro\'s Node can read them. This is a packaging problem with this build. Please report it.

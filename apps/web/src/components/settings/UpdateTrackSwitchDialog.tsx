@@ -163,7 +163,11 @@ function SwitchPlan({
     );
     if (result._tag === "Failure") {
       const error = squashAtomCommandFailure(result);
-      fail(error instanceof Error ? error.message : t("An unexpected error occurred."));
+      fail(
+        error instanceof Error
+          ? translateMaintenanceLabel(error.message, locale)
+          : t("An unexpected error occurred."),
+      );
     }
   };
 

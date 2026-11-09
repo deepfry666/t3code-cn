@@ -1,3 +1,7 @@
+import type { Locale } from "../../i18n/locale";
+import { translateVoiceLabel } from "../settings/settingsVoice.messages";
+import { translateConnectionLabel } from "../settings/settingsConnections.messages";
+
 export const desktopUiMessages = {
   // Desktop links
   "Could not open the link": "无法打开链接",
@@ -40,3 +44,9 @@ export const desktopUiMessages = {
   Copied: "已复制",
   "Copy error": "复制错误信息",
 } as const;
+
+export function translateDesktopLabel(label: string, locale: Locale): string {
+  if (locale === "zh-CN" && Object.hasOwn(desktopUiMessages, label))
+    return desktopUiMessages[label as keyof typeof desktopUiMessages];
+  return translateConnectionLabel(translateVoiceLabel(label, locale), locale);
+}
