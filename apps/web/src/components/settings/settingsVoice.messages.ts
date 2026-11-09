@@ -248,7 +248,7 @@ export const settingsVoiceMessages = {
   "Install the update, then sign out and back in.": "安装更新后，退出系统并重新登录。",
   "Allow GNOME extensions": "允许 GNOME 扩展",
   "Open GNOME Extensions and turn on extensions, then check again.":
-    "打开 GNOME Extensions 并开启扩展，然后重新检查。",
+    "打开 GNOME 扩展应用并开启扩展，然后重新检查。",
   "Enable the extension": "启用扩展",
   "Enable T3 Code SnapShots to start capturing windows.":
     "启用 T3 Code SnapShots 扩展，即可开始截取窗口。",
@@ -259,7 +259,7 @@ export const settingsVoiceMessages = {
     "在命令面板中选择“拍摄快照”，然后选择窗口。",
   "Couldn't set up the extension": "无法设置扩展",
   "Check T3 Code SnapShots in GNOME Extensions, then try again.":
-    "在 GNOME Extensions 中检查 T3 Code SnapShots 扩展，然后重试。",
+    "在 GNOME 扩展应用中检查 T3 Code SnapShots 扩展，然后重试。",
   "Let's try that again": "再试一次",
   "Couldn't check snapshots. Try again to continue.": "无法检查快照，请重试后继续。",
   "Check capture access": "检查截图权限",
@@ -534,7 +534,7 @@ export const settingsVoiceMessages = {
   "Config saved, but Hyprland couldn't reload it cleanly. Check hyprctl configerrors, then run hyprctl reload.":
     "配置已保存，但 Hyprland 无法正常重新加载。请检查 hyprctl configerrors，然后运行 hyprctl reload。",
   "Modifier-pair shortcuts aren't available in this Wayland session. Choose another shortcut or use Take snapshot from the command palette.":
-    "此 Wayland 桌面会话不支持双修饰键快捷键。请选择其他快捷键，或使用命令面板中的“截图”。",
+    "此 Wayland 桌面会话不支持双修饰键快捷键。请选择其他快捷键，或使用命令面板中的“拍摄快照”。",
   "Allow Screen Recording in System Settings, then restart T3 Code.":
     "请在系统设置中允许屏幕录制，然后重启 T3 Code。",
   "Allow Accessibility in System Settings, then restart T3 Code.":
@@ -544,13 +544,13 @@ export const settingsVoiceMessages = {
   "Could not list pending snapshots.": "无法列出待处理的截图。",
   "Could not read the snapshot.": "无法读取截图。",
   "Could not remove the snapshot.": "无法移除截图。",
-  "SnapShots are not supported here.": "此处不支持截图。",
-  "Enable SnapShots in Settings first.": "请先在设置中启用截图。",
+  "SnapShots are not supported here.": "此处不支持快照。",
+  "Enable SnapShots in Settings first.": "请先在设置中启用快照。",
   "No window was selected.": "未选择窗口。",
   "The active window is not available for capture.": "无法截取当前活动窗口。",
-  "Finish SnapShot setup in Settings → SnapShots.": "请在“设置 → 截图”中完成截图设置。",
+  "Finish SnapShot setup in Settings → SnapShots.": "请在“设置 → 快照”中完成快照设置。",
   "Could not capture the active window.": "无法截取当前活动窗口。",
-  "Could not register the SnapShot shortcut.": "无法注册截图快捷键。",
+  "Could not register the SnapShot shortcut.": "无法注册快照快捷键。",
   "Test capture requires macOS.": "测试截图需要 macOS。",
   "Could not capture a test snapshot.": "无法截取测试截图。",
   "Finding the front window": "查找前台窗口",
@@ -571,7 +571,7 @@ export const settingsVoiceMessages = {
   "Active window": "活动窗口",
   "This shortcut is already used by the system or another app.": "此快捷键已被系统或其他应用占用。",
   "The system could not register this shortcut.": "系统无法注册此快捷键。",
-  "SnapShots are not supported on this platform.": "此平台不支持截图。",
+  "SnapShots are not supported on this platform.": "此平台不支持快照。",
   "Configure the capture shortcut in your Niri config, not in T3 Code.":
     "请在 Niri 配置中设置截图快捷键，而非在 T3 Code 中设置。",
   "Change the capture binding in your Hyprland config, then save it.":
@@ -580,7 +580,7 @@ export const settingsVoiceMessages = {
     "保存时，桌面系统会请求确认此快捷键。",
   "Unsupported shortcut.": "不支持此快捷键。",
   "SnapShots require a Wayland session. X11 capture is not supported.":
-    "截图需要 Wayland 桌面会话，不支持 X11 截图。",
+    "快照需要 Wayland 桌面会话，不支持 X11 截图。",
   "The Niri capture endpoint disconnected. Restart T3 Code.":
     "Niri 截图端点已断开。请重启 T3 Code。",
   "Set up the shortcut to add it to your Niri config.": "设置快捷键，将其添加到 Niri 配置。",
