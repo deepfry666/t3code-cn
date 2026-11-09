@@ -100,7 +100,7 @@ export const settingsMessages = {
   "Linked environments": "关联环境",
   "Simlock device hosts (alpha)": "Simlock 设备主机（早期测试）",
   "Suggest next prompt": "建议下一条提示词",
-  "Fast worktree checkout": "用缓存工作副本快速创建工作树",
+  "Fast worktree checkout": "快速创建工作树",
   "Transcribe with": "转写方式",
   Microphone: "麦克风",
   "Dictation shortcut": "听写快捷键",
