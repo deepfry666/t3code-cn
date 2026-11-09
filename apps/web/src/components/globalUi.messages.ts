@@ -7,6 +7,15 @@ export const globalUiMessages = {
   Remote: "远程",
   Confirm: "确认",
 
+  // Thread notifications
+  "Thread completed": "会话已完成",
+  "Approval needed": "需要批准",
+  "Usage limit reached": "已达到用量上限",
+  "Thread failed": "会话失败",
+  "Guest request": "访客请求",
+  "Input needed": "需要输入",
+  "Open thread": "打开会话",
+
   // Desktop update toast
   "Unable to open release notes": "无法打开发行说明",
   "Read more": "了解更多",
