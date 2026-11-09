@@ -1,5 +1,6 @@
 // @effect-diagnostics nodeBuiltinImport:off globalConsole:off
-// Lists English text in the web and desktop clients that no zh-CN catalog translates.
+// Lists English text in the web and desktop clients, and the client code they share with
+// mobile, that no zh-CN catalog translates.
 // After an upstream merge: `vp run i18n:untranslated -- <pre-merge-commit>` shows only new lines.
 // `--path <prefix>` narrows the scan. Text kept in English on purpose is listed in KEEP_ENGLISH_PATH.
 import * as NodeChildProcess from "node:child_process";
@@ -61,7 +62,13 @@ function addedLines(file: string): ReadonlySet<number> | undefined {
   return lines;
 }
 
-const tracked = git(["ls-files", "apps/web/src", "apps/desktop/src"]).split("\n");
+const tracked = git([
+  "ls-files",
+  "apps/web/src",
+  "apps/desktop/src",
+  // Shared with mobile; the web translates its English where it renders it.
+  "packages/client-runtime/src",
+]).split("\n");
 const translated = new Set(
   tracked
     .filter((file) => CATALOG_FILE.test(file))

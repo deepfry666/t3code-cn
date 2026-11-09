@@ -43,6 +43,6 @@ vp run i18n:export
 vp run i18n:untranslated -- <合并前的提交>
 ```
 
-不带参数时检查网页端和桌面端的全部代码，`--path <路径前缀>` 只看某个目录。把需要翻译的文字用 `t()` 包起来，在同一区域的 `*.messages.ts` 里加上中文，再运行 `vp run i18n:export`。
+不带参数时检查网页端、桌面端，以及和手机端共用的 `packages/client-runtime`。共用代码里的英文不能直接改成 `t()`，要在网页显示它的地方翻译。`--path <路径前缀>` 只看某个目录。把需要翻译的文字用 `t()` 包起来，在同一区域的 `*.messages.ts` 里加上中文，再运行 `vp run i18n:export`。
 
 发给智能体的指令、日志和报错诊断、品牌名、快捷键这类文字刻意保留英文。确认要保留英文的，写进 [`keep-english.txt`](keep-english.txt)，检查脚本就不会再报告。
