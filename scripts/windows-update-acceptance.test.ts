@@ -17,7 +17,11 @@ it("accepts only a strictly newer stable artifact version", () => {
   expect(() => assertAcceptanceVersions("0.1.7", "0.1.7")).toThrow(/greater than the baseline/);
   expect(() => assertAcceptanceVersions("0.1.7", "0.1.6")).toThrow(/greater than the baseline/);
   expect(() => assertAcceptanceVersions("0.1.7", "0.1.8-nightly.20261108.1")).toThrow(
-    /not a stable x\.y\.z version/,
+    /not a supported version/,
+  );
+  expect(() => assertAcceptanceVersions("0.1.7-cn.2", "0.1.7-cn.3")).not.toThrow();
+  expect(() => assertAcceptanceVersions("0.1.7", "0.1.7-cn.3")).toThrow(
+    /greater than the baseline/,
   );
 });
 

@@ -527,9 +527,19 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
         undefined,
         undefined,
       );
+      const chineseRelease = yield* createBuildConfig(
+        "win",
+        "nsis",
+        "0.1.7-cn.2",
+        false,
+        false,
+        undefined,
+        undefined,
+      );
 
       assert.isNull(preview.publish);
       assert.isNull(previewChannel.publish);
+      assert.isFalse(chineseRelease.detectUpdateChannel);
       assert.deepStrictEqual(release.publish, [
         {
           provider: "github",

@@ -12,7 +12,9 @@ import * as NodeOS from "node:os";
 import * as NodePath from "node:path";
 import * as NodeTimersPromises from "node:timers/promises";
 import * as NodeUtil from "node:util";
+import { extractFile, uncache } from "@electron/asar";
 import { _electron, type ElectronApplication, type Page } from "playwright-core";
+import { compareSemverVersions } from "@t3tools/shared/semver";
 
 import { parseUpdateManifest, serializeUpdateManifest } from "./lib/update-manifest.ts";
 
@@ -69,22 +71,16 @@ interface AppProcess {
   readonly window: number;
 }
 
-function parseStableVersion(version: string, label: string): readonly [number, number, number] {
-  const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(version.trim());
-  if (match?.[1] === undefined || match[2] === undefined || match[3] === undefined) {
-    throw new Error(`${label} '${version}' is not a stable x.y.z version.`);
+function parseStableVersion(version: string, label: string): void {
+  if (!/^\d+\.\d+\.\d+(?:-cn\.\d+)?$/.test(version)) {
+    throw new Error(`${label} '${version}' is not a supported version.`);
   }
-  return [Number(match[1]), Number(match[2]), Number(match[3])];
 }
 
 export function compareStableVersions(a: string, b: string): number {
-  const left = parseStableVersion(a, "Version");
-  const right = parseStableVersion(b, "Version");
-  for (let index = 0; index < 3; index += 1) {
-    const difference = (left[index] ?? 0) - (right[index] ?? 0);
-    if (difference !== 0) return difference;
-  }
-  return 0;
+  parseStableVersion(a, "Version");
+  parseStableVersion(b, "Version");
+  return compareSemverVersions(a, b);
 }
 
 export function assertAcceptanceVersions(baselineVersion: string, newVersion: string): void {
@@ -330,10 +326,29 @@ function versionLabelMatches(label: string, expected: string): boolean {
   return trimmed === expectedLabel || trimmed === `${expectedLabel}.0`;
 }
 
+function readInstalledAppVersion(installDir: string): string {
+  const archive = NodePath.join(installDir, "resources", "app.asar");
+  uncache(archive);
+  const packageJson = extractFile(archive, "package.json");
+  const data: unknown = JSON.parse(packageJson.toString());
+  if (
+    typeof data !== "object" ||
+    data === null ||
+    !("version" in data) ||
+    typeof data.version !== "string"
+  ) {
+    throw new Error("Installed application package has no version.");
+  }
+  return data.version;
+}
+
 // Rebranding changes the executable name, so find the app by its version instead of its name.
 function findInstalledExecutable(installDir: string, expectedVersion: string): string {
   if (!NodeFS.existsSync(installDir)) {
     throw new Error(`The install directory does not exist: ${installDir}`);
+  }
+  if (readInstalledAppVersion(installDir) !== expectedVersion) {
+    throw new Error(`Installed app is not version ${expectedVersion}.`);
   }
   const executables = NodeFS.readdirSync(installDir, { withFileTypes: true })
     .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith(".exe"))
@@ -341,7 +356,12 @@ function findInstalledExecutable(installDir: string, expectedVersion: string): s
     .map((entry) => NodePath.join(installDir, entry.name));
   for (const executable of executables) {
     try {
-      if (versionLabelMatches(readExecutableProductVersion(executable), expectedVersion)) {
+      if (
+        versionLabelMatches(
+          readExecutableProductVersion(executable),
+          expectedVersion.split("-")[0]!,
+        )
+      ) {
         return executable;
       }
     } catch {
@@ -692,9 +712,9 @@ const run = async (): Promise<void> => {
       `the installed executable to report ${options.newVersion}`,
       () => {
         executable = findInstalledExecutable(options.installDir, options.newVersion);
-        return readExecutableProductVersion(executable);
+        return readInstalledAppVersion(options.installDir);
       },
-      (version) => versionLabelMatches(version, options.newVersion),
+      (version) => version === options.newVersion,
       INSTALL_APPLY_TIMEOUT_MS,
       2_000,
     );
