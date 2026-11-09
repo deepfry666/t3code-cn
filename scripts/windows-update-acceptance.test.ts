@@ -9,6 +9,7 @@ import {
   findDesktopArtifact,
   parseDesktopArtifactVersion,
   renderLatestYml,
+  validateLatestYml,
 } from "./windows-update-acceptance.ts";
 
 it("accepts only a strictly newer stable artifact version", () => {
@@ -54,4 +55,9 @@ it("renders the electron-updater feed the mock server serves", () => {
   expect(latest).toContain("    size: 42");
   expect(latest).toContain("path: 'T3-Code-0.1.8-x64.exe'");
   expect(latest).toContain("releaseDate: '2026-11-09T00:00:00.000Z'");
+  expect(() =>
+    validateLatestYml(latest, "0.1.8", "T3-Code-0.1.8-x64.exe", "digest", 42),
+  ).not.toThrow();
+  expect(() => validateLatestYml(latest, "0.1.9", "T3-Code-0.1.8-x64.exe", "digest", 42)).toThrow();
+  expect(() => validateLatestYml(latest, "0.1.8", "T3-Code-0.1.8-x64.exe", "wrong", 42)).toThrow();
 });

@@ -6,7 +6,8 @@
 #   gh workflow run fork-windows-update-test.yml -f run_id=<build run> -f new_version=0.1.8
 #
 # The new artifact must be a higher stable version than the baseline (fork-windows-desktop.yml
-# uploads whatever version the build was given), and must be `T3-Code-<version>-x64.exe`.
+# uploads whatever version the build was given), and must contain its `latest.yml` and
+# `T3-Code-<version>-x64.exe` together.
 name: Fork Windows update test
 
 on:

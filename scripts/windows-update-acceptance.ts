@@ -14,7 +14,7 @@ import * as NodeTimersPromises from "node:timers/promises";
 import * as NodeUtil from "node:util";
 import { _electron, type ElectronApplication, type Page } from "playwright-core";
 
-import { serializeUpdateManifest } from "./lib/update-manifest.ts";
+import { parseUpdateManifest, serializeUpdateManifest } from "./lib/update-manifest.ts";
 
 const FIXTURE_DB = NodePath.join(import.meta.dirname, "fixtures/desktop-launch/statev2.sqlite");
 const THREAD_TITLE = "Release launch check";
@@ -157,6 +157,27 @@ export function renderLatestYml(input: {
   );
 }
 
+export function validateLatestYml(
+  raw: string,
+  version: string,
+  fileName: string,
+  sha512: string,
+  size: number,
+): void {
+  const manifest = parseUpdateManifest(raw, "latest.yml", "Windows");
+  if (
+    manifest.version !== version ||
+    manifest.files.length !== 1 ||
+    manifest.files[0]?.url !== fileName ||
+    manifest.files[0]?.sha512 !== sha512 ||
+    manifest.files[0]?.size !== size
+  ) {
+    throw new Error(
+      "The Windows update manifest does not match the installer and requested version.",
+    );
+  }
+}
+
 const resolveOptions = (): AcceptanceOptions => {
   const { values } = NodeUtil.parseArgs({
     options: {
@@ -286,11 +307,11 @@ function listAppProcesses(executable: string, sinceMs?: number): ReadonlyArray<A
   });
 }
 
-function stopAppProcesses(executable: string, sinceMs: number): void {
+function closeRestartedWindows(executable: string, sinceMs: number): void {
   const pids = listAppProcesses(executable, sinceMs).map((process) => process.pid);
   if (pids.length === 0) return;
   runPowerShell(
-    "$env:T3_ACCEPT_PIDS.Split(',') | ForEach-Object { Stop-Process -Id ([int]$_) -Force -ErrorAction SilentlyContinue }",
+    "$env:T3_ACCEPT_PIDS.Split(',') | ForEach-Object { $p = Get-Process -Id ([int]$_) -ErrorAction SilentlyContinue; if ($p -and $p.MainWindowHandle -ne 0) { [void]$p.CloseMainWindow() } }",
     { T3_ACCEPT_PIDS: pids.join(",") },
   );
 }
@@ -460,13 +481,17 @@ const run = async (): Promise<void> => {
     NodeFS.copyFileSync(newInstaller, feedInstaller);
     const installerBytes = NodeFS.readFileSync(newInstaller);
     const sha512 = NodeCrypto.createHash("sha512").update(installerBytes).digest("base64");
-    const latestYml = renderLatestYml({
-      version: options.newVersion,
-      fileName: newInstallerName,
+    const latestYml = NodeFS.readFileSync(
+      NodePath.join(NodePath.dirname(newInstaller), "latest.yml"),
+      "utf8",
+    );
+    validateLatestYml(
+      latestYml,
+      options.newVersion,
+      newInstallerName,
       sha512,
-      size: installerBytes.byteLength,
-      releaseDate: new Date().toISOString(),
-    });
+      installerBytes.byteLength,
+    );
     NodeFS.writeFileSync(NodePath.join(feedDir, "latest.yml"), latestYml);
     NodeFS.writeFileSync(NodePath.join(options.artifactsDir, "latest.yml"), latestYml);
     record("prepared mock update feed", {
@@ -709,7 +734,7 @@ const run = async (): Promise<void> => {
       attempt < 3 && listAppProcesses(executable, installStartedAt).length > 0;
       attempt += 1
     ) {
-      stopAppProcesses(executable, installStartedAt);
+      closeRestartedWindows(executable, installStartedAt);
       await sleep(2_000);
     }
     if (listAppProcesses(executable, installStartedAt).length > 0) {
