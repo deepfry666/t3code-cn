@@ -34,7 +34,7 @@ export const settingsProviderAccountsMessages = {
   Remove: "移除",
   "Remove {label}?": "移除 {label}？",
   "The hub's management key is deleted from this server. Its accounts leave the Limits view; the hub itself is untouched. Add it again with the URL and key to bring them back.":
-    "此服务器将删除中转站的管理密钥，其账户也将从用量限制视图中移除，中转站本身不受影响。再次填写 URL 和密钥添加中转站，即可恢复显示。",
+    "此服务器将删除中转站的管理密钥，其账户也将从“限制”视图中移除，中转站本身不受影响。再次填写 URL 和密钥添加中转站，即可恢复显示。",
   "Remove hub": "移除中转站",
   "Add a CLIProxyAPI hub": "添加 CLIProxyAPI 中转站",
   "Show the quota of every account the hub pools, next to the providers on {environment}. The key stays on that server.":
@@ -57,12 +57,12 @@ export const settingsProviderAccountsMessages = {
   "{environment} load preference": "{environment} 的负载偏好",
   "The ACP could not be prepared.": "无法准备 ACP。",
   "Choose an agent": "选择智能体",
-  "Search ACP Registry": "搜索 ACP 注册表",
+  "Search ACP Registry": "搜索 ACP Registry",
   "Search agents…": "搜索智能体…",
   "Enter manually": "手动输入",
   "Local ACP command": "本地 ACP 命令",
-  "Searching the ACP Registry.": "正在搜索 ACP 注册表。",
-  "Refreshing ACP Registry results.": "正在刷新 ACP 注册表结果。",
+  "Searching the ACP Registry.": "正在搜索 ACP Registry。",
+  "Refreshing ACP Registry results.": "正在刷新 ACP Registry 结果。",
   "{count} compatible agent found.": "找到 {count} 个兼容的智能体。",
   "{count} compatible agents found.": "找到 {count} 个兼容的智能体。",
   "Searching the registry...": "正在搜索注册表…",
@@ -146,7 +146,7 @@ export const settingsProviderAccountsMessages = {
   "ChatGPT sign-in on the primary environment was interrupted. Try again.":
     "主环境上的 ChatGPT 登录已中断。请重试。",
   "Could not finish sign-in on this computer. Try again or paste the redirect URL below.":
-    "无法在此设备上完成登录。请重试，或在下方粘贴重定向 URL。",
+    "无法在本机上完成登录。请重试，或在下方粘贴重定向 URL。",
   "Downloading {downloaded} MB.": "正在下载 {downloaded} MB。",
   "Downloading {downloaded} of {total} MB.": "正在下载 {downloaded} MB，共 {total} MB。",
   "Installing Codex.": "正在安装 Codex。",

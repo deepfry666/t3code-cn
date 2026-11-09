@@ -31,7 +31,7 @@ export const globalUiMessages = {
   "Open keybindings.json": "打开 keybindings.json",
 
   // Slow requests
-  "Some requests are slow": "部分请求较慢",
+  "Some requests are slow": "部分请求响应较慢",
   "{count} request waiting longer than {seconds}s.": "{count} 个请求已等待超过 {seconds} 秒。",
   "{count} requests waiting longer than {seconds}s.": "{count} 个请求已等待超过 {seconds} 秒。",
   "Hide requests": "隐藏请求",
@@ -66,7 +66,7 @@ export const globalUiMessages = {
   "Starring…": "正在加星…",
   "Open GitHub": "打开 GitHub",
   "Thanks for the star!": "感谢你的加星！",
-  "It really helps T3 Code grow.": "这真的能帮助 T3 Code 成长。",
+  "It really helps T3 Code grow.": "这对 T3 Code 的发展很有帮助。",
   Dismiss: "忽略",
 
   // Custom snooze dialog
@@ -74,7 +74,7 @@ export const globalUiMessages = {
   "Enter a positive duration.": "请输入大于零的时长。",
   "Custom snooze": "自定义暂缓",
   "Choose when snoozed threads return to your inbox.": "选择暂缓的会话何时回到收件箱。",
-  "Schedule type": "计划类型",
+  "Schedule type": "定时方式",
   "Date and time": "日期和时间",
   "Duration@@snooze-mode": "时长",
   Date: "日期",
@@ -115,7 +115,7 @@ export const globalUiMessages = {
   "no files": "无文件",
   "+ {count} file": "+{count} 个文件",
   "+ {count} files": "+{count} 个文件",
-  "{selected} of {total}": "{selected}/{total}",
+  "{selected} of {total}": "已选 {selected} / 共 {total}",
   "Showing the first {count} files.": "仅显示前 {count} 个文件。",
   "Files are copied after the clone finishes. Folders git ignores whole, like node_modules, are left out.":
     "克隆完成后会复制这些文件。Git 整体忽略的文件夹（如 node_modules）不会被复制。",
@@ -157,10 +157,10 @@ export const globalUiMessages = {
 
   // Triage
   "Could not copy. Type {command} instead.": "无法复制。请改为输入 {command}。",
-  "Could not start triage": "无法开始分诊",
+  "Could not start triage": "无法开始问题排查",
   "{message} Run {command} in a terminal on that machine instead.":
     "{message} 请改为在那台机器的终端中运行 {command}。",
-  "Starting triage…": "正在开始分诊…",
+  "Starting triage…": "正在开始问题排查…",
 
   // Drafts and announcements
   "Failed to restore draft": "无法恢复草稿",
@@ -190,7 +190,7 @@ export const globalUiMessages = {
   "Open Sharing & access": "打开共享与访问",
   "Give {app} access to {owner}": "让 {app} 访问 {owner}",
   "It isn't installed there, so GitHub requests for {repository} use your own login and its lower rate limit.":
-    "它还没有安装在那里，因此对 {repository} 的 GitHub 请求会使用你自己的登录，速率上限也更低。",
+    "该处尚未安装此应用，因此对 {repository} 的 GitHub 请求会使用你自己的登录身份，受较低的速率限制。",
   "Failed to copy": "复制失败",
 
   // Thread migration and loading
@@ -273,7 +273,7 @@ export const globalUiMessages = {
   "Server update failed.": "服务器更新失败。",
   "Update all": "全部更新",
   Update: "更新",
-  "Desktop app relaunched on {version}.": "桌面应用已在 {version} 上重启。",
+  "Desktop app relaunched on {version}.": "桌面应用已重新启动，版本为 {version}。",
   "Reconnected on t3@{version}.": "已重新连接到 t3@{version}。",
   "Update command copied": "已复制更新命令",
   "Relaunch command copied": "已复制重启命令",

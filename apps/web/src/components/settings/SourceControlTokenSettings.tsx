@@ -142,7 +142,9 @@ export function SourceControlTokenSettings({
         </p>
         <div className="grid gap-3 sm:grid-cols-[12rem_1fr]">
           <div className="grid gap-1.5">
-            <Label htmlFor={`${definition.kind}-token-host-${environmentId}`}>{t("Host")}</Label>
+            <Label htmlFor={`${definition.kind}-token-host-${environmentId}`}>
+              {t("Host@@code-hosting")}
+            </Label>
             <Input
               id={`${definition.kind}-token-host-${environmentId}`}
               autoComplete="off"

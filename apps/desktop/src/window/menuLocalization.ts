@@ -3,7 +3,8 @@ import type * as Electron from "electron";
 const labels: Readonly<Record<string, string>> = {
   File: "文件",
   Edit: "编辑",
-  View: "视图",
+  View: "查看",
+  "View@@macOS": "显示",
   Speech: "语音",
   "Check for Updates...": "检查更新…",
   "Settings...": "设置…",
@@ -26,7 +27,7 @@ const labels: Readonly<Record<string, string>> = {
   "An unknown error occurred. Please try again later.": "发生未知错误，请稍后重试。",
   "Updates unavailable": "更新不可用",
   "Automatic updates are not available right now.": "目前无法自动更新。",
-  "Updates are turned off on this machine.": "此机器已停用更新。",
+  "Updates are turned off on this machine.": "本机已停用更新。",
   "Automatic updates are not available because no update feed is configured.":
     "尚未配置更新源，无法自动更新。",
   "Automatic updates are only available in packaged production builds.":
@@ -65,7 +66,7 @@ const labels: Readonly<Record<string, string>> = {
   Skip: "跳过",
   "Skip transcript cleanup": "跳过转写文本整理",
   "Open voice settings": "打开语音设置",
-  "Dismiss voice input error": "关闭语音输入错误",
+  "Dismiss voice input error": "关闭语音输入错误提示",
   "Voice input": "语音输入",
   "Voice input is busy": "语音输入正忙",
   "Drag annotation editor": "拖动标注编辑器",
@@ -87,7 +88,7 @@ const labels: Readonly<Record<string, string>> = {
   Padding: "内边距",
   Margin: "外边距",
   Gap: "间距",
-  "{label} value": "{label}值",
+  "{label} value": "{label} 的值",
   Select: "选择",
   Region: "区域",
   Draw: "绘制",
@@ -144,6 +145,7 @@ export function localizeApplicationMenu(
   template: Electron.MenuItemConstructorOptions[],
   languages: readonly string[],
   displayName: string,
+  platform?: NodeJS.Platform,
 ): Electron.MenuItemConstructorOptions[] {
   if (!languages[0]?.toLowerCase().startsWith("zh")) return template;
   const applicationLabels: Readonly<Record<string, string>> = {
@@ -159,11 +161,14 @@ export function localizeApplicationMenu(
         ? item.role === undefined
           ? undefined
           : roles[item.role]
-        : Object.hasOwn(labels, item.label)
-          ? labels[item.label]
-          : Object.hasOwn(applicationLabels, item.label)
-            ? applicationLabels[item.label]
-            : item.label;
+        : item.label === "View" && platform === "darwin"
+          ? // macOS names this menu 显示; Windows and Linux apps say 查看.
+            labels["View@@macOS"]
+          : Object.hasOwn(labels, item.label)
+            ? localizeDesktopText(item.label, languages)
+            : Object.hasOwn(applicationLabels, item.label)
+              ? applicationLabels[item.label]
+              : item.label;
     return {
       ...item,
       ...(label === undefined ? {} : { label }),

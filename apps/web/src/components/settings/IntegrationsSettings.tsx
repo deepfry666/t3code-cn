@@ -470,7 +470,7 @@ function BrowserViewportSetting({ disabled }: { readonly disabled: boolean }) {
                     </Button>
                   }
                 />
-                <TooltipPopup side="top">{t("Rotate")}</TooltipPopup>
+                <TooltipPopup side="top">{t("Rotate@@viewport")}</TooltipPopup>
               </Tooltip>
             </div>
           ) : null}

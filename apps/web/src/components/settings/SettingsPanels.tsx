@@ -1504,7 +1504,7 @@ export function DiffsSettingsPanel() {
         <DiffColorsSettingsRow />
       </SettingsSection>
 
-      <SettingsSection id="pull-requests" title={t("Pull requests")}>
+      <SettingsSection id="pull-requests" title={t("Pull requests@@short-label")}>
         <SettingsRow
           {...localizedSetting("proactive-panels")}
           description={t(

@@ -4,7 +4,7 @@ import { threadRuntimeMessages } from "./threadRuntime.messages";
 export const composerUiMessages = {
   ...threadRuntimeMessages,
   "Queued message": "排队消息",
-  "Voice transcription was cancelled.": "语音转录已取消。",
+  "Voice transcription was cancelled.": "语音转写已取消。",
   "Preview {name}": "预览 {name}",
   "Retry upload for {name}": "重新上传 {name}",
   "Remove {name}": "移除 {name}",
@@ -109,7 +109,7 @@ export const composerUiMessages = {
   "Choose a project first": "请先选择项目",
   "This draft no longer points to an available project.": "这个草稿关联的项目已不可用。",
   "Select a base branch before sending in New worktree mode.":
-    "在“新建工作树”模式下发送前，请先选择基准分支。",
+    "在“新工作树”模式下发送前，请先选择基准分支。",
   "Retry or remove failed uploads before sending.": "发送前请重试或移除上传失败的附件。",
   "This connection cannot change threads.": "此连接无法修改会话。",
   "Send approval feedback without attachments or added context.":
@@ -126,7 +126,7 @@ export const composerUiMessages = {
   "Draft unavailable": "草稿不可用",
   "Another recording active": "另一个录音正在进行",
   "Voice input unavailable": "语音输入不可用",
-  "Transcription still busy": "转写仍在忙",
+  "Transcription still busy": "转写仍在进行",
   "Language unsupported": "不支持该语言",
   "Couldn’t prepare dictation": "无法准备听写",
   "Couldn’t start recording": "无法开始录音",
@@ -141,7 +141,7 @@ export const composerUiMessages = {
   "Open voice settings": "打开语音设置",
   "Retry transcription": "重试转写",
   "Record again": "重新录音",
-  "Dismiss voice input error": "关闭语音输入错误",
+  "Dismiss voice input error": "关闭语音输入错误提示",
   "Microphone access is required for voice input. Allow access in your browser or system settings and try again.":
     "语音输入需要麦克风权限。请在浏览器或系统设置中允许访问后重试。",
   "Microphone access is required for voice input.": "语音输入需要麦克风权限。",
@@ -172,21 +172,21 @@ export const composerUiMessages = {
   "Voice input is busy": "语音输入正忙",
   "Could not list microphones. You can still use the system default.":
     "无法列出麦克风，你仍可使用系统默认麦克风。",
-  "Selected microphone (Unavailable)": "已选择的麦克风（不可用）",
+  "Selected microphone (Unavailable)": "所选麦克风（不可用）",
   "System default": "系统默认",
   "Set up voice input": "设置语音输入",
   "Transcribe speech on {environment} and use voice input across environments.":
     "在 {environment} 上转写语音，并在各个环境中使用语音输入。",
   "your transcription environment": "你的转写环境",
   Model: "模型",
-  "Ready to dictate": "准备听写",
+  "Ready to dictate": "可以开始听写",
   "Recommended for {language}": "推荐用于{language}",
   "Download the {size} MB model to {environment}. Microphone audio is sent there for transcription, as chosen in Voice settings.":
     "将 {size} MB 的模型下载到 {environment}。按照语音设置中的选择，麦克风音频会发送到那里进行转写。",
   "Silero (1.2 MB), used for silence filtering and pause detection, downloads alongside the speech model. An installed copy is reused.":
     "Silero（1.2 MB）用于过滤静音和检测停顿，会随语音模型一起下载；已安装的副本会被复用。",
   "Speech model download progress": "语音模型下载进度",
-  "Verifying download…": "正在校验下载…",
+  "Verifying download…": "正在校验下载内容…",
   "Starting download…": "正在开始下载…",
   "{percent}% downloaded": "已下载 {percent}%",
   "Loading transcription models…": "正在加载转写模型…",
@@ -240,7 +240,7 @@ export const composerUiMessages = {
   "{names}: stashed files are kept for 24 hours and this upload expired. Attach the file again.":
     "{names}：暂存的文件只保留 24 小时，这次上传已过期，请重新添加文件。",
   "Some attachments were not restored": "部分附件未能恢复",
-  "Stash entry may come back": "这条暂存可能会恢复出现",
+  "Stash entry may come back": "暂存条目可能会再次出现",
   "Browser storage rejected the delete, so this prompt could reappear after a reload.":
     "浏览器存储拒绝了删除操作，所以刷新后这条提示词可能再次出现。",
   "Stash again once its chip resolves.": "标签加载完成后请再次暂存。",
@@ -268,7 +268,7 @@ export const composerUiMessages = {
   "No matching files or folders.": "没有匹配的文件或文件夹。",
   "No matching command.": "没有匹配的命令。",
   "Files and folders": "文件和文件夹",
-  "Pull requests": "Pull requests",
+  "Pull requests@@short-label": "PR",
   Commands: "命令",
   Skills: "技能",
   App: "应用",
@@ -324,7 +324,7 @@ export const composerUiMessages = {
   "Ask before commands and file changes.": "执行命令和修改文件前询问。",
   "Auto-approve edits, ask before other actions.": "自动批准编辑，其他操作前询问。",
   "Supported providers approve routine actions; others still ask.":
-    "支持此模式的提供方会批准常规操作，其他提供方仍会询问。",
+    "支持此模式的提供方会自动批准常规操作，其他提供方仍会询问。",
   "Allow commands and edits without prompts.": "允许执行命令和编辑，无需确认。",
   Plan: "计划",
   Build: "构建",
@@ -576,14 +576,15 @@ export const composerUiMessages = {
   "Expired terminal contexts won't be sent": "已过期的终端上下文不会被发送",
   "Expired terminal context omitted from message": "已过期的终端上下文已从消息中略去",
   "Expired terminal contexts omitted from message": "已过期的终端上下文已从消息中略去",
-  "Remove it or re-add it to include terminal output.": "移除它或重新添加它，即可包含该终端输出。",
+  "Remove it or re-add it to include terminal output.":
+    "请移除它；如需包含这段终端输出，请重新添加。",
   "Remove them or re-add them to include terminal output.":
-    "移除它们或重新添加它们，即可包含这些终端输出。",
+    "请移除它们；如需包含这些终端输出，请重新添加。",
   "Re-add it if you want that terminal output included.": "如需包含该终端输出，请重新添加它。",
   "Re-add them if you want that terminal output included.":
     "如需包含这些终端输出，请重新添加它们。",
   "This connection cannot upload attachments.": "此连接无法上传附件。",
-  "Uploaded file expired. Remove it and attach it again.": "已上传的文件已过期。请移除后重新附加。",
+  "Uploaded file expired. Remove it and attach it again.": "已上传的文件已过期。请移除后重新添加。",
   "Uploaded file could not be verified. Retry when the server reconnects.":
     "无法验证已上传的文件。请在服务器重新连接后重试。",
   "Unsupported image type": "不支持的图片类型",

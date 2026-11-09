@@ -62,41 +62,40 @@ export const settingsMaintenanceMessages = {
   "Trace Diagnostics": "追踪诊断",
   "Open logs folder": "打开日志文件夹",
   "Refresh trace diagnostics": "刷新追踪诊断",
-  Spans: "追踪片段",
+  Spans: "Span",
   Failures: "失败次数",
-  "Slow Spans": "慢追踪片段",
-  "Spans with a duration of {value0} or longer.": "耗时达到 {value0} 或更长的追踪片段。",
-  "Spans at or above the configured slow-span threshold.":
-    "耗时达到或超过设定慢追踪片段阈值的追踪片段。",
+  "Slow Spans": "慢 Span",
+  "Spans with a duration of {value0} or longer.": "耗时达到 {value0} 或更长的 Span。",
+  "Spans at or above the configured slow-span threshold.": "耗时达到或超过所设阈值的 Span。",
   "Parse Errors": "解析错误",
   "Some trace files could not be read, so diagnostics may be incomplete. {message}":
     "部分追踪文件无法读取，诊断信息可能不完整。{message}",
   "Latest Failures": "最近的失败",
-  Span: "追踪片段",
+  Span: "Span",
   Cause: "原因",
   Duration: "耗时",
   Ended: "结束时间",
   "Loading failures...": "正在加载失败记录…",
-  "No failed spans found.": "没有失败的追踪片段。",
+  "No failed spans found.": "没有失败的 Span。",
   "Most Common Failures": "最常见的失败",
   Count: "次数",
   "Last Seen": "最后出现时间",
   "Loading failure groups...": "正在加载失败分组…",
   "No repeated failures found.": "没有重复的失败。",
-  "Slowest Spans": "最慢的追踪片段",
+  "Slowest Spans": "最慢的 Span",
   Trace: "追踪",
-  "Loading slow spans...": "正在加载慢追踪片段…",
-  "No spans found.": "没有追踪片段记录。",
-  "Span Logs": "追踪片段日志",
+  "Loading slow spans...": "正在加载慢 Span…",
+  "No spans found.": "没有 Span 记录。",
+  "Span Logs": "Span 日志",
   Time: "时间",
   Level: "级别",
   Message: "消息",
   "Show full message": "显示完整消息",
   "Loading recent logs...": "正在加载最近的日志…",
   "No warnings or errors found.": "没有警告或错误。",
-  "Top Span Names": "最常见的追踪片段名称",
+  "Top Span Names": "最常见的 Span 名称",
   Max: "最大",
-  "Loading span names...": "正在加载追踪片段名称…",
+  "Loading span names...": "正在加载 Span 名称…",
   "Waiting for sample": "正在等待样本",
   "Updated {time}": "更新时间：{time}",
   Read: "读取",
@@ -128,7 +127,7 @@ export const settingsMaintenanceMessages = {
   "No instrumented application I/O has been recorded yet.": "尚未记录应用的 I/O 统计。",
   "Failed to send {signal} to process {pid}.": "向进程 {pid} 发送 {signal} 失败。",
   "Could not restart resource monitor": "无法重启资源监测器",
-  "The resource monitor retry failed.": "重试资源监测器失败。",
+  "The resource monitor retry failed.": "资源监测器重试失败。",
   "Resource monitor": "资源监测器",
   Native: "原生",
   "Refresh resource telemetry": "刷新资源遥测",
@@ -178,7 +177,7 @@ export const settingsMaintenanceMessages = {
   "Waiting for collector health.": "正在等待采集器状态。",
   "Resource timeline": "资源时间线",
   "Live process tree": "运行中的进程树",
-  "Identity:": "标识",
+  "Identity:": "标识：",
   "PID + start time": "PID + 启动时间",
   "Instrumented application I/O": "应用 I/O 统计",
   "Logical bytes by operation": "按操作统计的逻辑字节数",
@@ -190,11 +189,11 @@ export const settingsMaintenanceMessages = {
   "Worktree location": "工作树位置",
   Mixed: "各不相同",
   Default: "默认",
-  "Decrease {label}": "减少{label}",
+  "Decrease {label}": "减少 {label}",
   "{label} in days": "{label}（天）",
   "{label} in seconds": "{label}（秒）",
-  "{label} details": "{label}详情",
-  "Increase {label}": "增加{label}",
+  "{label} details": "{label} 详情",
+  "Increase {label}": "增加 {label}",
   days: "天",
   Off: "关闭",
   Worktrees: "工作树",
@@ -248,7 +247,7 @@ export const settingsMaintenanceMessages = {
     "会话收尾达到设定天数后移除其工作树。设为 0 天时，在下次清理时移除。保留分支和会话历史。",
   "Delete unchanged worktrees": "删除无改动的工作树",
   "Remove worktrees with no commits beyond the default branch.":
-    "移除没有超出默认分支提交的工作树。",
+    "移除相较于默认分支没有新增提交的工作树。",
   "Includes ignored files, except node_modules.": "包括已忽略的文件，但不含 node_modules。",
   "Deletes untracked and ignored files, including .env.": "删除未跟踪和已忽略的文件，包括 .env。",
   "Keeps edits and untracked files. Deletes ignored files, including .env.":
@@ -298,7 +297,7 @@ export const settingsMaintenanceMessages = {
   "This connection lacks permission to change settings on {environment}.":
     "此连接没有权限更改 {environment} 的设置。",
   "the selected environment": "所选环境",
-  "{label} endpoint": "{label}端点",
+  "{label} endpoint": "{label} 端点",
   "Enter an HTTP or HTTPS endpoint, or leave empty to disable export.":
     "输入 HTTP 或 HTTPS 端点，留空则停用导出。",
   Test: "测试",
@@ -323,23 +322,23 @@ export const settingsMaintenanceMessages = {
   "{count} notices": "{count} 条声明",
   "{filtered} of {total}": "{filtered}/{total}",
   "Could not find the latest {label} release in this environment's npm registry.":
-    "无法在此环境的 npm 仓库中找到最新的{label}。",
+    "无法在此环境的 npm 仓库中找到最新的 {label} 版本。",
   "Checking releases…": "正在检查版本…",
   Cancel: "取消",
-  "Could not switch to {label}": "无法切换到{label}",
+  "Could not switch to {label}": "无法切换到 {label}",
   "Could not install update": "无法安装更新",
   "This app downloaded {value0}, not {version} or newer.":
     "此应用下载了 {value0}，需要 {version} 或更新版本。",
   "An unexpected error occurred.": "发生了意外错误。",
-  "Switch to {label}?": "切换到{label}？",
+  "Switch to {label}?": "切换到 {label}？",
   "Every connected machine is already on {label}. This only saves the track.":
-    "所有已连接机器都已使用{label}。这只会保存更新通道。",
+    "所有已连接机器都已使用 {label}。这只会保存更新通道。",
   "This app's updates are off here, so reinstall it yourself to switch.":
     "此应用已停用更新，请手动重新安装以切换通道。",
   "If T3 Code does not reopen after it restarts, open it again.":
     "如果 T3 Code 重启后没有重新打开，请再次打开。",
   "Checking…": "正在检查…",
-  "Switch to {label}": "切换到{label}",
+  "Switch to {label}": "切换到 {label}",
   "This app cannot switch: {localBlocked}.": "此应用无法切换：{localBlocked}。",
   nothing: "无内容",
   "Could not copy version": "无法复制版本",
@@ -395,7 +394,7 @@ export const settingsMaintenanceMessages = {
   "{count} processes": "{count} 个进程",
   "{count} file": "{count} 个文件",
   "{count} files": "{count} 个文件",
-  "{counts} on every machine": "每台机器均为{counts}",
+  "{counts} on every machine": "每台机器均为 {counts}",
   "{removed} removed, {kept} kept": "已移除 {removed} 项，保留 {kept} 项",
   "{removed} removed, {kept} kept, {failed} failed":
     "已移除 {removed} 项，保留 {kept} 项，失败 {failed} 项",
@@ -431,11 +430,11 @@ export const settingsMaintenanceMessages = {
   "iPhone and iPad": "iPhone 和 iPad",
   "its server is not connected, so its database cannot be checked": "服务器未连接，无法检查数据库",
   "its server predates database checks; update it on {channel} first":
-    "服务器版本过旧，不支持数据库检查；请先在{channel}上更新",
+    "服务器版本过旧，不支持数据库检查；请先在 {channel} 通道上更新",
   "{version} predates database checks; wait for a newer {channel} release":
-    "{version} 不支持数据库检查；请等待更新的{channel}",
+    "{version} 不支持数据库检查；请等待 {channel} 通道发布更新版本",
   "its database has changes {version} does not support yet; stay on {from} until {channel} has them":
-    "数据库包含 {version} 尚不支持的更改；请继续使用{from}，直到{channel}支持这些更改",
+    "数据库包含 {version} 尚不支持的更改；请继续使用 {from}，直到 {channel} 通道支持这些更改",
   "The update track did not change.": "更新通道未更改。",
   "This app found {found}, which is older than {version}. Try again in a few minutes.":
     "此应用找到的 {found} 早于 {version}。请几分钟后重试。",
@@ -458,7 +457,7 @@ export const settingsMaintenanceMessages = {
   "Thread is running or has pending work": "会话正在运行或有待处理的工作",
   "A subagent thread's branch differs from this worktree's branch":
     "子智能体会话的分支与此工作树的分支不同",
-  "Open terminal": "有打开的终端",
+  "Open terminal@@maintenance": "有打开的终端",
   "Worktree is a symbolic link": "工作树是符号链接",
   "Outside the managed worktree folder": "不在受管理的工作树文件夹内",
   "Contains a project checkout": "包含项目工作副本",
@@ -473,7 +472,7 @@ export const settingsMaintenanceMessages = {
   "Default branch is unavailable": "默认分支不可用",
   "No commits beyond the project branch": "没有超出项目分支的提交",
   "No commits beyond the default branch": "没有超出默认分支的提交",
-  "Pull request was merged": "Pull request 已合并",
+  "Pull request was merged": "PR 已合并",
   "Has commits beyond the project branch": "有超出项目分支的提交",
   "Inactive for {days} of {limit} days": "已闲置 {days} 天，清理阈值为 {limit} 天",
   "Settled for {days} of {limit} days": "已收尾 {days} 天，清理阈值为 {limit} 天",
@@ -651,6 +650,9 @@ export function translateMaintenanceLabel(label: string, locale: Locale): string
     const translated = translateMaintenanceLabel(message, locale);
     if (translated !== message) return translated;
   }
+  // This server label describes a worktree blocker, not the terminal action.
+  if (label === "Open terminal" || label === "open terminal")
+    return translate(locale, settingsMaintenanceMessages, "Open terminal@@maintenance");
   if (Object.hasOwn(settingsMaintenanceMessages, label))
     return settingsMaintenanceMessages[label as keyof typeof settingsMaintenanceMessages];
   for (const [pattern, key, parameters] of DYNAMIC_LABELS) {

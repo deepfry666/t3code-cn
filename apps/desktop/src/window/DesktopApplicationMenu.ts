@@ -327,7 +327,7 @@ export const make = Effect.gen(function* () {
 
     const languages = yield* electronApp.preferredSystemLanguages;
     yield* electronMenu.setApplicationMenu(
-      localizeApplicationMenu(template, languages, environment.displayName),
+      localizeApplicationMenu(template, languages, environment.displayName, environment.platform),
     );
   }).pipe(Effect.withSpan("desktop.menu.configure"));
 

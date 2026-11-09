@@ -16,28 +16,37 @@ vp run i18n:export
 
 同一英文在各处必须译法一致，下列术语有固定译名：
 
-| 英文           | 中文                     |
-| -------------- | ------------------------ |
-| thread         | 会话                     |
-| project        | 项目                     |
-| environment    | 环境                     |
-| provider       | 提供方                   |
-| worktree       | 工作树                   |
-| agent          | 智能体                   |
-| keybinding     | 快捷键                   |
-| archive        | 归档                     |
-| snooze         | 暂缓                     |
-| settle         | 收尾                     |
-| sidebar        | 侧边栏                   |
-| beta           | 测试版                   |
-| labs           | 实验功能                 |
-| checkout       | 工作副本                 |
-| machine        | 机器（指本机时写“本机”） |
-| device         | 设备（手机、模拟器）     |
-| source control | 版本控制                 |
-| review guide   | 审查导览                 |
+| 英文                | 中文                                          |
+| ------------------- | --------------------------------------------- |
+| thread              | 会话                                          |
+| project             | 项目                                          |
+| environment         | 环境                                          |
+| provider            | 提供方                                        |
+| worktree            | 工作树                                        |
+| agent               | 智能体                                        |
+| keybinding          | 快捷键                                        |
+| archive             | 归档                                          |
+| snooze              | 暂缓                                          |
+| settle              | 收尾                                          |
+| sidebar             | 侧边栏                                        |
+| beta                | 测试版                                        |
+| labs                | 实验功能                                      |
+| checkout            | 工作副本                                      |
+| machine             | 机器（指本机时写“本机”）                      |
+| device              | 设备（手机、模拟器）                          |
+| source control      | 版本控制                                      |
+| review guide        | 审查导览                                      |
+| Git stash           | 贮藏（恢复贮藏）；输入框提示词 stash 为暂存   |
+| schedule            | 定时（定时方式、定时规则）                    |
+| plan                | 智能体计划；订阅套餐                          |
+| secret              | 凭据；key / API key / signing key 为密钥      |
+| Open                | PR 状态为开放；动作为打开；设备折叠形态为展开 |
+| issue               | issue（GitHub 议题）                          |
+| host                | 代码托管平台为托管平台；运行机器为主机        |
+| archive（文件预览） | 压缩包                                        |
+| QR code             | 二维码                                        |
 
-产品名、品牌和技术缩写保持英文，例如 T3 Code、T3 Connect、GitHub、Codex、Claude、Cursor、CLI、MCP、SSH、API、URL、JSON、token、macOS、Windows、Finder。开发者日常直接说英文的词也保留英文：PR、pull request、merge request、change request，句首首字母大写，句中照原文小写。完整清单以 [`scripts/fork-i18n.test.ts`](../scripts/fork-i18n.test.ts) 为准。
+产品名、品牌和技术缩写保持英文，例如 Agent Platform、ACP Registry、Span、T3 Code、T3 Connect、GitHub、Codex、Claude、Cursor、CLI、MCP、SSH、API、URL、JSON、token、macOS、Windows、Finder。GitHub 的 issue 保留英文。导航、标签页、分区标题、按钮、菜单项和字段名等短标签中，pull request 用 PR，merge request 用 MR；描述、提示、错误和通知等完整句子保留 pull request / merge request，句首首字母大写，句中照原文小写。来自代码的 `{kind}` 占位符值及其译文保持原样。change request 保留英文。完整清单以 [`scripts/fork-i18n.test.ts`](../scripts/fork-i18n.test.ts) 为准。
 
 ## 同步官方后补翻译
 

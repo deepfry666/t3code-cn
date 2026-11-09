@@ -46,8 +46,7 @@ export const clerkUiMessages = {
   "No mobile clients": "没有移动客户端",
   "Install T3 Code on your phone and sign in to T3 Connect to get push notifications and Live Activities.":
     "在手机上安装 T3 Code 并登录 T3 Connect，即可收到推送通知和实时活动。",
-  "Mobile devices that get notifications from your environments.":
-    "接收你的环境所发通知的移动设备。",
+  "Mobile devices that get notifications from your environments.": "从你的环境接收通知的移动设备。",
   "Could not load mobile clients": "无法加载移动客户端",
   "approvals@@alert": "审批",
   "input requests@@alert": "输入请求",
@@ -73,7 +72,7 @@ export const clerkUiMessages = {
   "Deregistering…": "正在注销…",
   "Server deregistered": "已注销服务器",
   "T3 Connect access was revoked and a host space is now available.":
-    "已撤销 T3 Connect 访问权限，现在多出一个可用的主机名额。",
+    "已撤销 T3 Connect 访问权限，并释放了一个主机名额。",
   "Could not deregister the server.": "无法注销服务器。",
   "Could not deregister server": "无法注销服务器",
   "Environments registered to your account. Connections on this device are managed in Settings.":

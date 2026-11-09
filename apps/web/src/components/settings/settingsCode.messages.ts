@@ -13,7 +13,7 @@ export const settingsCodeMessages = {
   Light: "浅色",
   Dark: "深色",
   "Fill panel": "填满面板",
-  Responsive: "自适应",
+  Responsive: "响应式",
   "Tab size for you and agents. Fill fits the panel; other sizes show the device toolbar.":
     "你和智能体使用的标签页尺寸。“填满面板”会适应面板大小；其他尺寸会显示设备工具栏。",
   "default browser viewport": "默认浏览器视口",
@@ -21,7 +21,7 @@ export const settingsCodeMessages = {
   Standard: "标准",
   "Default viewport width": "默认视口宽度",
   "Default viewport height": "默认视口高度",
-  Rotate: "更换",
+  "Rotate@@viewport": "旋转",
   "Page zoom applied to new browser tabs.": "新浏览器标签页的页面缩放比例。",
   "default browser zoom": "默认浏览器缩放",
   "Default browser zoom": "默认浏览器缩放",
@@ -54,9 +54,9 @@ export const settingsCodeMessages = {
   "Enter an http or https URL containing %s. Searches use DuckDuckGo until then.":
     "请输入包含 %s 的 http 或 https URL。在此之前，搜索将使用 DuckDuckGo。",
   "Clicking a pull request link opens it in T3 Code. Turn off to open pull request links like any other link, on your git host.":
-    "点击 pull request 链接时在 T3 Code 中打开。关闭后会像其他链接一样，在 Git 托管网站上打开。",
-  "open pull requests in T3 Code": "在 T3 Code 中打开 pull request",
-  "Open pull requests in T3 Code": "在 T3 Code 中打开 pull request",
+    "点击 pull request 链接时在 T3 Code 中打开。关闭后会像其他链接一样，在 Git 托管平台上打开。",
+  "open pull requests in T3 Code": "在 T3 Code 中打开 PR",
+  "Open pull requests in T3 Code": "在 T3 Code 中打开 PR",
   Devices: "设备",
   "Environment disconnected": "环境已断开",
   "This connection cannot change device settings.": "此连接无法更改设备设置。",
@@ -77,7 +77,7 @@ export const settingsCodeMessages = {
   "default browser access": "默认浏览器访问权限",
   "Agent browser access": "智能体浏览器访问",
   "Show the floating preview when an agent opens a browser or device unless the agent says otherwise.":
-    "智能体打开浏览器或设备时显示悬浮预览，除非智能体另有要求。",
+    "智能体打开浏览器或设备时显示浮动预览，除非智能体另有要求。",
   "auto-show floating preview": "自动显示浮动预览",
   "Auto-show floating preview": "自动显示浮动预览",
   "You're not connected to a server yet.": "你还没有连接到服务器。",
@@ -130,10 +130,10 @@ export const settingsCodeMessages = {
   "Source control writing style": "版本控制文案风格",
   Mixed: "各不相同",
   "Custom source control instructions for all selected environments":
-    "所有所选环境的自定义版本控制指令",
+    "所有所选环境共用的自定义版本控制指令",
   "Write the instructions each selected environment should use.": "输入每个所选环境应使用的指令。",
-  "Apply instructions to all": "应用指令到全部",
-  "Write custom instructions for all": "为全部编写自定义指令",
+  "Apply instructions to all": "将指令应用到全部环境",
+  "Write custom instructions for all": "为全部环境编写自定义指令",
   "Keep titles concise. Use short bullet points in descriptions.":
     "标题保持简洁，说明使用简短的列表。",
   "Custom source control writing instructions": "自定义版本控制文案指令",
@@ -169,7 +169,7 @@ export const settingsCodeMessages = {
   Authenticated: "已认证",
   "Not authenticated": "未认证",
   "Status unknown": "状态未知",
-  "Toggle source control account visibility": "切换版本控制账户可见性",
+  "Toggle source control account visibility": "显示或隐藏版本控制账户",
   "Click to reveal account": "点击显示账户",
   "Click to hide account": "点击隐藏账户",
   Available: "可用",
@@ -204,7 +204,7 @@ export const settingsCodeMessages = {
     "追加到命名提示词中。模型返回完整的分支名，不再添加前缀或后缀。",
   "branch naming instructions": "分支命名指令",
   "Use julius/ followed by the issue ID and a short description.":
-    "使用 julius/，后接议题 ID 和简短说明。",
+    "使用 julius/，后接 issue ID 和简短说明。",
   "sign-in code": "登录验证码",
   "Signed in as": "已登录账户",
   "Signed-in GitHub account": "已登录的 GitHub 账户",
@@ -229,7 +229,7 @@ export const settingsCodeMessages = {
   Account: "账户",
   "Use active login": "使用当前登录账户",
   "Create a token": "创建 token",
-  Host: "主机",
+  "Host@@code-hosting": "托管平台",
   Token: "token",
   Remove: "移除",
   Save: "保存",
@@ -242,7 +242,7 @@ export const settingsCodeMessages = {
     "此处信任的机器可借助彼此的版本控制访问权限读取 PR 数据。需要在两台机器上都启用。“读取并操作”可能使用比权限所属机器更广的权限。此设置仅适用于当前设备。",
   "Could not save pull request routing permission": "无法保存 pull request 路由权限",
   "Uses the latest commit of the base branch’s tracked remote branch, even if its name differs. Otherwise uses the same-named branch on origin. Uses your local branch if that remote branch is missing.":
-    "使用基础分支所跟踪远程分支的最新提交，即使名称不同。未跟踪远程分支时，使用 origin 上的同名分支。远程分支不存在时，使用本地分支。",
+    "使用基准分支所跟踪的远程分支的最新提交，即使名称不同。未跟踪远程分支时，使用 origin 上的同名分支。远程分支不存在时，使用本地分支。",
   "new worktrees start from remote": "新工作树从远程分支开始",
   "Start new worktrees from remote by default": "默认从远程分支创建新工作树",
   Creation: "创建",
@@ -295,7 +295,7 @@ export const settingsCodeMessages = {
   Unarchive: "取消归档",
   Danger: "危险操作",
   "Remove checkout": "移除工作副本",
-  "Remove this project everywhere": "从所有设备移除此项目",
+  "Remove this project everywhere": "从所有位置移除此项目",
   "Remove project": "移除项目",
   "Deletes the selected machine's checkout entries and their threads. Other machines and files on disk are not touched.":
     "删除所选机器上的工作副本条目及其会话。其他机器和磁盘上的文件不受影响。",
@@ -320,7 +320,7 @@ export const settingsCodeMessages = {
   "Default workspace": "默认工作区",
   Unavailable: "不可用",
   "Used for new threads when the default model's provider is out of usage.":
-    "默认模型的提供方用量耗尽时，新会话使用此模型。",
+    "默认模型的提供方额度耗尽时，新会话使用此模型。",
   "fallback model": "备用模型",
   "Fallback model": "备用模型",
   None: "无",
@@ -334,9 +334,9 @@ export const settingsCodeMessages = {
   "Default permissions": "默认权限",
   "Automatically pull": "自动拉取",
   "Keeps this project's default branch current when the checkout has no local changes or commits.":
-    "工作副本没有本地改动或提交时，自动更新此项目的默认分支。",
+    "工作副本没有本地改动或未推送的提交时，自动更新此项目的默认分支。",
   "Keeps the default branch current when the checkout has no local changes or commits. Projects can override it.":
-    "工作副本没有本地改动或提交时，自动更新默认分支。项目可以覆盖此设置。",
+    "工作副本没有本地改动或未推送的提交时，自动更新默认分支。项目可以覆盖此设置。",
   "default automatic pull": "默认自动拉取",
   "Reset automatic pull to off": "将自动拉取重置为关闭",
   "Default automatic pull": "默认自动拉取",
@@ -351,7 +351,7 @@ export const settingsCodeMessages = {
     "Pull request 默认使用此合并方式。“上次选择”会沿用你在此设备上最近选择的方式。",
   "default merge method": "默认合并方式",
   "Reset to last selected": "重置为上次选择",
-  "Default pull request merge method": "默认 pull request 合并方式",
+  "Default pull request merge method": "默认 PR 合并方式",
   "Last selected": "上次选择",
   "How new worktrees in this project populate git submodules.":
     "此项目的新工作树如何初始化 Git 子模块。",
@@ -440,7 +440,7 @@ export const settingsCodeMessages = {
   "Not available on this server: {hint}": "此服务器上不可用：{hint}",
   as: "账户",
   "Available. {hint}": "可用。{hint}",
-  "Every {label} host is turned off.": "所有 {label} 主机均已关闭。",
+  "Every {label} host is turned off.": "所有 {label} 托管平台均已关闭。",
   "{label} is not authenticated on this server. Sign in or configure credentials using the {executable} tool on the server host to enable change request features.":
     "{label} 尚未在此服务器上认证。请在服务器上使用 {executable} 工具登录或配置凭据，以启用 change request 功能。",
   "Could not verify {label}. {detail}": "无法验证 {label}。{detail}",
@@ -454,7 +454,7 @@ export const settingsCodeMessages = {
   "Sign in with {command} on the server host, then rescan to choose accounts here.":
     "在服务器上使用 {command} 登录，然后重新扫描，即可在此选择账户。",
   "Choose which {cliName} login each {label} host uses, or turn a host off.":
-    "选择每个 {label} 主机使用的 {cliName} 登录账户，或关闭某个主机。",
+    "选择每个 {label} 托管平台使用的 {cliName} 登录账户，或关闭某个托管平台。",
   "Hide {label} accounts": "隐藏 {label} 账户",
   "Reveal {label} accounts": "显示 {label} 账户",
   "Use {label} on {host}": "在 {host} 上使用 {label}",
@@ -485,7 +485,7 @@ export const settingsCodeMessages = {
   "Deletes all {count} checkout entries and their threads on every machine. Files on disk are not touched.":
     "删除所有机器上的全部 {count} 个工作副本条目及其会话。磁盘上的文件不受影响。",
   "Open in {fileManager}": "在 {fileManager} 中打开",
-  "{environment} pull request routing": "{environment} 的 pull request 路由",
+  "{environment} pull request routing": "{environment} 的 PR 路由",
   "{environments} {permission}": "{environments} {permission}",
   "Quit {source} to import": "退出 {source} 以导入",
   "{source} is open, so its cookies can’t be read yet. Quit it, then continue.":
@@ -526,7 +526,7 @@ export const settingsCodeMessages = {
   "Ask before commands and file changes.": "执行命令和修改文件前询问。",
   "Auto-approve edits, ask before other actions.": "自动批准编辑，其他操作前询问。",
   "Supported providers approve routine actions; others still ask.":
-    "支持此模式的提供方会批准常规操作，其他提供方仍会询问。",
+    "支持此模式的提供方会自动批准常规操作，其他提供方仍会询问。",
   "Allow commands and edits without prompts.": "允许执行命令和编辑，无需确认。",
   "Group by repository": "按仓库分组",
   "Group by repository path": "按仓库路径分组",
@@ -580,7 +580,7 @@ export const settingsCodeMessages = {
   Octopus: "章鱼",
   Seedling: "幼苗",
   Incognito: "无痕浏览",
-  "read and write access to pull requests and contents": "Pull request 和内容的读写权限",
+  "read and write access to pull requests and contents": "PR 和内容的读写权限",
   "Not installed on this machine.": "此机器尚未安装。",
   "Needs Keychain access to read its cookies.": "需要钥匙串访问权限才能读取 Cookie。",
   "No encryption key in your Keychain. Sign in to that browser once, then retry.":

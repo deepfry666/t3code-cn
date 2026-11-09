@@ -79,7 +79,7 @@ export const coreUiMessages = {
   "T3 Code home": "T3 Code 首页",
   Back: "返回",
   Settings: "设置",
-  "Pull requests": "Pull requests",
+  "Pull requests@@short-label": "PR",
   Usage: "用量",
   "Thread action unavailable": "无法执行会话操作",
   "This connection cannot change one or more selected threads.": "此连接无法修改选中的部分会话。",

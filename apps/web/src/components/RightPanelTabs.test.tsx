@@ -200,7 +200,7 @@ describe("surface titles", () => {
     expect(surfaceTitle({ id: "files", kind: "files" }, {}, new Map(), "zh-CN")).toBe("文件");
     expect(
       surfaceTitle({ id: "pull-requests", kind: "pull-requests" }, {}, new Map(), "zh-CN"),
-    ).toBe("Pull requests");
+    ).toBe("PR");
     expect(
       surfaceTitle(
         { id: "side-chat:thread-a", kind: "side-chat", threadId: ThreadId.make("thread-a") },

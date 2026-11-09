@@ -19,13 +19,13 @@ export const deviceDetailMessages = {
     "此浏览器无法解码 Android 画面（WebCodecs 不可用）。",
   "This browser cannot decode this device's stream (WebCodecs unavailable).":
     "此浏览器无法解码该设备的画面（WebCodecs 不可用）。",
-  "Device stream stopped receiving video. Reconnecting…": "设备画面已停止接收视频，正在重新连接…",
+  "Device stream stopped receiving video. Reconnecting…": "已无法接收设备画面，正在重新连接…",
   "Device stream stalled. Reconnecting…": "设备画面已卡住，正在重新连接…",
   "Device stream connection failed. Reconnecting…": "设备画面连接失败，正在重新连接…",
   "Device stream found no network candidates yet. Retrying…":
     "设备画面尚未找到可用的网络候选，正在重试…",
   "Device stream returned an invalid answer. Retrying…": "设备画面返回了无效应答，正在重试…",
-  "Video decoder fell behind. Reconnecting…": "视频解码器跟不上，正在重新连接…",
+  "Video decoder fell behind. Reconnecting…": "视频解码速度不足，正在重新连接…",
   "Video decoder restarted.": "视频解码器已重启。",
   "Switching to WebRTC.": "正在切换到 WebRTC。",
   "Simulator input is unavailable": "模拟器输入不可用",

@@ -16,7 +16,7 @@ describe("theme error messages", () => {
       ),
     ).toBe("无法将主题库写入 t3code-cn:custom-themes。");
     expect(translateThemeErrorMessage("theme/dark.json is not valid JSON.", "zh-CN")).toBe(
-      "theme/dark.json不是有效的 JSON。",
+      "theme/dark.json 不是有效的 JSON。",
     );
   });
 
@@ -39,7 +39,7 @@ describe("theme error messages", () => {
       translateSettingsShellLabel("That Open VSX extension has no readable manifest.", "zh-CN"),
     ).toBe("Open VSX 扩展的清单无法读取。");
     expect(translateSettingsShellLabel("theme/dark.json is not valid JSON.", "zh-CN")).toBe(
-      "theme/dark.json不是有效的 JSON。",
+      "theme/dark.json 不是有效的 JSON。",
     );
   });
 });

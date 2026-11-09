@@ -38,6 +38,12 @@ describe("native menu localization", () => {
       visible: false,
     });
     expect(template[0]?.label).toBe("Edit");
+    expect(
+      localizeApplicationMenu([{ label: "View" }], ["zh-CN"], "T3 Code", "darwin")[0]?.label,
+    ).toBe("显示");
+    expect(
+      localizeApplicationMenu([{ label: "View" }], ["zh-CN"], "T3 Code", "win32")[0]?.label,
+    ).toBe("查看");
     expect(click).not.toHaveBeenCalled();
   });
 

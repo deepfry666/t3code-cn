@@ -1250,7 +1250,7 @@ export function VoiceSettingsPanel() {
         "speech-correction-word": cleanupEnabled ? undefined : "speech-post-processing",
       }}
     >
-      <SettingsSection id="voice-input" title={t("Input")}>
+      <SettingsSection id="voice-input" title={t("Input@@voice")}>
         <SettingsRow
           {...localizedSetting("voice-microphone")}
           title={t("Microphone")}
@@ -1609,7 +1609,10 @@ export function VoiceSettingsPanel() {
         <ProjectDictionaryRow />
       </SettingsSection>
 
-      <SettingsSection id={searchableSetting("speech-post-processing").id} title={t("Cleanup")}>
+      <SettingsSection
+        id={searchableSetting("speech-post-processing").id}
+        title={t("Cleanup@@transcript")}
+      >
         <SettingsRow
           title={t("Clean up transcripts with a provider")}
           description={t(

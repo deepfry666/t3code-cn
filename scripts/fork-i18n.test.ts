@@ -14,14 +14,23 @@ const GLOSSARY: ReadonlyArray<readonly [english: RegExp, chinese: string | Reado
     [/\bproviders?\b/i, "提供方"],
     [/\bworktrees?\b/i, "工作树"],
     // SSH uses an authentication agent, not a coding agent; agent-device is a tool's name.
-    [/(?<!SSH config, )\bagents?\b(?!-device)/i, "智能体"],
+    [/(?<!SSH config, )\bagents?\b(?!-device| Platform)/i, "智能体"],
     [/\bkeybindings?\b/i, "快捷键"],
+    [/\b(?:commit or stash|pop stash|apply stash|git stash)\b/i, "贮藏"],
+    [/\bschedules?\b/i, "定时"],
+    [/\bsecrets?\b/i, "凭据"],
+    [/(?<!Sentry )\bissues?\b(?! a pairing credential| and revoke credentials)/i, "issue"],
+    [/\bQR(?: code)?\b/i, "二维码"],
     // A zip or tar archive is 压缩包, not an archived thread.
-    [/(?<!expanded )\barchived?\b(?!\s+(?:entr\w*|metadata|paths?|contains|has)\b)/i, "归档"],
+    [
+      /(?<!expanded )(?<!inside an )(?<!Back to )\barchived?\b(?!\s+(?:entr\w*|contents|metadata|paths?|contains|has)\b)/i,
+      "归档",
+    ],
     [/\bsnooz\w*/i, "暂缓"],
     [/\bsettl\w*/i, "收尾"],
     [/\bsidebars?\b/i, "侧边栏"],
     [/\bsource control\b/i, "版本控制"],
+    [/\bsecrets?\b/i, "凭据"],
     // "设备" is a phone, simulator or emulator.
     [/\bmachines?\b/i, ["机器", "本机"]],
     [/\bbeta\b/i, "测试版"],
@@ -33,6 +42,9 @@ const GLOSSARY: ReadonlyArray<readonly [english: RegExp, chinese: string | Reado
 const KEEP_ENGLISH: ReadonlyArray<string | RegExp> = [
   "T3 Code",
   "T3 Connect",
+  "Agent Platform",
+  "ACP Registry",
+  /\bspans?\b/i,
   "GitHub",
   "GitLab",
   "Codex",
@@ -61,10 +73,12 @@ const KEEP_ENGLISH: ReadonlyArray<string | RegExp> = [
   "iOS",
   "Finder",
   "PR",
-  // Developers say these as-is; a stack's "merge request" is a request to merge, not GitLab's term.
-  /\bpull requests?\b/i,
-  /(?<!Stack )\bmerge requests?\b/i,
+  // Short labels use PR/MR; full sentences keep the host term; a stack's "merge request" is a request to merge, not GitLab's term.
+  /\b(?:pull requests?|PR)\b/i,
+  /(?<!Stack )\b(?:merge requests?|MR)\b/i,
   /\bchange requests?\b/i,
+  // An issue tracker item, not the verb "issue a credential".
+  /(?<!not )\bissues?\b(?!\s+(?:a|an|and|the|credentials?)\b)/i,
 ];
 
 const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

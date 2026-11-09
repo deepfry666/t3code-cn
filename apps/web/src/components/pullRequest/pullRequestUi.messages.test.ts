@@ -6,6 +6,7 @@ import {
   pullRequestFilterOptionLabel,
   pullRequestTermAtStart,
   pullRequestUiMessages,
+  translatePullRequestLabel,
 } from "./pullRequestUi.messages";
 
 describe("pull request filter option labels", () => {
@@ -13,6 +14,12 @@ describe("pull request filter option labels", () => {
     expect(pullRequestFilterOptionLabel({ label: "All", translateLabel: true }, "zh-CN")).toBe(
       "全部",
     );
+    expect(pullRequestFilterOptionLabel({ label: "Open", translateLabel: true }, "zh-CN")).toBe(
+      "开放",
+    );
+    expect(translatePullRequestLabel("Host", "zh-CN")).toBe("托管平台");
+    expect(translatePullRequestLabel("Open", "en")).toBe("Open");
+    expect(translate("zh-CN", pullRequestUiMessages, "Open")).toBe("打开");
   });
 
   it("leaves project, environment and host data untouched even when it matches a UI label", () => {

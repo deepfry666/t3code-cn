@@ -42,15 +42,15 @@ export const cloudUiMessages = {
   "Checking current installation": "正在检查当前安装",
   "Waiting for installer": "正在等待安装程序",
   "Downloading relay client": "正在下载中继客户端",
-  "Verifying download": "正在校验下载",
+  "Verifying download": "正在校验下载内容",
   "Installing relay client": "正在安装中继客户端",
   "Validating executable": "正在验证可执行文件",
-  "Activating installation": "正在启用安装",
+  "Activating installation": "正在启用中继客户端",
   "Install relay client?": "要安装中继客户端吗？",
   "T3 Code is preparing this environment for secure access through T3 Connect.":
     "T3 Code 正在为此环境做准备，以便通过 T3 Connect 安全访问。",
   "T3 Code needs the relay client to make this environment available through T3 Connect.":
-    "T3 Code 需要中继客户端，才能让此环境通过 T3 Connect 访问。",
+    "T3 Code 需要中继客户端，才能通过 T3 Connect 访问此环境。",
   "{step} of {total}": "第 {step}/{total} 步",
   "Relay client installation progress": "中继客户端安装进度",
   "Keep T3 Code open while the relay client is installed.":
