@@ -35,7 +35,7 @@ export const browserUiMessages = {
   Dismiss: "忽略",
   Accept: "接受",
   "Take control to respond.": "接管控制后才能回应。",
-  "Try again": "请重试",
+  "Try again": "重试",
   "Browser connection was refused.": "浏览器连接被拒绝。",
   Reconnect: "重新连接",
   "The page copied text": "页面复制了文字",
@@ -45,6 +45,9 @@ export const browserUiMessages = {
   "Could not send the files to the page": "无法将文件发送到页面",
   "Unable to resize browser viewport": "无法调整浏览器视口大小",
   "An error occurred.": "发生错误。",
+  "Saved browser settings could not be loaded.": "无法加载已保存的浏览器设置。",
+  "Unable to start the preview video source. Make sure the capture host is unlocked and its display is on, then retry.":
+    "无法启动预览视频源。请确认采集端主机已解锁且屏幕已亮，然后重试。",
   "The integrated browser is unavailable in this runtime.": "此运行环境不支持内置浏览器。",
   "Recording canvas is unavailable.": "录制画布不可用。",
   "Link opening is unavailable.": "无法打开链接。",

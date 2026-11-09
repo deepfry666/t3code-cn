@@ -1,3 +1,4 @@
+import { RuntimeErrorText } from "~/components/RuntimeErrorText";
 import type { RelayClientDeviceRecord } from "@t3tools/contracts/relay";
 import { SmartphoneIcon } from "lucide-react";
 
@@ -142,7 +143,9 @@ export function MobileClientsUserProfilePage() {
               <p className="font-medium text-destructive-foreground">
                 {t("Could not load mobile clients")}
               </p>
-              <p className="mt-0.5 text-xs text-muted-foreground">{devicesState.error}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                <RuntimeErrorText>{devicesState.error}</RuntimeErrorText>
+              </p>
             </div>
             <Button size="xs" variant="outline" onClick={devicesState.refresh}>
               {t("Try again")}

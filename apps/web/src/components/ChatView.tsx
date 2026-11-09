@@ -1,3 +1,4 @@
+import { translateThreadRuntimeLabel } from "./chat/threadRuntimeLabels";
 import { useTranslation } from "~/i18n/useTranslation";
 import { threadPanelUiMessages } from "./chat/threadPanelUi.messages";
 import { composerUiMessages } from "./chat/composerUi.messages";
@@ -1502,7 +1503,11 @@ export default function ChatView(props: ChatViewProps) {
       ? []
       : [
           { ...codexFeedbackMessage(submission), runId: null },
-          { ...codexFeedbackMessage(submission, "assistant"), runId: null },
+          {
+            ...codexFeedbackMessage(submission, "assistant"),
+            text: translateThreadRuntimeLabel(codexFeedbackMessage(submission, "assistant").text),
+            runId: null,
+          },
         ],
   );
   const timelineEntriesInput = {

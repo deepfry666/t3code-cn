@@ -1,6 +1,16 @@
 import type { Locale } from "../i18n/locale";
 
 export const commandPaletteUiMessages = {
+  "Enter the full owner/repository name.": "请输入完整的所有者/仓库名称。",
+  "Provider status unavailable. Open Source Control settings and rescan.":
+    "无法获取提供方状态。请打开“版本控制”设置并重新扫描。",
+  "Enter a project path.": "请输入项目路径。",
+  "Windows-style paths are only supported on Windows environments.":
+    "仅 Windows 环境支持 Windows 风格的路径。",
+  "Relative paths require an active project in this environment.":
+    "相对路径需要此环境中有活动项目。",
+  "No project in this environment can read {host}/{repository}.":
+    "此环境中没有项目能读取 {host}/{repository}。",
   // Groups, placeholders and empty states
   Suggestions: "建议",
   Threads: "会话",
@@ -52,7 +62,7 @@ export const commandPaletteUiMessages = {
   Sources: "来源",
   "Setup Required": "需要设置",
   "Open Settings -> Source control to configure this provider.":
-    "打开 设置 -> 源代码管理 以配置此提供方。",
+    "打开“设置 → 版本控制”以配置此提供方。",
   Create: "创建",
   Toggle: "开关",
   Select: "选择",
@@ -78,8 +88,8 @@ export const commandPaletteUiMessages = {
   "Find in current thread": "在当前会话中查找",
   "Copy prompt link": "复制提示词链接",
   "Copy prompt link with repo and model": "复制包含仓库与模型的提示链接",
-  "Link pull request to thread": "为会话关联拉取请求",
-  "Show linked pull requests": "显示已关联的拉取请求",
+  "Link pull request to thread": "为会话关联 pull request",
+  "Show linked pull requests": "显示已关联的 pull request",
   "Share with guest": "与访客共享",
   "Restart agent session": "重启智能体会话",
   "Agent session will restart": "智能体会话将重启",
@@ -87,7 +97,7 @@ export const commandPaletteUiMessages = {
   "Go to file": "转到文件",
   "Add project": "添加项目",
   "Open WSL folder": "打开 WSL 文件夹",
-  "Open pull requests": "打开拉取请求",
+  "Open pull requests": "打开 pull request",
   "Open usage": "打开用量",
   "Open settings": "打开设置",
   "Project settings": "项目设置",
@@ -164,7 +174,7 @@ export const commandPaletteUiMessages = {
   "Repository lookup failed": "仓库查询失败",
   "Clone unavailable": "无法克隆",
   "This connection needs permission to write source control and add projects.":
-    "此连接需要写入源代码管理和添加项目的权限。",
+    "此连接需要写入版本控制和添加项目的权限。",
   "Clone failed": "克隆失败",
   "Thread search is unavailable on this server.": "此服务器不支持会话搜索。",
   "Update the server to enable it.": "更新服务器即可启用。",
@@ -174,8 +184,10 @@ export const commandPaletteUiMessages = {
   "Could not add WSL project": "无法添加 WSL 项目",
   "Start the matching WSL backend, then choose the folder again.":
     "请先启动对应的 WSL 后端，然后重新选择文件夹。",
-  "Open source control settings": "打开源代码管理设置",
-  "Open Settings -> Source control": "打开 设置 -> 源代码管理",
+  "Open source control settings": "打开版本控制设置",
+  "Open Settings -> Source control": "打开“设置 → 版本控制”",
+  "This connection cannot browse host folders.": "此连接无法浏览主机文件夹。",
+  "Git URL": "Git URL",
 } as const;
 
 export type CommandPaletteUiKey = keyof typeof commandPaletteUiMessages;

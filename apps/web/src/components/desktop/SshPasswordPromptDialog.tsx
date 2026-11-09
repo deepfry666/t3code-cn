@@ -7,8 +7,8 @@ import { useId, useRef, useState, useSyncExternalStore } from "react";
 import { useDeadlinePassed } from "../../hooks/useDeadline";
 import { useNowSecond } from "../../hooks/useNowSecond";
 
-import { translateNow, useTranslation } from "~/i18n/useTranslation";
-import { desktopUiMessages } from "./desktopUi.messages";
+import { readLocale, translateNow, useTranslation } from "~/i18n/useTranslation";
+import { desktopUiMessages, translateDesktopLabel } from "./desktopUi.messages";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -36,7 +36,7 @@ function getPromptErrorMessage(error: unknown): string {
       : translateNow(desktopUiMessages, "SSH verification prompt failed.");
   return message.includes("expired") || message.includes("no longer pending")
     ? translateNow(desktopUiMessages, "This SSH verification prompt expired. Try connecting again.")
-    : message;
+    : translateDesktopLabel(message, readLocale());
 }
 
 let promptQueue: readonly DesktopSshPasswordPromptRequest[] = [];

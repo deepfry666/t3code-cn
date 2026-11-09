@@ -1,3 +1,5 @@
+import { translateDeviceStreamLabel } from "./deviceUi.messages";
+import { readLocale } from "~/i18n/useTranslation";
 import { translateNow } from "~/i18n/useTranslation";
 import { deviceDetailMessages } from "./deviceDetail.messages";
 
@@ -10,5 +12,7 @@ const knownDetail = (detail: string): keyof typeof deviceDetailMessages | null =
 export function deviceDetail(detail: string | null | undefined): string | null {
   if (!detail) return null;
   const key = knownDetail(detail);
-  return key === null ? detail : translateNow(deviceDetailMessages, key);
+  return key === null
+    ? translateDeviceStreamLabel(detail, readLocale())
+    : translateNow(deviceDetailMessages, key);
 }

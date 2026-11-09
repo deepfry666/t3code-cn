@@ -4,7 +4,7 @@ export const clerkUiMessages = {
   Refresh: "刷新",
   Cancel: "取消",
   "Copy trace ID": "复制追踪 ID",
-  "Try again": "请重试",
+  "Try again": "重试",
   "Try again.": "请重试。",
 
   "T3 Connect settings": "T3 Connect 设置",

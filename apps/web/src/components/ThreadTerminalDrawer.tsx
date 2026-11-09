@@ -1456,6 +1456,7 @@ function TerminalSidebarGroup({
   onActiveTerminalChange: (terminalId: string) => void;
   onCloseTerminal: (terminalId: string) => void;
 }) {
+  const t = useTranslation(projectScriptsUiMessages);
   const isGroupActive = terminalGroup.terminalIds.includes(activeTerminalId);
   const groupActiveTerminalId = isGroupActive
     ? activeTerminalId
@@ -1494,10 +1495,14 @@ function TerminalSidebarGroup({
       <div className="flex flex-col gap-0.5">
         {terminalGroup.terminalIds.map((terminalId) => {
           const isActive = terminalId === activeTerminalId;
-          const terminalLabel = terminalLabelById.get(terminalId) ?? "Terminal";
-          const closeTerminalLabel = `Close ${terminalLabel}${
-            isActive && closeShortcutLabel ? ` (${closeShortcutLabel})` : ""
-          }`;
+          const terminalLabel = terminalLabelById.get(terminalId) ?? t("Terminal");
+          const closeTerminalLabel =
+            isActive && closeShortcutLabel
+              ? t("Close {label} ({shortcut})", {
+                  label: terminalLabel,
+                  shortcut: closeShortcutLabel,
+                })
+              : t("Close {label}", { label: terminalLabel });
           return (
             <div
               key={terminalId}
@@ -1564,9 +1569,9 @@ export default function ThreadTerminalDrawer({
   terminalLaunchLocationsById,
 }: ThreadTerminalDrawerProps) {
   const canOperateTerminal = useEnvironmentScope(threadRef.environmentId, AuthTerminalOperateScope);
-  const terminalArea = workspaceAreaProps("terminal", 5, "Terminal");
-  const isPanel = mode === "panel";
   const t = useTranslation(projectScriptsUiMessages);
+  const terminalArea = workspaceAreaProps("terminal", 5, t("Terminal"));
+  const isPanel = mode === "panel";
   const [advancedTypography] = useLocalStorage(
     TYPOGRAPHY_ADVANCED_STORAGE_KEY,
     false,
@@ -1717,21 +1722,21 @@ export default function ThreadTerminalDrawer({
       ...(runtimeEnv ? { runtimeEnv } : {}),
     };
   const splitTerminalActionLabel = hasReachedSplitLimit
-    ? `Split Terminal Horizontally (max ${MAX_TERMINALS_PER_GROUP} per group)`
+    ? t("Split Terminal Horizontally (max {max} per group)", { max: MAX_TERMINALS_PER_GROUP })
     : splitShortcutLabel
-      ? `Split Terminal Horizontally (${splitShortcutLabel})`
-      : "Split Terminal Horizontally";
+      ? t("Split Terminal Horizontally ({shortcut})", { shortcut: splitShortcutLabel })
+      : t("Split Terminal Horizontally");
   const splitTerminalVerticalActionLabel = hasReachedSplitLimit
-    ? `Split Terminal Vertically (max ${MAX_TERMINALS_PER_GROUP} per group)`
+    ? t("Split Terminal Vertically (max {max} per group)", { max: MAX_TERMINALS_PER_GROUP })
     : splitVerticalShortcutLabel
-      ? `Split Terminal Vertically (${splitVerticalShortcutLabel})`
-      : "Split Terminal Vertically";
+      ? t("Split Terminal Vertically ({shortcut})", { shortcut: splitVerticalShortcutLabel })
+      : t("Split Terminal Vertically");
   const newTerminalActionLabel = newShortcutLabel
-    ? `New Terminal (${newShortcutLabel})`
-    : "New Terminal";
+    ? t("New Terminal ({shortcut})", { shortcut: newShortcutLabel })
+    : t("New Terminal");
   const closeTerminalActionLabel = closeShortcutLabel
-    ? `Close Terminal (${closeShortcutLabel})`
-    : "Close Terminal";
+    ? t("Close Terminal ({shortcut})", { shortcut: closeShortcutLabel })
+    : t("Close Terminal");
   const onSplitTerminalAction = () => {
     if (!canOperateTerminal || hasReachedSplitLimit) return;
     onSplitTerminal();

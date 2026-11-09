@@ -1,5 +1,5 @@
 import type { Session, WebContents } from "electron";
-import { BrowserWindow, session } from "electron";
+import { app, BrowserWindow, session } from "electron";
 import * as Context from "effect/Context";
 import * as Digest from "effect/crypto/Digest";
 import * as Effect from "effect/Effect";
@@ -10,6 +10,11 @@ import * as Schema from "effect/Schema";
 import * as SynchronizedRef from "effect/SynchronizedRef";
 
 import * as ElectronDialog from "../electron/ElectronDialog.ts";
+
+import { localizeDesktopText } from "../window/menuLocalization.ts";
+
+const t = (text: string, params: Readonly<Record<string, string | number>> = {}) =>
+  localizeDesktopText(text, app.getPreferredSystemLanguages(), params);
 
 const PREVIEW_PARTITION_PREFIX = "persist:t3code-preview-";
 /** Ephemeral partitions omit persist: but retain a product prefix so the webview gate recognizes them. */
@@ -250,9 +255,11 @@ export const make = Effect.gen(function* BrowserSessionMake() {
     promptPermission(
       requester,
       {
-        buttons: ["Open", "Cancel"],
-        message: `Open this ${new URL(url).protocol.slice(0, -1)} link?`,
-        detail: `A page in the browser wants to open another application:\n\n${truncateForPrompt(url)}`,
+        buttons: [t("Open"), t("Cancel")],
+        message: t("Open this {protocol} link?", { protocol: new URL(url).protocol.slice(0, -1) }),
+        detail: t("A page in the browser wants to open another application:\n\n{url}", {
+          url: truncateForPrompt(url),
+        }),
       },
       (answer) => callback(answer === true),
     );
@@ -309,8 +316,10 @@ export const make = Effect.gen(function* BrowserSessionMake() {
             promptPermission(
               requester,
               {
-                buttons: ["Allow", "Block"],
-                message: `${truncateForPrompt(origin)} wants to see text and images copied to the clipboard`,
+                buttons: [t("Allow"), t("Block")],
+                message: t("{origin} wants to see text and images copied to the clipboard", {
+                  origin: truncateForPrompt(origin),
+                }),
               },
               (answer) => {
                 if (answer !== undefined) clipboardReadDecisions.set(origin, answer);

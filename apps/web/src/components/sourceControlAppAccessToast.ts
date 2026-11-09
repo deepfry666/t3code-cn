@@ -3,6 +3,8 @@ import { appSignInTargetForRemote } from "@t3tools/client-runtime/source-control
 import { runAtomCommand } from "@t3tools/client-runtime/state/runtime";
 import { appAtomRegistry } from "../rpc/atomRegistry";
 import { sourceControlEnvironment } from "../state/sourceControl";
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "./globalUi.messages";
 import { toastManager } from "./ui/toast";
 
 /**
@@ -25,8 +27,15 @@ export async function suggestAppAccessForRemote(
   const owner = target.input.repository.split("/")[0] ?? target.input.repository;
   const id = toastManager.add({
     type: "info",
-    title: `Give ${target.appSignIn.appName} access to ${owner}`,
-    description: `It isn't installed there, so GitHub requests for ${target.input.repository} use your own login and its lower rate limit.`,
+    title: translateNow(globalUiMessages, "Give {app} access to {owner}", {
+      app: target.appSignIn.appName,
+      owner,
+    }),
+    description: translateNow(
+      globalUiMessages,
+      "It isn't installed there, so GitHub requests for {repository} use your own login and its lower rate limit.",
+      { repository: target.input.repository },
+    ),
     actionProps: {
       children: "Install",
       onClick: () => {

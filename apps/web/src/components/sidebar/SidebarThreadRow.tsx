@@ -145,11 +145,13 @@ function compactSidebarTimeLabel(label: string): string {
 // minute. The minute is passed as the clock so it is the formatter's input.
 function RelativeTimeLabel(props: { timestamp: string | null }) {
   const nowMinute = useNowMinute();
-  return props.timestamp === null
-    ? null
-    : compactSidebarTimeLabel(
-        formatRelativeTimeLabel(props.timestamp, Date.parse(`${nowMinute}:00.000Z`)),
-      );
+  const t = useTranslation(sidebarUiMessages);
+  if (props.timestamp === null) return null;
+  const label = compactSidebarTimeLabel(
+    formatRelativeTimeLabel(props.timestamp, Date.parse(`${nowMinute}:00.000Z`)),
+  );
+  // "5m", "2h" and "3d" fit the row in any language; only "now" reads as a word.
+  return label === "now" ? t("now@@sidebar time") : label;
 }
 
 function JumpHintBadge(props: { label: string }) {

@@ -5,6 +5,8 @@ import {
   type EnvironmentId,
 } from "@t3tools/contracts";
 
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "./components/globalUi.messages";
 import { resolveDiffPathForWorkspace } from "./diffFileActions";
 import {
   revealInFileExplorerLabelForKind,
@@ -76,7 +78,7 @@ function buildFileContextMenuItems(input: {
   if (editorIds.length > 0) {
     items.push({
       id: "open-with",
-      label: "Open with",
+      label: translateNow(globalUiMessages, "Open with"),
       children: editorIds.map((editorId) => ({
         id: `editor:${editorId}` as FileContextMenuAction,
         label: EDITOR_LABEL_BY_ID.get(editorId) ?? editorId,
@@ -128,10 +130,12 @@ export function useFileContextMenu(environmentId: EnvironmentId | null) {
       type: "error",
       title:
         action === "open"
-          ? "Could not open file"
+          ? translateNow(globalUiMessages, "Could not open file")
           : reveal
             ? "Unable to reveal file"
-            : `Could not open in ${EDITOR_LABEL_BY_ID.get(editor) ?? editor}`,
+            : translateNow(globalUiMessages, "Could not open in {editor}", {
+                editor: EDITOR_LABEL_BY_ID.get(editor) ?? editor,
+              }),
       description: absolutePath,
     });
   };

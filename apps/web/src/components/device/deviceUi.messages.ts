@@ -1,4 +1,14 @@
+import { createLabelTranslator } from "../../i18n/labelTranslation";
+import { translate, type Locale } from "../../i18n/locale";
+
 export const deviceUiMessages = {
+  "This browser cannot decode {codec}.": "此浏览器无法解码 {codec}。",
+  "Video decoder: {error}": "视频解码器：{error}",
+  "This browser cannot decode this device's {codec} stream.":
+    "此浏览器无法解码此设备的 {codec} 视频流。",
+  "This browser cannot decode the Duo panel's {codec} stream.":
+    "此浏览器无法解码 Duo 面板的 {codec} 视频流。",
+  "Device stream offer failed ({status}). Retrying…": "设备流协商失败（{status}）。正在重试…",
   "iOS Simulators": "iOS 模拟器",
   "Android Emulators": "Android 模拟器",
   "Device host": "设备主机",
@@ -191,7 +201,8 @@ export const deviceUiMessages = {
   "Open {name}": "打开 {name}",
   "Start {name}": "启动 {name}",
   "Dismiss device error": "关闭设备错误提示",
-  "{platforms} {kind} on {label} may be incomplete.": "{label} 上的 {platforms} {kind}可能不完整。",
+  "{platforms} {kind} on {label} may be incomplete.":
+    "{label} 上的 {platforms} {kind} 可能不完整。",
   list: "列表",
   lists: "列表",
   "Device discovery on {label} reported a warning.": "{label} 上的设备发现报告了一条警告。",
@@ -230,4 +241,18 @@ export const deviceUiMessages = {
   Ready: "就绪",
   Retry: "重试",
   "Retrying…": "正在重试…",
+  "Fold command failed ({status}).": "折叠命令失败（{status}）。",
 } as const;
+
+const translateStreamLabel = createLabelTranslator(deviceUiMessages, [
+  "This browser cannot decode {codec}.",
+  "Video decoder: {error}",
+  "This browser cannot decode this device's {codec} stream.",
+  "This browser cannot decode the Duo panel's {codec} stream.",
+  "Device stream offer failed ({status}). Retrying…",
+]);
+export function translateDeviceStreamLabel(label: string, locale: Locale): string {
+  return translateStreamLabel(label, (key, params) =>
+    translate(locale, deviceUiMessages, key, params),
+  );
+}

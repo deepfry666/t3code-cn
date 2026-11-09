@@ -200,7 +200,7 @@ export const settingsMaintenanceMessages = {
   Worktrees: "工作树",
   "Rotated logs": "轮转日志",
   "Browser artifacts": "浏览器产物",
-  Machine: "设备",
+  Machine: "机器",
   Project: "项目",
   Folder: "文件夹",
   Thread: "会话",
@@ -222,15 +222,15 @@ export const settingsMaintenanceMessages = {
   "Delete now": "立即删除",
   "Last run": "上次运行",
   "Update the selected environments to use storage cleanup, or choose a machine that supports it.":
-    "更新所选环境后即可使用存储清理，或选择支持此功能的设备。",
-  "Mixed across selected machines": "所选设备的设置各不相同",
+    "更新所选环境后即可使用存储清理，或选择支持此功能的机器。",
+  "Mixed across selected machines": "所选机器的设置各不相同",
   "Update the selected machines to configure project worktree cleanup.":
-    "请先更新所选设备，再配置项目工作树清理。",
+    "请先更新所选机器，再配置项目工作树清理。",
   "Automatic worktree cleanup": "自动清理工作树",
   "Keep this project's worktrees until you delete them manually.":
     "保留此项目的工作树，直到你手动删除。",
   "Use these rules for this project.": "此项目使用以下规则。",
-  "Use each machine's worktree cleanup settings.": "使用各设备的工作树清理设置。",
+  "Use each machine's worktree cleanup settings.": "使用各机器的工作树清理设置。",
   Inherit: "继承",
   Custom: "自定义",
   "Delete worktrees with deleted threads": "删除会话时删除工作树",
@@ -238,12 +238,12 @@ export const settingsMaintenanceMessages = {
     "删除活跃或已归档会话时，移除不再使用的工作树。保留有本地改动的工作树。",
   "Delete merged worktrees": "删除已合并的工作树",
   "Remove worktrees whose pull request is merged and whose commits are included in the default branch.":
-    "移除拉取请求已合并且提交已包含在默认分支中的工作树。",
+    "移除 pull request 已合并且提交已包含在默认分支中的工作树。",
   "Delete inactive worktrees": "删除不活跃的工作树",
   "Remove worktrees after their threads have been inactive for this many days. Branches and thread history are kept.":
     "会话闲置达到设定天数后移除其工作树。保留分支和会话历史。",
   "Delete settled worktrees": "删除已收尾的工作树",
-  "Offline machines will not get this setting": "离线设备不会收到此设置",
+  "Offline machines will not get this setting": "离线机器不会收到此设置",
   "Remove worktrees this many days after their thread settles. Set 0 days to remove them at the next cleanup. Branches and thread history are kept.":
     "会话收尾达到设定天数后移除其工作树。设为 0 天时，在下次清理时移除。保留分支和会话历史。",
   "Delete unchanged worktrees": "删除无改动的工作树",
@@ -269,7 +269,7 @@ export const settingsMaintenanceMessages = {
   "These databases still hold space freed by history cleanup.":
     "这些数据库仍占用历史清理后腾出的空间。",
   "These databases still hold space freed by history cleanup. Run the command on each machine to reclaim it. It restarts the background service. Quit the desktop app first if it hosts the environment.":
-    "这些数据库仍占用历史清理后腾出的空间。在各设备上运行此命令即可回收。命令会重启后台服务。如果此环境由桌面应用托管，请先退出桌面应用。",
+    "这些数据库仍占用历史清理后腾出的空间。在各机器上运行此命令即可回收。命令会重启后台服务。如果此环境由桌面应用托管，请先退出桌面应用。",
   "{size} GiB on {environment}": "{environment} 上的 {size} GiB",
   "Copy command": "复制命令",
   Dismiss: "忽略",
@@ -312,7 +312,7 @@ export const settingsMaintenanceMessages = {
   "Search open-source licenses": "搜索开源许可",
   "Search licenses": "搜索许可",
   "Open-source notices are unavailable": "开源声明不可用",
-  "Try again": "请重试。",
+  "Try again": "重试",
   "The license manifest could not load.": "无法加载许可清单。",
   "The license manifest took too long to load.": "许可清单加载超时。",
   "The license manifest request failed with status {status}.":
@@ -333,7 +333,7 @@ export const settingsMaintenanceMessages = {
   "An unexpected error occurred.": "发生了意外错误。",
   "Switch to {label}?": "切换到{label}？",
   "Every connected machine is already on {label}. This only saves the track.":
-    "所有已连接设备都已使用{label}。这只会保存更新通道。",
+    "所有已连接机器都已使用{label}。这只会保存更新通道。",
   "This app's updates are off here, so reinstall it yourself to switch.":
     "此应用已停用更新，请手动重新安装以切换通道。",
   "If T3 Code does not reopen after it restarts, open it again.":
@@ -395,7 +395,7 @@ export const settingsMaintenanceMessages = {
   "{count} processes": "{count} 个进程",
   "{count} file": "{count} 个文件",
   "{count} files": "{count} 个文件",
-  "{counts} on every machine": "每台设备均为{counts}",
+  "{counts} on every machine": "每台机器均为{counts}",
   "{removed} removed, {kept} kept": "已移除 {removed} 项，保留 {kept} 项",
   "{removed} removed, {kept} kept, {failed} failed":
     "已移除 {removed} 项，保留 {kept} 项，失败 {failed} 项",
@@ -473,7 +473,7 @@ export const settingsMaintenanceMessages = {
   "Default branch is unavailable": "默认分支不可用",
   "No commits beyond the project branch": "没有超出项目分支的提交",
   "No commits beyond the default branch": "没有超出默认分支的提交",
-  "Pull request was merged": "拉取请求已合并",
+  "Pull request was merged": "Pull request 已合并",
   "Has commits beyond the project branch": "有超出项目分支的提交",
   "Inactive for {days} of {limit} days": "已闲置 {days} 天，清理阈值为 {limit} 天",
   "Settled for {days} of {limit} days": "已收尾 {days} 天，清理阈值为 {limit} 天",
@@ -506,9 +506,70 @@ export const settingsMaintenanceMessages = {
   "No expired files": "没有过期文件",
   "Removed {count} browser artifacts": "已移除 {count} 个浏览器产物",
   "Removed {count} rotated logs": "已移除 {count} 个轮转日志",
+  "Could not read your PATH, so it was left unchanged.": "无法读取 PATH，未做更改。",
+  "Could not update your PATH.": "无法更新 PATH。",
+  "The t3 command needs an installed app.": "t3 命令需要已安装的应用。",
+  "Added t3 to your PATH but could not record it.": "已将 t3 添加到 PATH，但无法记录此更改。",
+  "Could not set up the t3 launcher at {path}.": "无法在 {path} 设置 t3 启动器。",
+  "Could not replace {path}.": "无法替换 {path}。",
+  "Could not remove {path}.": "无法移除 {path}。",
+  "Another t3 at {path} runs first in a new terminal. Remove it, or run the launcher directly at {launcher}.":
+    "新终端会优先运行 {path} 处的另一个 t3。请移除它，或直接运行 {launcher} 处的启动器。",
+  "Another t3 command is already installed, or no folder on your PATH is writable. Run the launcher directly at {launcher}.":
+    "已安装另一个 t3 命令，或 PATH 中没有可写文件夹。请直接运行 {launcher} 处的启动器。",
+  "The desktop app failed to install the update.": "桌面应用安装更新失败。",
+  "A prepared desktop update is already in progress.": "已有准备好的桌面更新正在进行。",
+  "This desktop app also runs WSL backends, whose databases a remote switch cannot check. Switch it on that machine.":
+    "此桌面应用还运行 WSL 后端，远程切换无法检查其数据库。请在该机器上切换。",
+  "The desktop app lost the downloaded update.": "桌面应用找不到已下载的更新。",
+  "The desktop app found no build of {version}.": "桌面应用未找到 {version} 的构建版本。",
+  "This desktop update is no longer prepared.": "此桌面更新已不处于准备就绪状态。",
+  "The desktop app could not start the install.": "桌面应用无法开始安装。",
+  "Updates are off because T3 Code cannot use the managed policy at {path}. Contact your administrator.":
+    "T3 Code 无法使用 {path} 处的受管理策略，已停用更新。请联系管理员。",
+  "Your administrator manages T3 Code updates.": "T3 Code 更新由管理员管理。",
+  "Automatic updates are disabled on this machine.": "此机器已停用自动更新。",
+  "Update {version} did not apply on this machine. Retry it from the desktop app there.":
+    "更新 {version} 未在此机器上生效。请在该机器的桌面应用中重试。",
+  "The desktop app failed to download the update.": "桌面应用下载更新失败。",
+  "The desktop app update failed.": "桌面应用更新失败。",
+  "The desktop app did not report an update result.": "桌面应用未报告更新结果。",
 } as const;
 
 const DYNAMIC_LABELS = [
+  [
+    /^Could not set up the t3 launcher at ([\s\S]+?)\.$/,
+    "Could not set up the t3 launcher at {path}.",
+    ["path"],
+  ],
+  [/^Could not replace ([\s\S]+?)\.$/, "Could not replace {path}.", ["path"]],
+  [/^Could not remove ([\s\S]+?)\.$/, "Could not remove {path}.", ["path"]],
+  [
+    /^Another t3 at ([\s\S]+?) runs first in a new terminal\. Remove it, or run the launcher directly at ([\s\S]+?)\.$/,
+    "Another t3 at {path} runs first in a new terminal. Remove it, or run the launcher directly at {launcher}.",
+    ["path", "launcher"],
+  ],
+  [
+    /^Another t3 command is already installed, or no folder on your PATH is writable\. Run the launcher directly at ([\s\S]+?)\.$/,
+    "Another t3 command is already installed, or no folder on your PATH is writable. Run the launcher directly at {launcher}.",
+    ["launcher"],
+  ],
+  [
+    /^The desktop app found no build of ([\s\S]+?)\.$/,
+    "The desktop app found no build of {version}.",
+    ["version"],
+  ],
+  [
+    /^Updates are off because T3 Code cannot use the managed policy at ([\s\S]+?)\. Contact your administrator\.$/,
+    "Updates are off because T3 Code cannot use the managed policy at {path}. Contact your administrator.",
+    ["path"],
+  ],
+  [
+    /^Update ([\s\S]+?) did not apply on this machine\. Retry it from the desktop app there\.$/,
+    "Update {version} did not apply on this machine. Retry it from the desktop app there.",
+    ["version"],
+  ],
+
   [/^(\d+(?:[.,]\d+)?) second$/, "{count} second", ["count"]],
   [/^(\d+(?:[.,]\d+)?) seconds$/, "{count} seconds", ["count"]],
   [/^(\d+)m[\s\u00a0]ago$/, "{count}m ago", ["count"]],
@@ -580,6 +641,16 @@ const DYNAMIC_LABELS = [
 
 export function translateMaintenanceLabel(label: string, locale: Locale): string {
   if (locale !== "zh-CN") return label;
+  // Electron prefixes rejected IPC errors with the channel and error class.
+  const ipcError =
+    /^(?:Error invoking remote method 'desktop:[^']+':\s*(?:\w*Error:\s*)?|\w*Error:\s*)([\s\S]+)$/u.exec(
+      label,
+    );
+  if (ipcError) {
+    const message = ipcError[1]!;
+    const translated = translateMaintenanceLabel(message, locale);
+    if (translated !== message) return translated;
+  }
   if (Object.hasOwn(settingsMaintenanceMessages, label))
     return settingsMaintenanceMessages[label as keyof typeof settingsMaintenanceMessages];
   for (const [pattern, key, parameters] of DYNAMIC_LABELS) {

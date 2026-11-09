@@ -1,3 +1,4 @@
+import { translateThreadRuntimeLabel } from "./threadRuntimeLabels";
 import { useTranslation } from "~/i18n/useTranslation";
 import { composerUiMessages } from "./composerUi.messages";
 import { scopeThreadRef } from "@t3tools/client-runtime/environment";
@@ -138,7 +139,7 @@ export function QueuedRunsControl({
       messageId: run.userMessageId,
       freshContext: run.freshContext === true,
       serverIndex,
-      text,
+      text: message === undefined && text === "Queued message" ? t("Queued message") : text,
       // A guest's message keeps the guest's words; the owner can cancel it, not rewrite it.
       editable: context?.guest === undefined,
       attachments,
@@ -353,7 +354,9 @@ export function QueuedRunsControl({
                         </Button>
                       </TooltipTrigger>
                       <TooltipPopup>
-                        {props.editBlockedReason ??
+                        {(props.editBlockedReason === null
+                          ? null
+                          : translateThreadRuntimeLabel(props.editBlockedReason)) ??
                           `${t("Edit in the composer")}${item.serverIndex === queued.length - 1 && props.editShortcutLabel ? ` (${props.editShortcutLabel})` : ""}`}
                       </TooltipPopup>
                     </Tooltip>

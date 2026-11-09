@@ -26,6 +26,7 @@ const { fromWebContents } = vi.hoisted(() => ({
 }));
 
 vi.mock("electron", () => ({
+  app: { getPreferredSystemLanguages: () => ["en-US"] },
   BrowserWindow: { fromWebContents },
   session: {
     fromPartition,

@@ -1,3 +1,5 @@
+import { translate, type Locale } from "~/i18n/locale";
+
 export const filesUiMessages = {
   "This folder is no longer available.": "此文件夹已不可用。",
   "Refresh failed. Retry": "刷新失败，请重试",
@@ -7,7 +9,7 @@ export const filesUiMessages = {
   "Reset reading size": "重置阅读字号",
   "File explorer": "文件浏览器",
   "Loading file": "正在加载文件",
-  "Try again": "请重试。",
+  "Try again": "重试",
   "The font is damaged or unsupported.": "字体已损坏或不受支持。",
   "Font preview": "字体预览",
   "Showing the first 1,024 columns. Source and Save retain every column.":
@@ -146,7 +148,7 @@ export const filesUiMessages = {
   "0 rows": "0 行",
   "Read-only. Up to 50 columns and 1,024 characters per cell. Blob contents are omitted.":
     "只读。最多 50 列，每格最多 1,024 个字符。不显示 Blob 内容。",
-  "Archive entries": "归档条目",
+  "Archive entries": "压缩包条目",
   Name: "名称",
   Size: "大小",
   Modified: "修改时间",
@@ -188,4 +190,133 @@ export const filesUiMessages = {
   "The selected cells could not be copied.": "无法复制所选单元格。",
   "Preview limited to 1,000 pages.": "预览仅限 1,000 页。",
   "{count} pages": "{count} 页",
+  "Open {label}": "打开 {label}",
+  "Retry {label}": "重试 {label}",
+  "Loading {label}": "正在加载 {label}",
+  "Pause {label}": "暂停 {label}",
+  "Play {label}": "播放 {label}",
+  "Audio unavailable. Open the file or retry playback.": "音频不可用。请打开文件或重试播放。",
+  "Audio unavailable. {action}": "音频不可用。{action}",
+  "Retry loading folder": "重试加载文件夹",
+  "No entries from this folder are available in the partial workspace index.":
+    "部分工作区索引中无法提供此文件夹的条目。",
+  "Browse {path}": "浏览 {path}",
+  "Resize file explorer": "调整文件浏览器宽度",
+  "The font took too long to load.": "字体加载超时。",
+  "Could not load the text viewer. Close the file and try again.":
+    "无法加载文本查看器。请关闭文件后重试。",
+  "Mermaid diagram": "Mermaid 图表",
+  "Cell {number}": "单元格 {number}",
+  "Cell {number} HTML output": "单元格 {number} 的 HTML 输出",
+  "Cell {number} output": "单元格 {number} 的输出",
+  "Could not load the Office viewer. Close the file and try again.":
+    "无法加载 Office 查看器。请关闭文件后重试。",
+  "Chapter {page} of {count}": "第 {page} 章，共 {count} 章",
+  "Previous sheet": "上一个工作表",
+  "Previous chapter": "上一章节",
+  "Next sheet": "下一个工作表",
+  "Next chapter": "下一章节",
+  "Page {current} of {total}": "第 {current} / {total} 页",
+  "Image decoding cancelled.": "已取消图片解码。",
+  "This image took too long to decode.": "此图片解码超时。",
+  "Could not load the image decoder.": "无法加载图片解码器。",
+  "Could not decode this image.": "无法解码此图片。",
+  "The path is a directory or special file, not a regular file.":
+    "此路径是文件夹或特殊文件，不是普通文件。",
+  "The file is binary and cannot be displayed as text.": "此文件是二进制文件，无法以文本显示。",
+  "The requested path is outside the workspace.": "请求的路径不在工作区内。",
+  "The path resolves to a location outside the workspace.": "此路径指向工作区之外的位置。",
+  "The workspace folder could not be accessed.": "无法访问工作区文件夹。",
+  "The file could not be accessed or read. It may be missing or inaccessible.":
+    "无法访问或读取该文件，它可能已不存在或无权访问。",
+  "Sheet {number}": "工作表 {number}",
+  "Chapter {number}": "章节 {number}",
+  "Workspace query failed.": "工作区查询失败。",
+  "Unable to load folder.": "无法加载文件夹。",
+  "The expanded archive exceeds the preview size or compression ratio limit.":
+    "解压后的压缩包超出预览大小或压缩比限制。",
+  "Could not preview this file.": "无法预览此文件。",
+  "Could not parse this file.": "无法解析此文件。",
+  "This workbook exceeds the preview limit: 2 million cells or 8 million grid positions.":
+    "此工作簿超出预览限制：200 万个单元格或 800 万个网格位置。",
+  "Preview limited: this Word document has an aliased document part.":
+    "预览受限：此 Word 文档包含通过别名引用的文档部件。",
+  "Preview limited: this Word document has an unsupported document relationship.":
+    "预览受限：此 Word 文档包含不受支持的文档关系。",
+  // Preview workers report these in English; the viewers translate them where they show them.
+  "An archive entry is too large or damaged.": "压缩包中的某个条目过大或已损坏。",
+  "Archive metadata is too large.": "压缩包元数据过大。",
+  "Database previews are limited to 100 tables.": "数据库预览最多支持 100 张表。",
+  "Entry previews are limited to 10 MB.": "条目预览限制为 10 MB。",
+  "Image decoding is unavailable.": "图片解码不可用。",
+  "Image previews are limited to 32 megapixels and 16,384 pixels per side.":
+    "图片预览限制为 3200 万像素，每边最多 16,384 像素。",
+  "Invalid HEIF dimensions.": "HEIF 尺寸无效。",
+  "Invalid HEIF metadata.": "HEIF 元数据无效。",
+  "Invalid TIFF LZW dictionary.": "TIFF LZW 字典无效。",
+  "Invalid TIFF metadata pointer.": "TIFF 元数据指针无效。",
+  "Invalid TIFF metadata.": "TIFF 元数据无效。",
+  "Invalid TIFF strip.": "TIFF 条带无效。",
+  "Invalid or oversized TIFF strip.": "TIFF 条带无效或过大。",
+  "Oversized TIFF strip.": "TIFF 条带过大。",
+  "Preview limited: this Word document has excessive XML nesting.":
+    "预览受限：此 Word 文档的 XML 嵌套过深。",
+  "Preview limited: this Word document has too much auxiliary markup.":
+    "预览受限：此 Word 文档的辅助标记过多。",
+  "Preview limited: this Word document has too much expanded markup.":
+    "预览受限：此 Word 文档展开后的标记过多。",
+  "Preview limited: this Word document has too much section markup.":
+    "预览受限：此 Word 文档的节标记过多。",
+  "Preview limited: this Word document has unsupported archive paths.":
+    "预览受限：此 Word 文档包含不受支持的压缩包路径。",
+  "The TAR header is damaged.": "TAR 文件头已损坏。",
+  "The TAR metadata is damaged.": "TAR 元数据已损坏。",
+  "The expanded document is too large to preview safely.": "解压后的文档过大，无法安全预览。",
+  "This HEIF image has no readable dimensions.": "无法读取此 HEIF 图片的尺寸。",
+  "This TAR uses an unsupported numeric format.": "此 TAR 使用了不受支持的数字格式。",
+  "This TIFF color format is not supported.": "不支持此 TIFF 颜色格式。",
+  "This TIFF compression is not supported.": "不支持此 TIFF 压缩方式。",
+  "This TIFF has no readable image.": "此 TIFF 没有可读取的图像。",
+  "This TIFF has too much image data.": "此 TIFF 的图像数据过多。",
+  "This TIFF has too much or truncated metadata.": "此 TIFF 的元数据过多或不完整。",
+  "This TIFF orientation is not supported.": "不支持此 TIFF 方向。",
+  "This Word document has excessive XML nesting.": "此 Word 文档的 XML 嵌套过深。",
+  "This Word document has no readable body.": "此 Word 文档没有可读取的正文。",
+  "This Word document has too much section markup.": "此 Word 文档的节标记过多。",
+  "This archive contains more than 2,048 entries.": "此压缩包包含超过 2,048 个条目。",
+  "This archive entry is unavailable.": "此压缩包条目不可用。",
+  "This archive has no readable entries.": "此压缩包没有可读取的条目。",
+  "This document contains unsupported XML declarations.": "此文档包含不受支持的 XML 声明。",
+  "This file contains too many archive entries to preview.": "此文件包含的压缩条目过多，无法预览。",
+  "This file is damaged, encrypted, or not a valid Office document.":
+    "此文件已损坏、已加密，或不是有效的 Office 文档。",
+  "This file is too large to preview.": "此文件太大，无法预览。",
+  "This file is unavailable or too large to preview.": "此文件不可用，或太大而无法预览。",
+  "This file is unavailable.": "此文件不可用。",
+  "This image has too much metadata.": "此图片的元数据过多。",
+  "This is not a valid Office Open XML file. Encrypted files are not supported.":
+    "这不是有效的 Office Open XML 文件。不支持加密文件。",
+  "This sheet is unavailable.": "此工作表不可用。",
+  "This table is unavailable.": "此表不可用。",
+  "This workbook contains excessive XML nesting.": "此工作簿的 XML 嵌套过深。",
+  "This workbook contains inconsistent cell rows.": "此工作簿的单元格行不一致。",
+  "This workbook contains invalid cell coordinates.": "此工作簿包含无效的单元格坐标。",
+  "This workbook contains invalid cell metadata.": "此工作簿包含无效的单元格元数据。",
+  "This workbook contains invalid row coordinates.": "此工作簿包含无效的行坐标。",
+  "This workbook contains invalid worksheet dimensions.": "此工作簿包含无效的工作表尺寸。",
+  "This workbook contains invalid worksheet structure.": "此工作簿的工作表结构无效。",
+  "This workbook exceeds the preview limit: 250,000 rows.":
+    "此工作簿超出预览限制：最多 250,000 行。",
+  "This workbook has a missing worksheet.": "此工作簿缺少工作表。",
+  "This workbook has invalid or too many sheets.": "此工作簿的工作表无效或过多。",
+  "This workbook has no worksheet data.": "此工作簿没有工作表数据。",
+  "Truncated TIFF strip.": "TIFF 条带不完整。",
+  "Unsupported TIFF metadata type.": "不支持的 TIFF 元数据类型。",
+  "Unsupported TIFF strip layout.": "不支持的 TIFF 条带布局。",
 };
+
+export function translateFilesMessage(message: string, locale: Locale): string {
+  return Object.hasOwn(filesUiMessages, message)
+    ? translate(locale, filesUiMessages, message as keyof typeof filesUiMessages)
+    : message;
+}

@@ -1,3 +1,4 @@
+import { translateThreadRuntimeLabel } from "./threadRuntimeLabels";
 import { useTranslation } from "~/i18n/useTranslation";
 import { timelineUiMessages } from "./timelineUi.messages";
 import { useAtomValue } from "@effect/atom-react";
@@ -85,10 +86,13 @@ export function WorkflowOpeningBlock(props: {
         ) : null}
       </header>
       {phases.map((phase) => (
-        <section key={phase.index} aria-label={`${phase.title} phase`}>
+        <section
+          key={phase.index}
+          aria-label={t("{title} phase", { title: translateThreadRuntimeLabel(phase.title) })}
+        >
           <h4 className="flex items-baseline gap-2 px-2 pb-0.5 text-2xs font-medium text-muted-foreground">
             <span className="min-w-0 truncate" data-thread-find-text="true">
-              {phase.title}
+              {translateThreadRuntimeLabel(phase.title)}
             </span>
             <span className="shrink-0 font-normal tabular-nums">
               {phase.settledCount}/{phase.members.length}

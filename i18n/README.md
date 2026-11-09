@@ -16,25 +16,28 @@ vp run i18n:export
 
 同一英文在各处必须译法一致，下列术语有固定译名：
 
-| 英文         | 中文     |
-| ------------ | -------- |
-| thread       | 会话     |
-| project      | 项目     |
-| environment  | 环境     |
-| provider     | 提供方   |
-| worktree     | 工作树   |
-| agent        | 智能体   |
-| keybinding   | 快捷键   |
-| archive      | 归档     |
-| snooze       | 暂缓     |
-| settle       | 收尾     |
-| sidebar      | 侧边栏   |
-| pull request | 拉取请求 |
-| beta         | 测试版   |
-| labs         | 实验功能 |
-| checkout     | 工作副本 |
+| 英文           | 中文                     |
+| -------------- | ------------------------ |
+| thread         | 会话                     |
+| project        | 项目                     |
+| environment    | 环境                     |
+| provider       | 提供方                   |
+| worktree       | 工作树                   |
+| agent          | 智能体                   |
+| keybinding     | 快捷键                   |
+| archive        | 归档                     |
+| snooze         | 暂缓                     |
+| settle         | 收尾                     |
+| sidebar        | 侧边栏                   |
+| beta           | 测试版                   |
+| labs           | 实验功能                 |
+| checkout       | 工作副本                 |
+| machine        | 机器（指本机时写“本机”） |
+| device         | 设备（手机、模拟器）     |
+| source control | 版本控制                 |
+| review guide   | 审查导览                 |
 
-产品名、品牌和技术缩写保持英文，例如 T3 Code、T3 Connect、GitHub、Codex、Claude、Cursor、CLI、MCP、SSH、API、URL、JSON、token、macOS、Windows。完整清单以 [`scripts/fork-i18n.test.ts`](../scripts/fork-i18n.test.ts) 为准。
+产品名、品牌和技术缩写保持英文，例如 T3 Code、T3 Connect、GitHub、Codex、Claude、Cursor、CLI、MCP、SSH、API、URL、JSON、token、macOS、Windows、Finder。开发者日常直接说英文的词也保留英文：PR、pull request、merge request、change request，句首首字母大写，句中照原文小写。完整清单以 [`scripts/fork-i18n.test.ts`](../scripts/fork-i18n.test.ts) 为准。
 
 ## 同步官方后补翻译
 
@@ -44,4 +47,6 @@ vp run i18n:export
 vp run i18n:untranslated -- <合并前的提交>
 ```
 
-把需要翻译的文字用 `t()` 包起来，在同一区域的 `*.messages.ts` 里加上中文，再运行 `vp run i18n:export`。
+不带参数时检查网页端、桌面端，以及和手机端共用的 `packages/client-runtime`。共用代码里的英文不能直接改成 `t()`，要在网页显示它的地方翻译。`--path <路径前缀>` 只看某个目录。把需要翻译的文字用 `t()` 包起来，在同一区域的 `*.messages.ts` 里加上中文，再运行 `vp run i18n:export`。
+
+发给智能体的指令、日志和报错诊断、品牌名、快捷键这类文字刻意保留英文。确认要保留英文的，写进 [`keep-english.txt`](keep-english.txt)，检查脚本就不会再报告。

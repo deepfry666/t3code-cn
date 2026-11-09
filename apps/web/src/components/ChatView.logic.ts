@@ -13,6 +13,8 @@ import {
 import * as Option from "effect/Option";
 import type { SetStateAction } from "react";
 import { applyClaudePromptEffortPrefix, resolvePromptInjectedEffort } from "@t3tools/shared/model";
+import { translateNow } from "../i18n/useTranslation";
+import { globalUiMessages } from "./globalUi.messages";
 import { getProviderModelCapabilities } from "../providerModels";
 import { sanitizeThreadErrorMessage } from "@t3tools/client-runtime/errors";
 import type { EnvironmentThread, ThreadStructure } from "@t3tools/client-runtime/state/shell";
@@ -121,13 +123,21 @@ export function agentControlledBrowserCloseConfirmation(
   if (activeBrowserCount === 0) return null;
   if (activeBrowserCount === 1) {
     return [
-      "Close browser while the agent is using it?",
-      "The agent is actively controlling this browser. Closing it may interrupt the current browser action.",
+      translateNow(globalUiMessages, "Close browser while the agent is using it?"),
+      translateNow(
+        globalUiMessages,
+        "The agent is actively controlling this browser. Closing it may interrupt the current browser action.",
+      ),
     ].join("\n");
   }
   return [
-    `Close ${activeBrowserCount} browsers while the agent is using them?`,
-    "The agent is actively controlling these browsers. Closing them may interrupt the current browser actions.",
+    translateNow(globalUiMessages, "Close {count} browsers while the agent is using them?", {
+      count: activeBrowserCount,
+    }),
+    translateNow(
+      globalUiMessages,
+      "The agent is actively controlling these browsers. Closing them may interrupt the current browser actions.",
+    ),
   ].join("\n");
 }
 

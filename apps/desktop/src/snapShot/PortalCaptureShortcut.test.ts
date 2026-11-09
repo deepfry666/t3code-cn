@@ -4,6 +4,8 @@ import { DBusError, Message, MessageType, Variant, type MessageBus } from "dbus-
 import { afterEach, expect, it, vi } from "vite-plus/test";
 import { PortalCaptureShortcut, portalShortcutTrigger } from "./PortalCaptureShortcut.ts";
 
+vi.mock("electron", () => ({ app: { getPreferredSystemLanguages: () => ["en-US"] } }));
+
 const chord = {
   key: "2",
   modKey: true,

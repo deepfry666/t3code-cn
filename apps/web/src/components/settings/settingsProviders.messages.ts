@@ -287,7 +287,7 @@ export const settingsProvidersMessages = {
   "e.g. 300000": "例如：300000",
   "Compact idle threads": "压缩空闲会话",
   "When to compact an idle thread over 200,000 tokens: after you return, just before its prompt cache expires, or never. Overrides the default in Providers > Advanced.":
-    "空闲且超过 200,000 token 的会话何时压缩：在你回来后、提示缓存即将过期前，或从不压缩。覆盖“提供方 > 高级”中的默认设置。",
+    "空闲且超过 200,000 token 的会话何时压缩：在你回来后、提示缓存即将过期前，或从不压缩。覆盖“智能体提供方 > 高级”中的默认设置。",
   "Use default": "使用默认值",
   "When you return": "在你回来后",
   "Before the cache expires (beta)": "缓存过期前（测试版）",
@@ -323,7 +323,7 @@ export const settingsProvidersMessages = {
   "Additional CLI arguments passed to pi --mode rpc on session start.":
     "会话开始时传给 pi --mode rpc 的额外 CLI 参数。",
   "Path to the fx binary. All fx instances on this machine share its fx login.":
-    "fx 可执行文件的路径。此设备上的所有 fx 实例共用 fx login 登录信息。",
+    "fx 可执行文件的路径。此机器上的所有 fx 实例共用 fx login 登录信息。",
   "ACP source": "ACP 来源",
   "Local command": "本地命令",
   "Registry agent ID": "注册表智能体 ID",
@@ -361,7 +361,7 @@ export const settingsProvidersMessages = {
   "Unsupported version": "不支持的版本",
   "Known broken version": "已知有问题的版本",
   "Update for full support.": "请更新以获得完整支持。",
-  "Update available": "有可用更新。",
+  "Update available": "有可用更新",
   "Update available: install the latest provider version.": "有可用更新：安装最新的提供方版本。",
   Connected: "已连接",
   Disconnected: "未连接",
@@ -496,9 +496,9 @@ export const settingsProvidersMessages = {
   "The managed Antigravity runtime is incomplete. Remove it and reinstall.":
     "托管的 Antigravity 运行环境不完整。请移除后重新安装。",
   "Antigravity has not reached Google after 30 seconds. Check this machine's network connection. Broken IPv6 is a common cause.":
-    "Antigravity 在 30 秒后仍未连上 Google。请检查此设备的网络连接，IPv6 故障是常见原因。",
+    "Antigravity 在 30 秒后仍未连上 Google。请检查此机器的网络连接，IPv6 故障是常见原因。",
   "Antigravity could not reach Google. Check this machine's network connection, then start sign-in again.":
-    "Antigravity 无法连接 Google。请检查此设备的网络连接后重新登录。",
+    "Antigravity 无法连接 Google。请检查此机器的网络连接后重新登录。",
   "Could not deliver the sign-in response. Start sign-in again.": "无法发送登录响应。请重新登录。",
   "Cursor sign-in failed or expired. Start sign-in again.": "Cursor 登录失败或已过期。请重新登录。",
   "Signed out of Cursor.": "已退出 Cursor 登录。",

@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { scopeProjectRef } from "@t3tools/client-runtime/environment";
 import {
   getNewProjectRepository,
@@ -50,8 +52,14 @@ export function useNewProject() {
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: `Could not create the ${label} repository`,
-            description: `${errorMessage(squashAtomCommandFailure(result))} Use Publish Repository in the Git menu to try again.`,
+            title: translateNow(globalUiMessages, "Could not create the {provider} repository", {
+              provider: label,
+            }),
+            description: translateNow(
+              globalUiMessages,
+              "{message} Use Publish Repository in the Git menu to try again.",
+              { message: errorMessage(squashAtomCommandFailure(result)) },
+            ),
           }),
         );
       }
@@ -60,7 +68,7 @@ export function useNewProject() {
     toastManager.add(
       stackedThreadToast({
         type: "success",
-        title: `Published to ${label}`,
+        title: translateNow(globalUiMessages, "Published to {provider}", { provider: label }),
         description: result.value.repository.nameWithOwner,
       }),
     );
@@ -81,7 +89,7 @@ export function useNewProject() {
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Could not create the project",
+            title: translateNow(globalUiMessages, "Could not create the project"),
             description: errorMessage(squashAtomCommandFailure(result)),
           }),
         );
@@ -93,11 +101,20 @@ export function useNewProject() {
     toastManager.add(
       stackedThreadToast(
         commitError === undefined
-          ? { type: "success", title: `Created ${input.name}`, description: workspaceRoot }
+          ? {
+              type: "success",
+              title: translateNow(globalUiMessages, "Created {name}", { name: input.name }),
+              description: workspaceRoot,
+            }
           : {
               type: "warning",
-              title: `Created ${input.name} without a first commit`,
-              description: `${commitError} The project is in ${workspaceRoot}.`,
+              title: translateNow(globalUiMessages, "Created {name} without a first commit", {
+                name: input.name,
+              }),
+              description: translateNow(globalUiMessages, "{error} The project is in {path}.", {
+                error: commitError,
+                path: workspaceRoot,
+              }),
             },
       ),
     );

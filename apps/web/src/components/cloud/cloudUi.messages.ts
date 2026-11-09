@@ -95,7 +95,7 @@ export const cloudUiMessages = {
   "Copy trace ID": "复制追踪 ID",
   "You appear to be offline.": "你似乎处于离线状态。",
   "Could not load T3 Connect environments": "无法加载 T3 Connect 环境",
-  "Try again": "请重试",
+  "Try again": "重试",
   "Saved without T3 Connect": "已保存（未使用 T3 Connect）",
   "Not added": "未添加",
   "T3 Connect · {state} · Client not supported": "T3 Connect · {state} · 不支持此客户端",
@@ -113,4 +113,34 @@ export const cloudUiMessages = {
   Add: "添加",
   "Adding…": "正在添加…",
   "Add route": "添加线路",
+
+  // Relay client and link errors
+  "T3 Connect timed out. Try again.": "T3 Connect 超时，请重试。",
+  "Could not reach T3 Connect. Check your network.": "无法连接 T3 Connect，请检查网络。",
+  "T3 Connect is unavailable. Try again.": "T3 Connect 暂时不可用，请重试。",
+  "Could not update T3 Connect access.": "无法更新 T3 Connect 访问权限。",
+  "Could not update T3 Connect": "无法更新 T3 Connect",
+  "Disconnected here, but T3 Connect still lists it. Remove it in Account.":
+    "已在此断开，但 T3 Connect 仍列出此环境。请到账户中移除。",
+  "Could not read T3 Connect link state.": "无法读取 T3 Connect 关联状态。",
+  "Could not check relay client availability.": "无法检查中继客户端是否可用。",
+  "T3 Code cannot install the relay client automatically on {platform}-{arch}.":
+    "T3 Code 无法在 {platform}-{arch} 上自动安装中继客户端。",
+  "Could not confirm relay client installation.": "无法确认中继客户端的安装。",
+  "Relay client installation was cancelled.": "中继客户端安装已取消。",
+  "Could not install the relay client.": "无法安装中继客户端。",
+  "The relay client install completed without a final status.":
+    "中继客户端安装结束时没有返回最终状态。",
+  "The relay client is still unavailable after installation.": "安装后中继客户端仍不可用。",
+  "Relay returned credentials for a different environment.": "中继返回的凭据属于另一个环境。",
+  "Relay returned credentials for a different endpoint provider.":
+    "中继返回的凭据属于另一种端点提供方。",
+  "Could not reach the environment.": "无法连接到该环境。",
+  "Could not read environment cloud link state.": "无法读取环境的云端关联状态。",
+  "Could not update environment cloud preferences.": "无法更新环境的云端偏好设置。",
+  "Could not unlink the environment from cloud.": "无法解除该环境与云端的关联。",
+  "Disconnected locally, but T3 Connect did not confirm it removed this environment":
+    "已在本地断开，但 T3 Connect 未确认已移除该环境",
+  "Could not obtain environment link proof.": "无法获取环境关联凭证。",
+  "Could not configure environment relay access.": "无法配置环境中继访问。",
 } as const;

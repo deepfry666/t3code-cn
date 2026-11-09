@@ -1,3 +1,5 @@
+import { createLabelTranslator } from "../../i18n/labelTranslation";
+import { timelineSharedMessages } from "./timelineShared.messages";
 import { timelineUiMessages } from "./timelineUi.messages";
 
 type TimelineUiKey = Extract<keyof typeof timelineUiMessages, string>;
@@ -9,6 +11,9 @@ export type TimelineTranslator = (
 // Timeline logic builds these labels as English strings (shared with mobile and asserted in
 // tests), so the web client translates the fixed ones when it renders them.
 const FIXED_LABELS = new Set<string>([
+  "Declined",
+  "Request ended",
+  "Waiting for an answer in the original thread",
   "Worked",
   "You stopped this response",
   "Continued",
@@ -21,6 +26,16 @@ const FIXED_LABELS = new Set<string>([
   "Context automatically compacted before cache expiry",
   "Context compacted before sending",
   "Thought",
+  "Provider error",
+  "Ran command",
+  "Searched files",
+  "File search",
+  "Searched the web",
+  "Web search",
+  "Checkpoint captured",
+  "Approval requested",
+  "Answered questions",
+  "Input requested",
 ]);
 
 const PATTERNS: ReadonlyArray<readonly [RegExp, TimelineUiKey, string]> = [
@@ -34,7 +49,30 @@ const PATTERNS: ReadonlyArray<readonly [RegExp, TimelineUiKey, string]> = [
   [/^Failed (\S+)$/, "Failed {command}", "command"],
   [/^Declined (\S+)$/, "Declined {command}", "command"],
   [/^Stopped (\S+)$/, "Stopped {command}", "command"],
+  [/^Changed (\d+) files$/, "Changed {count} files", "count"],
+  [/^Changed (.+)$/, "Changed {name}", "name"],
+  [/^Retrying provider \((.+)\)$/, "Retrying provider ({progress})", "progress"],
+  [/^Provider recovered \((.+) retries\)$/, "Provider recovered ({progress} retries)", "progress"],
+  [/^Provider retry stopped \((.+)\)$/, "Provider retry stopped ({progress})", "progress"],
+  [/^Provider error after (.+) retries$/, "Provider error after {progress} retries", "progress"],
 ];
+
+const translateSharedLabel = createLabelTranslator(timelineSharedMessages);
+
+function translateSharedTimelineLabel(label: string, t: TimelineTranslator): string {
+  const translated = translateSharedLabel(label, (key, params) => {
+    const target = params?.target;
+    const error = params?.error;
+    return t(key, {
+      ...params,
+      ...(typeof target === "string" ? { target: translateSharedLabel(target, t) } : {}),
+      ...(error === "the other environment refused"
+        ? { error: t("the other environment refused") }
+        : {}),
+    });
+  });
+  return translated;
+}
 
 export function translateTimelineLabel(label: string, t: TimelineTranslator): string {
   if (label === "Thinking") return t("Thinking@@activity");
@@ -43,5 +81,22 @@ export function translateTimelineLabel(label: string, t: TimelineTranslator): st
     const match = pattern.exec(label);
     if (match) return t(key, { [param]: match[1] ?? "" });
   }
-  return label;
+  const parts = label.split(
+    /(?:, and | and |, )(?=(?:sent|delegated|read|waited on|listed|requested|checked|updated|scheduled|set|searched|organized|edited|reordered|answered|asked|handed off|registered|deleted|cloned|forgot|prepared|discarded|linked|unlinked|watching|stopped watching|started|used|previewed|rendered|changed|received|ran|created|performed|tried to)\b)/iu,
+  );
+  if (parts.length > 1) {
+    const translated = parts.map((part) =>
+      translateSharedTimelineLabel(part.charAt(0).toUpperCase() + part.slice(1), t),
+    );
+    if (
+      translated.every(
+        (part, index) =>
+          part !== parts[index] &&
+          part !== parts[index]!.charAt(0).toUpperCase() + parts[index]!.slice(1),
+      )
+    ) {
+      return translated.join("，");
+    }
+  }
+  return translateSharedTimelineLabel(label, t);
 }

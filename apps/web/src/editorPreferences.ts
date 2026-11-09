@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import {
   AuthOrchestrationOperateScope,
   EDITORS,
@@ -98,7 +100,10 @@ export function useOpenInPreferredEditor(
         Cause.fail(
           new EnvironmentAuthorizationError({
             requiredScope: AuthOrchestrationOperateScope,
-            message: "This connection cannot open an editor on this environment.",
+            message: translateNow(
+              globalUiMessages,
+              "This connection cannot open an editor on this environment.",
+            ),
           }),
         ),
       );

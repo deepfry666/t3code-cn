@@ -89,7 +89,7 @@ export function GuideStop({
         <Collapsible open={railOpen} onOpenChange={onRailOpenChange}>
           <header className="flex items-center justify-between gap-2">
             <p className="text-xs text-muted-foreground tabular-nums @max-[56rem]/guide:hidden">
-              Stop {index + 1} of {stopCount}
+              {t("Stop {index} of {count}", { index: index + 1, count: stopCount })}
             </p>
             <CollapsibleTrigger
               render={
@@ -97,7 +97,7 @@ export function GuideStop({
               }
             >
               <span className="tabular-nums">
-                Stop {index + 1} of {stopCount}
+                {t("Stop {index} of {count}", { index: index + 1, count: stopCount })}
               </span>
               <ChevronDownIcon aria-hidden className={cn(railOpen && "rotate-180")} />
             </CollapsibleTrigger>
@@ -146,7 +146,7 @@ export function GuideStop({
         {stop.attention !== null ? (
           <Alert controlAlignment="first-line">
             <EyeIcon />
-            <AlertTitle>{ATTENTION_LABELS[stop.attention.kind]}</AlertTitle>
+            <AlertTitle>{t(ATTENTION_LABELS[stop.attention.kind])}</AlertTitle>
             <AlertDescription>
               <div>
                 <GuideProse text={stop.attention.note} />
@@ -236,7 +236,9 @@ export function GuideStop({
         {stop.questions.length > 0 || onAsk !== null ? (
           <section className="flex flex-col gap-1.5">
             {stop.questions.length > 0 ? (
-              <h3 className="text-xs font-medium text-muted-foreground">Questions to consider</h3>
+              <h3 className="text-xs font-medium text-muted-foreground">
+                {t("Questions to consider")}
+              </h3>
             ) : null}
             <div className="flex flex-col items-start gap-1.5">
               {stop.questions.map((question) =>
@@ -255,7 +257,7 @@ export function GuideStop({
                       aria-hidden
                       className="size-3.5 h-lh shrink-0 text-muted-foreground"
                     />
-                    <span className="sr-only">Ask an agent: </span>
+                    <span className="sr-only">{t("Ask an agent: ")}</span>
                     <span>
                       <GuideProse text={question} plain />
                     </span>

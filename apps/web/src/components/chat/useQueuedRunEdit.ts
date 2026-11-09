@@ -326,7 +326,9 @@ export function useQueuedRunEdit(input: {
     ) {
       setThreadError(
         editing.threadId,
-        `A message can have at most ${PROVIDER_SEND_TURN_MAX_ATTACHMENTS} attachments.`,
+        t("A message can have at most {count} attachments.", {
+          count: PROVIDER_SEND_TURN_MAX_ATTACHMENTS,
+        }),
       );
       return;
     }

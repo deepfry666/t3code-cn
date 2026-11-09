@@ -6,27 +6,31 @@ import { describe, expect, it } from "vite-plus/test";
 import { readCatalogs, repoRoot, SNAPSHOT_PATH, snapshotText } from "./lib/fork-catalogs.ts";
 
 // The one Chinese term for each recurring product concept.
-const GLOSSARY: ReadonlyArray<readonly [english: RegExp, chinese: string]> = [
-  [/\bthreads?\b/i, "会话"],
-  [/\bprojects?\b/i, "项目"],
-  [/\benvironments?\b/i, "环境"],
-  [/\bproviders?\b/i, "提供方"],
-  [/\bworktrees?\b/i, "工作树"],
-  // SSH uses an authentication agent, not a coding agent.
-  [/(?<!SSH config, )\bagents?\b/i, "智能体"],
-  [/\bkeybindings?\b/i, "快捷键"],
-  [/\barchived?\b/i, "归档"],
-  [/\bsnooz\w*/i, "暂缓"],
-  [/\bsettl\w*/i, "收尾"],
-  [/\bsidebars?\b/i, "侧边栏"],
-  [/\bpull requests?\b/i, "拉取请求"],
-  [/\bbeta\b/i, "测试版"],
-  [/\blabs\b/i, "实验功能"],
-  [/(?<!worktree )\bcheckouts?\b(?! a ref)/i, "工作副本"],
-];
+const GLOSSARY: ReadonlyArray<readonly [english: RegExp, chinese: string | ReadonlyArray<string>]> =
+  [
+    [/\bthreads?\b/i, "会话"],
+    [/\bprojects?\b/i, "项目"],
+    [/\benvironments?\b/i, "环境"],
+    [/\bproviders?\b/i, "提供方"],
+    [/\bworktrees?\b/i, "工作树"],
+    // SSH uses an authentication agent, not a coding agent; agent-device is a tool's name.
+    [/(?<!SSH config, )\bagents?\b(?!-device)/i, "智能体"],
+    [/\bkeybindings?\b/i, "快捷键"],
+    // A zip or tar archive is 压缩包, not an archived thread.
+    [/(?<!expanded )\barchived?\b(?!\s+(?:entr\w*|metadata|paths?|contains|has)\b)/i, "归档"],
+    [/\bsnooz\w*/i, "暂缓"],
+    [/\bsettl\w*/i, "收尾"],
+    [/\bsidebars?\b/i, "侧边栏"],
+    [/\bsource control\b/i, "版本控制"],
+    // "设备" is a phone, simulator or emulator.
+    [/\bmachines?\b/i, ["机器", "本机"]],
+    [/\bbeta\b/i, "测试版"],
+    [/\blabs\b/i, "实验功能"],
+    [/(?<!worktree )\bcheckouts?\b(?! a ref)/i, "工作副本"],
+  ];
 
 // Product names, brands and technical abbreviations stay as written in Chinese.
-const KEEP_ENGLISH: ReadonlyArray<string> = [
+const KEEP_ENGLISH: ReadonlyArray<string | RegExp> = [
   "T3 Code",
   "T3 Connect",
   "GitHub",
@@ -55,18 +59,25 @@ const KEEP_ENGLISH: ReadonlyArray<string> = [
   "Linux",
   "Android",
   "iOS",
+  "Finder",
+  "PR",
+  // Developers say these as-is; a stack's "merge request" is a request to merge, not GitLab's term.
+  /\bpull requests?\b/i,
+  /(?<!Stack )\bmerge requests?\b/i,
+  /\bchange requests?\b/i,
 ];
 
 const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // "Settings..." and "settings", or the menu role "selectAll" and "Select All", are one source.
+// A final period stays: "Try again" is a button, "Try again." a sentence.
 const sourceKey = (source: string) =>
   source
     .replace(/([a-z])([A-Z])/g, "$1 $2")
     .toLowerCase()
     .replace(/[ \t]+/g, " ")
     .trim()
-    .replace(/(?:\.\.\.|…|\.|:)$/, "");
+    .replace(/(?:\.\.\.|…|:)$/, "");
 const localizedKey = (localized: string) => localized.trim().replace(/[…。：:]$/, "");
 
 describe("Chinese catalogs", () => {
@@ -123,9 +134,11 @@ describe("Chinese catalogs", () => {
         "",
       );
       return GLOSSARY.filter(
-        ([english, chinese]) => english.test(source) && !entry.localized.includes(chinese),
+        ([english, chinese]) =>
+          english.test(source) && ![chinese].flat().some((term) => entry.localized.includes(term)),
       ).map(
-        ([, chinese]) => `${entry.at} ${entry.source} → ${entry.localized} (expected ${chinese})`,
+        ([, chinese]) =>
+          `${entry.at} ${entry.source} → ${entry.localized} (expected ${[chinese].flat().join(" or ")})`,
       );
     });
     expect(misses).toEqual([]);
@@ -134,11 +147,13 @@ describe("Chinese catalogs", () => {
   it("keeps product names and abbreviations in English", () => {
     const misses = entries.flatMap((entry) => {
       const source = entry.source.split("@@")[0] ?? "";
-      return KEEP_ENGLISH.filter(
-        (term) =>
-          new RegExp(`\\b${escapeRegExp(term)}\\b`).test(source) &&
-          !new RegExp(`\\b${escapeRegExp(term)}\\b`).test(entry.localized),
-      ).map((term) => `${entry.at} ${entry.source} → ${entry.localized} (expected ${term})`);
+      return KEEP_ENGLISH.map((term) =>
+        typeof term === "string" ? new RegExp(`\\b${escapeRegExp(term)}\\b`) : term,
+      )
+        .filter((term) => term.test(source) && !term.test(entry.localized))
+        .map(
+          (term) => `${entry.at} ${entry.source} → ${entry.localized} (expected ${term.source})`,
+        );
     });
     expect(misses).toEqual([]);
   });

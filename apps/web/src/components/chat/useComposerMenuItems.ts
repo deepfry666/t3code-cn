@@ -1,3 +1,4 @@
+import { translateThreadRuntimeLabel } from "./threadRuntimeLabels";
 import { useTranslation } from "~/i18n/useTranslation";
 import { composerUiMessages } from "./composerUi.messages";
 import {
@@ -198,7 +199,7 @@ export function useComposerMenuItems({
           excludeThreadId: activeThreadId,
           query: composerTrigger.query,
           now,
-        }),
+        }).map((item) => ({ ...item, description: translateThreadRuntimeLabel(item.description) })),
         // An answer to an agent's question carries thread links, not machines.
         ...(questionAttachmentTarget === null && offersMachines
           ? matchComposerEnvironmentItems({

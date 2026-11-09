@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import type {
   DesktopAppActivationFailure,
   DesktopAppActivationRequest,
@@ -63,7 +65,10 @@ export async function handleDesktopAppActivationRequest(
     return failure(
       request.requestId,
       "environment-unavailable",
-      "The desktop app's primary local environment is not connected.",
+      translateNow(
+        globalUiMessages,
+        "The desktop app's primary local environment is not connected.",
+      ),
     );
   }
 
@@ -72,7 +77,11 @@ export async function handleDesktopAppActivationRequest(
     return failure(
       request.requestId,
       "platform-mismatch",
-      `The command path is for ${requestPlatform}, but the desktop app's primary environment uses ${target.platform}. Cross-platform path mapping is not supported.`,
+      translateNow(
+        globalUiMessages,
+        "The command path is for {request}, but the desktop app's primary environment uses {target}. Cross-platform path mapping is not supported.",
+        { request: requestPlatform, target: target.platform },
+      ),
     );
   }
 
@@ -85,7 +94,7 @@ export async function handleDesktopAppActivationRequest(
       return failure(
         request.requestId,
         "project-create-failed",
-        errorMessage(error, "T3 Code could not add the project."),
+        errorMessage(error, translateNow(globalUiMessages, "T3 Code could not add the project.")),
       );
     }
   }
@@ -99,7 +108,7 @@ export async function handleDesktopAppActivationRequest(
       return failure(
         request.requestId,
         "thread-open-failed",
-        "T3 Code could not open a new thread for the project.",
+        translateNow(globalUiMessages, "T3 Code could not open a new thread for the project."),
       );
     }
     return {
@@ -113,7 +122,10 @@ export async function handleDesktopAppActivationRequest(
     return failure(
       request.requestId,
       "thread-open-failed",
-      errorMessage(error, "T3 Code could not open a new thread for the project."),
+      errorMessage(
+        error,
+        translateNow(globalUiMessages, "T3 Code could not open a new thread for the project."),
+      ),
     );
   }
 }

@@ -1,6 +1,6 @@
 /* oxlint-disable react/no-array-index-key -- Spreadsheet rows and columns retain their source positions. */
-import { translateNow } from "~/i18n/useTranslation";
-import { filesUiMessages } from "./filesUi.messages";
+import { translateNow, useLocale, useTranslation } from "~/i18n/useTranslation";
+import { filesUiMessages, translateFilesMessage } from "./filesUi.messages";
 
 import { formatAttachmentSize } from "@t3tools/client-runtime/state/attachments";
 import type { OfficePreviewKind } from "@t3tools/shared/filePreview";
@@ -71,6 +71,8 @@ function ExtendedOfficeViewer(props: {
   readonly kind: OfficePreviewKind;
   readonly sizeBytes?: number;
 }) {
+  const t = useTranslation(filesUiMessages);
+  const locale = useLocale();
   const [error, setError] = useState<string | null>(null);
   const [sheetPages, setSheetPages] = useState(new Map<string, string[][]>());
   const pendingPages = useRef(new Set<string>());
@@ -107,11 +109,22 @@ function ExtendedOfficeViewer(props: {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
     timerRef.current = setTimeout(
-      () => fail("This document took too long to preview. Open it in another app."),
+      () =>
+        fail(
+          translateNow(
+            filesUiMessages,
+            "This document took too long to preview. Open it in another app.",
+          ),
+        ),
       30_000,
     );
     worker.addEventListener("error", () =>
-      fail("Could not load the Office viewer. Close the file and try again."),
+      fail(
+        translateNow(
+          filesUiMessages,
+          "Could not load the Office viewer. Close the file and try again.",
+        ),
+      ),
     );
     worker.addEventListener("message", (event: MessageEvent<OfficeWorkerResult>) => {
       if (controller.signal.aborted) return;
@@ -167,9 +180,11 @@ function ExtendedOfficeViewer(props: {
         role="alert"
         className="flex min-h-0 flex-1 flex-col items-center justify-center gap-1 px-6 text-center"
       >
-        <p className="text-sm font-medium">No preview for this file</p>
+        <p className="text-sm font-medium">{t("No preview for this file")}</p>
         <p className="max-w-sm text-xs leading-relaxed text-muted-foreground">
-          {error} Save it or open it in another app.
+          {t("{message} Save it or open it in another app.", {
+            message: translateFilesMessage(error, locale),
+          })}
         </p>
       </div>
     );
@@ -185,14 +200,22 @@ function ExtendedOfficeViewer(props: {
   const documentCount = previewDocument?.pages.length ?? 0;
   const documentDetails =
     navigation === "chapter"
-      ? `Chapter ${page + 1} of ${documentCount}`
-      : `${documentCount} ${navigation}${documentCount === 1 ? "" : "s"}`;
+      ? t("Chapter {page} of {count}", { page: page + 1, count: documentCount })
+      : navigation === "sheet"
+        ? t("{count} sheets", { count: documentCount })
+        : t("{count} slides", { count: documentCount });
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       {count > 0 ? (
         <div className="flex h-10 shrink-0 items-center gap-2 border-b border-border/60 px-3 text-xs">
           <FileSurfaceAction
-            label={`Previous ${navigation}`}
+            label={
+              navigation === "sheet"
+                ? t("Previous sheet")
+                : navigation === "chapter"
+                  ? t("Previous chapter")
+                  : t("Previous slide")
+            }
             disabled={page === 0}
             onPress={() => selectPage(page - 1)}
           >
@@ -206,7 +229,7 @@ function ExtendedOfficeViewer(props: {
                   if (value !== null) selectPage(value);
                 }}
               >
-                <SelectTrigger aria-label="Sheet" size="xs">
+                <SelectTrigger aria-label={t("Sheet")} size="xs">
                   <SelectValue>{sheet?.name}</SelectValue>
                 </SelectTrigger>
                 <SelectPopup>
@@ -226,7 +249,7 @@ function ExtendedOfficeViewer(props: {
                   if (value !== null) selectPage(value);
                 }}
               >
-                <SelectTrigger aria-label="Chapter" size="xs">
+                <SelectTrigger aria-label={t("Chapter")} size="xs">
                   <SelectValue>{documentPage?.title}</SelectValue>
                 </SelectTrigger>
                 <SelectPopup>
@@ -240,11 +263,19 @@ function ExtendedOfficeViewer(props: {
             </div>
           ) : (
             <span className="flex-1 text-center tabular-nums" aria-live="polite">
-              {navigation === "slide" ? "Slide" : "Page"} {page + 1} of {count}
+              {navigation === "slide"
+                ? t("Slide {current} of {total}", { current: page + 1, total: count })
+                : t("Page {current} of {total}", { current: page + 1, total: count })}
             </span>
           )}
           <FileSurfaceAction
-            label={`Next ${navigation}`}
+            label={
+              navigation === "sheet"
+                ? t("Next sheet")
+                : navigation === "chapter"
+                  ? t("Next chapter")
+                  : t("Next slide")
+            }
             disabled={page + 1 === count}
             onPress={() => selectPage(page + 1)}
           >

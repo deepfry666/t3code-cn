@@ -23,6 +23,8 @@ import {
   type ComposerImageAttachment,
   type ComposerThreadTarget,
 } from "../composerDraftStore";
+import { translateNow } from "../i18n/useTranslation";
+import { composerUiMessages } from "../components/chat/composerUi.messages";
 import { appAtomRegistry } from "../rpc/atomRegistry";
 import { environmentCatalog } from "../connection/catalog";
 import { assetEnvironment } from "../state/assets";
@@ -169,7 +171,7 @@ async function runUpload(job: UploadJob): Promise<void> {
     setUploadState(job.image.id, {
       status: "failed",
       environmentId: job.environmentId,
-      reason: "This connection cannot upload attachments.",
+      reason: translateNow(composerUiMessages, "This connection cannot upload attachments."),
       ...(job.previous ? { previous: job.previous } : {}),
     });
     return;
@@ -217,8 +219,14 @@ async function runUpload(job: UploadJob): Promise<void> {
         environmentId: job.environmentId,
         reason:
           verification.status === "missing"
-            ? "Uploaded file expired. Remove it and attach it again."
-            : "Uploaded file could not be verified. Retry when the server reconnects.",
+            ? translateNow(
+                composerUiMessages,
+                "Uploaded file expired. Remove it and attach it again.",
+              )
+            : translateNow(
+                composerUiMessages,
+                "Uploaded file could not be verified. Retry when the server reconnects.",
+              ),
         ...(job.previous ? { previous: job.previous } : {}),
       });
       return;
@@ -235,7 +243,7 @@ async function runUpload(job: UploadJob): Promise<void> {
     setUploadState(job.image.id, {
       status: "failed",
       environmentId: job.environmentId,
-      reason: "Unsupported image type",
+      reason: translateNow(composerUiMessages, "Unsupported image type"),
       ...(job.previous ? { previous: job.previous } : {}),
     });
     return;
@@ -245,7 +253,7 @@ async function runUpload(job: UploadJob): Promise<void> {
     setUploadState(job.image.id, {
       status: "failed",
       environmentId: job.environmentId,
-      reason: "Original file is no longer available",
+      reason: translateNow(composerUiMessages, "Original file is no longer available"),
       ...(job.previous ? { previous: job.previous } : {}),
     });
     return;
@@ -256,7 +264,7 @@ async function runUpload(job: UploadJob): Promise<void> {
     setUploadState(job.image.id, {
       status: "failed",
       environmentId: job.environmentId,
-      reason: "This connection cannot upload attachments.",
+      reason: translateNow(composerUiMessages, "This connection cannot upload attachments."),
       ...(job.previous ? { previous: job.previous } : {}),
     });
     return;
@@ -333,14 +341,14 @@ async function runUpload(job: UploadJob): Promise<void> {
     environmentId: job.environmentId,
     reason:
       result.step === "mint"
-        ? "Upload could not start"
+        ? translateNow(composerUiMessages, "Upload could not start")
         : result.step === "resolve-url"
           ? readEnvironmentScope(job.environmentId, AuthOrchestrationOperateScope)
-            ? "Not connected"
-            : "This connection cannot upload attachments."
+            ? translateNow(composerUiMessages, "Not connected")
+            : translateNow(composerUiMessages, "This connection cannot upload attachments.")
           : result.error instanceof Error
             ? result.error.message
-            : "Upload failed",
+            : translateNow(composerUiMessages, "Upload failed"),
     ...(result.attachmentId ? { attachmentId: result.attachmentId } : {}),
     ...(job.previous ? { previous: job.previous } : {}),
   });
@@ -366,7 +374,7 @@ function pumpUploads(): void {
           setUploadState(job.image.id, {
             status: "failed",
             environmentId: job.environmentId,
-            reason: "Upload failed",
+            reason: translateNow(composerUiMessages, "Upload failed"),
             ...(job.previous ? { previous: job.previous } : {}),
           });
         }

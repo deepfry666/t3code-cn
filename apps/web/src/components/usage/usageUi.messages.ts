@@ -1,4 +1,10 @@
+import { createLabelTranslator } from "../../i18n/labelTranslation";
+import { translate, type Locale } from "../../i18n/locale";
+
 export const usageUiMessages = {
+  "Updating {count} providers…": "正在更新 {count} 个提供方…",
+  "Updating {count} environments…": "正在更新 {count} 个环境…",
+  "Updating {provider}…": "正在更新 {provider}…",
   Usage: "用量",
   "Usage breadcrumb": "用量导航",
   "Usage period": "用量时间范围",
@@ -146,3 +152,14 @@ export const usageUiMessages = {
   "View usage in ChatGPT with your connected account.": "用已连接的账户在 ChatGPT 中查看用量。",
   "Manage usage": "管理用量",
 } as const;
+
+const translateUsageLabel = createLabelTranslator(usageUiMessages, [
+  "Updating {count} providers…",
+  "Updating {count} environments…",
+  "Updating {provider}…",
+]);
+export function translateUsageProgressLabel(label: string, locale: Locale): string {
+  return translateUsageLabel(label, (key, params) =>
+    translate(locale, usageUiMessages, key, params),
+  );
+}

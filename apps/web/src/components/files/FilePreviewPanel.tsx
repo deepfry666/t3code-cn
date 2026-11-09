@@ -1,3 +1,4 @@
+import { RuntimeErrorText } from "~/components/RuntimeErrorText";
 import { DownloadIcon, CopyIcon, CheckIcon } from "lucide-react";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import { Spinner } from "~/components/ui/spinner";
@@ -1261,7 +1262,9 @@ export default function FilePreviewPanel({
     }
     return (
       <div className="p-4 text-sm text-muted-foreground">
-        {fileAccess.error ?? t("This connection cannot read host files.")}
+        <RuntimeErrorText>
+          {fileAccess.error ?? t("This connection cannot read host files.")}
+        </RuntimeErrorText>
       </div>
     );
   }

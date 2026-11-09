@@ -66,6 +66,19 @@ export const onboardingUiMessages = {
   "Importing…": "正在导入…",
   "Import {count} project": "导入 {count} 个项目",
   "Import {count} projects": "导入 {count} 个项目",
+  "Could not read settings": "无法读取设置",
+  "Still connecting": "仍在连接",
+  "Your saved settings could not be loaded.": "无法加载你保存的设置。",
+  "T3 Code could not confirm this workspace.": "T3 Code 无法确认此工作区。",
+  Retry: "重试",
+  Reload: "重新加载",
+  "Codex setup settings": "Codex 设置项",
+  "T3 Code collects anonymous usage data to help us improve it.":
+    "T3 Code 会收集匿名使用数据，帮助我们改进产品。",
+  " To read more about how your data is used{optOut}, see our ":
+    "要了解你的数据如何被使用{optOut}，请参阅我们的",
+  " and how to opt out": "以及如何退出",
+  "privacy policy": "隐私政策",
 } as const;
 
 /**

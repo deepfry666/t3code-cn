@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { PRIMARY_LOCAL_ENVIRONMENT_ID, type DesktopEnvironmentBootstrap } from "@t3tools/contracts";
 import * as Schema from "effect/Schema";
 
@@ -64,7 +66,7 @@ export class PrimaryEnvironmentDisabledError extends Schema.TaggedError<PrimaryE
   {},
 ) {
   override get message(): string {
-    return "The local environment is disabled.";
+    return translateNow(globalUiMessages, "The local environment is disabled.");
   }
 }
 

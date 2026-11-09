@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import type {
   AuthBrowserSessionResult,
   AuthClientMetadata,
@@ -74,7 +76,7 @@ export class PrimaryEnvironmentPairingCredentialRejectedError extends Schema.Tag
   },
 ) {
   override get message(): string {
-    return "Invalid pairing token. Check the token and try again.";
+    return translateNow(globalUiMessages, "Invalid pairing token. Check the token and try again.");
   }
 }
 
@@ -97,7 +99,7 @@ export class PrimaryEnvironmentPairingCredentialRequiredError extends Schema.Tag
   },
 ) {
   override get message(): string {
-    return "Enter a pairing token to continue.";
+    return translateNow(globalUiMessages, "Enter a pairing token to continue.");
   }
 }
 

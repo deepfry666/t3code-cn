@@ -1,3 +1,4 @@
+import { translateThreadRuntimeLabel } from "./threadRuntimeLabels";
 import type {
   EnvironmentId,
   OrchestrationV2PendingBackgroundTask,
@@ -106,8 +107,8 @@ export function goalNowItem(
     icon: <TargetIcon />,
     title:
       presentation.usage === null
-        ? presentation.title
-        : `${presentation.title} · ${presentation.usage}`,
+        ? translateThreadRuntimeLabel(presentation.title)
+        : `${translateThreadRuntimeLabel(presentation.title)} · ${presentation.usage}`,
     description: presentation.objective,
     // Clear stops goal work; Resume would stop unrelated work, so it waits.
     actions: (
@@ -231,7 +232,7 @@ export function backgroundWorkNowItem(
           {presentation.waiting ? t("Waiting") : t("Running")} · {only.label}
         </>
       ) : (
-        presentation.title
+        translateThreadRuntimeLabel(presentation.title)
       ),
     description: only ? (
       only.activity

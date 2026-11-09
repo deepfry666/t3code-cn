@@ -1,4 +1,6 @@
 import type { OrchestrationV2TurnItem } from "@t3tools/contracts";
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { getRenderablePatch, resolveFileDiffPath } from "./diffRendering";
 
 type FileChange = Extract<OrchestrationV2TurnItem, { type: "file_change" }>;
@@ -69,8 +71,14 @@ export function toolCallDiff(
     content: diff.text?.trim()
       ? []
       : [
-          { label: "Recorded content before", text: before.text },
-          { label: "Recorded content after", text: after.text },
+          {
+            label: translateNow(globalUiMessages, "Recorded content before"),
+            text: before.text,
+          },
+          {
+            label: translateNow(globalUiMessages, "Recorded content after"),
+            text: after.text,
+          },
         ].filter((entry): entry is { label: string; text: string } => entry.text !== undefined),
     truncated: diff.truncated || before.truncated || after.truncated,
   };

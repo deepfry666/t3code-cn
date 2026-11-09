@@ -29,8 +29,8 @@ describe("pull request terms at the start of English copy", () => {
     expect(pullRequestTermAtStart("merge request", "en")).toBe("Merge request");
   });
 
-  it("uses the translated term in Chinese", () => {
-    expect(pullRequestTermAtStart("pull request", "zh-CN")).toBe("拉取请求");
+  it("keeps the term in English in Chinese", () => {
+    expect(pullRequestTermAtStart("pull request", "zh-CN")).toBe("Pull request");
   });
 });
 

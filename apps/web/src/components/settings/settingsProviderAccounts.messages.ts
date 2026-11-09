@@ -53,7 +53,7 @@ export const settingsProviderAccountsMessages = {
   Off: "关闭",
   "Automatically balance load": "自动均衡负载",
   "New threads in shared projects start on the machine with the most free CPU and memory, weighted by each machine's preference.":
-    "共享项目的新会话会根据各设备的偏好权重，在空闲 CPU 和内存最多的设备上启动。",
+    "共享项目的新会话会根据各机器的偏好权重，在空闲 CPU 和内存最多的机器上启动。",
   "{environment} load preference": "{environment} 的负载偏好",
   "The ACP could not be prepared.": "无法准备 ACP。",
   "Choose an agent": "选择智能体",
@@ -227,6 +227,7 @@ export const settingsProviderAccountsMessages = {
     "无法完成 Codex 安装。请检查磁盘空间和目录访问权限。",
   "The managed Codex runtime is incomplete. Remove it and reinstall.":
     "托管的 Codex 运行环境不完整。请移除后重新安装。",
+  "Signed out locally.": "已在本地退出登录。",
 } as const;
 
 export function translateProviderAccountsLabel(label: string, locale: Locale): string {

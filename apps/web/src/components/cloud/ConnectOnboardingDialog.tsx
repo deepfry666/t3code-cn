@@ -1,3 +1,4 @@
+import { RuntimeErrorText } from "~/components/RuntimeErrorText";
 import { useAuth } from "@clerk/react";
 import { useAtomValue } from "@effect/atom-react";
 import {
@@ -354,7 +355,11 @@ function PublishStep({
           onCheckedChange={onPublishAgentActivityChange}
         />
       </div>
-      {operationError ? <p className="text-xs text-destructive">{operationError}</p> : null}
+      {operationError ? (
+        <p className="text-xs text-destructive">
+          <RuntimeErrorText>{operationError}</RuntimeErrorText>
+        </p>
+      ) : null}
       {tunnelLimit !== null ? (
         <OnboardingTunnelLimitAlert onOpenAccountPage={onOpenAccountPage} />
       ) : null}

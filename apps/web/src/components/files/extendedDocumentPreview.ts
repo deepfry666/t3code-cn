@@ -7,6 +7,9 @@ import { XMLParser, XMLValidator } from "fast-xml-parser";
 import { decodeHTMLAttribute, decodeHTMLStrict as decodeEntities } from "entities";
 import type JSZip from "jszip";
 
+import { translateNow } from "~/i18n/useTranslation";
+
+import { filesUiMessages } from "./filesUi.messages";
 import { type OfficeWorkerResult, type NotebookCell } from "./officePreviewProtocol";
 
 const ODS_PREVIEW_MAX_ROWS = 500;
@@ -359,7 +362,9 @@ export async function openDocument(
           }
         }
         return {
-          name: table.attrs["table:name"] || `Sheet ${index + 1}`,
+          name:
+            table.attrs["table:name"] ||
+            translateNow(filesUiMessages, "Sheet {number}", { number: index + 1 }),
           rows,
           rowCount: rows.length,
           columns: rows.reduce((columns, row) => Math.max(columns, row.length), 1),
@@ -401,7 +406,7 @@ export async function openEpub(archive: JSZip): Promise<OfficeWorkerResult> {
     pages.push({
       title:
         text(find(chapter, "title")[0] ?? find(chapter, "h1")[0] ?? chapter).slice(0, 120) ||
-        `Chapter ${pages.length + 1}`,
+        translateNow(filesUiMessages, "Chapter {number}", { number: pages.length + 1 }),
       html: await epubHtml(chapter, archive, path),
     });
   }

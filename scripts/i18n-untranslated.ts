@@ -1,12 +1,14 @@
 // @effect-diagnostics nodeBuiltinImport:off globalConsole:off
-// Lists English UI text that bypasses t() in already-localized web components.
+// Lists English text in the web and desktop clients, and the client code they share with
+// mobile, that no zh-CN catalog translates.
 // After an upstream merge: `vp run i18n:untranslated -- <pre-merge-commit>` shows only new lines.
-// `--all` also scans components with no translation yet; `--path <prefix>` narrows the scan.
+// `--path <prefix>` narrows the scan. Text kept in English on purpose is listed in KEEP_ENGLISH_PATH.
 import * as NodeChildProcess from "node:child_process";
 import * as NodeFS from "node:fs";
 
+const KEEP_ENGLISH_PATH = "i18n/keep-english.txt";
+
 const args = process.argv.slice(2).filter((arg) => arg !== "--");
-const scanAll = args.includes("--all");
 const pathIndex = args.indexOf("--path");
 const pathPrefix = pathIndex === -1 ? undefined : args[pathIndex + 1];
 const since = args.find(
@@ -15,24 +17,37 @@ const since = args.find(
 const git = (args: ReadonlyArray<string>) =>
   NodeChildProcess.execFileSync("git", args, { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
 
-const CANDIDATES: ReadonlyArray<RegExp> = [
-  // JSX string props that render as text or are announced.
+const CATALOG_FILE = /(?:\.messages|Messages|menuLocalization)\.ts$/;
+const CATALOG_ENTRY = /^\s*(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|([A-Za-z_$][\w$]*))\s*:/gm;
+// JSX text and string props, which are not quoted string literals.
+const JSX_TEXT: ReadonlyArray<RegExp> = [
   /\b(?:title|label|description|placeholder|aria-label|tooltip|heading|emptyText)="([^"]*[A-Za-z]{2}[^"]*)"/,
-  // Object fields that end up in toasts, menus and rows.
-  /\b(?:title|label|description|placeholder|message|tooltip)\s*:\s*["'`]([A-Z][^"'`]*[a-z][^"'`]*)["'`]/,
-  // JSX text between tags.
   />\s*([A-Z][A-Za-z0-9 ,.'’?!:-]*[a-z][A-Za-z0-9 ,.'’?!:-]*)\s*</,
-  // A JSX text line on its own.
   /^\s*([A-Z][a-z]+(?: [A-Za-z0-9,.'’?!-]+)+[.?!]?)\s*$/,
 ];
+const LITERAL = /(["'`])((?:(?!\1)[^\\\n]|\\.){3,}?)\1/g;
+// Diagnostics for logs and bug reports stay in English.
+const DIAGNOSTIC_LINE =
+  /new \w*Error\(|\bthrow\b|Effect\.(?:fail|die|log\w*)\(|console\.\w+\(|\blog(?:Info|Warning|Error|Debug)\(|\$\{this\./;
+const SKIPPED_LINE =
+  /^\s*(?:\/\/|\*|\/\*|import\b|export \* )|\bt\(|translate\w*\(|className=|data-/;
 
-// Generic type arguments look like JSX text to the patterns above; key, language and
-// product names stay as written.
-const NEVER_TRANSLATED =
-  /^(?:Promise|ReadonlyArray|Array|Record|Readonly|Partial|Option|Effect|Set|Map|Enter|English|T3 Code)$/;
-// A catalog key in a file that translates labels at render time (`t(option.label)`).
-const DYNAMIC_TRANSLATION = /\b(?:t|translate\w*)\((?!["'`)])/;
-const CATALOG_ENTRY = /^\s*(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|([A-Za-z_$][\w$]*))\s*:/gm;
+// "Retry…", `Open ${name}`, "Open {name}" and "Open@@context" are one text.
+const normalize = (text: string) =>
+  (text.split("@@")[0] ?? "")
+    .replace(/\$\{[^}]*\}|\{\w+\}/g, "{}")
+    .replace(/\.\.\./g, "…")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/[.:…]+$/, "")
+    .toLowerCase();
+
+function looksLikeProse(text: string): boolean {
+  const plain = text.replace(/\$\{[^}]*\}/g, "x");
+  if (!/^[A-Z]/.test(plain) || !/[a-z]{2}/.test(plain)) return false;
+  if (/[<>=;{}]|https?:|^[A-Z][\w-]*(?:\.[\w-]+)+$/.test(plain)) return false;
+  return / [A-Za-z]/.test(plain) || /[.?!…]$/.test(plain);
+}
 
 function addedLines(file: string): ReadonlySet<number> | undefined {
   if (since === undefined) return undefined;
@@ -47,40 +62,58 @@ function addedLines(file: string): ReadonlySet<number> | undefined {
   return lines;
 }
 
-const localized = git(["ls-files", "apps/web/src"])
-  .split("\n")
-  .filter((file) => file.endsWith(".tsx") && !file.includes(".test."))
-  .filter((file) => pathPrefix === undefined || file.startsWith(pathPrefix))
-  .filter((file) => scanAll || NodeFS.readFileSync(file, "utf8").includes("useTranslation("));
-
-const catalogKeys = new Set(
-  git(["ls-files", "apps/web/src"])
-    .split("\n")
-    .filter((file) => /(?:\.messages|Messages)\.ts$/.test(file))
+const tracked = git([
+  "ls-files",
+  "apps/web/src",
+  "apps/desktop/src",
+  // Shared with mobile; the web translates its English where it renders it.
+  "packages/client-runtime/src",
+]).split("\n");
+const translated = new Set(
+  tracked
+    .filter((file) => CATALOG_FILE.test(file))
     .flatMap((file) =>
-      [...NodeFS.readFileSync(file, "utf8").matchAll(CATALOG_ENTRY)].map(
-        (match) => match[1] ?? match[2] ?? match[3] ?? "",
+      [...NodeFS.readFileSync(file, "utf8").matchAll(CATALOG_ENTRY)].map((match) =>
+        normalize((match[1] ?? match[2] ?? match[3] ?? "").split("@@")[0] ?? ""),
       ),
     ),
 );
+const keptEnglish = new Set(
+  NodeFS.readFileSync(KEEP_ENGLISH_PATH, "utf8")
+    .split("\n")
+    .filter((line) => line.trim() !== "" && !line.startsWith("#"))
+    .map(normalize),
+);
+
+const sources = tracked
+  .filter((file) => /\.tsx?$/.test(file) && !file.endsWith(".d.ts"))
+  .filter((file) => !/\.(?:test|browser\.test|stories)\.|\/test\/|test-fixtures/.test(file))
+  .filter((file) => !CATALOG_FILE.test(file))
+  .filter((file) => pathPrefix === undefined || file.startsWith(pathPrefix));
 
 let total = 0;
-for (const file of localized) {
+for (const file of sources) {
   const added = addedLines(file);
-  const source = NodeFS.readFileSync(file, "utf8");
-  const translatesAtRender = DYNAMIC_TRANSLATION.test(source);
-  source.split("\n").forEach((line, index) => {
+  if (added?.size === 0) continue;
+  const lines = NodeFS.readFileSync(file, "utf8").split("\n");
+  lines.forEach((line, index) => {
     if (added !== undefined && !added.has(index + 1)) return;
-    if (/^\s*(?:\/\/|\*|import\b)|\bt\(|className=|data-/.test(line)) return;
-    const text = CANDIDATES.map((pattern) => pattern.exec(line)?.[1]).find(Boolean);
-    if (text === undefined || NEVER_TRANSLATED.test(text.trim())) return;
-    if (translatesAtRender && catalogKeys.has(text.trim())) return;
-    total++;
-    console.log(`${file}:${index + 1}  ${text.trim()}`);
+    if (SKIPPED_LINE.test(line) || DIAGNOSTIC_LINE.test(line)) return;
+    const texts = [...line.matchAll(LITERAL)].map((match) => match[2] ?? "").filter(looksLikeProse);
+    if (file.endsWith(".tsx")) {
+      const jsx = JSX_TEXT.map((pattern) => pattern.exec(line)?.[1]).find(Boolean);
+      if (jsx !== undefined && looksLikeProse(jsx.trim())) texts.push(jsx.trim());
+    }
+    for (const text of new Set(texts)) {
+      const key = normalize(text);
+      if (translated.has(key) || keptEnglish.has(key)) continue;
+      total++;
+      console.log(`${file}:${index + 1}  ${text}`);
+    }
   });
 }
 console.log(
   total === 0
     ? "No untranslated text found."
-    : `${total} candidate line(s). Wrap real UI text in t() and add it to the catalog.`,
+    : `${total} candidate(s). Wrap UI text in t() and add it to the catalog, or list text that stays English in ${KEEP_ENGLISH_PATH}.`,
 );

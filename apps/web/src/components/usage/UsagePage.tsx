@@ -1,3 +1,6 @@
+import { translateUsageProgressLabel } from "./usageUi.messages";
+import { translateRuntimeError } from "../runtimeErrorLabels";
+import { readLocale } from "~/i18n/useTranslation";
 import { ChatGptUsageButton } from "../settings/ChatGptUsageButton";
 import { usesChatGptSharing } from "@t3tools/shared/usageLimits";
 import { RefreshIcon } from "~/components/ui/refresh-icon";
@@ -541,7 +544,9 @@ export function UsagePage() {
                 {selectedEnvironments.map((environment) => (
                   <p key={environment.environmentId}>
                     {selectedEnvironments.length > 1 ? `${environment.label}: ` : null}
-                    {environment.error}
+                    {environment.error === null
+                      ? null
+                      : translateRuntimeError(environment.error, readLocale())}
                   </p>
                 ))}
               </div>
@@ -1132,7 +1137,10 @@ function UsageCoverageNotice({
     <div className="flex flex-col gap-1 border-t border-border px-2 py-2 text-xs text-muted-foreground">
       {failed.map((environment) => (
         <span key={environment.label}>
-          {environment.label}: {environment.error}
+          {environment.label}:{" "}
+          {environment.error === null
+            ? null
+            : translateRuntimeError(environment.error, readLocale())}
         </span>
       ))}
       {incompatible.map(({ environment, mismatch }) => (
@@ -1240,7 +1248,10 @@ function UsageEnvironmentFilter({
                     : progress.phase === "stale"
                       ? t("Refreshing…")
                       : progress.phase === "partway"
-                        ? updatingProvidersLabel(progress.providers, providerLabel)
+                        ? translateUsageProgressLabel(
+                            updatingProvidersLabel(progress.providers, providerLabel),
+                            readLocale(),
+                          )
                         : t("Ready");
           return (
             <MenuCheckboxItem

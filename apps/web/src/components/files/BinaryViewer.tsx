@@ -15,7 +15,7 @@ import {
   SelectPopup,
   SelectItem,
 } from "~/components/ui/select";
-import { translateNow, useTranslation } from "~/i18n/useTranslation";
+import { translateNow, useLocale, useTranslation } from "~/i18n/useTranslation";
 
 import {
   FileSurfaceAction,
@@ -23,7 +23,7 @@ import {
   FileSurfaceLoading,
   FileSurfaceNotice,
 } from "./fileSurfaceChrome";
-import { filesUiMessages } from "./filesUi.messages";
+import { filesUiMessages, translateFilesMessage } from "./filesUi.messages";
 import {
   SQLITE_PAGE_SIZE,
   type BinaryWorkerRequest,
@@ -104,6 +104,7 @@ export default function BinaryViewer(props: {
   const [busy, setBusy] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const t = useTranslation(filesUiMessages);
+  const locale = useLocale();
   const workerRef = useRef<Worker | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const send = (request: BinaryWorkerRequest) => {
@@ -320,7 +321,7 @@ export default function BinaryViewer(props: {
       ) : null}
       {error ? (
         <FileSurfaceFailure
-          message={error}
+          message={translateFilesMessage(error, locale)}
           {...(props.onRetry ? { onRetry: props.onRetry } : {})}
         />
       ) : busy ? (

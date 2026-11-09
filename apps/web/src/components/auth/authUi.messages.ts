@@ -50,7 +50,7 @@ export const authUiMessages = {
   "Host: {host}": "主机：{host}",
   "Verify the backend is reachable from this browser, supports CORS for hosted clients, and is served over HTTPS when opening this page from HTTPS.":
     "请确认此浏览器能访问该后端、后端为托管客户端启用了 CORS，并且在通过 HTTPS 打开此页面时后端也使用 HTTPS。",
-  "Try again": "请重试",
+  "Try again": "重试",
   "Open app": "打开应用",
   "Authentication failed.": "身份验证失败。",
   "This environment expects a trusted pairing credential before the app can connect.":

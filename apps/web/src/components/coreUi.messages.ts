@@ -1,4 +1,8 @@
 export const coreUiMessages = {
+  "Thread copied": "已复制会话",
+  "Failed to copy thread": "无法复制会话",
+  "PR link copied": "已复制 PR 链接",
+  "Failed to copy PR link": "无法复制 PR 链接",
   "1 terminal process running. Open terminal": "1 个终端进程正在运行。打开终端",
   "{count} terminal processes running. Open terminal": "{count} 个终端进程正在运行。打开终端",
   "Worktree: {path}": "工作树：{path}",
@@ -75,7 +79,7 @@ export const coreUiMessages = {
   "T3 Code home": "T3 Code 首页",
   Back: "返回",
   Settings: "设置",
-  "Pull requests": "拉取请求",
+  "Pull requests": "Pull requests",
   Usage: "用量",
   "Thread action unavailable": "无法执行会话操作",
   "This connection cannot change one or more selected threads.": "此连接无法修改选中的部分会话。",

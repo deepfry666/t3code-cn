@@ -1,4 +1,6 @@
 import { RegistryContext, useAtomRefresh, useAtomValue } from "@effect/atom-react";
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import * as Cause from "effect/Cause";
 import * as Option from "effect/Option";
 import { AsyncResult, Atom } from "effect/reactivity";
@@ -22,7 +24,7 @@ export function formatEnvironmentQueryError(cause: Cause.Cause<unknown>): string
   const error = Cause.squash(cause);
   return error instanceof Error && error.message.trim().length > 0
     ? error.message
-    : "The environment request failed.";
+    : translateNow(globalUiMessages, "The environment request failed.");
 }
 
 function queryUpdatedAt(result: AsyncResult.AsyncResult<unknown, unknown>): number {

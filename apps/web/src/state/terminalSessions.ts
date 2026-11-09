@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { useAtomValue } from "@effect/atom-react";
 import {
   combineTerminalSessionState,
@@ -140,7 +142,7 @@ const attachedTerminalSessionFamily = Atom.family((key: string) => {
   if (Option.isNone(decoded)) {
     return Atom.make<TerminalSessionState>({
       ...EMPTY_TERMINAL_SESSION_STATE,
-      error: "Invalid terminal launch input",
+      error: translateNow(globalUiMessages, "Invalid terminal launch input"),
       status: "error",
     }).pipe(Atom.withLabel(`web-terminal-session:${key}`));
   }

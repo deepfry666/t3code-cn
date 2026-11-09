@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { cloudUiMessages } from "~/components/cloud/cloudUi.messages";
 import * as Effect from "effect/Effect";
 import * as Option from "effect/Option";
 import * as Schema from "effect/Schema";
@@ -59,21 +61,33 @@ const ensureRelayClientAvailable = Effect.fn("linkEnvironment.ensureRelayClientA
     const registry = yield* EnvironmentRegistry.EnvironmentRegistry;
     const status = yield* registry
       .run(environmentId, request(WS_METHODS.cloudGetRelayClientStatus, {}))
-      .pipe(Effect.mapError(relayClientRpcError("Could not check relay client availability.")));
+      .pipe(
+        Effect.mapError(
+          relayClientRpcError(
+            translateNow(cloudUiMessages, "Could not check relay client availability."),
+          ),
+        ),
+      );
     if (status.status === "available") return;
     if (status.status === "unsupported") {
       return yield* new CloudEnvironmentLinkError({
-        message: `T3 Code cannot install the relay client automatically on ${status.platform}-${status.arch}.`,
+        message: translateNow(
+          cloudUiMessages,
+          "T3 Code cannot install the relay client automatically on {platform}-{arch}.",
+          { platform: status.platform, arch: status.arch },
+        ),
       });
     }
 
     const confirmed = yield* Effect.tryPromise({
       try: () => requestRelayClientInstallConfirmation(status.version),
-      catch: relayClientRpcError("Could not confirm relay client installation."),
+      catch: relayClientRpcError(
+        translateNow(cloudUiMessages, "Could not confirm relay client installation."),
+      ),
     });
     if (!confirmed) {
       return yield* new CloudEnvironmentLinkError({
-        message: "Relay client installation was cancelled.",
+        message: translateNow(cloudUiMessages, "Relay client installation was cancelled."),
       });
     }
 
@@ -86,12 +100,17 @@ const ensureRelayClientAvailable = Effect.fn("linkEnvironment.ensureRelayClientA
       )
       .pipe(
         Stream.runLast,
-        Effect.mapError(relayClientRpcError("Could not install the relay client.")),
+        Effect.mapError(
+          relayClientRpcError(translateNow(cloudUiMessages, "Could not install the relay client.")),
+        ),
         Effect.ensuring(Effect.sync(finishRelayClientInstall)),
       );
     if (Option.isNone(installed) || installed.value.type !== "complete") {
       return yield* new CloudEnvironmentLinkError({
-        message: "The relay client install completed without a final status.",
+        message: translateNow(
+          cloudUiMessages,
+          "The relay client install completed without a final status.",
+        ),
       });
     }
     const installedStatus = installed.value.status;
@@ -99,8 +118,15 @@ const ensureRelayClientAvailable = Effect.fn("linkEnvironment.ensureRelayClientA
       return yield* new CloudEnvironmentLinkError({
         message:
           installedStatus.status === "unsupported"
-            ? `T3 Code cannot install the relay client automatically on ${installedStatus.platform}-${installedStatus.arch}.`
-            : "The relay client is still unavailable after installation.",
+            ? translateNow(
+                cloudUiMessages,
+                "T3 Code cannot install the relay client automatically on {platform}-{arch}.",
+                { platform: installedStatus.platform, arch: installedStatus.arch },
+              )
+            : translateNow(
+                cloudUiMessages,
+                "The relay client is still unavailable after installation.",
+              ),
       });
     }
   },
@@ -168,12 +194,18 @@ function ensureLinkedEnvironmentMatches(input: {
 }): Effect.Effect<void, CloudEnvironmentLinkError> {
   if (input.link.environmentId !== input.expectedEnvironmentId) {
     return new CloudEnvironmentLinkError({
-      message: "Relay returned credentials for a different environment.",
+      message: translateNow(
+        cloudUiMessages,
+        "Relay returned credentials for a different environment.",
+      ),
     });
   }
   if (input.link.endpoint.providerKind !== input.expectedProviderKind) {
     return new CloudEnvironmentLinkError({
-      message: "Relay returned credentials for a different endpoint provider.",
+      message: translateNow(
+        cloudUiMessages,
+        "Relay returned credentials for a different endpoint provider.",
+      ),
     });
   }
   return Effect.void;
@@ -218,7 +250,9 @@ const preparedEndpoint = (target: CloudLinkTarget) =>
       ),
     ),
   ).pipe(
-    Effect.mapError(environmentApiError("Could not reach the environment.")),
+    Effect.mapError(
+      environmentApiError(translateNow(cloudUiMessages, "Could not reach the environment.")),
+    ),
     Effect.flatMap(
       Option.match({
         onNone: () =>
@@ -252,7 +286,7 @@ export const readCloudLinkState: (input: {
         url: (urls) => urls.linkState(),
         request: ({ client, headers }) => client.linkState({ headers }),
       },
-      "Could not read environment cloud link state.",
+      translateNow(cloudUiMessages, "Could not read environment cloud link state."),
     );
   });
 
@@ -275,7 +309,7 @@ export const updateCloudPreferences: (input: {
       url: (urls) => urls.preferences(),
       request: ({ client, headers }) => client.preferences({ headers, payload }),
     },
-    "Could not update environment cloud preferences.",
+    translateNow(cloudUiMessages, "Could not update environment cloud preferences."),
   );
 });
 
@@ -297,7 +331,7 @@ export const unlinkEnvironmentFromCloud: (input: {
       url: (urls) => urls.unlink(),
       request: ({ client, headers }) => client.unlink({ headers }),
     },
-    "Could not unlink the environment from cloud.",
+    translateNow(cloudUiMessages, "Could not unlink the environment from cloud."),
   );
 
   const configuredRelayUrl = relayUrl();
@@ -311,7 +345,10 @@ export const unlinkEnvironmentFromCloud: (input: {
       .pipe(
         Effect.mapError(
           decodedRelayClientError(
-            "Disconnected locally, but T3 Connect did not confirm it removed this environment",
+            translateNow(
+              cloudUiMessages,
+              "Disconnected locally, but T3 Connect did not confirm it removed this environment",
+            ),
           ),
         ),
       );
@@ -384,7 +421,7 @@ export const linkEnvironmentToCloud: (input: {
           },
         }),
     },
-    "Could not obtain environment link proof.",
+    translateNow(cloudUiMessages, "Could not obtain environment link proof."),
   );
   const link = yield* relayClient
     .linkEnvironment({
@@ -425,6 +462,6 @@ export const linkEnvironmentToCloud: (input: {
           },
         }),
     },
-    "Could not configure environment relay access.",
+    translateNow(cloudUiMessages, "Could not configure environment relay access."),
   );
 });

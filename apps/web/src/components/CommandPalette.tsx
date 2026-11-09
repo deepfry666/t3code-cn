@@ -1,3 +1,4 @@
+import { translateProjectRuntimeLabel } from "./projectRuntimeLabels";
 import { threadPullRequestLinkMode } from "@t3tools/client-runtime/thread-pull-request-compatibility";
 import { visibleThreadPullRequests } from "@t3tools/shared/threadPullRequests";
 
@@ -744,7 +745,7 @@ function OpenCommandPaletteDialog(props: {
   const isBrowsePending = hasBrowseTarget && (browseAccess.isPending || browseQuery.isPending);
   const browseAccessError =
     hasBrowseTarget && !browseAccess.isPending && !browseAccess.canReadFiles
-      ? (browseAccess.error ?? "This connection cannot browse host folders.")
+      ? (browseAccess.error ?? t("This connection cannot browse host folders."))
       : null;
   const browseEntries = browseResult?.entries ?? EMPTY_BROWSE_ENTRIES;
   const { visibleEntries: visibleBrowseEntries, exactEntry: exactBrowseEntry } =
@@ -1072,7 +1073,8 @@ function OpenCommandPaletteDialog(props: {
 
     for (const source of orderedSources) {
       const label = addProjectRemoteSourceLabel(source);
-      const title = source === "url" ? "Git URL" : t("{provider} repository", { provider: label });
+      const title =
+        source === "url" ? t("Git URL") : t("{provider} repository", { provider: label });
       const titleSource = source === "url" ? "Git URL" : `${label} repository`;
       const description =
         source === "url"
@@ -1082,7 +1084,10 @@ function OpenCommandPaletteDialog(props: {
               hint: addProjectRemoteSourcePathHint(source),
             });
       const readiness = readinessBySource(source);
-      const disabledHint = readiness.hint;
+      const disabledHint =
+        readiness.hint == null
+          ? readiness.hint
+          : translateProjectRuntimeLabel(readiness.hint, locale);
 
       const titleTrailingContent = readiness.ready ? undefined : (
         <span className="ml-auto">

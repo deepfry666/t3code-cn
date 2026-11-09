@@ -59,6 +59,7 @@ vi.mock("electron", async () => {
   }
   return {
     app: {
+      getPreferredSystemLanguages: () => ["en-US"],
       getPath: () => "/Applications/T3 Code (Nightly).app/Contents/MacOS/T3 Code",
     },
     nativeImage: { createFromPath: mocks.createFromPath },

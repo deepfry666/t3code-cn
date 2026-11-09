@@ -11,12 +11,15 @@ import * as Option from "effect/Option";
 import * as Schema from "effect/Schema";
 import { AsyncResult, Atom } from "effect/reactivity";
 
+import { translateNow } from "~/i18n/useTranslation";
 import { appAtomRegistry } from "~/rpc/atomRegistry";
 import { useFilesystemReadAccess } from "~/state/filesystem";
 import { projectEnvironment } from "~/state/projects";
 import { useProjectPathSearch } from "~/state/queries";
 import { executeAtomQuery } from "@t3tools/client-runtime/state/runtime";
 import { revisionedQuery } from "~/state/revisionedQuery";
+
+import { filesUiMessages } from "./filesUi.messages";
 
 const EMPTY_PROJECT_FILE_PATH = "";
 const EMPTY_PROJECT_ENTRIES_QUERY_ATOM = Atom.make(
@@ -186,7 +189,9 @@ function failureCause<A>(result: AsyncResult.AsyncResult<A, unknown>): unknown {
 
 function errorMessage(cause: unknown): string | null {
   if (cause === null) return null;
-  return cause instanceof Error ? cause.message : "Workspace query failed.";
+  return cause instanceof Error
+    ? cause.message
+    : translateNow(filesUiMessages, "Workspace query failed.");
 }
 
 const isProjectReadFileError = Schema.is(ProjectReadFileError);

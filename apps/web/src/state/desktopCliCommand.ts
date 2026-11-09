@@ -3,6 +3,8 @@ import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
 import { Atom } from "effect/reactivity";
 
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { appAtomRegistry } from "~/rpc/atomRegistry";
 
 type DesktopCliCommandBridge = DesktopBridge["cliCommand"];
@@ -12,7 +14,7 @@ class DesktopCliCommandUnavailableError extends Schema.TaggedError<DesktopCliCom
   {},
 ) {
   override get message(): string {
-    return "The t3 command is unavailable.";
+    return translateNow(globalUiMessages, "The t3 command is unavailable.");
   }
 }
 
@@ -21,7 +23,7 @@ class DesktopCliCommandLoadError extends Schema.TaggedError<DesktopCliCommandLoa
   { cause: Schema.Defect() },
 ) {
   override get message(): string {
-    return "Failed to load the t3 command state.";
+    return translateNow(globalUiMessages, "Failed to load the t3 command state.");
   }
 }
 

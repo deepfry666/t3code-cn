@@ -1,5 +1,5 @@
-import { useTranslation } from "~/i18n/useTranslation";
-import { composerUiMessages } from "./composerUi.messages";
+import { readLocale, useTranslation } from "~/i18n/useTranslation";
+import { composerUiMessages, translateComposerLabel } from "./composerUi.messages";
 import {
   buildTraitsTriggerDisplay,
   getDescriptorStringValue,
@@ -64,9 +64,12 @@ const SAVED_OPTION_LABELS: Readonly<Record<string, string>> = {
 };
 
 function savedOptionLabel(id: string): string {
-  return (
+  return translateComposerLabel(
     SAVED_OPTION_LABELS[id] ??
-    id.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/^./, (character) => character.toUpperCase())
+      id
+        .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+        .replace(/^./, (character) => character.toUpperCase()),
+    readLocale(),
   );
 }
 

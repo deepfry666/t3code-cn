@@ -13,7 +13,10 @@ const electron = vi.hoisted(() => ({
 const webauthn = vi.hoisted(() => ({ createCredential: vi.fn(), getCredential: vi.fn() }));
 
 vi.mock("electron", () => ({
-  app: { configureWebAuthn: electron.configureWebAuthn },
+  app: {
+    configureWebAuthn: electron.configureWebAuthn,
+    getPreferredSystemLanguages: () => ["en-US"],
+  },
   dialog: { showMessageBox: electron.showMessageBox },
   BrowserWindow: { fromWebContents: electron.fromWebContents },
   webContents: { fromFrame: () => undefined },

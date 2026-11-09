@@ -1,3 +1,4 @@
+import { RuntimeErrorText } from "~/components/RuntimeErrorText";
 import { useAuth } from "@clerk/react";
 import { useAtomValue } from "@effect/atom-react";
 import type {
@@ -400,7 +401,7 @@ function ConnectionStep({
                 ) : null}
                 {environment.connection.phase === "unsupported" && environment.connection.error ? (
                   <span className="mt-0.5 block text-xs text-muted-foreground">
-                    {environment.connection.error}
+                    <RuntimeErrorText>{environment.connection.error}</RuntimeErrorText>
                   </span>
                 ) : null}
               </span>
@@ -453,26 +454,25 @@ function ConnectionStep({
       </div>
       {skippedLabels.length > 0 ? (
         <p className="mt-4 text-xs text-muted-foreground">
-          {translateOnboardingLabel(
-            `Not connected, so setup skips ${skippedLabels.join(", ")}. You can set ${skippedLabels.length === 1 ? "it" : "them"} up later from Settings.`,
-            locale,
-          )}
+          {t("Not connected, so setup skips {names}.", { names: skippedLabels.join(", ") })}
+          {t("You can set it up later from Settings.")}
         </p>
       ) : null}
       <div className="mt-6 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         <p className="min-w-0 text-xs leading-relaxed text-muted-foreground">
-          {telemetryOff ?? "T3 Code collects anonymous usage data to help us improve it."} To read
-          more about how your data is used{telemetryOff === undefined ? " and how to opt out" : ""},
-          see our{" "}
+          {telemetryOff ?? t("T3 Code collects anonymous usage data to help us improve it.")}
+          {t(" To read more about how your data is used{optOut}, see our ", {
+            optOut: telemetryOff === undefined ? t(" and how to opt out") : "",
+          })}
           <a
             className="underline underline-offset-2 hover:text-foreground"
             href={PRIVACY_POLICY_URL}
             target="_blank"
             rel="noreferrer noopener"
           >
-            privacy policy
+            {t("privacy policy")}
           </a>
-          .
+          {locale === "zh-CN" ? "。" : "."}
         </p>
         <Button
           className="shrink-0 self-end"
@@ -650,7 +650,9 @@ function PairingForm({
         </div>
         {errorMessage ? (
           <Alert id="onboarding-pairing-error" variant="error">
-            <AlertDescription>{errorMessage}</AlertDescription>
+            <AlertDescription>
+              <RuntimeErrorText>{errorMessage}</RuntimeErrorText>
+            </AlertDescription>
           </Alert>
         ) : null}
         <Collapsible>
@@ -926,8 +928,9 @@ function OnboardingCodexSetup({
   } | null;
   readonly onAutoStartConsumed: () => void;
 }) {
+  const t = useTranslation(onboardingUiMessages);
   const canOperateTerminal = useEnvironmentScope(environmentId, AuthTerminalOperateScope);
-  const update = useAtomCommand(serverEnvironment.updateSettings, "Codex setup settings");
+  const update = useAtomCommand(serverEnvironment.updateSettings, t("Codex setup settings"));
   const instanceId =
     createdAccount?.instanceId ??
     provider?.instanceId ??

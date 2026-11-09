@@ -7,6 +7,8 @@ import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
 import { Atom } from "effect/reactivity";
 
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { appAtomRegistry } from "~/rpc/atomRegistry";
 
 const DESKTOP_NETWORK_ACCESS_STALE_TIME_MS = 30_000;
@@ -26,7 +28,7 @@ class DesktopNetworkAccessUnavailableError extends Schema.TaggedError<DesktopNet
   {},
 ) {
   override get message(): string {
-    return "Desktop network access is unavailable.";
+    return translateNow(globalUiMessages, "Desktop network access is unavailable.");
   }
 }
 
@@ -35,7 +37,7 @@ class DesktopServerExposureStateLoadError extends Schema.TaggedError<DesktopServ
   { cause: Schema.Defect() },
 ) {
   override get message(): string {
-    return "Failed to load desktop server exposure state.";
+    return translateNow(globalUiMessages, "Failed to load desktop server exposure state.");
   }
 }
 
@@ -44,7 +46,7 @@ class DesktopAdvertisedEndpointsLoadError extends Schema.TaggedError<DesktopAdve
   { cause: Schema.Defect() },
 ) {
   override get message(): string {
-    return "Failed to load advertised desktop endpoints.";
+    return translateNow(globalUiMessages, "Failed to load advertised desktop endpoints.");
   }
 }
 

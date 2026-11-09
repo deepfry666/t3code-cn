@@ -1,3 +1,4 @@
+import { RuntimeErrorText } from "~/components/RuntimeErrorText";
 import { RefreshIcon } from "~/components/ui/refresh-icon";
 import { useAtomValue } from "@effect/atom-react";
 import type { FileDiffContentsLoader, FileDiffMetadata } from "@pierre/diffs";
@@ -829,7 +830,7 @@ export default function DiffPanel({
           <DropdownMenuTrigger
             render={<Button size="xs" variant="secondary" />}
             className={cn("max-w-full", headerCommitSha !== null && "min-w-0 shrink")}
-            aria-label={`Diff scope: ${selectedScopeLabel}`}
+            aria-label={t("Diff scope: {scope}", { scope: selectedScopeLabel })}
             data-workspace-focus-default
           >
             <span className="truncate">{selectedScopeLabel}</span>
@@ -951,7 +952,9 @@ export default function DiffPanel({
                                 href={commitUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                aria-label={`Open commit ${commit.sha.slice(0, 7)}`}
+                                aria-label={t("Open commit {sha}", {
+                                  sha: commit.sha.slice(0, 7),
+                                })}
                               />
                             }
                             onClick={(event) => openCommitUrl(event, commitUrl)}
@@ -970,7 +973,9 @@ export default function DiffPanel({
                   })}
                 </DropdownMenuRadioGroup>
                 {branchCommitsQuery.error ? (
-                  <DropdownMenuItem disabled>{branchCommitsQuery.error}</DropdownMenuItem>
+                  <DropdownMenuItem disabled>
+                    <RuntimeErrorText>{branchCommitsQuery.error}</RuntimeErrorText>
+                  </DropdownMenuItem>
                 ) : !canReadFiles ? (
                   <DropdownMenuItem disabled>
                     {fileAccess.isPending
@@ -995,7 +1000,10 @@ export default function DiffPanel({
         {canSelectBranchBase && (
           <div
             className="flex min-w-0 max-w-full items-center gap-2 overflow-hidden text-xs text-muted-foreground"
-            aria-label={`Comparing ${comparisonHeadRef} against ${comparisonBaseRef}`}
+            aria-label={t("Comparing {head} against {base}", {
+              head: comparisonHeadRef,
+              base: comparisonBaseRef,
+            })}
           >
             <Tooltip>
               <TooltipTrigger
@@ -1087,7 +1095,9 @@ export default function DiffPanel({
                               onPointerDown={(event) => event.stopPropagation()}
                             >
                               <Switch
-                                aria-label={`Use remote version of ${choice.label}`}
+                                aria-label={t("Use remote version of {ref}", {
+                                  ref: choice.label,
+                                })}
                                 checked={useRemote}
                                 className="[--thumb-size:--spacing(3)]"
                                 onCheckedChange={(checked) => {
@@ -1313,7 +1323,9 @@ export default function DiffPanel({
           <DiffPanelLoadingState label={t("Checking file access...")} />
         ) : (
           <div className="flex flex-1 items-center justify-center px-5 text-center text-xs text-muted-foreground/70">
-            {fileAccess.error ?? t("This connection cannot read local diffs.")}
+            <RuntimeErrorText>
+              {fileAccess.error ?? t("This connection cannot read local diffs.")}
+            </RuntimeErrorText>
           </div>
         )
       ) : (
@@ -1344,7 +1356,9 @@ export default function DiffPanel({
             )}
             {selectedPatchError && !renderablePatch && (
               <div className="px-3">
-                <p className="mb-2 text-2xs text-error/80">{selectedPatchError}</p>
+                <p className="mb-2 text-2xs text-error/80">
+                  <RuntimeErrorText>{selectedPatchError}</RuntimeErrorText>
+                </p>
               </div>
             )}
             {!renderablePatch && toolCallPreview && toolCallPreview.content.length > 0 ? (

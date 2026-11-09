@@ -26,7 +26,7 @@ export const settingsShellMessages = {
   Default: "默认",
   Inherits: "继承",
   Inherit: "继承",
-  "Same on all machines": "所有设备上的设置相同",
+  "Same on all machines": "所有机器上的设置相同",
   "Overridden by": "被以下项目覆盖",
   "Reset it": "重置此项",
   "Reset all": "全部重置",

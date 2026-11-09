@@ -22,7 +22,7 @@ export const promptLinksUiMessages = {
   "It opens in T3 Code if you're connected to the machine it runs on.":
     "如果你已连接到运行它的机器，它会在 T3 Code 中打开。",
   "Opens one of your threads.": "打开你的一个会话。",
-  "Pull request {pullRequest}": "拉取请求 {pullRequest}",
+  "Pull request {pullRequest}": "Pull request {pullRequest}",
   "Repository {repository}": "仓库 {repository}",
   "No project": "无项目",
   "Model {model}": "模型 {model}",
@@ -56,7 +56,7 @@ export const promptLinksUiMessages = {
   "Use without project": "不使用项目",
   "Check out {pullRequest}?": "要检出 {pullRequest} 吗？",
   "This puts the pull request's code in a new worktree and runs your project's setup script on it.":
-    "这会把该拉取请求的代码放到新的工作树中，并在其上运行你项目的设置脚本。",
+    "这会把该 pull request 的代码放到新的工作树中，并在其上运行你项目的设置脚本。",
   "Checking out...": "正在检出…",
   "Check out": "检出",
 } as const;

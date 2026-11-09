@@ -1,3 +1,4 @@
+import { translateThreadRuntimeLabel } from "./threadRuntimeLabels";
 import { useTranslation } from "~/i18n/useTranslation";
 import { threadPanelUiMessages } from "./threadPanelUi.messages";
 import {
@@ -217,7 +218,10 @@ export function ThreadLineageWorkflowRow({
                   expanded={open}
                   aria-label={t(
                     open ? "Collapse {phase} phase, {status}" : "Expand {phase} phase, {status}",
-                    { phase: phase.title, status: t(`${status}@@phase`) },
+                    {
+                      phase: translateThreadRuntimeLabel(phase.title),
+                      status: t(`${status}@@phase`),
+                    },
                   )}
                   onClick={() => setPhaseOpen((phases) => new Map(phases).set(phase.index, !open))}
                   accessory={
@@ -235,7 +239,7 @@ export function ThreadLineageWorkflowRow({
                     </>
                   }
                 >
-                  {phase.title}
+                  {translateThreadRuntimeLabel(phase.title)}
                 </CollapsibleSectionHeader>
                 {open ? (
                   <ul className="m-0 list-none p-0">
