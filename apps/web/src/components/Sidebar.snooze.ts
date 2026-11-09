@@ -7,9 +7,11 @@ import {
   type SnoozePreset,
 } from "@t3tools/client-runtime/state/thread-settled";
 
+import { readLocale } from "../i18n/useTranslation";
 import { appAtomRegistry } from "../rpc/atomRegistry";
 import { serverEnvironment } from "../state/server";
 import { formatShortTimestamp } from "../timestampFormat";
+import { translateSnoozeWhen, translateThreadsLabel } from "./settings/settingsThreads.messages";
 import { toastManager } from "./ui/toast";
 
 export { snoozeWakeLabel, type SnoozePreset };
@@ -20,7 +22,9 @@ export function resolveSnoozePresets(
   timestampFormat: TimestampFormat,
   environmentId: EnvironmentId,
 ): ReadonlyArray<SnoozePreset> {
-  return resolveSharedSnoozePresets(now, snoozeOptions(timestampFormat, environmentId));
+  return resolveSharedSnoozePresets(now, snoozeOptions(timestampFormat, environmentId)).map(
+    (preset) => localizePreset(preset, now),
+  );
 }
 
 /** A shown menu choice as picked; see the shared `pickSnoozePreset`. */
@@ -44,6 +48,16 @@ export function pickSnoozePreset(
     });
   }
   return picked;
+}
+
+// The shared presets are English; the menu is built when it opens, so reading the locale then is enough.
+function localizePreset(preset: SnoozePreset, now: Date): SnoozePreset {
+  const locale = readLocale();
+  return {
+    ...preset,
+    label: translateThreadsLabel(preset.label, locale),
+    whenLabel: translateSnoozeWhen(preset, now, locale),
+  };
 }
 
 function snoozeOptions(timestampFormat: TimestampFormat, environmentId: EnvironmentId) {
