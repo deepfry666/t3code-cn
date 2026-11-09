@@ -17,7 +17,7 @@ const GLOSSARY: ReadonlyArray<readonly [english: RegExp, chinese: string | Reado
     [/(?<!SSH config, )\bagents?\b(?!-device)/i, "智能体"],
     [/\bkeybindings?\b/i, "快捷键"],
     // A zip or tar archive is 压缩包, not an archived thread.
-    [/\barchived?\b(?!\s+(?:entr\w*|metadata|paths?|contains|has)\b)/i, "归档"],
+    [/(?<!expanded )\barchived?\b(?!\s+(?:entr\w*|metadata|paths?|contains|has)\b)/i, "归档"],
     [/\bsnooz\w*/i, "暂缓"],
     [/\bsettl\w*/i, "收尾"],
     [/\bsidebars?\b/i, "侧边栏"],

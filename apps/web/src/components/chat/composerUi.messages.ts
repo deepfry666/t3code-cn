@@ -1,6 +1,10 @@
 import { translate, type Locale } from "../../i18n/locale";
+import { threadRuntimeMessages } from "./threadRuntime.messages";
 
 export const composerUiMessages = {
+  ...threadRuntimeMessages,
+  "Queued message": "排队消息",
+  "Voice transcription was cancelled.": "语音转录已取消。",
   "Preview {name}": "预览 {name}",
   "Retry upload for {name}": "重新上传 {name}",
   "Remove {name}": "移除 {name}",

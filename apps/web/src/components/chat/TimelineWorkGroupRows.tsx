@@ -510,11 +510,10 @@ export function LiveWorkEntryTimelineRow({
   const t = useTranslation(timelineUiMessages);
   const ctx = use(TimelineRowCtx);
   const threadTarget = useThreadReadTarget(row.entry, ctx.activeThreadEnvironmentId);
-  const label = translateTimelineLabel(
-    liveWorkEntryLabel(row.entry, ctx.workspaceRoot, row.active),
-    t,
-  );
-  const threadLabel = threadReadLabel(label, threadTarget);
+  const sourceLabel = liveWorkEntryLabel(row.entry, ctx.workspaceRoot, row.active);
+  const label =
+    row.entry.itemType === "reasoning" ? sourceLabel : translateTimelineLabel(sourceLabel, t);
+  const threadLabel = threadReadLabel(sourceLabel, threadTarget, t);
 
   const item = row.entry.projectedItem?.item;
   const pendingApproval =

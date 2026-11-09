@@ -272,3 +272,129 @@ Usage: Period: ${usagePeriod.label}
 
 # 写进环境注册数据、作为环境名保存的标签，按名称处理。
 WSL (default distro)
+
+# HTTP 授权格式、技术字段或配对凭据标识，保持协议和配置原值
+Bearer ${input.bearerToken}
+Git URL
+Bearer ${authorization.token}
+T3 Code link
+
+# 复制给错误报告的连接诊断文本；网页可见诊断另行翻译
+T3 Code connection to ${hostLabel}: ${diagnosis.headline}
+More info: ${diagnosis.moreInfoUrl}
+
+# 开发者日志、内部 atom 键诊断或性能基准数据，不作为正常网页文案
+Could not clear pull request routing permission for a platform environment.
+Could not remove a persisted registration shadowed by a platform environment.
+Could not clear pull request routing permission after platform removal.
+Message text.
+Invalid asset collection atom key: ${JSON.stringify(this.key)}.
+Invalid scoped project atom key: ${JSON.stringify(this.key)}.
+Invalid scoped thread atom key: ${JSON.stringify(this.key)}.
+Invalid scoped project reference collection atom key: ${JSON.stringify(this.key)}.
+
+# 发给 MCP App 的 JSON-RPC 协议错误，不是 T3 网页界面文案
+Request failed.
+Too many requests in flight.
+Only http(s) links can be opened.
+Only text messages from the user role are supported.
+Model context needs content blocks or an object of structured content.
+Method not found: ${method}
+Message too large.
+
+# 产品名称保持英文
+Claude Code
+
+# 在网页显示处按模式翻译
+Relay DPoP access token exchange
+Relay environment listing
+Relay client device listing
+Relay environment link challenge
+Relay environment linking
+Relay environment unlinking
+Relay environment status request
+Relay environment connection
+Relay mobile device registration
+Relay mobile device unregistration
+Relay Live Activity registration
+Relay agent activity snapshot
+Relay T3 Chat link lookup
+Relay T3 Chat link request
+Relay T3 Chat unlinking
+Remove ${targetKind} "${targetLabel}" and delete its ${threadCount} thread${threadCount === 1 ? "" : "s"}?
+Remove ${targetKind} "${targetLabel}"?
+Waiting on a ${noun}
+Running a ${noun}
+Next ${capitalize(setting.day)}
+Running source control action
+Requested thread creation ${times}
+Waited on
+Requested interrupts for
+Requested stops for
+Requested cancellation of
+Requested deletion of
+Requested steering with
+Asked for
+Handed off to
+Asked to link
+Stopped watching
+Started writing
+Failed to ${action.toLowerCase()}
+Declined to ${action.toLowerCase()}
+Linked ${count} ${count === 1 ? "pull request" : "pull requests"}
+Unlinked ${count} ${count === 1 ? "pull request" : "pull requests"}
+Watching ${count} ${count === 1 ? "pull request" : "pull requests"}
+Stopped watching ${count} ${count === 1 ? "pull request" : "pull requests"}
+Read ${count} ${count === 1 ? "file" : "files"}
+Changed ${count} ${count === 1 ? "file" : "files"}
+Ran ${count} ${count === 1 ? "command" : "commands"}
+Created ${count} ${count === 1 ? "thread" : "threads"}
+Used device controls ${count} ${count === 1 ? "time" : "times"}
+Used browser ${count} ${count === 1 ? "time" : "times"}
+Searched the web ${count} ${count === 1 ? "time" : "times"}
+Searched code ${count} ${count === 1 ? "time" : "times"}
+Used ${count} ${count === 1 ? "tool" : "tools"}
+Received ${count} ${count === 1 ? "update" : "updates"}
+Performed ${remainingCount} other ${remainingCount === 1 ? "action" : "actions"}
+
+# 仅手机端显示；网页使用独立的 Git、设备版本和语音生命周期实现
+Device tool versions have not been checked.
+Agent tools
+Versions have not been checked. Reconnect the host and check versions.
+Required tools are installed automatically when needed. Checking versions does not install or start anything.
+View ${terminology.shortLabel}
+Create and checkout a branch before pushing or opening ${terminology.shortLabelWithArticle}.
+Add an "origin" remote before pushing or creating ${terminology.shortLabelWithArticle}.
+Sync branch
+Detached HEAD: checkout a branch before pushing.
+View ${terminology.shortLabel} is currently unavailable.
+Detached HEAD: checkout a branch before creating ${terminology.shortLabelWithArticle}.
+Add an "origin" remote before creating ${terminology.shortLabelWithArticle}.
+No local commits to include in ${terminology.shortLabelWithArticle}.
+Branch is behind upstream. Pull/rebase before creating ${terminology.shortLabelWithArticle}.
+Commit & push to default branch?
+This action will commit and push changes${suffix}
+Push to default branch?
+This action will push local commits${suffix}
+Commit, push & create ${shortLabel} from default branch?
+This action will commit, push, and create ${shortLabelWithArticle}${suffix}
+Push & create ${shortLabel} from default branch?
+This action will push local commits and create ${shortLabelWithArticle}${suffix}
+Voice input stopped when the app moved to the background.
+
+# PowerShell 命令识别词表，属于代码词法数据，不是界面文字
+Add Approve Assert Backup Block Build Checkpoint Clear Close Compare Complete Compress Confirm Connect Convert ConvertFrom ConvertTo Copy Debug Deny Deploy Disable Disconnect Dismount Edit Enable Enter Exit Expand Export Find ForEach Format Get Grant Group Hide Import Initialize Install Invoke Join Limit Lock Measure Merge Mount Move New Open Optimize Out Ping Pop Protect Publish Push Read Receive Redo Register Remove Rename Repair Request Reset Resize Resolve Restart Restore Resume Revoke Save Search Select Send Set Show Skip Sort Split Start Step Stop Submit Suspend Switch Sync Tee Test Trace Unblock Undo Uninstall Unlock Unprotect Unpublish Unregister Update Use Wait Watch Where Write
+
+# 在网页显示处按模式翻译
+Feedback sent to OpenAI.\n\nThread ID: \`${submission.feedbackId}\`
+
+# HTTP 授权头格式保持协议原值
+Bearer ${clerkToken}
+
+# 作为会话标题保存进数据；显示时无法区分自动标题和用户自己起的同名标题。
+Attached image
+Attached images
+File: {attachmentName}
+
+# 代码里用来匹配翻译键的前缀，不是界面文字。
+Your DNS

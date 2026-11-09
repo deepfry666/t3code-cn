@@ -1,4 +1,7 @@
-import { useTranslation } from "~/i18n/useTranslation";
+import { createLabelTranslator } from "../../i18n/labelTranslation";
+import { translate } from "../../i18n/locale";
+import { translateRuntimeError } from "../runtimeErrorLabels";
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { coreUiMessages } from "../coreUi.messages";
 import { Spinner } from "~/components/ui/spinner";
 
@@ -96,6 +99,7 @@ function createBufferedToastManager(): BaseToastManager {
   };
 }
 
+const translateCoreLabel = createLabelTranslator(coreUiMessages);
 const toastManager = createBufferedToastManager();
 const anchoredToastManager = createBufferedToastManager();
 type ToastId = ReturnType<typeof toastManager.add>;
@@ -208,6 +212,11 @@ function ToastDescriptionAndExpandable({
   toastDescription: unknown;
   toastType: unknown;
 }) {
+  const locale = useLocale();
+  const description =
+    typeof toastDescription === "string"
+      ? translateRuntimeError(toastDescription, locale)
+      : undefined;
   const expandableContent = toastData?.expandableContent;
   const labels = toastData?.expandableLabels ?? {};
   const descriptionTrigger = toastData?.expandableDescriptionTrigger ?? false;
@@ -219,13 +228,19 @@ function ToastDescriptionAndExpandable({
   const t = useTranslation(coreUiMessages);
 
   if (!expandableContent) {
-    return <Toast.Description className={descriptionClassName} data-slot="toast-description" />;
+    return (
+      <Toast.Description className={descriptionClassName} data-slot="toast-description">
+        {description}
+      </Toast.Description>
+    );
   }
 
   if (!descriptionTrigger) {
     return (
       <>
-        <Toast.Description className={descriptionClassName} data-slot="toast-description" />
+        <Toast.Description className={descriptionClassName} data-slot="toast-description">
+          {description}
+        </Toast.Description>
         <ToastExpandableSection labels={labels}>{expandableContent}</ToastExpandableSection>
       </>
     );
@@ -270,7 +285,9 @@ function ToastDescriptionAndExpandable({
                 "underline-offset-2 decoration-muted-foreground/60 group-hover:underline",
               )}
               data-slot="toast-description"
-            />
+            >
+              {description}
+            </Toast.Description>
           </div>
           <MorphIcon
             aria-hidden
@@ -337,6 +354,7 @@ function deriveToastBodyDescriptor(toast: {
 interface ToastBodyContentProps extends ToastBodyDescriptor {
   readonly actionProps: { readonly children?: ReactNode } | undefined;
   readonly toastData: ThreadToastData | undefined;
+  readonly toastTitle: ReactNode;
   readonly toastDescription: unknown;
   readonly toastType: unknown;
 }
@@ -350,9 +368,11 @@ function ToastBodyContent({
   secondaryActionVariant,
   hasTrailingControls,
   toastData,
+  toastTitle,
   toastDescription,
   toastType,
 }: ToastBodyContentProps) {
+  const locale = useLocale();
   const additionalActions = toastData?.additionalActions ?? [];
   const secondaryActionProps = toastData?.secondaryActionProps;
   const leadingIcon = toastData?.leadingIcon;
@@ -388,7 +408,16 @@ function ToastBodyContent({
               <Icon className="in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=success]:text-success in-data-[type=warning]:text-warning in-data-[type=loading]:opacity-80" />
             </div>
           ) : null}
-          <Toast.Title className="min-w-0 wrap-break-word font-medium" data-slot="toast-title" />
+          <Toast.Title className="min-w-0 wrap-break-word font-medium" data-slot="toast-title">
+            {typeof toastTitle === "string"
+              ? translateRuntimeError(
+                  translateCoreLabel(toastTitle, (key, params) =>
+                    translate(locale, coreUiMessages, key, params),
+                  ),
+                  locale,
+                )
+              : toastTitle}
+          </Toast.Title>
         </div>
         <ToastDescriptionAndExpandable
           toastData={toastData}
@@ -693,6 +722,7 @@ function Toasts({ position }: { position: ToastPosition }) {
                   {...bodyDescriptor}
                   actionProps={toast.actionProps}
                   toastData={toast.data}
+                  toastTitle={toast.title}
                   toastDescription={toast.description}
                   toastType={toast.type}
                 />
@@ -715,6 +745,7 @@ function AnchoredToastProvider({ children, ...props }: Toast.Provider.Props) {
 }
 
 function AnchoredToasts() {
+  const locale = useLocale();
   const t = useTranslation(coreUiMessages);
   const { toasts } = Toast.useToastManager<ThreadToastData>();
   const activeThreadRef = useActiveThreadRefFromRoute();
@@ -752,7 +783,13 @@ function AnchoredToasts() {
                 >
                   {tooltipStyle ? (
                     <Toast.Content className="pointer-events-auto px-2 py-1">
-                      <Toast.Title data-slot="toast-title" />
+                      <Toast.Title data-slot="toast-title">
+                        {typeof toast.title === "string"
+                          ? translateCoreLabel(toast.title, (key, params) =>
+                              translate(locale, coreUiMessages, key, params),
+                            )
+                          : toast.title}
+                      </Toast.Title>
                     </Toast.Content>
                   ) : (
                     <>
@@ -789,6 +826,7 @@ function AnchoredToasts() {
                           {...bodyDescriptor}
                           actionProps={toast.actionProps}
                           toastData={toast.data}
+                          toastTitle={toast.title}
                           toastDescription={toast.description}
                           toastType={toast.type}
                         />

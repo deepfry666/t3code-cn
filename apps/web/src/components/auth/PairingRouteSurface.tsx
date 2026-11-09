@@ -1,3 +1,4 @@
+import { RuntimeErrorText } from "~/components/RuntimeErrorText";
 import { Alert, AlertDescription } from "../ui/alert";
 import type { AuthSessionState } from "@t3tools/contracts";
 import { squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
@@ -117,7 +118,9 @@ export function PairingRouteSurface({
 
         {errorMessage ? (
           <Alert variant="error">
-            <AlertDescription>{errorMessage}</AlertDescription>
+            <AlertDescription>
+              <RuntimeErrorText>{errorMessage}</RuntimeErrorText>
+            </AlertDescription>
           </Alert>
         ) : null}
 

@@ -3,6 +3,8 @@ import { capitalizeTerm } from "@t3tools/client-runtime/source-control-clients";
 import type { Locale } from "~/i18n/locale";
 
 export const pullRequestUiMessages = {
+  "Context, no code": "背景说明，无代码",
+  "1 file": "1 个文件",
   "opened@@timestamp": "创建于",
   "Stack of {count} {kind}, {state}": "包含 {count} 个 {kind} 的堆叠，{state}",
   "{kind} #{number}, status pending": "{kind} #{number}，状态待更新",

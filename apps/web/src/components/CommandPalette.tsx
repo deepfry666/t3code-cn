@@ -1,3 +1,4 @@
+import { translateProjectRuntimeLabel } from "./projectRuntimeLabels";
 import { threadPullRequestLinkMode } from "@t3tools/client-runtime/thread-pull-request-compatibility";
 import { visibleThreadPullRequests } from "@t3tools/shared/threadPullRequests";
 
@@ -1083,7 +1084,10 @@ function OpenCommandPaletteDialog(props: {
               hint: addProjectRemoteSourcePathHint(source),
             });
       const readiness = readinessBySource(source);
-      const disabledHint = readiness.hint;
+      const disabledHint =
+        readiness.hint == null
+          ? readiness.hint
+          : translateProjectRuntimeLabel(readiness.hint, locale);
 
       const titleTrailingContent = readiness.ready ? undefined : (
         <span className="ml-auto">

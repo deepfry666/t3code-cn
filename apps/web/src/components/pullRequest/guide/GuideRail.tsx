@@ -1,3 +1,4 @@
+import { createLabelTranslator } from "../../../i18n/labelTranslation";
 import type { PullRequestReviewGuideStop } from "@t3tools/contracts";
 import { CheckIcon } from "lucide-react";
 
@@ -8,6 +9,12 @@ import { stopSubline } from "@t3tools/client-runtime/review-guide-tour";
 import { useTranslation } from "~/i18n/useTranslation";
 
 import { pullRequestUiMessages } from "../pullRequestUi.messages";
+
+const translateGuideSubline = createLabelTranslator(pullRequestUiMessages, [
+  "Context, no code",
+  "{count} files",
+  "1 file",
+]);
 
 export function GuideRail({
   stops,
@@ -36,7 +43,7 @@ export function GuideRail({
                 {t("Look closely")}
               </Badge>
             ) : null}
-            <span>{stopSubline(stop)}</span>
+            <span>{translateGuideSubline(stopSubline(stop), t)}</span>
           </>
         }
       />

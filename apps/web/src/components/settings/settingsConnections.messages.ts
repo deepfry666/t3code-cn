@@ -1,3 +1,4 @@
+import { translateRuntimeError } from "../runtimeErrorLabels";
 import { translate, type Locale } from "~/i18n/locale";
 
 export const settingsConnectionsMessages = {
@@ -814,7 +815,7 @@ export function translateConnectionLabel(label: string, locale: Locale): string 
       .map((part) => translateConnectionLabel(part, locale))
       .join(" · ");
   }
-  return label;
+  return translateRuntimeError(label, locale);
 }
 
 const diagnosisHostLabels = (

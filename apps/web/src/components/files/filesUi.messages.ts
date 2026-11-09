@@ -148,7 +148,7 @@ export const filesUiMessages = {
   "0 rows": "0 行",
   "Read-only. Up to 50 columns and 1,024 characters per cell. Blob contents are omitted.":
     "只读。最多 50 列，每格最多 1,024 个字符。不显示 Blob 内容。",
-  "Archive entries": "归档条目",
+  "Archive entries": "压缩包条目",
   Name: "名称",
   Size: "大小",
   Modified: "修改时间",
@@ -234,7 +234,7 @@ export const filesUiMessages = {
   "Workspace query failed.": "工作区查询失败。",
   "Unable to load folder.": "无法加载文件夹。",
   "The expanded archive exceeds the preview size or compression ratio limit.":
-    "解压后的归档超出预览大小或压缩比限制。",
+    "解压后的压缩包超出预览大小或压缩比限制。",
   "Could not preview this file.": "无法预览此文件。",
   "Could not parse this file.": "无法解析此文件。",
   "This workbook exceeds the preview limit: 2 million cells or 8 million grid positions.":

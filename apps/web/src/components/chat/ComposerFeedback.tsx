@@ -1,3 +1,5 @@
+import { createLabelTranslator } from "../../i18n/labelTranslation";
+import { threadRuntimeMessages } from "./threadRuntime.messages";
 import { englishComposer, type ComposerTranslator } from "./chatTranslators";
 import {
   codexFeedbackNotice,
@@ -9,6 +11,8 @@ import { writeTextToClipboard } from "../../hooks/useCopyToClipboard";
 import { Button } from "../ui/button";
 import { toastManager } from "../ui/toast";
 import type { ComposerBannerStackItem } from "./ComposerBannerStack";
+
+const translateFeedbackLabel = createLabelTranslator(threadRuntimeMessages);
 
 export function feedbackBannerItem(
   submission: CodexFeedbackSubmission,
@@ -23,6 +27,9 @@ export function feedbackBannerItem(
       submission.status === "failed" ? "error" : submission.status === "sent" ? "success" : "info",
     icon: <MessageSquareIcon />,
     ...notice,
+    title: translateFeedbackLabel(notice.title, t),
+    description:
+      notice.description === undefined ? undefined : translateFeedbackLabel(notice.description, t),
     actions:
       submission.status === "sent" ? (
         <Button

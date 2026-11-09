@@ -1,3 +1,4 @@
+import { translateThreadRuntimeLabel } from "./threadRuntimeLabels";
 import { useTranslation } from "~/i18n/useTranslation";
 import { timelineUiMessages } from "./timelineUi.messages";
 import type {
@@ -140,7 +141,9 @@ export function SubagentTooltipContent(props: {
         )}
         <span className="inline-flex min-w-0 items-center gap-1 text-foreground/75">
           <span className="min-w-0 truncate">
-            {showInstanceBadge ? `${modelLabel} · ${entry.displayName}` : modelLabel}
+            {showInstanceBadge
+              ? `${translateThreadRuntimeLabel(modelLabel)} · ${entry.displayName}`
+              : translateThreadRuntimeLabel(modelLabel)}
           </span>
           {effort || speed?.speedIcon ? (
             <span className="inline-flex shrink-0 items-center gap-1">

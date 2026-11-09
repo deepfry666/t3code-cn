@@ -1,4 +1,8 @@
 export const coreUiMessages = {
+  "Thread copied": "已复制会话",
+  "Failed to copy thread": "无法复制会话",
+  "PR link copied": "已复制 PR 链接",
+  "Failed to copy PR link": "无法复制 PR 链接",
   "1 terminal process running. Open terminal": "1 个终端进程正在运行。打开终端",
   "{count} terminal processes running. Open terminal": "{count} 个终端进程正在运行。打开终端",
   "Worktree: {path}": "工作树：{path}",

@@ -1,3 +1,4 @@
+import { RuntimeErrorText } from "~/components/RuntimeErrorText";
 import { useTranslation } from "~/i18n/useTranslation";
 import { timelineUiMessages } from "./timelineUi.messages";
 import { translateTimelineLabel } from "./timelineLabels";
@@ -1419,7 +1420,7 @@ function TimelineHistoryControl(props: MessagesTimelineHistoryControls) {
         ) : null}
         {props.error !== null ? (
           <p role="status" className="text-center text-muted-foreground text-xs">
-            {props.error}
+            <RuntimeErrorText>{props.error}</RuntimeErrorText>
           </p>
         ) : null}
       </div>

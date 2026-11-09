@@ -1,3 +1,4 @@
+import { RuntimeErrorText } from "~/components/RuntimeErrorText";
 import { fillNode } from "../../i18n/fillNode";
 import type { Locale } from "../../i18n/locale";
 import { useLocale, useTranslation } from "../../i18n/useTranslation";
@@ -295,7 +296,9 @@ export function T3ConnectUserProfilePage() {
             <p className="font-medium text-destructive-foreground">
               {t("Could not load T3 Connect environments")}
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">{environmentsState.error}</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              <RuntimeErrorText>{environmentsState.error}</RuntimeErrorText>
+            </p>
           </div>
         ) : null}
 

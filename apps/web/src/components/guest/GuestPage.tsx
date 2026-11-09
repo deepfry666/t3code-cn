@@ -1,3 +1,4 @@
+import { RuntimeErrorText } from "~/components/RuntimeErrorText";
 import {
   EnvironmentId,
   GUEST_MESSAGE_MAX_LENGTH,
@@ -400,7 +401,7 @@ function NameForm({
       </label>
       {error !== null ? (
         <p role="alert" className="text-sm text-destructive">
-          {error}
+          <RuntimeErrorText>{error}</RuntimeErrorText>
         </p>
       ) : null}
       <Button type="submit" disabled={submitting || name.trim() === ""}>
@@ -836,7 +837,7 @@ function GuestComposer({
         <GuestModelLabel model={model} />
         {error !== null ? (
           <p role="alert" className="min-w-0 flex-1 text-xs text-destructive">
-            {error}
+            <RuntimeErrorText>{error}</RuntimeErrorText>
           </p>
         ) : (
           <p className="min-w-0 flex-1 truncate text-xs text-muted-foreground">

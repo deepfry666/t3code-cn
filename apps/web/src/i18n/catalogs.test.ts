@@ -1,3 +1,5 @@
+import { runtimeErrorsMessages } from "../components/runtimeErrors.messages";
+import { threadRuntimeMessages } from "../components/chat/threadRuntime.messages";
 import { describe, expect, it } from "vite-plus/test";
 
 import { themeEditorUiMessages } from "../components/settings/themeEditorUi.messages";
@@ -45,6 +47,8 @@ import { timestampFormatMessages } from "../timestampFormat.messages";
 import { translate } from "./locale";
 
 const catalogs: Record<string, Readonly<Record<string, string>>> = {
+  runtimeErrors: runtimeErrorsMessages,
+  threadRuntime: threadRuntimeMessages,
   deviceToolVersions: deviceToolVersionsMessages,
   sidebar: sidebarUiMessages,
   commandPalette: commandPaletteUiMessages,
