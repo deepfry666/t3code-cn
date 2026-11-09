@@ -53,7 +53,7 @@ export const settingsProviderAccountsMessages = {
   Off: "关闭",
   "Automatically balance load": "自动均衡负载",
   "New threads in shared projects start on the machine with the most free CPU and memory, weighted by each machine's preference.":
-    "共享项目的新会话会根据各设备的偏好权重，在空闲 CPU 和内存最多的设备上启动。",
+    "共享项目的新会话会根据各机器的偏好权重，在空闲 CPU 和内存最多的机器上启动。",
   "{environment} load preference": "{environment} 的负载偏好",
   "The ACP could not be prepared.": "无法准备 ACP。",
   "Choose an agent": "选择智能体",

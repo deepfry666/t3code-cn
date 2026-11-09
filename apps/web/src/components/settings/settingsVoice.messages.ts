@@ -250,7 +250,8 @@ export const settingsVoiceMessages = {
   "Open GNOME Extensions and turn on extensions, then check again.":
     "打开 GNOME Extensions 并开启扩展，然后重新检查。",
   "Enable the extension": "启用扩展",
-  "Enable T3 Code SnapShots to start capturing windows.": "启用 T3 Code 快照，即可开始截图窗口。",
+  "Enable T3 Code SnapShots to start capturing windows.":
+    "启用 T3 Code SnapShots 扩展，即可开始截取窗口。",
   "Capture is ready": "截图已就绪",
   "Next, choose your shortcut.": "接下来，选择快捷键。",
   "Automatic capture isn't available": "无法自动截图",
@@ -258,7 +259,7 @@ export const settingsVoiceMessages = {
     "在命令面板中选择“拍摄快照”，然后选择窗口。",
   "Couldn't set up the extension": "无法设置扩展",
   "Check T3 Code SnapShots in GNOME Extensions, then try again.":
-    "在 GNOME Extensions 中检查 T3 Code 快照，然后重试。",
+    "在 GNOME Extensions 中检查 T3 Code SnapShots 扩展，然后重试。",
   "Let's try that again": "再试一次",
   "Couldn't check snapshots. Try again to continue.": "无法检查快照，请重试后继续。",
   "Check capture access": "检查截图权限",
@@ -294,7 +295,7 @@ export const settingsVoiceMessages = {
   "Optional. Include text and controls from the captured app.": "可选。包含截图应用的文本和控件。",
   "Reinstall helper": "重新安装辅助程序",
   "Shortcut permissions": "快捷键权限",
-  "Try again": "请重试",
+  "Try again": "重试",
   "Capture needs attention. Go back to check access.": "截图需要处理，请返回检查权限。",
   "Couldn't finish this step. Try again or check Advanced for help.":
     "无法完成此步骤。请重试，或展开“高级”查看帮助。",
@@ -474,7 +475,7 @@ export const settingsVoiceMessages = {
   "Top accuracy across languages. Best on Apple Silicon or a GPU":
     "多语言准确率出色，适合 Apple Silicon 或 GPU",
   "Instant Mandarin, Japanese, Korean on any machine. Weak Cantonese":
-    "可在任意设备上即时识别普通话、日语和韩语，粤语表现较弱",
+    "可在任意机器上即时识别普通话、日语和韩语，粤语表现较弱",
   "Accurate with translation support. Best on Apple Silicon or a GPU.":
     "识别准确，支持翻译，适合 Apple Silicon 或 GPU。",
   "Wide language support in a relatively small model.": "模型体积较小，支持多种语言。",

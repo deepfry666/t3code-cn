@@ -16,25 +16,24 @@ vp run i18n:export
 
 同一英文在各处必须译法一致，下列术语有固定译名：
 
-| 英文         | 中文     |
-| ------------ | -------- |
-| thread       | 会话     |
-| project      | 项目     |
-| environment  | 环境     |
-| provider     | 提供方   |
-| worktree     | 工作树   |
-| agent        | 智能体   |
-| keybinding   | 快捷键   |
-| archive      | 归档     |
-| snooze       | 暂缓     |
-| settle       | 收尾     |
-| sidebar      | 侧边栏   |
-| pull request | 拉取请求 |
-| beta         | 测试版   |
-| labs         | 实验功能 |
-| checkout     | 工作副本 |
+| 英文        | 中文     |
+| ----------- | -------- |
+| thread      | 会话     |
+| project     | 项目     |
+| environment | 环境     |
+| provider    | 提供方   |
+| worktree    | 工作树   |
+| agent       | 智能体   |
+| keybinding  | 快捷键   |
+| archive     | 归档     |
+| snooze      | 暂缓     |
+| settle      | 收尾     |
+| sidebar     | 侧边栏   |
+| beta        | 测试版   |
+| labs        | 实验功能 |
+| checkout    | 工作副本 |
 
-产品名、品牌和技术缩写保持英文，例如 T3 Code、T3 Connect、GitHub、Codex、Claude、Cursor、CLI、MCP、SSH、API、URL、JSON、token、macOS、Windows。完整清单以 [`scripts/fork-i18n.test.ts`](../scripts/fork-i18n.test.ts) 为准。
+产品名、品牌和技术缩写保持英文，例如 T3 Code、T3 Connect、GitHub、Codex、Claude、Cursor、CLI、MCP、SSH、API、URL、JSON、token、macOS、Windows、Finder。开发者日常直接说英文的词也保留英文：PR、pull request、merge request、change request，句首首字母大写，句中照原文小写。完整清单以 [`scripts/fork-i18n.test.ts`](../scripts/fork-i18n.test.ts) 为准。
 
 ## 同步官方后补翻译
 

@@ -35,7 +35,7 @@ export const browserUiMessages = {
   Dismiss: "忽略",
   Accept: "接受",
   "Take control to respond.": "接管控制后才能回应。",
-  "Try again": "请重试",
+  "Try again": "重试",
   "Browser connection was refused.": "浏览器连接被拒绝。",
   Reconnect: "重新连接",
   "The page copied text": "页面复制了文字",

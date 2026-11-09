@@ -95,7 +95,7 @@ export const cloudUiMessages = {
   "Copy trace ID": "复制追踪 ID",
   "You appear to be offline.": "你似乎处于离线状态。",
   "Could not load T3 Connect environments": "无法加载 T3 Connect 环境",
-  "Try again": "请重试",
+  "Try again": "重试",
   "Saved without T3 Connect": "已保存（未使用 T3 Connect）",
   "Not added": "未添加",
   "T3 Connect · {state} · Client not supported": "T3 Connect · {state} · 不支持此客户端",

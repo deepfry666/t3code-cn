@@ -26,7 +26,7 @@ const labels: Readonly<Record<string, string>> = {
   "An unknown error occurred. Please try again later.": "发生未知错误，请稍后重试。",
   "Updates unavailable": "更新不可用",
   "Automatic updates are not available right now.": "目前无法自动更新。",
-  "Updates are turned off on this machine.": "此设备已停用更新。",
+  "Updates are turned off on this machine.": "此机器已停用更新。",
   "Automatic updates are not available because no update feed is configured.":
     "尚未配置更新源，无法自动更新。",
   "Automatic updates are only available in packaged production builds.":

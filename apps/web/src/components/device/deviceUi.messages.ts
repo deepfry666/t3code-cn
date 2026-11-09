@@ -191,7 +191,8 @@ export const deviceUiMessages = {
   "Open {name}": "打开 {name}",
   "Start {name}": "启动 {name}",
   "Dismiss device error": "关闭设备错误提示",
-  "{platforms} {kind} on {label} may be incomplete.": "{label} 上的 {platforms} {kind}可能不完整。",
+  "{platforms} {kind} on {label} may be incomplete.":
+    "{label} 上的 {platforms} {kind} 可能不完整。",
   list: "列表",
   lists: "列表",
   "Device discovery on {label} reported a warning.": "{label} 上的设备发现报告了一条警告。",

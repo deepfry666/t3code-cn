@@ -7,7 +7,7 @@ export const filesUiMessages = {
   "Reset reading size": "重置阅读字号",
   "File explorer": "文件浏览器",
   "Loading file": "正在加载文件",
-  "Try again": "请重试。",
+  "Try again": "重试",
   "The font is damaged or unsupported.": "字体已损坏或不受支持。",
   "Font preview": "字体预览",
   "Showing the first 1,024 columns. Source and Save retain every column.":

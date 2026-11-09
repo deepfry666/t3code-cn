@@ -63,7 +63,7 @@ export const settingsDevicesMessages = {
   "{failed} of {count} failed": "{count} 个中有 {failed} 个失败",
   "Connect from {environment}.": "从 {environment} 连接。",
   "Connect from {count} selected environments.": "从 {count} 个选中的环境连接。",
-  "Hosts on the same machine are skipped.": "会跳过同一设备上的主机。",
+  "Hosts on the same machine are skipped.": "会跳过同一机器上的主机。",
   "SSH target": "SSH 目标",
   "SSH options": "SSH 选项",
   "Identity file": "身份文件",
@@ -81,7 +81,7 @@ export const settingsDevicesMessages = {
   "user@host or SSH alias": "user@host 或 SSH 别名",
   "SSH config default": "SSH 配置默认值",
   Default: "默认",
-  "{summary}. Per-machine results": "{summary}。各设备的结果",
+  "{summary}. Per-machine results": "{summary}。各机器的结果",
   "Add EAS host": "添加 EAS 主机",
   "Edit EAS host": "编辑 EAS 主机",
   "Checking the Expo account…": "正在检查 Expo 账户…",
@@ -122,9 +122,9 @@ export const settingsDevicesMessages = {
   "Agent token · {environment}": "智能体 token · {environment}",
   "Agent token": "智能体 token",
   "Leases, drives, and streams devices. Create one per environment with {command}, or leave it blank to add it later. A blank token uses the machine's {authToken} when its {baseUrl} is this gateway.":
-    "用于租用、操控和传输设备画面。使用 {command} 为每个环境创建一个 token，也可以留空稍后添加。如果设备的 {baseUrl} 指向此网关，留空时会使用该设备的 {authToken}。",
+    "用于租用、操控和传输设备画面。使用 {command} 为每个环境创建一个 token，也可以留空稍后添加。如果该机器的 {baseUrl} 指向此网关，留空时会使用它的 {authToken}。",
   "Leases, drives, and streams devices. Create one with {command}, or leave it blank to add it later. A blank token uses the machine's {authToken} when its {baseUrl} is this gateway.":
-    "用于租用、操控和传输设备画面。使用 {command} 创建一个 token，也可以留空稍后添加。如果设备的 {baseUrl} 指向此网关，留空时会使用该设备的 {authToken}。",
+    "用于租用、操控和传输设备画面。使用 {command} 创建一个 token，也可以留空稍后添加。如果该机器的 {baseUrl} 指向此网关，留空时会使用它的 {authToken}。",
   "Devices at once": "同时租用的设备数",
   "Lease minutes": "租用时长（分钟）",
   " Saving restarts this host, which releases its devices.": "保存后会重启此主机，释放其设备。",
@@ -133,7 +133,7 @@ export const settingsDevicesMessages = {
     "请输入网关源地址，例如 https://gateway.example.ts.net:4700。",
   "Keep the limits within the ranges shown.": "请将限制设在显示的范围内。",
   "Using this machine's agent-device token ({account}).":
-    "正在使用此设备的 agent-device 智能体 token（{account}）。",
+    "正在使用本机的 agent-device token（{account}）。",
   "Accepted as {account}.": "已验证为 {account}。",
   "Clear agent token": "清空智能体 token",
   "This connection cannot change settings on {environments}.":
@@ -152,7 +152,7 @@ export const settingsDevicesMessages = {
   "{environment}: {error}": "{environment}：{error}",
   failed: "失败",
   "Add source": "添加来源",
-  "Machine over SSH": "通过 SSH 连接的设备",
+  "Machine over SSH": "通过 SSH 连接的机器",
   "EAS Simulator": "EAS 模拟器",
   "Simlock pool (alpha)": "Simlock 池（早期测试）",
   Details: "详情",
@@ -160,9 +160,9 @@ export const settingsDevicesMessages = {
   "Device sources": "设备来源",
   "Local simulators": "本地模拟器",
   "Simulators and emulators installed on each environment's own machine.":
-    "各环境所在设备上安装的模拟器。",
+    "各环境所在机器上安装的模拟器。",
   "Simulators and emulators installed on this environment's machine.":
-    "此环境所在设备上安装的模拟器。",
+    "此环境所在机器上安装的模拟器。",
   "Up to 1 session at once, each stopped after {minutes} min or {idle} idle min":
     "最多同时运行 1 个会话，每个会话在 {minutes} 分钟后或空闲 {idle} 分钟后结束",
   "Up to {count} sessions at once, each stopped after {minutes} min or {idle} idle min":
@@ -188,7 +188,7 @@ export const settingsDevicesMessages = {
   Available: "可用",
   "Not available": "不可用",
   "Not added": "未添加",
-  "Not set up on this machine.": "此设备尚未配置。",
+  "Not set up on this machine.": "此机器尚未配置。",
   "iOS Simulators need macOS with Xcode.": "iOS 模拟器需要装有 Xcode 的 macOS。",
   "Xcode command line tools were not found.": "未找到 Xcode 命令行工具。",
   "Android SDK was not found. Install it with Android Studio or set ANDROID_HOME to your SDK directory.":

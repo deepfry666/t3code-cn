@@ -34,7 +34,7 @@ export const desktopUiMessages = {
     "此链接未指向 {app} 中的任何页面。返回首页选择项目或新建会话。",
   "Go home": "返回首页",
   "Something went wrong.": "出了点问题。",
-  "Try again": "请重试",
+  "Try again": "重试",
   "Reload app": "重新加载应用",
   "Error report": "错误报告",
   Copied: "已复制",

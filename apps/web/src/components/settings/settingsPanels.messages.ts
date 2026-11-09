@@ -21,11 +21,11 @@ export const settingsPanelsMessages = {
   "Nightly builds are not available.": "无法使用 Nightly 版。",
   "Nightly builds are not available; switch to Stable to keep getting updates.":
     "无法使用 Nightly 版；请切换到稳定版以继续获取更新。",
-  "1 machine still runs {channel}.": "仍有 1 台设备运行{channel}。",
-  "{count} machines still run {channel}.": "仍有 {count} 台设备运行{channel}。",
+  "1 machine still runs {channel}.": "仍有 1 台机器运行{channel}。",
+  "{count} machines still run {channel}.": "仍有 {count} 台机器运行{channel}。",
   Review: "查看",
   "Switches this app and every connected machine whose database the target release supports.":
-    "切换此应用，以及所有数据库受目标版本支持的已连接设备。",
+    "切换此应用，以及所有数据库受目标版本支持的已连接机器。",
   "Update track": "更新通道",
   Stable: "稳定版",
   Nightly: "Nightly 版",
@@ -85,15 +85,15 @@ export const settingsPanelsMessages = {
   "diff whitespace changes": "差异空白字符改动",
   "Hide whitespace changes by default": "默认隐藏空白字符改动",
   "Start with files expanded or collapsed when opening diffs or a pull request's Code tab.":
-    "打开差异或拉取请求的“代码”标签页时，文件默认展开还是折叠。",
+    "打开差异或 pull request 的“代码”标签页时，文件默认展开还是折叠。",
   "default diff file state": "差异文件默认状态",
   Collapsed: "折叠",
   Expanded: "展开",
-  "Pull requests": "拉取请求",
+  "Pull requests": "Pull requests",
   "Open linked pull requests first. Otherwise, open Changes for edits to at least 3 files or 50 lines.":
-    "优先打开关联的拉取请求；否则在改动至少 3 个文件或 50 行时打开“改动”面板。",
+    "优先打开关联的 pull request；否则在改动至少 3 个文件或 50 行时打开“改动”面板。",
   "proactive panels": "自动打开面板",
-  "Open pull requests and changes panels proactively": "自动打开拉取请求与改动面板",
+  "Open pull requests and changes panels proactively": "自动打开 pull request 与改动面板",
   "When to compact an idle Claude thread over 200,000 tokens: after you return, just before its prompt cache expires, or never. Each Claude provider can override this.":
     "空闲且超过 200,000 token 的 Claude 会话何时压缩：在你回来后、提示缓存即将过期前，或从不压缩。每个 Claude 提供方都可以单独覆盖此设置。",
   "compact idle threads": "压缩空闲会话",
@@ -119,7 +119,7 @@ export const settingsPanelsMessages = {
   "Auto-settle": "自动收尾",
   "auto-settle": "自动收尾",
   "Settle a thread when its pull request merges. Closed pull requests still settle automatically.":
-    "拉取请求合并后收尾会话。已关闭的拉取请求仍会自动收尾。",
+    "Pull request 合并后收尾会话。已关闭的 pull request 仍会自动收尾。",
   "auto-settle on merge": "合并后自动收尾",
   "Auto-settle merged threads": "合并后自动收尾会话",
   "Sidebar threads with no activity for this long settle automatically.":
@@ -129,7 +129,7 @@ export const settingsPanelsMessages = {
   "Any new activity un-settles a thread automatically.": "会话有新活动时会自动取消收尾。",
   "Keep threads with a PR": "保留有关联 PR 的会话",
   "Inactivity does not settle threads with a pull request. Merge and close still do.":
-    "闲置不会让有拉取请求的会话收尾，但合并和关闭仍会。",
+    "闲置不会让有 pull request 的会话收尾，但合并和关闭仍会。",
   "Text generation": "文本生成",
   "Used for thread titles and other generated text on connected devices with this provider. Source control can override it.":
     "用于在使用此提供方的已连接设备上生成会话标题和其他文本。版本控制设置可以覆盖它。",

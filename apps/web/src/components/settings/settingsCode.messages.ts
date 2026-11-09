@@ -54,9 +54,9 @@ export const settingsCodeMessages = {
   "Enter an http or https URL containing %s. Searches use DuckDuckGo until then.":
     "请输入包含 %s 的 http 或 https URL。在此之前，搜索将使用 DuckDuckGo。",
   "Clicking a pull request link opens it in T3 Code. Turn off to open pull request links like any other link, on your git host.":
-    "点击拉取请求链接时在 T3 Code 中打开。关闭后会像其他链接一样，在 Git 托管网站上打开。",
-  "open pull requests in T3 Code": "在 T3 Code 中打开拉取请求",
-  "Open pull requests in T3 Code": "在 T3 Code 中打开拉取请求",
+    "点击 pull request 链接时在 T3 Code 中打开。关闭后会像其他链接一样，在 Git 托管网站上打开。",
+  "open pull requests in T3 Code": "在 T3 Code 中打开 pull request",
+  "Open pull requests in T3 Code": "在 T3 Code 中打开 pull request",
   Devices: "设备",
   "Environment disconnected": "环境已断开",
   "This connection cannot change device settings.": "此连接无法更改设备设置。",
@@ -119,13 +119,13 @@ export const settingsCodeMessages = {
   "Repository conventions": "仓库规范",
   "Conventional Commits": "约定式提交",
   "In each project, matches recent change descriptions and change request titles.":
-    "在每个项目中，沿用近期变更说明和变更请求标题的风格。",
+    "在每个项目中，沿用近期变更说明和 change request 标题的风格。",
   "Use Conventional Commit prefixes and keep change request text concise.":
-    "使用约定式提交前缀，保持变更请求文案简洁。",
+    "使用约定式提交前缀，保持 change request 文案简洁。",
   "Custom instructions": "自定义指令",
   "Use your instructions for change descriptions and change requests in every project.":
-    "所有项目的变更说明和变更请求都使用你的指令。",
-  "Writing & review": "文案与评审",
+    "所有项目的变更说明和 change request 都使用你的指令。",
+  "Writing & review": "文案与审查",
   "source control writing style": "版本控制文案风格",
   "Source control writing style": "版本控制文案风格",
   Mixed: "各不相同",
@@ -138,26 +138,26 @@ export const settingsCodeMessages = {
     "标题保持简洁，说明使用简短的列表。",
   "Custom source control writing instructions": "自定义版本控制文案指令",
   "Add a Guide tab to pull requests. An agent explains the changes and points out decisions that need review.":
-    "为拉取请求添加“指南”标签页。智能体会解释改动，并指出需要评审的决策。",
-  "Review guides": "评审指南",
+    "为 pull request 添加“导览”标签页。智能体会解释改动，并指出需要审查的决策。",
+  "Review guides": "审查导览",
   "Model that reads a pull request to write its review guide. It reads the change itself over many steps, so a stronger model helps. Off uses the source control writer model.":
-    "阅读拉取请求并编写评审指南的模型。它会分多步阅读改动，能力更强的模型效果更好。关闭时使用版本控制文案模型。",
-  "Connect an environment to choose its review guide model.": "连接一个环境以选择其评审指南模型。",
-  "Review guide model": "评审指南模型",
-  "Review guide model not saved": "未保存评审指南模型",
-  "Use a separate review guide model": "使用单独的评审指南模型",
+    "阅读 pull request 并编写审查导览的模型。它会分多步阅读改动，能力更强的模型效果更好。关闭时使用版本控制文案模型。",
+  "Connect an environment to choose its review guide model.": "连接一个环境以选择其审查导览模型。",
+  "Review guide model": "审查导览模型",
+  "Review guide model not saved": "未保存审查导览模型",
+  "Use a separate review guide model": "使用单独的审查导览模型",
   "Your preferences for review guides: what to show first, dwell on, or skip. The guide's format and coverage stay the same.":
-    "你的评审指南偏好：先展示什么、重点解释什么、跳过什么。指南的格式和覆盖范围保持不变。",
-  "review guide instructions": "评审指南说明",
-  "Review guide instructions": "评审指南说明",
+    "你的审查导览偏好：先展示什么、重点解释什么、跳过什么。导览的格式和覆盖范围保持不变。",
+  "review guide instructions": "审查导览说明",
+  "Review guide instructions": "审查导览说明",
   "Mixed. Enter instructions to apply to all selected targets.":
     "各不相同。输入指令后将应用到所有所选目标。",
   "Show service interfaces before implementations. Skip test files unless they change behavior. Keep summaries to two sentences.":
     "先展示服务接口，再展示实现。跳过不影响行为的测试文件。摘要不超过两句话。",
   "Use the repository's template for change request descriptions when available.":
-    "有仓库模板时，使用模板编写变更请求说明。",
-  "change request templates": "变更请求模板",
-  "Follow change request templates": "遵循变更请求模板",
+    "有仓库模板时，使用模板编写 change request 说明。",
+  "change request templates": "change request 模板",
+  "Follow change request templates": "遵循 change request 模板",
   "Model for source control text and branch or bookmark names. When disabled, use the text generation model configured for this environment.":
     "生成版本控制文案、分支或书签名称的模型。关闭时使用此环境配置的文本生成模型。",
   "Connect an environment to choose its source control writer model.":
@@ -217,7 +217,7 @@ export const settingsCodeMessages = {
   "Approve the app on GitHub to finish signing in.": "在 GitHub 上授权此应用以完成登录。",
   "A far higher GitHub API rate limit than a personal token or gh login.":
     "GitHub API 请求额度远高于个人 token 或 gh 登录。",
-  "Try again": "请重试。",
+  "Try again": "重试",
   "Sign in with GitHub": "使用 GitHub 登录",
   "Copy code": "复制验证码",
   "Copy code & open GitHub": "复制验证码并打开 GitHub",
@@ -239,8 +239,8 @@ export const settingsCodeMessages = {
   "read and act": "读取并操作",
   "read PRs": "读取 PR",
   "Machines you trust here can read PR data through each other's source control access. Enable both machines. Read and act may use broader permissions than the machine that owns them. This applies only to this device.":
-    "此处信任的设备可借助彼此的版本控制访问权限读取 PR 数据。需要在两台设备上都启用。“读取并操作”可能使用比权限所属设备更广的权限。此设置仅适用于当前设备。",
-  "Could not save pull request routing permission": "无法保存拉取请求路由权限",
+    "此处信任的机器可借助彼此的版本控制访问权限读取 PR 数据。需要在两台机器上都启用。“读取并操作”可能使用比权限所属机器更广的权限。此设置仅适用于当前设备。",
+  "Could not save pull request routing permission": "无法保存 pull request 路由权限",
   "Uses the latest commit of the base branch’s tracked remote branch, even if its name differs. Otherwise uses the same-named branch on origin. Uses your local branch if that remote branch is missing.":
     "使用基础分支所跟踪远程分支的最新提交，即使名称不同。未跟踪远程分支时，使用 origin 上的同名分支。远程分支不存在时，使用本地分支。",
   "new worktrees start from remote": "新工作树从远程分支开始",
@@ -298,7 +298,7 @@ export const settingsCodeMessages = {
   "Remove this project everywhere": "从所有设备移除此项目",
   "Remove project": "移除项目",
   "Deletes the selected machine's checkout entries and their threads. Other machines and files on disk are not touched.":
-    "删除所选设备上的工作副本条目及其会话。其他设备和磁盘上的文件不受影响。",
+    "删除所选机器上的工作副本条目及其会话。其他机器和磁盘上的文件不受影响。",
   "Deletes the project entry and its threads. Files on disk are not touched.":
     "删除项目条目及其会话。磁盘上的文件不受影响。",
   "Remove all entries": "移除所有条目",
@@ -345,12 +345,13 @@ export const settingsCodeMessages = {
   "agent credit removal": "移除智能体署名",
   "Keep agent credits": "保留智能体署名",
   "Remove agent credits when merging": "合并时移除智能体署名",
-  "Pull requests in this project start with this method.": "此项目的拉取请求默认使用此合并方式。",
+  "Pull requests in this project start with this method.":
+    "此项目的 pull request 默认使用此合并方式。",
   "Pull requests start with this method. Last selected reuses whatever you chose most recently on this device.":
-    "拉取请求默认使用此合并方式。“上次选择”会沿用你在此设备上最近选择的方式。",
+    "Pull request 默认使用此合并方式。“上次选择”会沿用你在此设备上最近选择的方式。",
   "default merge method": "默认合并方式",
   "Reset to last selected": "重置为上次选择",
-  "Default pull request merge method": "默认拉取请求合并方式",
+  "Default pull request merge method": "默认 pull request 合并方式",
   "Last selected": "上次选择",
   "How new worktrees in this project populate git submodules.":
     "此项目的新工作树如何初始化 Git 子模块。",
@@ -441,7 +442,7 @@ export const settingsCodeMessages = {
   "Available. {hint}": "可用。{hint}",
   "Every {label} host is turned off.": "所有 {label} 主机均已关闭。",
   "{label} is not authenticated on this server. Sign in or configure credentials using the {executable} tool on the server host to enable change request features.":
-    "{label} 尚未在此服务器上认证。请在服务器上使用 {executable} 工具登录或配置凭据，以启用变更请求功能。",
+    "{label} 尚未在此服务器上认证。请在服务器上使用 {executable} 工具登录或配置凭据，以启用 change request 功能。",
   "Could not verify {label}. {detail}": "无法验证 {label}。{detail}",
   "Toggle {label} details": "展开或收起 {label} 详情",
   "{label} availability": "{label} 可用性",
@@ -482,9 +483,9 @@ export const settingsCodeMessages = {
   'Failed to remove "{title}"': "无法移除“{title}”",
   "Remove checkout {path}": "移除工作副本 {path}",
   "Deletes all {count} checkout entries and their threads on every machine. Files on disk are not touched.":
-    "删除所有设备上的全部 {count} 个工作副本条目及其会话。磁盘上的文件不受影响。",
+    "删除所有机器上的全部 {count} 个工作副本条目及其会话。磁盘上的文件不受影响。",
   "Open in {fileManager}": "在 {fileManager} 中打开",
-  "{environment} pull request routing": "{environment} 的拉取请求路由",
+  "{environment} pull request routing": "{environment} 的 pull request 路由",
   "{environments} {permission}": "{environments} {permission}",
   "Quit {source} to import": "退出 {source} 以导入",
   "{source} is open, so its cookies can’t be read yet. Quit it, then continue.":
@@ -579,8 +580,8 @@ export const settingsCodeMessages = {
   Octopus: "章鱼",
   Seedling: "幼苗",
   Incognito: "无痕浏览",
-  "read and write access to pull requests and contents": "拉取请求和内容的读写权限",
-  "Not installed on this machine.": "此设备尚未安装。",
+  "read and write access to pull requests and contents": "Pull request 和内容的读写权限",
+  "Not installed on this machine.": "此机器尚未安装。",
   "Needs Keychain access to read its cookies.": "需要钥匙串访问权限才能读取 Cookie。",
   "No encryption key in your Keychain. Sign in to that browser once, then retry.":
     "钥匙串中没有加密密钥。请先在该浏览器中登录一次，再重试。",

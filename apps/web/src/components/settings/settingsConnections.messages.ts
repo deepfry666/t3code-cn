@@ -10,7 +10,7 @@ export const settingsConnectionsMessages = {
     "支持此模式的提供方会批准常规操作，其他提供方仍会询问。",
   "Allow commands and edits without prompts.": "允许执行命令和编辑，无需确认。",
   "An agent never gets more access there than its own mode here. Below full access, it can change only threads this link started, not that machine's own threads, projects or settings.":
-    "智能体在另一环境中的权限不会高于它在这里的运行模式。未授予完全访问权限时，它只能更改通过此连接启动的会话，不能更改该设备自身的会话、项目或设置。",
+    "智能体在另一环境中的权限不会高于它在这里的运行模式。未授予完全访问权限时，它只能更改通过此连接启动的会话，不能更改该机器自身的会话、项目或设置。",
   "Showing access for": "显示访问权限的环境",
   Environment: "环境",
   Offline: "离线",
@@ -277,7 +277,7 @@ export const settingsConnectionsMessages = {
     "在这里粘贴完整的配对 URL，即可自动填写两个字段。",
   "Could not add the route.": "无法添加线路。",
   "This machine is on your T3 Connect account. Use it as a fallback route.":
-    "此设备属于你的 T3 Connect 账户。可将其用作备用线路。",
+    "此机器属于你的 T3 Connect 账户。可将其用作备用线路。",
   "Add T3 Connect": "添加 T3 Connect",
   "Adding…": "正在添加…",
   "Add route": "添加线路",
@@ -289,7 +289,7 @@ export const settingsConnectionsMessages = {
   Port: "端口",
   "Add Environment": "添加环境",
   "Pair this machine again over another address, such as its Tailscale name. It joins the existing routes instead of adding a second machine.":
-    "使用其他地址（例如 Tailscale 名称）再次配对此设备。该地址将加入现有线路，不会重复添加设备。",
+    "使用其他地址（例如 Tailscale 名称）再次配对此机器。该地址将加入现有线路，不会重复添加机器。",
   "Pair another environment to this client.": "将其他环境与此客户端配对。",
   "Remote link": "远程连接",
   "Enter a backend host and pairing code.": "输入后端主机和配对码。",
@@ -299,7 +299,7 @@ export const settingsConnectionsMessages = {
   "Loading linked environments…": "正在加载已关联的环境…",
   "No linked environments": "没有已关联的环境",
   "Link another machine running T3 Code, such as a VPS, so agents here can launch and drive threads there.":
-    "关联另一台运行 T3 Code 的设备（例如 VPS），让这里的智能体能够在那台设备上启动和操作会话。",
+    "关联另一台运行 T3 Code 的机器（例如 VPS），让这里的智能体能够在那台机器上启动和操作会话。",
   "Could not forget the link": "无法移除关联",
   "Expired. Link it again with a new pairing code.": "已过期。请使用新的配对码重新关联。",
   "Not answering right now.": "暂时没有响应。",
@@ -333,9 +333,9 @@ export const settingsConnectionsMessages = {
   "Remove route": "移除线路",
   "In use": "正在使用",
   Linked: "已关联",
-  Machine: "设备",
+  Machine: "机器",
   "Another address…": "其他地址…",
-  "Choose a machine": "选择设备",
+  "Choose a machine": "选择机器",
   "Connect to this environment to change its icon.": "连接此环境后即可更改图标。",
   "Your session on this environment cannot change its settings.":
     "你在此环境中的会话无法更改其设置。",
@@ -399,7 +399,7 @@ export const settingsConnectionsMessages = {
   "Expires in {count} days. Link it again to renew.": "{count} 天后过期。重新关联即可续期。",
   "Linked {environment}": "已关联 {environment}",
   "This app has no address for {machine} that another machine can reach. Enter its https or Tailscale address.":
-    "此应用没有其他设备可用来访问 {machine} 的地址。请输入其 https 或 Tailscale 地址。",
+    "此应用没有其他机器可用来访问 {machine} 的地址。请输入其 https 或 Tailscale 地址。",
   "Create a link on {machine}: Settings → Connections → Create link, then paste its code here.":
     "在 {machine} 上创建链接：设置 → 连接 → 创建链接，然后将配对码粘贴到这里。",
   "retrying in {seconds}s": "{seconds} 秒后重试",
@@ -438,7 +438,7 @@ export const settingsConnectionsMessages = {
   "Create terminals and send input to running shells.": "创建终端，并向运行中的 shell 发送输入。",
   "Change source control": "更改版本控制",
   "Commit, push, manage branches and repositories, and change pull requests.":
-    "提交、推送、管理分支和仓库，以及修改拉取请求。",
+    "提交、推送、管理分支和仓库，以及修改 pull request。",
   "Read files": "读取文件",
   "Browse host files, search workspaces, and inspect local changes.":
     "浏览主机文件、搜索工作区和查看本地改动。",
@@ -562,12 +562,12 @@ export const settingsConnectionsMessages = {
   "T3 Code on {host} did not accept this device": "{host} 上的 T3 Code 未接受此设备",
   "T3 Code on {host} did not answer": "{host} 上的 T3 Code 没有响应",
   "On {host}, check Settings > Sharing & access or run `t3 connect status`.":
-    "请在 {host} 上查看“设置 > 共享与访问权限”，或运行 `t3 connect status`。",
+    "请在 {host} 上查看“设置 > 共享与访问”，或运行 `t3 connect status`。",
   "Update T3 Code on {host}.": "请更新 {host} 上的 T3 Code。",
   "Turn on automatic date and time on this device and on {host}, then retry.":
     "请在此设备和 {host} 上开启自动日期与时间，然后重试。",
   "On {host}, open Settings > Sharing & access and turn T3 Connect on.":
-    "请在 {host} 上打开“设置 > 共享与访问权限”，并开启 T3 Connect。",
+    "请在 {host} 上打开“设置 > 共享与访问”，并开启 T3 Connect。",
   "Make sure {host} is awake and T3 Code is running on it.":
     "请确认 {host} 未休眠，且 T3 Code 正在运行。",
   "A VPN or Tailscale exit node on {host} can block the tunnel (port 7844). Turn it off or allow the tunnel.":

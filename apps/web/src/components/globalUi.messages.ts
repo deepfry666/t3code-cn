@@ -108,7 +108,7 @@ export const globalUiMessages = {
   "Finding ignored files…": "正在查找被忽略的文件…",
   "Starting…": "正在启动…",
   "Clone to {machine}": "克隆到 {machine}",
-  machine: "设备",
+  machine: "机器",
   "Over 1 MB": "超过 1 MB",
   "Clone {name} and bring the local files git does not track.":
     "克隆 {name}，并带上 Git 未跟踪的本地文件。",
@@ -123,7 +123,7 @@ export const globalUiMessages = {
   // Server updates
   "Downloading…": "正在下载…",
   "Restarting…": "正在重启…",
-  "Switch tracks in About → Update track": "在“关于” → “更新渠道”中切换渠道",
+  "Switch tracks in About → Update track": "在“关于 → 更新通道”中切换通道",
   "Server update failed.": "服务器更新失败。",
   "Update all": "全部更新",
   Update: "更新",

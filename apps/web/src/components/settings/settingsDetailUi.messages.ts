@@ -25,16 +25,16 @@ export const settingsDetailUiMessages = {
   "Group sidebar threads into project folders. Pinned threads stay on top, and Snoozed and Settled stay below the folders.":
     "将侧边栏会话按项目文件夹分组。置顶会话保留在顶部，已暂缓和已收尾会话显示在文件夹下方。",
   "Show folder threads on two lines: the title, then the branch, pull request, and agent.":
-    "分两行显示文件夹内的会话：第一行显示标题，第二行显示分支、拉取请求和智能体。",
+    "分两行显示文件夹内的会话：第一行显示标题，第二行显示分支、pull request 和智能体。",
   "Hide the commands, edits, and searches agents run. Hide successful keeps failures. Zen shows only final answers. Approvals, questions, and errors always show.":
     "隐藏智能体执行的命令、编辑和搜索。“隐藏成功的调用”仍保留失败项；“专注模式”仅显示最终回答。审批、提问和错误始终显示。",
   "Share a thread with a guest who watches it live in a browser and sends messages you approve. Sign in to T3 Connect to use guest links.":
     "与访客共享会话，访客可在浏览器中实时查看，并发送需要你批准的消息。登录 T3 Connect 后即可使用访客链接。",
   "Share a thread with a guest who watches it live in a browser and sends messages you approve. Needs T3 Connect: sign in and link this machine in ":
-    "与访客共享会话，访客可在浏览器中实时查看，并发送需要你批准的消息。需要 T3 Connect：请登录，并在以下页面关联此设备：",
+    "与访客共享会话，访客可在浏览器中实时查看，并发送需要你批准的消息。需要 T3 Connect：请登录，并在以下页面关联此机器：",
   ". Turning it off stops every guest link.": "。关闭后，所有访客链接都将停止工作。",
   "Let agents here work on your other machines, and theirs here. Turn it on for each machine, then link them in ":
-    "允许此设备上的智能体在你的其他设备上工作，也允许其他设备上的智能体在此工作。请在各设备上启用此功能，然后在以下页面关联设备：",
+    "允许此机器上的智能体在你的其他机器上工作，也允许其他机器上的智能体在此工作。请在各机器上启用此功能，然后在以下页面关联机器：",
   ". While off, nothing new starts over a link; running tasks finish.":
     "。关闭后，不会通过关联启动新任务；正在运行的任务会继续完成。",
   "Let the Device panel lease simulators and emulators from your own ":
