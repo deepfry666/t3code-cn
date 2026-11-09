@@ -6,6 +6,7 @@ import { Atom, AtomRegistry } from "effect/reactivity";
 import { expect, it, vi } from "vite-plus/test";
 
 import { stubGlobal } from "../../test/render";
+import { LOCALE_STORAGE_KEY } from "../i18n/locale";
 
 const state = vi.hoisted(() => ({
   mode: "notifications",
@@ -239,6 +240,31 @@ it.each(["hasPendingApprovals", "hasPendingUserInput"] as const)(
     expect(notification.close).toHaveBeenCalled();
   },
 );
+
+it("titles notifications and the open action in the interface language", async () => {
+  await using app = setup();
+  localStorage.setItem(LOCALE_STORAGE_KEY, "zh-CN");
+  await using _locale = {
+    [Symbol.asyncDispose]: async () => localStorage.removeItem(LOCALE_STORAGE_KEY),
+  };
+  app.start();
+  state.shells.set("one", shell({ hasPendingUserInput: true }));
+  expect(TestNotification.sent.map((sent) => sent.title)).toEqual(["需要输入"]);
+
+  focused = true;
+  state.inApp = true;
+  state.shells.set("two", shell({ hasPendingApprovals: true }));
+  const toast = state.toast.mock.calls[0]![0] as {
+    title: string;
+    actionProps: { children: string; onClick: () => void };
+  };
+  expect([toast.title, toast.actionProps.children]).toEqual(["需要批准", "打开会话"]);
+  toast.actionProps.onClick();
+  expect(state.navigate).toHaveBeenCalledWith({
+    to: "/$environmentId/$threadId",
+    params: { environmentId: EnvironmentId.make("two"), threadId: "thread" },
+  });
+});
 
 it("presents completion notifications and sound as soon as the shell completes", async () => {
   await using app = setup();
