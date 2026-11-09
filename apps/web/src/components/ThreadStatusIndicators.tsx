@@ -6,8 +6,13 @@ import {
 } from "@t3tools/client-runtime/environment";
 import { useSupportsMultiplePullRequests } from "~/hooks/useSupportsMultiplePullRequests";
 import { useStableCallback } from "~/hooks/useStableCallback";
-import { translateNow } from "~/i18n/useTranslation";
+import { translateNow, readLocale } from "~/i18n/useTranslation";
 import { globalUiMessages } from "./globalUi.messages";
+import {
+  pullRequestUiMessages,
+  translatePullRequestLabel,
+} from "./pullRequest/pullRequestUi.messages";
+import { coreUiMessages } from "./coreUi.messages";
 
 import { pullRequestDetailToVcsStatus } from "@t3tools/client-runtime/state/pull-requests";
 import {
@@ -180,19 +185,36 @@ function resolveThreadPullRequestBadgePresentation({
     return {
       Icon: PullRequestGlyph.stack,
       toneClassName: aggregate.toneClassName,
-      label: `Stack of ${badge.layers} ${terminology.plural}, ${aggregate.label.toLowerCase()}`,
+      label: translateNow(pullRequestUiMessages, "Stack of {count} {kind}, {state}", {
+        count: badge.layers,
+        kind: translatePullRequestLabel(terminology.plural, readLocale()),
+        state: translatePullRequestLabel(aggregate.label, readLocale()).toLowerCase(),
+      }),
       text: badge.layers,
     };
   }
   if (number === undefined || url === undefined) return null;
 
-  const tooltip = status?.tooltip ?? `${terminology.shortLabel} #${number}, status pending`;
+  const tooltip =
+    status?.tooltip ??
+    translateNow(pullRequestUiMessages, "{kind} #{number}, status pending", {
+      kind: terminology.shortLabel,
+      number,
+    });
   if (badge?.kind === "pull-request" && badge.others > 0) {
     const aggregate = PULL_REQUEST_STATE_PRESENTATION[badge.state];
     return {
       Icon: aggregate.Icon,
       toneClassName: aggregate.toneClassName,
-      label: `${tooltip}, and ${badge.others} more linked; overall ${aggregate.label.toLowerCase()}`,
+      label: translateNow(
+        pullRequestUiMessages,
+        "{tooltip}, and {count} more linked; overall {state}",
+        {
+          tooltip,
+          count: badge.others,
+          state: translatePullRequestLabel(aggregate.label, readLocale()).toLowerCase(),
+        },
+      ),
       text: `+${badge.others + 1}`,
     };
   }
@@ -354,7 +376,11 @@ export function ThreadPullRequestsMiniList({
           >
             {line.stack ? (
               <span className="ml-auto shrink-0 pl-1 text-3xs">
-                {line.stack.kind === "native" ? "stack" : "chain"} · {line.stack.size}
+                {translateNow(
+                  pullRequestUiMessages,
+                  line.stack.kind === "native" ? "stack" : "chain",
+                )}{" "}
+                · {line.stack.size}
               </span>
             ) : null}
           </ThreadPullRequestMiniListItem>
@@ -421,9 +447,10 @@ export function prStatusIndicator(
   const { shortLabel } = sourceControlClients.get(provider?.kind).changeRequest;
   const state = resolvePullRequestState({ state: pr.state, isDraft: pr.isDraft === true });
 
-  const tooltipLead = `${shortLabel} #${pr.number} - ${state.label}`;
+  const stateLabel = translatePullRequestLabel(state.label, readLocale());
+  const tooltipLead = `${shortLabel} #${pr.number} - ${stateLabel}`;
   return {
-    label: `${shortLabel} ${state.label.toLowerCase()}`,
+    label: `${shortLabel} ${stateLabel.toLowerCase()}`,
     colorClass: state.toneClassName,
     Icon: state.Icon,
     tooltip: `${tooltipLead}: ${pr.title}`,
@@ -536,8 +563,10 @@ export function ThreadTerminalStatusButton({
   const status = terminalStatusFromRunningIds(terminalIds);
   const label =
     terminalIds.length === 1
-      ? "1 terminal process running. Open terminal"
-      : `${terminalIds.length} terminal processes running. Open terminal`;
+      ? translateNow(coreUiMessages, "1 terminal process running. Open terminal")
+      : translateNow(coreUiMessages, "{count} terminal processes running. Open terminal", {
+          count: terminalIds.length,
+        });
   return (
     <Tooltip>
       <TooltipTrigger
@@ -583,8 +612,11 @@ export function ThreadWorktreeIndicator({
 
   const displayPath = formatWorktreePathForDisplay(worktreePath);
   const tooltip = thread.branch
-    ? `Worktree: ${displayPath} (${thread.branch})`
-    : `Worktree: ${displayPath}`;
+    ? translateNow(coreUiMessages, "Worktree: {path} ({branch})", {
+        path: displayPath,
+        branch: thread.branch,
+      })
+    : translateNow(coreUiMessages, "Worktree: {path}", { path: displayPath });
 
   return (
     <Tooltip>
@@ -745,7 +777,10 @@ export function ThreadRowLeadingStatus({ thread }: { thread: SidebarThreadSummar
       {pendingLink ? (
         <PullRequestGlyph.pullRequest
           className="size-3 text-muted-foreground"
-          aria-label={`${changeRequestTerminologyForUrl(pendingLink.url).shortLabel} #${pendingLink.number}, status pending`}
+          aria-label={translateNow(pullRequestUiMessages, "{kind} #{number}, status pending", {
+            kind: changeRequestTerminologyForUrl(pendingLink.url).shortLabel,
+            number: pendingLink.number,
+          })}
         />
       ) : null}
       {threadStatus ? <ThreadStatusLabel status={threadStatus} /> : null}

@@ -7,7 +7,7 @@ import * as Schema from "effect/Schema";
 import type * as Electron from "electron";
 
 import { makeComponentLogger } from "../app/DesktopObservability.ts";
-import { localizeApplicationMenu } from "./menuLocalization.ts";
+import { localizeApplicationMenu, localizeDesktopText } from "./menuLocalization.ts";
 import * as ElectronApp from "../electron/ElectronApp.ts";
 import * as ElectronDialog from "../electron/ElectronDialog.ts";
 import * as ElectronMenu from "../electron/ElectronMenu.ts";
@@ -36,6 +36,7 @@ export class DesktopApplicationMenu extends Context.Service<
 
 type DesktopApplicationMenuRuntimeServices =
   | DesktopUpdates.DesktopUpdates
+  | ElectronApp.ElectronApp
   | DesktopWindow.DesktopWindow
   | ElectronDialog.ElectronDialog;
 
@@ -71,21 +72,26 @@ const checkForUpdatesFromMenu = Effect.gen(function* () {
   const electronDialog = yield* ElectronDialog.ElectronDialog;
   const result = yield* updates.check("menu");
   const updateState = result.state;
+  const languages = yield* (yield* ElectronApp.ElectronApp).preferredSystemLanguages;
+  const t = (text: string, params?: Record<string, string | number>) =>
+    localizeDesktopText(text, languages, params);
 
   if (updateState.status === "up-to-date") {
     yield* electronDialog.showMessageBox({
       type: "info",
-      title: "You're up to date!",
-      message: `T3 Code ${updateState.currentVersion} is currently the newest version available.`,
-      buttons: ["OK"],
+      title: t("You're up to date!"),
+      message: t("T3 Code {version} is currently the newest version available.", {
+        version: updateState.currentVersion,
+      }),
+      buttons: [t("OK")],
     });
   } else if (updateState.status === "error") {
     yield* electronDialog.showMessageBox({
       type: "warning",
-      title: "Update check failed",
-      message: "Could not check for updates.",
-      detail: updateState.message ?? "An unknown error occurred. Please try again later.",
-      buttons: ["OK"],
+      title: t("Update check failed"),
+      message: t("Could not check for updates."),
+      detail: t(updateState.message ?? "An unknown error occurred. Please try again later."),
+      buttons: [t("OK")],
     });
   }
 }).pipe(Effect.withSpan("desktop.menu.checkForUpdates"));
@@ -95,15 +101,17 @@ const handleCheckForUpdatesMenuClick = Effect.gen(function* () {
   const electronDialog = yield* ElectronDialog.ElectronDialog;
   const disabledReason = yield* updates.disabledReason;
   if (Option.isSome(disabledReason)) {
+    const languages = yield* (yield* ElectronApp.ElectronApp).preferredSystemLanguages;
+    const t = (text: string) => localizeDesktopText(text, languages);
     yield* logUpdaterInfo("manual update check requested, but updates are disabled", {
       disabledReason: disabledReason.value,
     });
     yield* electronDialog.showMessageBox({
       type: "info",
-      title: "Updates unavailable",
-      message: "Automatic updates are not available right now.",
-      detail: disabledReason.value,
-      buttons: ["OK"],
+      title: t("Updates unavailable"),
+      message: t("Automatic updates are not available right now."),
+      detail: t(disabledReason.value),
+      buttons: [t("OK")],
     });
     return;
   }

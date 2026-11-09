@@ -3,6 +3,15 @@ import { capitalizeTerm } from "@t3tools/client-runtime/source-control-clients";
 import type { Locale } from "~/i18n/locale";
 
 export const pullRequestUiMessages = {
+  "opened@@timestamp": "创建于",
+  "Stack of {count} {kind}, {state}": "包含 {count} 个{kind}的堆叠，{state}",
+  "{kind} #{number}, status pending": "{kind} #{number}，状态待更新",
+  "{tooltip}, and {count} more linked; overall {state}":
+    "{tooltip}，另有关联的 {count} 个；整体{state}",
+  stack: "堆叠",
+  chain: "链",
+  "pull requests": "拉取请求",
+  "merge requests": "合并请求",
   Open: "打开",
   Draft: "草稿",
   Closed: "已关闭",
