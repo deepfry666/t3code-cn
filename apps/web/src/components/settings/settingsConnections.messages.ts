@@ -12,7 +12,7 @@ export const settingsConnectionsMessages = {
   "Allow commands and edits without prompts.": "允许执行命令和编辑，无需确认。",
   "An agent never gets more access there than its own mode here. Below full access, it can change only threads this link started, not that machine's own threads, projects or settings.":
     "智能体在另一环境中的权限不会高于它在这里的运行模式。未授予完全访问权限时，它只能更改通过此连接启动的会话，不能更改该机器自身的会话、项目或设置。",
-  "Showing access for": "显示访问权限的环境",
+  "Showing access for": "权限所属环境",
   Environment: "环境",
   Offline: "离线",
   "Failed to update network exposure.": "无法更新网络开放设置。",
@@ -44,7 +44,7 @@ export const settingsConnectionsMessages = {
   Off: "关闭",
   "Default distro": "默认发行版",
   "Run the selected WSL distro alongside Windows. Projects remain on their current filesystem.":
-    "同时运行所选 WSL 发行版和 Windows。项目保留在原来的文件系统中。",
+    "同时运行所选 WSL 发行版和 Windows 后端。项目保留在原来的文件系统中。",
   "WSL backend": "WSL 后端",
   "WSL only": "仅 WSL",
   "Run only the WSL backend. T3 Code restarts when this changes.":
@@ -66,7 +66,7 @@ export const settingsConnectionsMessages = {
     "更改网络开放设置会重启后端，必须在启动服务器进程的位置操作。",
   "This machine": "本机",
   "Primary environment": "主环境",
-  "More actions for this machine": "本机的更多操作",
+  "More actions for this machine": "此机器的更多操作",
   Version: "版本",
   "Retry update": "重试更新",
   Permissions: "权限",
@@ -185,7 +185,7 @@ export const settingsConnectionsMessages = {
   "This environment was removed from T3 Connect. Run `t3 connect link` on the host to link it again.":
     "此环境已从 T3 Connect 移除。请在主机上运行 `t3 connect link` 重新关联。",
   "Sign in to send activity to mobile notifications and Live Activities.":
-    "登录后，将活动发送到手机通知和实时活动。",
+    "登录后即可向手机通知和实时活动发送活动信息。",
   "Send activity to mobile notifications and Live Activities without T3 Connect.":
     "无需 T3 Connect，即可将活动发送到手机通知和实时活动。",
   "Publish agent activity to mobile clients": "向移动客户端发布智能体活动",
@@ -231,20 +231,20 @@ export const settingsConnectionsMessages = {
     "这里无法复制到剪贴板。请手动将此配对码复制到另一个客户端。",
   "Pairing link. Scan to open on another device": "配对链接。在其他设备上扫描即可打开",
   Done: "完成",
-  "Revoking…": "正在撤销…",
-  Revoke: "撤销",
-  "Endpoint the pairing QR code and URL use": "配对 QR 码和 URL 使用的端点",
-  "Reach this machine via": "访问本机的方式",
+  "Revoking…": "正在撤销授权…",
+  Revoke: "撤销授权",
+  "Endpoint the pairing QR code and URL use": "配对二维码和 URL 使用的端点",
+  "Reach this machine via": "访问此机器的方式",
   "Copy link": "复制链接",
   "Copy code only": "仅复制配对码",
   "No QR for this endpoint. Another device scanning a loopback link would dial itself; copy the URL for use on this machine instead.":
-    "此端点不提供 QR 码。其他设备扫描回环链接会连接到自身；请复制 URL，在本机上使用。",
+    "此端点不提供二维码。其他设备扫描回环链接会连接到自身；请复制 URL，在本机上使用。",
   "Not connected yet.": "尚未连接。",
   "This device": "此设备",
   "Client scopes": "客户端权限范围",
   "Failed to create pairing URL.": "无法创建配对 URL。",
   "Could not create pairing URL": "无法创建配对 URL",
-  "Revoke others": "撤销其他客户端",
+  "Revoke others": "撤销其他客户端的访问权限",
   "Create link": "创建链接",
   "Create pairing link": "创建配对链接",
   "Generate a one-time link that another device can use to pair with this backend as an authorized client.":
@@ -345,15 +345,15 @@ export const settingsConnectionsMessages = {
   default: "默认",
   "Couldn't change this setting.": "无法更改此设置。",
   "Run agents on this computer. Turn off to use T3 Code only with remote environments.":
-    "在此设备上运行智能体。关闭后，T3 Code 将仅使用远程环境。",
+    "在本机上运行智能体。关闭后，T3 Code 将仅使用远程环境。",
   "Turned off. Agents only run in remote environments.": "已关闭。智能体仅在远程环境中运行。",
   "Local environment": "本地环境",
   "Turn off local environment?": "关闭本地环境？",
   "Turn on local environment?": "开启本地环境？",
   "T3 Code will restart without running a server on this computer. Any agents and terminals running here will stop, and other devices will no longer be able to connect to this computer. Your projects, history, and remote environments are unaffected.":
-    "T3 Code 将重启，并停止在此设备上运行服务器。这里运行的智能体和终端将停止，其他设备也将无法连接此设备。你的项目、历史记录和远程环境不受影响。",
+    "T3 Code 将重启，不再在本机上运行服务器。本机上运行的智能体和终端将停止，其他设备也将无法连接本机。你的项目、历史记录和远程环境不受影响。",
   "T3 Code will restart and start running a server on this computer again.":
-    "T3 Code 将重启，并重新在此设备上运行服务器。",
+    "T3 Code 将重启，并重新在本机上运行服务器。",
   "Restart and turn off": "重启并关闭",
   "Restart and turn on": "重启并开启",
   "These permissions apply to your active route. Other routes may have different permissions.":
@@ -675,7 +675,7 @@ export const settingsConnectionsMessages = {
   "WSL support is missing from this T3 Code build: the packaged Linux node-pty binary was not included. Install a build that includes WSL support.":
     "此 T3 Code 版本缺少 WSL 支持：未包含打包的 Linux node-pty 二进制文件。请安装支持 WSL 的版本。",
   "WSL distro is missing required tools: {tools}. Install {commands}, then retry.":
-    "WSL 发行版缺少必要工具：{tools}。请安装 {commands} 后重试。",
+    "WSL 发行版缺少必要工具：{tools}。请运行 {commands} 安装后重试。",
   "WSL login-shell PATH could not be resolved during backend preflight.":
     "后端预检无法解析 WSL 登录 shell 的 PATH。",
   "Node.js was not found in the WSL distro. Install it (e.g. via nvm) and restart the desktop app.":

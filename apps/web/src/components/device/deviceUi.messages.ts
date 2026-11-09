@@ -135,7 +135,7 @@ export const deviceUiMessages = {
   "App ID": "应用 ID",
   Permission: "权限",
   Grant: "授予",
-  Revoke: "撤销",
+  Revoke: "撤销授权",
   Reset: "重置",
   Camera: "相机",
   Microphone: "麦克风",

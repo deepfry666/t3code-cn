@@ -77,7 +77,7 @@ export const settingsCodeMessages = {
   "default browser access": "默认浏览器访问权限",
   "Agent browser access": "智能体浏览器访问",
   "Show the floating preview when an agent opens a browser or device unless the agent says otherwise.":
-    "智能体打开浏览器或设备时显示悬浮预览，除非智能体另有要求。",
+    "智能体打开浏览器或设备时显示浮动预览，除非智能体另有要求。",
   "auto-show floating preview": "自动显示浮动预览",
   "Auto-show floating preview": "自动显示浮动预览",
   "You're not connected to a server yet.": "你还没有连接到服务器。",
@@ -130,10 +130,10 @@ export const settingsCodeMessages = {
   "Source control writing style": "版本控制文案风格",
   Mixed: "各不相同",
   "Custom source control instructions for all selected environments":
-    "所有所选环境的自定义版本控制指令",
+    "所有所选环境共用的自定义版本控制指令",
   "Write the instructions each selected environment should use.": "输入每个所选环境应使用的指令。",
-  "Apply instructions to all": "应用指令到全部",
-  "Write custom instructions for all": "为全部编写自定义指令",
+  "Apply instructions to all": "将指令应用到全部环境",
+  "Write custom instructions for all": "为全部环境编写自定义指令",
   "Keep titles concise. Use short bullet points in descriptions.":
     "标题保持简洁，说明使用简短的列表。",
   "Custom source control writing instructions": "自定义版本控制文案指令",
@@ -169,7 +169,7 @@ export const settingsCodeMessages = {
   Authenticated: "已认证",
   "Not authenticated": "未认证",
   "Status unknown": "状态未知",
-  "Toggle source control account visibility": "切换版本控制账户可见性",
+  "Toggle source control account visibility": "显示或隐藏版本控制账户",
   "Click to reveal account": "点击显示账户",
   "Click to hide account": "点击隐藏账户",
   Available: "可用",
@@ -295,7 +295,7 @@ export const settingsCodeMessages = {
   Unarchive: "取消归档",
   Danger: "危险操作",
   "Remove checkout": "移除工作副本",
-  "Remove this project everywhere": "从所有设备移除此项目",
+  "Remove this project everywhere": "从所有位置移除此项目",
   "Remove project": "移除项目",
   "Deletes the selected machine's checkout entries and their threads. Other machines and files on disk are not touched.":
     "删除所选机器上的工作副本条目及其会话。其他机器和磁盘上的文件不受影响。",
@@ -320,7 +320,7 @@ export const settingsCodeMessages = {
   "Default workspace": "默认工作区",
   Unavailable: "不可用",
   "Used for new threads when the default model's provider is out of usage.":
-    "默认模型的提供方用量耗尽时，新会话使用此模型。",
+    "默认模型的提供方额度耗尽时，新会话使用此模型。",
   "fallback model": "备用模型",
   "Fallback model": "备用模型",
   None: "无",
@@ -334,9 +334,9 @@ export const settingsCodeMessages = {
   "Default permissions": "默认权限",
   "Automatically pull": "自动拉取",
   "Keeps this project's default branch current when the checkout has no local changes or commits.":
-    "工作副本没有本地改动或提交时，自动更新此项目的默认分支。",
+    "工作副本没有本地改动或未推送的提交时，自动更新此项目的默认分支。",
   "Keeps the default branch current when the checkout has no local changes or commits. Projects can override it.":
-    "工作副本没有本地改动或提交时，自动更新默认分支。项目可以覆盖此设置。",
+    "工作副本没有本地改动或未推送的提交时，自动更新默认分支。项目可以覆盖此设置。",
   "default automatic pull": "默认自动拉取",
   "Reset automatic pull to off": "将自动拉取重置为关闭",
   "Default automatic pull": "默认自动拉取",
