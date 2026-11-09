@@ -1,3 +1,4 @@
+import { settingsDetailUiMessages } from "./settingsDetailUi.messages";
 import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { generalMessages } from "./generalMessages";
 import { translateSettingsLabel } from "./settingsMessages";
@@ -28,6 +29,7 @@ import {
   type ResponseStreamingMode,
   type QuitConfirmationMode,
   SidebarProjectSortOrder,
+  ToolCallVisibility,
 } from "@t3tools/contracts/settings";
 import { desktopUpdateChannelOf } from "@t3tools/shared/cliRelease";
 import { createModelSelection } from "@t3tools/shared/model";
@@ -558,8 +560,8 @@ export function useSettingsRestore(onRestored?: () => void) {
     ...(settings.followUpBehavior !== DEFAULT_UNIFIED_SETTINGS.followUpBehavior
       ? ["Follow-up behavior"]
       : []),
-    ...(settings.contextWindowMeterEnabled !== DEFAULT_UNIFIED_SETTINGS.contextWindowMeterEnabled
-      ? ["Context window indicator"]
+    ...(settings.toolCallVisibility !== DEFAULT_UNIFIED_SETTINGS.toolCallVisibility
+      ? ["Tool calls in chat"]
       : []),
     ...(settings.responseStreamingMode !== DEFAULT_UNIFIED_SETTINGS.responseStreamingMode
       ? ["Response streaming"]
@@ -680,7 +682,7 @@ export function useSettingsRestore(onRestored?: () => void) {
       composerRichTextEnabled: DEFAULT_UNIFIED_SETTINGS.composerRichTextEnabled,
       sendShortcut: DEFAULT_UNIFIED_SETTINGS.sendShortcut,
       followUpBehavior: DEFAULT_UNIFIED_SETTINGS.followUpBehavior,
-      contextWindowMeterEnabled: DEFAULT_UNIFIED_SETTINGS.contextWindowMeterEnabled,
+      toolCallVisibility: DEFAULT_UNIFIED_SETTINGS.toolCallVisibility,
       environmentIdentificationMode: DEFAULT_UNIFIED_SETTINGS.environmentIdentificationMode,
       glassOpacity: DEFAULT_UNIFIED_SETTINGS.glassOpacity,
       panelAnimationDurationMs: DEFAULT_UNIFIED_SETTINGS.panelAnimationDurationMs,
@@ -779,43 +781,6 @@ function AutoSettleDaysInput({
       onBlur={() => setDraft(String(value))}
       aria-label={t("Days of inactivity before auto-settle")}
     />
-  );
-}
-
-export function LegacyFeaturesSection() {
-  const { t, localizedSetting } = usePanelText();
-  const settings = useScopedSettings();
-  const updateSettings = useUpdateScopedSettings();
-
-  return (
-    <SettingsSection id="legacy-features" title={t("Legacy")}>
-      <SettingsRow
-        {...localizedSetting("legacy-plan-mode")}
-        description={t("Restore Build/Plan, /plan, /default, and Shift+Tab. Off uses build mode.")}
-        control={
-          <Switch
-            checked={settings.planModeEnabled}
-            onCheckedChange={(checked) => {
-              updateSettings({ planModeEnabled: Boolean(checked) });
-            }}
-            aria-label={t("Plan mode (legacy)")}
-          />
-        }
-      />
-      <SettingsRow
-        {...localizedSetting("legacy-context-window-indicator")}
-        description={t("Shows context window usage as a circular indicator in the composer.")}
-        control={
-          <Switch
-            checked={settings.contextWindowMeterEnabled}
-            onCheckedChange={(checked) =>
-              updateSettings({ contextWindowMeterEnabled: Boolean(checked) })
-            }
-            aria-label={t("Context window indicator (legacy)")}
-          />
-        }
-      />
-    </SettingsSection>
   );
 }
 
@@ -1306,7 +1271,64 @@ export function ChatSettingsPanel() {
           }
         />
       </SettingsSection>
+
+      <SettingsSection id="activity" title="Activity">
+        <ToolCallVisibilityRow />
+      </SettingsSection>
     </SettingsPageContainer>
+  );
+}
+
+const TOOL_CALL_VISIBILITY_LABELS = {
+  showAll: "Show all",
+  hideSuccessful: "Hide successful",
+  hideAll: "Hide all",
+  zen: "Zen",
+} as const satisfies Record<ToolCallVisibility, string>;
+
+const isToolCallVisibility = Schema.is(ToolCallVisibility);
+
+function ToolCallVisibilityRow() {
+  const t = useTranslation(settingsDetailUiMessages);
+  const localizedSetting = useLocalizedSetting();
+  const settings = useScopedSettings();
+  const updateSettings = useUpdateScopedSettings();
+  return (
+    <SettingsRow
+      {...localizedSetting("tool-call-visibility")}
+      description={t(
+        "Hide the commands, edits, and searches agents run. Hide successful keeps failures. Zen shows only final answers. Approvals, questions, and errors always show.",
+      )}
+      resetAction={
+        settings.toolCallVisibility !== DEFAULT_UNIFIED_SETTINGS.toolCallVisibility ? (
+          <SettingResetButton
+            label="tool calls in chat"
+            onClick={() =>
+              updateSettings({ toolCallVisibility: DEFAULT_UNIFIED_SETTINGS.toolCallVisibility })
+            }
+          />
+        ) : null
+      }
+      control={
+        <Select
+          value={settings.toolCallVisibility}
+          onValueChange={(value) => {
+            if (isToolCallVisibility(value)) updateSettings({ toolCallVisibility: value });
+          }}
+        >
+          <SelectTrigger size="sm" className="w-full sm:w-40" aria-label={t("Tool calls in chat")}>
+            <SelectValue>{t(TOOL_CALL_VISIBILITY_LABELS[settings.toolCallVisibility])}</SelectValue>
+          </SelectTrigger>
+          <SelectPopup align="end" alignItemWithTrigger={false}>
+            {ToolCallVisibility.literals.map((value) => (
+              <SelectItem key={value} value={value}>
+                {t(TOOL_CALL_VISIBILITY_LABELS[value])}
+              </SelectItem>
+            ))}
+          </SelectPopup>
+        </Select>
+      }
+    />
   );
 }
 
@@ -1936,9 +1958,7 @@ export function ThreadsSettingsPanel() {
                     model={textGenModel}
                     modelOptions={textGenModelOptions}
                     allowPromptInjectedEffort={false}
-                    planModeEnabled={
-                      settings.planModeEnabled || selectsPlanAgent(textGenModelOptions)
-                    }
+                    includePlanAgent={selectsPlanAgent(textGenModelOptions)}
                     triggerClassName={SETTINGS_PICKER_TRIGGER_CLASSNAME}
                     onModelOptionsChange={(nextOptions) => {
                       updateSettings({

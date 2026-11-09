@@ -48,13 +48,6 @@ export const settingsPanelsMessages = {
   "Try again.": "请重试。",
   "Restore default settings?": "恢复默认设置？",
   "This will reset: {labels}.": "将重置：{labels}。",
-  Legacy: "旧版功能",
-  "Restore Build/Plan, /plan, /default, and Shift+Tab. Off uses build mode.":
-    "恢复 Build/Plan 切换、/plan、/default 和 Shift+Tab。关闭时使用构建模式。",
-  "Plan mode (legacy)": "计划模式（旧版）",
-  "Shows context window usage as a circular indicator in the composer.":
-    "在输入框中以圆形指示器显示上下文窗口用量。",
-  "Context window indicator (legacy)": "上下文窗口指示器（旧版）",
   Composer: "输入框",
   "Show formatted Markdown as you type.": "输入时显示 Markdown 格式效果。",
   "rich text composer": "富文本输入框",

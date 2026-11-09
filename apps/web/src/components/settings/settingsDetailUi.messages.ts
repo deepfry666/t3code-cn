@@ -17,8 +17,8 @@ export const settingsDetailUiMessages = {
   Devices: "设备",
   "Group sidebar threads into project folders. Pinned threads stay on top, and Snoozed and Settled stay below the folders.":
     "将侧边栏会话按项目文件夹分组。置顶会话保留在顶部，已暂缓和已收尾会话显示在文件夹下方。",
-  "In the boring sidebar, show folder threads on two lines: the title, then the branch, pull request, and agent.":
-    "在简洁侧边栏中分两行显示文件夹内的会话：第一行显示标题，第二行显示分支、拉取请求和智能体。",
+  "Show folder threads on two lines: the title, then the branch, pull request, and agent.":
+    "分两行显示文件夹内的会话：第一行显示标题，第二行显示分支、拉取请求和智能体。",
   "Hide the commands, edits, and searches agents run. Hide successful keeps failures. Zen shows only final answers. Approvals, questions, and errors always show.":
     "隐藏智能体执行的命令、编辑和搜索。“隐藏成功的调用”仍保留失败项；“专注模式”仅显示最终回答。审批、提问和错误始终显示。",
   "Share a thread with a guest who watches it live in a browser and sends messages you approve. Sign in to T3 Connect to use guest links.":

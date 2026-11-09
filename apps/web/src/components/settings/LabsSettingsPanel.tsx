@@ -4,36 +4,32 @@ import { settingsDetailUiMessages } from "./settingsDetailUi.messages";
 import { useAuth } from "@clerk/react";
 import { Link } from "@tanstack/react-router";
 import { managedCapabilityDenial } from "@t3tools/contracts";
-import { ToolCallVisibility } from "@t3tools/contracts/settings";
-import * as Schema from "effect/Schema";
 
 import { hasCloudPublicConfig } from "~/cloud/publicConfig";
 import { useT3ConnectAuthPrompt } from "../clerk/useT3ConnectAuthPrompt";
 import { Button } from "../ui/button";
-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "../ui/select";
 import { Switch } from "../ui/switch";
 import { ScopedSwitch } from "./ScopedSwitch";
 import { SettingsPageContainer, SettingsRow, SettingsSection } from "./settingsLayout";
-import { LegacyFeaturesSection } from "./SettingsPanels";
+import { searchableSetting } from "./settingsSearch";
 import { useScopedSettings, useUpdateScopedSettings } from "./useScopedSettings";
-import { useOptionalSettingsScope } from "./SettingsScopeContext";
+import { useOptionalSettingsScope, useSettingsScope } from "./SettingsScopeContext";
 import { firstManagedDenial, usePrimaryManagedPolicy } from "~/state/managedPolicy";
 
-/** Features still settling in, and legacy behavior kept for people who rely on it. */
+/** Features still settling in. */
 export function LabsSettingsPanel() {
   const t = useTranslation(settingsDetailUiMessages);
   return (
     <SettingsPageContainer>
       <SettingsSection id="beta" title={t("Beta")}>
         <BoringSidebarRow />
-        <BoringSidebarMultilineRow />
-        <ToolCallVisibilityRow />
         {/* Clerk is only mounted when this build has T3 Connect. */}
         {hasCloudPublicConfig() ? <GuestLinksRowWithSignIn /> : <GuestLinksRow />}
         <LinkedEnvironmentsRow />
+        <PromptSuggestionsRow />
         <SimlockHostsRow />
+        <FastWorktreeCheckoutRow />
       </SettingsSection>
-      <LegacyFeaturesSection />
     </SettingsPageContainer>
   );
 }
@@ -52,15 +48,18 @@ function BoringSidebarRow() {
       )}
       control={
         <Switch
-          checked={settings.boringSidebarEnabled || settings.legacySidebarEnabled}
-          // Turning it off also clears the opt-in of the removed legacy sidebar.
-          onCheckedChange={(checked) =>
-            updateSettings({ boringSidebarEnabled: Boolean(checked), legacySidebarEnabled: false })
-          }
+          checked={settings.boringSidebarEnabled}
+          onCheckedChange={(checked) => updateSettings({ boringSidebarEnabled: Boolean(checked) })}
           aria-label={t("Boring sidebar (group by project)")}
         />
       }
-    />
+    >
+      {settings.boringSidebarEnabled ? (
+        <div className="mt-2 mb-2 border-l-2 border-border/60 ps-3">
+          <BoringSidebarMultilineRow />
+        </div>
+      ) : null}
+    </SettingsRow>
   );
 }
 
@@ -72,9 +71,9 @@ function BoringSidebarMultilineRow() {
   return (
     <SettingsRow
       {...localizedSetting("boring-sidebar-multiline")}
-      title={t("Two-line folder rows")}
+      className="px-0 py-2 sm:px-0"
       description={t(
-        "In the boring sidebar, show folder threads on two lines: the title, then the branch, pull request, and agent.",
+        "Show folder threads on two lines: the title, then the branch, pull request, and agent.",
       )}
       control={
         <Switch
@@ -84,57 +83,6 @@ function BoringSidebarMultilineRow() {
           }
           aria-label={t("Two-line folder rows")}
         />
-      }
-    />
-  );
-}
-
-const TOOL_CALL_VISIBILITY_LABELS = {
-  showAll: "Show all",
-  hideSuccessful: "Hide successful",
-  hideAll: "Hide all",
-  zen: "Zen",
-} as const satisfies Record<ToolCallVisibility, string>;
-
-const isToolCallVisibility = Schema.is(ToolCallVisibility);
-
-function ToolCallVisibilityRow() {
-  const t = useTranslation(settingsDetailUiMessages);
-  const localizedSetting = useLocalizedSetting();
-  const settings = useScopedSettings();
-  const updateSettings = useUpdateScopedSettings();
-  return (
-    <SettingsRow
-      {...localizedSetting("tool-call-visibility")}
-      title={t("Tool calls in chat")}
-      description={t(
-        "Hide the commands, edits, and searches agents run. Hide successful keeps failures. Zen shows only final answers. Approvals, questions, and errors always show.",
-      )}
-      control={
-        <div className="w-full sm:w-40">
-          <Select
-            value={settings.toolCallVisibility}
-            onValueChange={(value) => {
-              if (isToolCallVisibility(value)) updateSettings({ toolCallVisibility: value });
-            }}
-          >
-            <SelectTrigger
-              size="sm"
-              className="w-full min-w-0"
-              aria-label={t("Tool calls in chat")}
-            >
-              <SelectValue>
-                {t(TOOL_CALL_VISIBILITY_LABELS[settings.toolCallVisibility])}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectPopup align="end" alignItemWithTrigger={false}>
-              <SelectItem value="showAll">{t("Show all")}</SelectItem>
-              <SelectItem value="hideSuccessful">{t("Hide successful")}</SelectItem>
-              <SelectItem value="hideAll">{t("Hide all")}</SelectItem>
-              <SelectItem value="zen">{t("Zen")}</SelectItem>
-            </SelectPopup>
-          </Select>
-        </div>
       }
     />
   );
@@ -245,6 +193,29 @@ function LinkedEnvironmentsRow() {
   );
 }
 
+function PromptSuggestionsRow() {
+  const settings = useScopedSettings();
+  const updateSettings = useUpdateScopedSettings();
+  return (
+    <SettingsRow
+      serverScoped
+      {...searchableSetting("prompt-suggestions-beta")}
+      settingKeys={["promptSuggestionsEnabled"]}
+      description="Show a predicted next message in the empty composer after a Claude or Codex turn. Tab uses it. Each is an extra cached request on your plan. Needs Codex 0.165+. Claude threads update on restart."
+      control={
+        <ScopedSwitch
+          settingKeys={["promptSuggestionsEnabled"]}
+          checked={settings.promptSuggestionsEnabled}
+          onCheckedChange={(checked) =>
+            updateSettings({ promptSuggestionsEnabled: Boolean(checked) })
+          }
+          aria-label="Suggest next prompt"
+        />
+      }
+    />
+  );
+}
+
 function SimlockHostsRow() {
   const t = useTranslation(settingsDetailUiMessages);
   const localizedSetting = useLocalizedSetting();
@@ -282,6 +253,39 @@ function SimlockHostsRow() {
             updateSettings({ simlockDeviceHostsEnabled: Boolean(checked) })
           }
           aria-label={t("Simlock device hosts")}
+        />
+      }
+    />
+  );
+}
+
+/** Shows only when every machine in scope is a Mac, since only macOS servers honor it. */
+function FastWorktreeCheckoutRow() {
+  const { scope, connectedEnvironments } = useSettingsScope();
+  const settings = useScopedSettings();
+  const updateSettings = useUpdateScopedSettings();
+  if (
+    scope.kind === "project" ||
+    scope.kind === "checkout" ||
+    connectedEnvironments.length === 0 ||
+    connectedEnvironments.some(
+      (environment) =>
+        environment.serverConfig?.environment.capabilities.fastWorktreeCheckout !== true,
+    )
+  )
+    return null;
+  return (
+    <SettingsRow
+      serverScoped
+      {...searchableSetting("worktree-fast-checkout")}
+      settingKeys={["fastWorktreeCheckout"]}
+      description="On a Mac, clone new worktrees from a checkout cached in the T3 home folder instead of writing every file. Uses Git’s normal checkout when it can’t. Turning it off deletes the cache."
+      control={
+        <ScopedSwitch
+          settingKeys={["fastWorktreeCheckout"]}
+          checked={settings.fastWorktreeCheckout}
+          onCheckedChange={(checked) => updateSettings({ fastWorktreeCheckout: Boolean(checked) })}
+          aria-label="Fast worktree checkout"
         />
       }
     />

@@ -266,6 +266,8 @@ export const settingsMaintenanceMessages = {
     "删除超过设定天数且不再写入的轮转日志文件。保留当前日志。",
   Database: "数据库",
   "Reclaim freed database space": "回收数据库空闲空间",
+  "These databases still hold space freed by history cleanup.":
+    "这些数据库仍占用历史清理后腾出的空间。",
   "These databases still hold space freed by history cleanup. Run the command on each machine to reclaim it. It restarts the background service. Quit the desktop app first if it hosts the environment.":
     "这些数据库仍占用历史清理后腾出的空间。在各设备上运行此命令即可回收。命令会重启后台服务。如果此环境由桌面应用托管，请先退出桌面应用。",
   "{size} GiB on {environment}": "{environment} 上的 {size} GiB",
