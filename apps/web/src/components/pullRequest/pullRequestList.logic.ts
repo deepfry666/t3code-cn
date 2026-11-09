@@ -631,6 +631,16 @@ export function resolveQueryEnvironmentIds<Id extends string>(
   return environmentIds.filter((environmentId) => holders.has(environmentId));
 }
 
+/** One unreachable server must not replace another server's real answer, even an empty one. */
+export function pullRequestListErrorPlacement(input: {
+  readonly error: string | null;
+  readonly answered: boolean;
+  readonly shownCount: number;
+}): "page" | "banner" | null {
+  if (input.error === null) return null;
+  return input.answered || input.shownCount > 0 ? "banner" : "page";
+}
+
 /** Retain connecting environments to avoid matching another server's project id. */
 export function resolveSelectedEnvironmentId<Id extends string>(
   namedEnvironmentId: Id | undefined,
