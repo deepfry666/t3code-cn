@@ -58,6 +58,7 @@ export const deviceUiMessages = {
   Book: "书本",
   "Laptop@@fold shape": "笔记本",
   Open: "打开",
+  "Open@@fold": "展开",
   Start: "启动",
   Running: "正在运行",
   Stopped: "已停止",

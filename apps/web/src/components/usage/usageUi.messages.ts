@@ -138,7 +138,7 @@ export const usageUiMessages = {
   "Toggle account email visibility": "显示或隐藏账户邮箱",
   "Click to reveal email": "点击显示邮箱",
   "Click to hide email": "点击隐藏邮箱",
-  Plan: "计划",
+  "Plan@@account": "套餐",
   "Signed in": "已登录",
   Via: "来源",
   Left: "剩余",

@@ -132,13 +132,13 @@ export const filesUiMessages = {
   "Searching…": "正在搜索…",
   "Next matching page": "下一个匹配页",
   "Only UTF-8 text and images can be opened inside an archive.":
-    "归档内只能打开 UTF-8 文本和图片。",
+    "压缩包内只能打开 UTF-8 文本和图片。",
   "Preview limited to the first 1 MB.": "预览仅限前 1 MB。",
   "This file took too long to preview. Close it and try again.": "此文件预览超时。请关闭后重试。",
   "Could not load the file viewer. Close it and try again.": "无法加载文件查看器。请关闭后重试。",
-  "Back to archive": "返回归档",
+  "Back to archive": "返回压缩包",
   "Parent folder": "上级文件夹",
-  "Archive contents": "归档内容",
+  "Archive contents": "压缩包内容",
   Table: "表格",
   "Previous rows": "上一组行",
   "Next rows": "下一组行",
@@ -287,7 +287,8 @@ export const filesUiMessages = {
   "This archive entry is unavailable.": "此压缩包条目不可用。",
   "This archive has no readable entries.": "此压缩包没有可读取的条目。",
   "This document contains unsupported XML declarations.": "此文档包含不受支持的 XML 声明。",
-  "This file contains too many archive entries to preview.": "此文件包含的压缩条目过多，无法预览。",
+  "This file contains too many archive entries to preview.":
+    "此文件包含的压缩包条目过多，无法预览。",
   "This file is damaged, encrypted, or not a valid Office document.":
     "此文件已损坏、已加密，或不是有效的 Office 文档。",
   "This file is too large to preview.": "此文件太大，无法预览。",

@@ -21,7 +21,7 @@ export const settingsCodeMessages = {
   Standard: "标准",
   "Default viewport width": "默认视口宽度",
   "Default viewport height": "默认视口高度",
-  Rotate: "更换",
+  "Rotate@@viewport": "旋转",
   "Page zoom applied to new browser tabs.": "新浏览器标签页的页面缩放比例。",
   "default browser zoom": "默认浏览器缩放",
   "Default browser zoom": "默认浏览器缩放",
@@ -54,9 +54,9 @@ export const settingsCodeMessages = {
   "Enter an http or https URL containing %s. Searches use DuckDuckGo until then.":
     "请输入包含 %s 的 http 或 https URL。在此之前，搜索将使用 DuckDuckGo。",
   "Clicking a pull request link opens it in T3 Code. Turn off to open pull request links like any other link, on your git host.":
-    "点击 pull request 链接时在 T3 Code 中打开。关闭后会像其他链接一样，在 Git 托管网站上打开。",
-  "open pull requests in T3 Code": "在 T3 Code 中打开 pull request",
-  "Open pull requests in T3 Code": "在 T3 Code 中打开 pull request",
+    "点击 pull request 链接时在 T3 Code 中打开。关闭后会像其他链接一样，在 Git 托管平台上打开。",
+  "open pull requests in T3 Code": "在 T3 Code 中打开 PR",
+  "Open pull requests in T3 Code": "在 T3 Code 中打开 PR",
   Devices: "设备",
   "Environment disconnected": "环境已断开",
   "This connection cannot change device settings.": "此连接无法更改设备设置。",
@@ -204,7 +204,7 @@ export const settingsCodeMessages = {
     "追加到命名提示词中。模型返回完整的分支名，不再添加前缀或后缀。",
   "branch naming instructions": "分支命名指令",
   "Use julius/ followed by the issue ID and a short description.":
-    "使用 julius/，后接议题 ID 和简短说明。",
+    "使用 julius/，后接 issue ID 和简短说明。",
   "sign-in code": "登录验证码",
   "Signed in as": "已登录账户",
   "Signed-in GitHub account": "已登录的 GitHub 账户",
@@ -229,7 +229,7 @@ export const settingsCodeMessages = {
   Account: "账户",
   "Use active login": "使用当前登录账户",
   "Create a token": "创建 token",
-  Host: "主机",
+  "Host@@code-hosting": "托管平台",
   Token: "token",
   Remove: "移除",
   Save: "保存",
@@ -351,7 +351,7 @@ export const settingsCodeMessages = {
     "Pull request 默认使用此合并方式。“上次选择”会沿用你在此设备上最近选择的方式。",
   "default merge method": "默认合并方式",
   "Reset to last selected": "重置为上次选择",
-  "Default pull request merge method": "默认 pull request 合并方式",
+  "Default pull request merge method": "默认 PR 合并方式",
   "Last selected": "上次选择",
   "How new worktrees in this project populate git submodules.":
     "此项目的新工作树如何初始化 Git 子模块。",
@@ -440,7 +440,7 @@ export const settingsCodeMessages = {
   "Not available on this server: {hint}": "此服务器上不可用：{hint}",
   as: "账户",
   "Available. {hint}": "可用。{hint}",
-  "Every {label} host is turned off.": "所有 {label} 主机均已关闭。",
+  "Every {label} host is turned off.": "所有 {label} 托管平台均已关闭。",
   "{label} is not authenticated on this server. Sign in or configure credentials using the {executable} tool on the server host to enable change request features.":
     "{label} 尚未在此服务器上认证。请在服务器上使用 {executable} 工具登录或配置凭据，以启用 change request 功能。",
   "Could not verify {label}. {detail}": "无法验证 {label}。{detail}",
@@ -454,7 +454,7 @@ export const settingsCodeMessages = {
   "Sign in with {command} on the server host, then rescan to choose accounts here.":
     "在服务器上使用 {command} 登录，然后重新扫描，即可在此选择账户。",
   "Choose which {cliName} login each {label} host uses, or turn a host off.":
-    "选择每个 {label} 主机使用的 {cliName} 登录账户，或关闭某个主机。",
+    "选择每个 {label} 托管平台使用的 {cliName} 登录账户，或关闭某个托管平台。",
   "Hide {label} accounts": "隐藏 {label} 账户",
   "Reveal {label} accounts": "显示 {label} 账户",
   "Use {label} on {host}": "在 {host} 上使用 {label}",
@@ -485,7 +485,7 @@ export const settingsCodeMessages = {
   "Deletes all {count} checkout entries and their threads on every machine. Files on disk are not touched.":
     "删除所有机器上的全部 {count} 个工作副本条目及其会话。磁盘上的文件不受影响。",
   "Open in {fileManager}": "在 {fileManager} 中打开",
-  "{environment} pull request routing": "{environment} 的 pull request 路由",
+  "{environment} pull request routing": "{environment} 的 PR 路由",
   "{environments} {permission}": "{environments} {permission}",
   "Quit {source} to import": "退出 {source} 以导入",
   "{source} is open, so its cookies can’t be read yet. Quit it, then continue.":
@@ -580,7 +580,7 @@ export const settingsCodeMessages = {
   Octopus: "章鱼",
   Seedling: "幼苗",
   Incognito: "无痕浏览",
-  "read and write access to pull requests and contents": "Pull request 和内容的读写权限",
+  "read and write access to pull requests and contents": "PR 和内容的读写权限",
   "Not installed on this machine.": "此机器尚未安装。",
   "Needs Keychain access to read its cookies.": "需要钥匙串访问权限才能读取 Cookie。",
   "No encryption key in your Keychain. Sign in to that browser once, then retry.":

@@ -181,7 +181,7 @@ export const timelineUiMessages = {
   "Kept out of chat, in a private file this agent's commands can read for 24 hours":
     "不会出现在对话中，而是存放在一个私密文件里，此智能体的命令可在 24 小时内读取",
   "Stored securely, never shown to the agent": "安全存储，绝不会展示给智能体",
-  "Paste the secret": "粘贴密钥",
+  "Paste the secret": "粘贴凭据",
   "This connection cannot change threads.": "此连接无法修改会话。",
   "Available when the main thread is idle.": "主会话空闲时可用。",
   "Available after a finished reply.": "有完整回复后可用。",

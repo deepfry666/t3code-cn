@@ -265,10 +265,10 @@ export function composerSuggestionOptionId(listId: string, itemId: string): stri
 
 const LISTBOX_LABEL_BY_TRIGGER: Record<
   ComposerTriggerKind,
-  "Files and folders" | "Pull requests" | "Commands" | "Skills"
+  "Files and folders" | "Pull requests@@short-label" | "Commands" | "Skills"
 > = {
   path: "Files and folders",
-  "pull-request": "Pull requests",
+  "pull-request": "Pull requests@@short-label",
   "slash-command": "Commands",
   skill: "Skills",
 };

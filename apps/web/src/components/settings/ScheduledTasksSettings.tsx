@@ -1212,7 +1212,7 @@ function WebhookEndpointField({
           disabled={rotating || !canRotate}
           onClick={() => void rotateUrl()}
         >
-          {t("Rotate")}
+          {t("Rotate@@credential")}
         </Button>
       </div>
       {note !== null ? <p className="text-xs text-muted-foreground">{tl(note)}</p> : null}

@@ -18,7 +18,7 @@ export const themeErrorMessages = {
     "主题变体不能重复基础外观“{appearance}”。",
   "Failed to read the theme library from {storageKey}.": "无法从 {storageKey} 读取主题库。",
   "Failed to write the theme library to {storageKey}.": "无法将主题库写入 {storageKey}。",
-  "{source} is not valid JSON.": "{source}不是有效的 JSON。",
+  "{source} is not valid JSON.": "{source} 不是有效的 JSON。",
   "{source} is missing from the extension package.": "扩展包中缺少 {source}。",
   "{source} has unreadable size metadata.": "{source} 的大小信息无法读取。",
   "{source} is too large.": "{source} 过大。",

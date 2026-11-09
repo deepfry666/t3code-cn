@@ -43,7 +43,7 @@ export function DeviceDuoControls(props: {
   const foldLabels = {
     closed: t("Closed@@fold"),
     half: phoneVertical ? t("Book") : t("Laptop@@fold shape"),
-    open: t("Open"),
+    open: t("Open@@fold"),
   };
   const button = (
     key: string,

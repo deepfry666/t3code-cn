@@ -268,7 +268,7 @@ export const composerUiMessages = {
   "No matching files or folders.": "没有匹配的文件或文件夹。",
   "No matching command.": "没有匹配的命令。",
   "Files and folders": "文件和文件夹",
-  "Pull requests": "Pull requests",
+  "Pull requests@@short-label": "PR",
   Commands: "命令",
   Skills: "技能",
   App: "应用",

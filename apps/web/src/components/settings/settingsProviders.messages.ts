@@ -295,17 +295,17 @@ export const settingsProvidersMessages = {
   "Google account": "Google 账户",
   "Gemini API key": "Gemini API 密钥",
   "Google accounts use your subscription; API keys and Agent Platform bill usage.":
-    "Google 账户使用你的订阅；API 密钥和 Agent Platform 智能体平台 按用量计费。",
+    "Google 账户使用你的订阅；API 密钥和 Agent Platform 按用量计费。",
   "API key": "API 密钥",
   "Gemini or Vertex AI express key. Stored separately on the host.":
     "Gemini 或 Vertex AI express 密钥，单独存储在主机上。",
   Optional: "可选",
   "GCP project": "GCP 项目",
   "Required for Gemini Enterprise. Agent Platform uses it when no API key is set.":
-    "Gemini Enterprise 必填。未设置 API 密钥时，Agent Platform 智能体平台 使用此项目。",
+    "Gemini Enterprise 必填。未设置 API 密钥时，Agent Platform 使用此项目。",
   "GCP location": "GCP 位置",
   "Region for Gemini Enterprise or Agent Platform.":
-    "Gemini Enterprise 或 Agent Platform 智能体平台 使用的区域。",
+    "Gemini Enterprise 或 Agent Platform 使用的区域。",
   "Custom ACP executable. Leave empty to select automatically.":
     "自定义 ACP 可执行文件。留空则自动选择。",
   Automatic: "自动",

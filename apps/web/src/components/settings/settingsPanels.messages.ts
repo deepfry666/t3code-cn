@@ -89,11 +89,11 @@ export const settingsPanelsMessages = {
   "default diff file state": "差异文件默认状态",
   Collapsed: "折叠",
   Expanded: "展开",
-  "Pull requests": "Pull requests",
+  "Pull requests@@short-label": "PR",
   "Open linked pull requests first. Otherwise, open Changes for edits to at least 3 files or 50 lines.":
     "优先打开关联的 pull request；否则在改动至少 3 个文件或 50 行时打开“改动”面板。",
   "proactive panels": "自动打开面板",
-  "Open pull requests and changes panels proactively": "自动打开 pull request 与改动面板",
+  "Open pull requests and changes panels proactively": "自动打开 PR 与改动面板",
   "When to compact an idle Claude thread over 200,000 tokens: after you return, just before its prompt cache expires, or never. Each Claude provider can override this.":
     "空闲且超过 200,000 token 的 Claude 会话何时压缩：在你回来后、提示缓存即将过期前，或从不压缩。每个 Claude 提供方都可以单独覆盖此设置。",
   "compact idle threads": "压缩空闲会话",

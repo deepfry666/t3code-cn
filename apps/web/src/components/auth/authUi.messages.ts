@@ -32,7 +32,7 @@ export const authUiMessages = {
   "Validating the pairing link and preparing your session.": "正在验证配对链接并准备登录状态。",
   "Pair with this environment": "与此环境配对",
   "Pairing token": "配对 token",
-  "Paste a one-time token or pairing secret": "粘贴一次性 token 或配对密钥",
+  "Paste a one-time token or pairing secret": "粘贴一次性 token 或配对凭据",
   "Pairing...": "正在配对…",
   Continue: "继续",
   "Reload app": "重新加载应用",

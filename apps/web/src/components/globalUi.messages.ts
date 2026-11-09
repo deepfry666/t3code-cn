@@ -74,7 +74,7 @@ export const globalUiMessages = {
   "Enter a positive duration.": "请输入大于零的时长。",
   "Custom snooze": "自定义暂缓",
   "Choose when snoozed threads return to your inbox.": "选择暂缓的会话何时回到收件箱。",
-  "Schedule type": "计划类型",
+  "Schedule type": "定时方式",
   "Date and time": "日期和时间",
   "Duration@@snooze-mode": "时长",
   Date: "日期",

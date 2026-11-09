@@ -40,7 +40,7 @@ export const gitUiMessages = {
   "Worktree is clean. Make changes before committing.": "工作树没有改动。请先修改再提交。",
   "Commit is currently unavailable.": "当前无法提交。",
   "Detached HEAD: check out a branch before pushing.": "游离 HEAD：请先检出一个分支再推送。",
-  "Commit or stash local changes before pushing.": "推送前请先提交或暂存本地改动。",
+  "Commit or stash local changes before pushing.": "推送前请先提交或贮藏本地改动。",
   "Branch is behind upstream. Pull/rebase before pushing.":
     "分支落后于上游。请先拉取或变基再推送。",
   'Add an "origin" remote before pushing.': "推送前请添加名为 “origin” 的远端。",
@@ -134,7 +134,7 @@ export const gitUiMessages = {
     "{provider} 尚未通过身份验证。请打开“设置 → 版本控制”查看设置指引。",
   "Initializing repository": "正在初始化仓库",
   "Publishing repository": "正在发布仓库",
-  "Preparing pull request thread": "正在准备 pull request 会话",
+  "Preparing pull request thread": "正在准备 PR 会话",
   "Running source control action": "正在运行版本控制操作",
   "Previous worktree ({branch})": "上一个工作树（{branch}）",
   "Select ref": "选择引用",

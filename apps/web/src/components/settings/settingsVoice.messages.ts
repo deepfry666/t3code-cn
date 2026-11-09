@@ -107,7 +107,7 @@ export const settingsVoiceMessages = {
   "System default": "系统默认",
   "Manage OpenRouter": "管理 OpenRouter",
   "Manage key": "管理密钥",
-  Input: "输入框",
+  "Input@@voice": "输入",
   Microphone: "麦克风",
   "System default follows your operating system. Record a ten-second test and play it back here. Test audio stays on this device and is never transcribed.":
     "系统默认会跟随操作系统设置。可录制 10 秒测试音频并在此回放。测试音频只保存在此设备上，不会转写。",
@@ -146,7 +146,7 @@ export const settingsVoiceMessages = {
   "Names and terms transcription should spell your way, saved on this device. Add an alias when it keeps hearing a term wrong. The name of the project you dictate in is also sent as a hint.":
     "在此设备上保存姓名和术语的首选拼写。如果某个词总是识别错误，可添加别名。听写所在的项目名称也会作为提示发送。",
   dictionary: "词典",
-  Cleanup: "清理",
+  "Cleanup@@transcript": "文本整理",
   "Clean up transcripts with a provider": "使用提供方整理转写文本",
   "Sends the transcript and nearby draft text to the text generation provider on the draft’s environment to fix punctuation, numbers, and spoken corrections. Sends text only; off by default.":
     "将转写文本及其附近的草稿文字发送给草稿所在环境的文本生成提供方，修正标点、数字和口头纠正。只发送文本，默认关闭。",
@@ -170,7 +170,7 @@ export const settingsVoiceMessages = {
   "{company} API key": "{company} API 密钥",
   "{company} API key reference": "{company} API 密钥引用",
   "Enter API key": "输入 API 密钥",
-  "Enter an API key, not a URL or secret reference.": "请输入 API 密钥，不要输入 URL 或凭据引用。",
+  "Enter an API key, not a URL or secret reference.": "请输入 API 凭据，不要输入 URL 或凭据引用。",
   "Updating the key keeps dictation enabled.": "更新密钥后听写会保持启用。",
   "Leave blank to keep the saved key.": "留空可保留已保存的密钥。",
   "Anyone with dictation access to {environment} can bill this key.":
@@ -222,7 +222,7 @@ export const settingsVoiceMessages = {
   "Test microphone": "测试麦克风",
   "Cancel microphone test": "取消麦克风测试",
   "Recording time": "录音时长",
-  "Microphone input level": "麦克风输入电平",
+  "Microphone input level": "输入音量",
   "Opening microphone…": "正在打开麦克风…",
   "Stop recording": "停止录音",
   "Pause recording": "暂停回放",

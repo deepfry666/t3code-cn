@@ -94,7 +94,7 @@ export const settingsThreadsMessages = {
   "Recent requests to this task's webhook URL.": "此任务 webhook URL 最近收到的请求。",
   "Loading delivery…": "正在加载投递记录…",
   "Signature verified": "签名已验证",
-  "Scheduled run": "已计划运行",
+  "Scheduled run": "已安排定时运行",
   "Prompt sent to the agent": "发给智能体的提示词",
   "Run scheduled when the window closes; no run started yet.": "合并窗口结束时运行，目前尚未开始。",
   "No run was started for this request.": "此请求未触发运行。",
@@ -131,7 +131,7 @@ export const settingsThreadsMessages = {
   "Webhook URL": "webhook URL",
   Copied: "已复制",
   Copy: "复制",
-  Rotate: "更换",
+  "Rotate@@credential": "更换",
   "Link this environment to T3 Connect for a public URL.":
     "将此环境关联到 T3 Connect，获取公网 URL。",
   "Only this computer can call this address. Link T3 Connect for a public URL.":
@@ -174,7 +174,7 @@ export const settingsThreadsMessages = {
   "Enter an interval of at least one minute.": "请输入至少一分钟的间隔。",
   "Once is not available here": "此环境不支持单次运行",
   "This environment runs an older T3 Code. Update it to schedule a one-time task, or pick another schedule.":
-    "此环境运行的是旧版 T3 Code。请更新后再创建单次定时任务，或选择其他计划。",
+    "此环境运行的是旧版 T3 Code。请更新后再创建单次定时任务，或选择其他定时规则。",
   "Checkout path is required": "请填写工作副本路径",
   "Enter the path of the checkout to run in.": "请输入任务运行所在的工作副本路径。",
   "Could not save scheduled task": "无法保存定时任务",
@@ -186,7 +186,7 @@ export const settingsThreadsMessages = {
   "Unavailable environment": "环境不可用",
   "This scheduled task no longer exists.": "此定时任务已不存在。",
   Name: "名称",
-  "e.g. Check for Sentry issues": "例如：检查 Sentry 问题",
+  "e.g. Check for Sentry issues": "例如：检查 Sentry issue",
   Project: "项目",
   "Select a project": "选择项目",
   Workspace: "工作区",
@@ -197,8 +197,8 @@ export const settingsThreadsMessages = {
   Model: "模型",
   "This task uses a legacy interval below one minute. Saving updates it to at least one minute.":
     "此任务使用旧版间隔，不到一分钟。保存后会调整为至少一分钟。",
-  Schedule: "计划",
-  "Schedule type": "计划类型",
+  Schedule: "定时规则",
+  "Schedule type": "定时方式",
   "At a time": "固定时间",
   Once: "单次",
   "Every interval": "按间隔",

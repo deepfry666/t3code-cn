@@ -3,7 +3,8 @@ import type * as Electron from "electron";
 const labels: Readonly<Record<string, string>> = {
   File: "文件",
   Edit: "编辑",
-  View: "视图",
+  View: "查看",
+  "View@@macOS": "显示",
   Speech: "语音",
   "Check for Updates...": "检查更新…",
   "Settings...": "设置…",
@@ -144,6 +145,7 @@ export function localizeApplicationMenu(
   template: Electron.MenuItemConstructorOptions[],
   languages: readonly string[],
   displayName: string,
+  platform?: NodeJS.Platform,
 ): Electron.MenuItemConstructorOptions[] {
   if (!languages[0]?.toLowerCase().startsWith("zh")) return template;
   const applicationLabels: Readonly<Record<string, string>> = {
@@ -159,11 +161,14 @@ export function localizeApplicationMenu(
         ? item.role === undefined
           ? undefined
           : roles[item.role]
-        : Object.hasOwn(labels, item.label)
-          ? labels[item.label]
-          : Object.hasOwn(applicationLabels, item.label)
-            ? applicationLabels[item.label]
-            : item.label;
+        : item.label === "View" && platform === "darwin"
+          ? // macOS names this menu 显示; Windows and Linux apps say 查看.
+            labels["View@@macOS"]
+          : Object.hasOwn(labels, item.label)
+            ? localizeDesktopText(item.label, languages)
+            : Object.hasOwn(applicationLabels, item.label)
+              ? applicationLabels[item.label]
+              : item.label;
     return {
       ...item,
       ...(label === undefined ? {} : { label }),

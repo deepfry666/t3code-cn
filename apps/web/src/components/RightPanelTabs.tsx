@@ -605,7 +605,7 @@ export function surfaceTitle(
     case "pull-request":
       return `#${surface.number}`;
     case "pull-requests":
-      return t("Pull requests");
+      return t("Pull requests@@short-label");
     case "device":
       return surface.title ?? surface.target?.name ?? t("Device");
     case "side-chat":

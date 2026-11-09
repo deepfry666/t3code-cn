@@ -25,7 +25,7 @@ export const threadPanelUiMessages = {
   "Environment and worktree": "环境与工作树",
   "Open in editor": "在编辑器中打开",
   "Project scripts": "项目脚本",
-  "Branch and pull request": "分支与 pull request",
+  "Branch and pull request": "分支与 PR",
   "Git actions": "Git 操作",
   Changes: "改动",
   Servers: "服务器",
@@ -127,7 +127,7 @@ export const threadPanelUiMessages = {
   "done@@phase": "已完成",
   "not started@@phase": "未开始",
   "No agents yet": "还没有智能体",
-  "Pull requests unavailable": "Pull request 不可用",
+  "Pull requests unavailable": "PR 不可用",
   "Update this environment's T3 Code server to browse pull requests.":
     "请更新此环境的 T3 Code 服务器后再浏览 pull request。",
   "Could not create a guest link.": "无法创建访客链接。",
