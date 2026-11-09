@@ -1,0 +1,128 @@
+# Fork-only: install the published Windows 0.1.7 build on a clean Windows runner, then
+# drive its real updater against a mock feed carrying a newer Actions artifact. Covers
+# discovery, download, the in-app install, the installer's restart, the new version and
+# the seeded state the user still sees. It publishes nothing.
+#
+#   gh workflow run fork-windows-update-test.yml -f run_id=<build run> -f new_version=0.1.8
+#
+# The new artifact must be a higher stable version than the baseline (fork-windows-desktop.yml
+# uploads whatever version the build was given), and must be `T3-Code-<version>-x64.exe`.
+name: Fork Windows update test
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Run id of the workflow_dispatch build that produced the new installer artifact."
+        type: string
+        required: true
+      new_version:
+        description: "Stable version bundled by that artifact, e.g. 0.1.8. Must be greater than baseline_version."
+        type: string
+        required: true
+      artifact_name:
+        description: "Artifact name from that build."
+        type: string
+        default: t3code-cn-windows-x64
+      baseline_version:
+        description: "Version the published baseline installer reports."
+        type: string
+        default: "0.1.7"
+      baseline_tag:
+        description: "Release tag that carries the baseline installer."
+        type: string
+        default: v0.1.7-cn.1
+      baseline_asset:
+        description: "Windows installer asset in that release."
+        type: string
+        default: T3-Code-0.1.7-x64.exe
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  update:
+    name: Update ${{ inputs.baseline_version }} to ${{ inputs.new_version }}
+    if: github.repository == 'deepfry666/t3code-cn'
+    runs-on: windows-2025
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
+
+      # setup-vp's own cache restores a Linux-shaped store on Windows (see #7975).
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version-file: package.json
+          cache: false
+          run-install: false
+
+      - name: Install
+        run: vp install
+
+      - name: Download and verify the baseline installer
+        shell: pwsh
+        run: |
+          $baselineDir = Join-Path $env:RUNNER_TEMP "baseline"
+          New-Item -ItemType Directory -Force -Path $baselineDir | Out-Null
+          $asset = "${{ inputs.baseline_asset }}"
+          $base = "https://github.com/${{ github.repository }}/releases/download/${{ inputs.baseline_tag }}"
+          $installerPath = Join-Path $baselineDir $asset
+          $checksumsPath = Join-Path $baselineDir "SHA256SUMS.txt"
+          curl.exe -fsSL -o $installerPath "$base/$asset"
+          if ($LASTEXITCODE -ne 0) { throw "Downloading the baseline installer failed with exit $LASTEXITCODE." }
+          curl.exe -fsSL -o $checksumsPath "$base/SHA256SUMS.txt"
+          if ($LASTEXITCODE -ne 0) { throw "Downloading SHA256SUMS.txt failed with exit $LASTEXITCODE." }
+          $entry = Select-String -Path $checksumsPath -Pattern $asset -SimpleMatch | Select-Object -First 1
+          if (-not $entry) { throw "SHA256SUMS.txt has no entry for $asset." }
+          $expected = $entry.Line.Split()[0]
+          $actual = (Get-FileHash $installerPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne $expected.ToLowerInvariant()) {
+            throw "Baseline installer checksum mismatch: expected $expected, got $actual."
+          }
+          Write-Host "Baseline $asset sha256 $actual verified."
+
+      - name: Download the new installer artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: ${{ runner.temp }}/new-artifact
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+
+      - name: List the new artifact
+        shell: pwsh
+        run: |
+          Get-ChildItem -Recurse -File (Join-Path $env:RUNNER_TEMP "new-artifact") |
+            Select-Object FullName, Length | Format-Table -AutoSize | Out-String | Write-Host
+
+      - name: Run the update acceptance
+        shell: pwsh
+        run: |
+          $arguments = @(
+            "scripts/windows-update-acceptance.ts"
+            "--baseline-installer", (Join-Path $env:RUNNER_TEMP "baseline/${{ inputs.baseline_asset }}")
+            "--new-artifact-dir", (Join-Path $env:RUNNER_TEMP "new-artifact")
+            "--baseline-version", "${{ inputs.baseline_version }}"
+            "--new-version", "${{ inputs.new_version }}"
+            "--artifacts-dir", (Join-Path $env:RUNNER_TEMP "windows-update-acceptance")
+          )
+          node @arguments
+          if ($LASTEXITCODE -ne 0) { throw "Windows update acceptance failed with exit $LASTEXITCODE." }
+
+      - name: Upload acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-update-acceptance
+          path: ${{ runner.temp }}/windows-update-acceptance
+          if-no-files-found: warn
+          retention-days: 14
