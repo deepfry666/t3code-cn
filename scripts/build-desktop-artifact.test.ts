@@ -584,6 +584,46 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
     }),
   );
 
+  it.effect("signs unsigned Chinese mac builds with the fork's stable self-signed identity", () =>
+    Effect.gen(function* () {
+      const selfSigned = yield* createBuildConfig(
+        "mac",
+        "dmg",
+        "0.1.7-cn.3",
+        false,
+        false,
+        undefined,
+        undefined,
+      );
+      const officialSigned = yield* createBuildConfig(
+        "mac",
+        "dmg",
+        "0.1.7-cn.3",
+        true,
+        false,
+        undefined,
+        undefined,
+      );
+      const selfSignedMac = selfSigned.mac as Record<string, unknown>;
+      const officialSignedMac = officialSigned.mac as Record<string, unknown>;
+
+      assert.deepStrictEqual(selfSignedMac.target, ["dmg", "zip"]);
+      assert.strictEqual(selfSignedMac.identity, "-");
+      assert.strictEqual(selfSignedMac.hardenedRuntime, false);
+      assert.match(String(selfSignedMac.sign), /scripts\/fork-sign-macos\.ts$/);
+      assert.match(String(officialSignedMac.sign), /scripts\/sign-macos\.ts$/);
+      assert.isUndefined(officialSignedMac.identity);
+    }).pipe(
+      Effect.provide(
+        ConfigProvider.layer(
+          ConfigProvider.fromEnv({
+            env: { T3CODE_MACOS_SELF_SIGN_IDENTITY: "A839365945BD24B57F1D02A1FA403FC6FDE2E97A" },
+          }),
+        ),
+      ),
+    ),
+  );
+
   // pnpm writes "set this to true or false" placeholders into allowBuilds when a
   // tarball changes. pnpm ignores them, but the release build decode rejects them.
   it.effect("decodes the repo allowBuilds and every file: tarball it names exists", () =>

@@ -2829,6 +2829,9 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
   if (platform === "mac") {
     const path = yield* Path.Path;
     const repoRoot = yield* RepoRoot;
+    const selfSignIdentity = yield* Config.String("T3CODE_MACOS_SELF_SIGN_IDENTITY").pipe(
+      Config.option,
+    );
     buildConfig.mac = {
       target: target === "dmg" ? [target, "zip"] : [target],
       icon: "icon.icns",
@@ -2873,6 +2876,16 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
         },
       ],
       ...(signed ? { sign: path.join(repoRoot, "scripts/sign-macos.ts") } : {}),
+      // Fork: "-" makes electron-builder call the hook, which swaps in the self-signed identity.
+      // Without a Team ID, hardened runtime library validation would reject Electron's frameworks.
+      ...(!signed && Option.isSome(selfSignIdentity)
+        ? {
+            identity: "-",
+            hardenedRuntime: false,
+            timestamp: "none",
+            sign: path.join(repoRoot, "scripts/fork-sign-macos.ts"),
+          }
+        : {}),
       ...(macPasskeySigning
         ? {
             entitlements: macPasskeySigning.entitlementsPath,
