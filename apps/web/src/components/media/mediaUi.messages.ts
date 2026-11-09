@@ -55,7 +55,7 @@ export const mediaUiMessages = {
   "This link returned a web page instead of media. Open the original URL.":
     "此链接返回的是网页而不是媒体，请打开原始 URL。",
   "The browser could not decode this image for copying. Try saving it instead.":
-    "浏览器无法解码这张图片用于复制，请改为保存。",
+    "浏览器无法解码这张图片，无法复制，请改为保存。",
   "This image is too large or has no usable dimensions. Try saving it instead.":
     "这张图片太大或没有可用的尺寸，请改为保存。",
   "Image copying is unavailable in this browser.": "此浏览器无法复制图片。",

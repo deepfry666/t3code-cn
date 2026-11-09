@@ -234,7 +234,7 @@ export const settingsConnectionsMessages = {
   "Revoking…": "正在撤销授权…",
   Revoke: "撤销授权",
   "Endpoint the pairing QR code and URL use": "配对二维码和 URL 使用的端点",
-  "Reach this machine via": "访问此机器的方式",
+  "Reach this machine via": "访问本机的方式",
   "Copy link": "复制链接",
   "Copy code only": "仅复制配对码",
   "No QR for this endpoint. Another device scanning a loopback link would dial itself; copy the URL for use on this machine instead.":

@@ -141,7 +141,7 @@ export const composerUiMessages = {
   "Open voice settings": "打开语音设置",
   "Retry transcription": "重试转写",
   "Record again": "重新录音",
-  "Dismiss voice input error": "关闭语音输入错误",
+  "Dismiss voice input error": "关闭语音输入错误提示",
   "Microphone access is required for voice input. Allow access in your browser or system settings and try again.":
     "语音输入需要麦克风权限。请在浏览器或系统设置中允许访问后重试。",
   "Microphone access is required for voice input.": "语音输入需要麦克风权限。",
@@ -186,7 +186,7 @@ export const composerUiMessages = {
   "Silero (1.2 MB), used for silence filtering and pause detection, downloads alongside the speech model. An installed copy is reused.":
     "Silero（1.2 MB）用于过滤静音和检测停顿，会随语音模型一起下载；已安装的副本会被复用。",
   "Speech model download progress": "语音模型下载进度",
-  "Verifying download…": "正在校验下载…",
+  "Verifying download…": "正在校验下载内容…",
   "Starting download…": "正在开始下载…",
   "{percent}% downloaded": "已下载 {percent}%",
   "Loading transcription models…": "正在加载转写模型…",

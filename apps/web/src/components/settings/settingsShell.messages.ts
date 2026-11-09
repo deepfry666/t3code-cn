@@ -24,7 +24,7 @@ export const settingsShellMessages = {
   "Open all environments": "打开所有环境",
   Project: "项目",
   Default: "默认",
-  Inherits: "继承",
+  Inherits: "继承上层设置",
   Inherit: "继承",
   "Same on all machines": "所有机器上的设置相同",
   "Overridden by": "被以下项目覆盖",

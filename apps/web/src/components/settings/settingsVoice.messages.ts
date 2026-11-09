@@ -24,7 +24,7 @@ export const settingsVoiceMessages = {
   "not benchmarked": "未做基准测试",
   "Speed:": "速度：",
   "{model} download progress": "{model} 下载进度",
-  "Verifying download…": "正在校验下载…",
+  "Verifying download…": "正在校验下载内容…",
   "{progress}% downloaded": "已下载 {progress}%",
   "Cancel {model} download": "取消下载 {model}",
   Download: "下载",

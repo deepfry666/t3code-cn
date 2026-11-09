@@ -43,7 +43,7 @@ export const onboardingUiMessages = {
 
   // Import step
   "This connection cannot import projects or thread history.": "此连接无法导入项目或会话历史。",
-  "Some history was not imported": "部分历史未导入",
+  "Some history was not imported": "部分历史记录未能导入",
   "Imported {count} thread": "已导入 {count} 个会话",
   "Imported {count} threads": "已导入 {count} 个会话",
   "Imported {count} thread.": "已导入 {count} 个会话。",

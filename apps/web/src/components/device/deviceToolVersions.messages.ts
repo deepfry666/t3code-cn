@@ -16,5 +16,5 @@ export const deviceToolVersionsMessages = {
   None: "无",
   "Versions have not been checked.": "尚未检查版本。",
   "Managed by {owner}. ": "由 {owner} 管理。",
-  "Tools update automatically on this host when needed.": "工具会在需要时在此主机上自动更新。",
+  "Tools update automatically on this host when needed.": "此主机上的工具会在需要时自动更新。",
 } as const;

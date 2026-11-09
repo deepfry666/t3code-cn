@@ -13,7 +13,7 @@ export const settingsCodeMessages = {
   Light: "浅色",
   Dark: "深色",
   "Fill panel": "填满面板",
-  Responsive: "自适应",
+  Responsive: "响应式",
   "Tab size for you and agents. Fill fits the panel; other sizes show the device toolbar.":
     "你和智能体使用的标签页尺寸。“填满面板”会适应面板大小；其他尺寸会显示设备工具栏。",
   "default browser viewport": "默认浏览器视口",
