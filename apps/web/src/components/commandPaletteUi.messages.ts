@@ -176,6 +176,8 @@ export const commandPaletteUiMessages = {
     "请先启动对应的 WSL 后端，然后重新选择文件夹。",
   "Open source control settings": "打开源代码管理设置",
   "Open Settings -> Source control": "打开 设置 -> 源代码管理",
+  "This connection cannot browse host folders.": "此连接无法浏览主机文件夹。",
+  "Git URL": "Git URL",
 } as const;
 
 export type CommandPaletteUiKey = keyof typeof commandPaletteUiMessages;

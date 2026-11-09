@@ -7,7 +7,9 @@ import {
   type SnoozePreset,
 } from "@t3tools/client-runtime/state/thread-settled";
 
+import { translateNow } from "~/i18n/useTranslation";
 import { appAtomRegistry } from "../rpc/atomRegistry";
+import { sidebarUiMessages } from "./sidebar/sidebarUi.messages";
 import { serverEnvironment } from "../state/server";
 import { formatShortTimestamp } from "../timestampFormat";
 import { toastManager } from "./ui/toast";
@@ -40,7 +42,10 @@ export function pickSnoozePreset(
     toastManager.add({
       type: "warning",
       title: "Could not snooze thread",
-      description: "That snooze time has passed. Choose another time.",
+      description: translateNow(
+        sidebarUiMessages,
+        "That snooze time has passed. Choose another time.",
+      ),
     });
   }
   return picked;

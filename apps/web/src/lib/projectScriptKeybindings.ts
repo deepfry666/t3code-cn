@@ -6,6 +6,9 @@ import {
 } from "@t3tools/contracts";
 import * as Schema from "effect/Schema";
 
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
+
 export const PROJECT_SCRIPT_KEYBINDING_INVALID_MESSAGE = "Invalid keybinding.";
 
 const decodeKeybindingRule = Schema.decodeUnknownOption(KeybindingRuleSchema);
@@ -25,7 +28,7 @@ export function decodeProjectScriptKeybindingRule(input: {
   if (!normalizedKey) return null;
 
   if (input.command === null) {
-    throw new Error(PROJECT_SCRIPT_KEYBINDING_INVALID_MESSAGE);
+    throw new Error(translateNow(globalUiMessages, PROJECT_SCRIPT_KEYBINDING_INVALID_MESSAGE));
   }
 
   const decoded = decodeKeybindingRule({
@@ -33,7 +36,7 @@ export function decodeProjectScriptKeybindingRule(input: {
     command: input.command,
   });
   if (decoded._tag === "None") {
-    throw new Error(PROJECT_SCRIPT_KEYBINDING_INVALID_MESSAGE);
+    throw new Error(translateNow(globalUiMessages, PROJECT_SCRIPT_KEYBINDING_INVALID_MESSAGE));
   }
   return decoded.value;
 }

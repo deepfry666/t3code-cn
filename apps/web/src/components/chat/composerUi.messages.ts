@@ -1,3 +1,5 @@
+import { translate, type Locale } from "../../i18n/locale";
+
 export const composerUiMessages = {
   "Preview {name}": "预览 {name}",
   "Retry upload for {name}": "重新上传 {name}",
@@ -554,4 +556,51 @@ export const composerUiMessages = {
   "Open provider settings": "打开提供方设置",
   "No provider available": "没有可用的提供方",
   "Usage limits are unavailable for this provider": "这个提供方无法查看用量限制",
+  "Install Antigravity in provider settings before sending.":
+    "发送前请先在提供方设置中安装 Antigravity。",
+  "Sign in to Antigravity in provider settings before sending.":
+    "发送前请先在提供方设置中登录 Antigravity。",
+  "Choose an Antigravity model before sending.": "发送前请先选择 Antigravity 模型。",
+  "Refresh Antigravity models in provider settings before sending.":
+    "发送前请先在提供方设置中刷新 Antigravity 模型。",
+  "That Antigravity model is no longer available. Choose another model.":
+    "该 Antigravity 模型已不可用。请选择其他模型。",
+  "Start a new chat to switch providers": "开始新对话以切换提供方",
+  "This thread does not support switching providers after it has started.":
+    "此会话开始后不支持切换提供方。",
+  "Expired terminal context won't be sent": "已过期的终端上下文不会被发送",
+  "Expired terminal contexts won't be sent": "已过期的终端上下文不会被发送",
+  "Expired terminal context omitted from message": "已过期的终端上下文已从消息中略去",
+  "Expired terminal contexts omitted from message": "已过期的终端上下文已从消息中略去",
+  "Remove it or re-add it to include terminal output.": "移除它或重新添加它，即可包含该终端输出。",
+  "Remove them or re-add them to include terminal output.":
+    "移除它们或重新添加它们，即可包含这些终端输出。",
+  "Re-add it if you want that terminal output included.": "如需包含该终端输出，请重新添加它。",
+  "Re-add them if you want that terminal output included.":
+    "如需包含这些终端输出，请重新添加它们。",
+  "This connection cannot upload attachments.": "此连接无法上传附件。",
+  "Uploaded file expired. Remove it and attach it again.": "已上传的文件已过期。请移除后重新附加。",
+  "Uploaded file could not be verified. Retry when the server reconnects.":
+    "无法验证已上传的文件。请在服务器重新连接后重试。",
+  "Unsupported image type": "不支持的图片类型",
+  "Original file is no longer available": "原文件已不可用",
+  "Upload could not start": "上传无法开始",
+  "Not connected": "未连接",
+  "Upload failed": "上传失败",
+  "Attachment still uploading": "附件仍在上传",
+  "Attachments still uploading": "附件仍在上传",
+  "Reasoning effort": "推理强度",
+  "Codex feedback thread ID": "Codex 反馈会话 ID",
+  "A message can have at most {count} attachments.": "一条消息最多可以有 {count} 个附件。",
 } as const;
+
+/**
+ * Labels the composer logic builds in English (shared with tests) and the toast copy built
+ * beside them; the ones in the catalog are translated where they show.
+ */
+export function translateComposerLabel(label: string, locale: Locale): string {
+  if (locale !== "zh-CN") return label;
+  return Object.hasOwn(composerUiMessages, label)
+    ? translate(locale, composerUiMessages, label as keyof typeof composerUiMessages)
+    : label;
+}

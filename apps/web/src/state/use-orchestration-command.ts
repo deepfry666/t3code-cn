@@ -11,6 +11,8 @@ import {
 import * as Cause from "effect/Cause";
 import { AsyncResult } from "effect/reactivity";
 
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { readEnvironmentScope } from "./session";
 import { useAtomCommand } from "./use-atom-command";
 
@@ -27,7 +29,7 @@ export function useOrchestrationCommand<W extends { readonly environmentId: Envi
         Cause.fail(
           new EnvironmentAuthorizationError({
             requiredScope: AuthOrchestrationOperateScope,
-            message: ORCHESTRATION_OPERATE_DENIED_MESSAGE,
+            message: translateNow(globalUiMessages, ORCHESTRATION_OPERATE_DENIED_MESSAGE),
           }),
         ),
       );

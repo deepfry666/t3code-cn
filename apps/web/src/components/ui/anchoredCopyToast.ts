@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "../globalUi.messages";
 import type { RefObject } from "react";
 import { anchoredToastManager } from "./toast";
 
@@ -24,7 +26,7 @@ export function showAnchoredCopyErrorToast(ref: RefObject<HTMLButtonElement | nu
     positionerProps: {
       anchor: ref.current,
     },
-    title: "Failed to copy",
+    title: translateNow(globalUiMessages, "Failed to copy"),
     description: error.message,
   });
 }

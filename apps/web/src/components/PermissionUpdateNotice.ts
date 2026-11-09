@@ -7,6 +7,8 @@ import { getLocalStorageItem, setLocalStorageItem } from "../hooks/useLocalStora
 import { appAtomRegistry } from "../rpc/atomRegistry";
 import { environmentSummaries } from "../state/presentation";
 import { environmentSession } from "../state/session";
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "./globalUi.messages";
 import { toastManager } from "./ui/toast";
 
 interface LegacyPermissionEnvironment {
@@ -42,13 +44,15 @@ function showPermissionNotice(
     toastManager.close(id);
   };
   const id = toastManager.add({
-    title: `Permissions have changed for ${label}`,
-    description:
+    title: translateNow(globalUiMessages, "Permissions have changed for {label}", { label }),
+    description: translateNow(
+      globalUiMessages,
       "This connection still uses the old permissions, so some actions may no longer be available. Pair again using a new link with the permissions you need.",
+    ),
     timeout: 0,
     onClose: persistDismissal,
     actionProps: {
-      children: "Open Sharing & access",
+      children: translateNow(globalUiMessages, "Open Sharing & access"),
       onClick: () => {
         dismiss();
         void router.navigate({ to: "/settings/access" });

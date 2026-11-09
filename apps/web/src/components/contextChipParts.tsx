@@ -6,6 +6,8 @@ import { documentChipKindForFileName } from "~/pierre-icons";
 
 import { PULL_REQUEST_STATE_PRESENTATION } from "~/components/pullRequest/pullRequestIcons";
 import type { PullRequestContextDisplayState } from "~/lib/composerContextRecords";
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "./globalUi.messages";
 import { PierreEntryIcon } from "./chat/PierreEntryIcon";
 import { middleTruncateAttachmentName } from "./composerInlineChip";
 import { PullRequestContextDetails } from "./PullRequestContextDetails";
@@ -102,7 +104,11 @@ export function PullRequestChip(props: {
     <ContextChip
       kind={props.kind}
       render={<button type="button" />}
-      aria-label={`Open ${props.kindLabel} ${props.label}: ${props.metadata.title}`}
+      aria-label={translateNow(globalUiMessages, "Open {kind} {label}: {title}", {
+        kind: props.kindLabel,
+        label: props.label,
+        title: props.metadata.title,
+      })}
       data-markdown-copy={props.copyMarkdown}
       onClick={(event) => props.onOpen(event, props.metadata.url)}
       onAuxClick={(event) => props.onOpen(event, props.metadata.url)}
@@ -152,7 +158,10 @@ export function ImageChipButton({
     <ContextChip
       kind="image"
       render={<button type="button" disabled={disabled} />}
-      aria-label={`Image attachment, ${name}, ${size}`}
+      aria-label={translateNow(globalUiMessages, "Image attachment, {name}, {size}", {
+        name,
+        size,
+      })}
       {...props}
     >
       {previewUrl ? (
@@ -332,7 +341,9 @@ export function UnresolvedChip(props: { label: string; tooltip: string; copyMark
       icon={<CircleDashedIcon />}
       label={props.label}
       state="unresolved"
-      aria-label={`Unavailable context, ${props.label}`}
+      aria-label={translateNow(globalUiMessages, "Unavailable context, {label}", {
+        label: props.label,
+      })}
       data-markdown-copy={props.copyMarkdown}
       tooltip={props.tooltip}
     />

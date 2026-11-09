@@ -1,2 +1,122 @@
 # 刻意保留英文、不翻译的界面文字，每行一条。
 # vp run i18n:untranslated 不再报告这里列出的文字。写法同源码，${...} 或 {name} 占位符等价。
+
+# 字体名与字体探测用的示例字符串。
+Segoe UI
+Noto Sans
+DejaVu Sans
+Liberation Sans
+Helvetica Neue
+Cascadia Mono
+DejaVu Sans Mono
+Ubuntu Mono
+Liberation Mono
+Noto Sans Mono
+Roboto Mono
+Courier New
+SF Pro
+SF Mono
+Symbols Nerd Font Mono
+RagIl10O@ fjord quiz
+
+# 品牌、产品名与客户端名称。
+T3 Code
+T3 Code Desktop
+T3 Code Web
+Samsung Internet
+
+# 启动恢复页（含崩溃页）按 docs/user/chinese.md 的约定保持英文。
+Copy was blocked. The text is selected so you can copy it manually.
+The update download failed. Try Download update again.
+The update install failed. Try Restart to update again.
+Caused by: {text}
+Version: {environment}
+Channel: {channel}
+Surface: {surface}
+Platform: {platform}
+User agent: {agent}
+Time: {time}
+Press ⌘C to copy
+Press Ctrl+C to copy
+Download update
+This browser appears to be offline. Check the connection, then reload.
+We are not sure why. Try a reload first.
+Copied to clipboard.
+Copy error details
+T3 Code failed to start
+More options if it keeps failing
+Download and reinstall the latest nightly build
+Download and reinstall T3 Code
+Run this on the computer that runs T3 Code. Your agent can check the local logs and help you file a bug report.
+Details may include local file paths and names. Check before sharing.
+File a bug report on GitHub
+An unexpected router error occurred.
+Caused by:
+Path: {path}
+No additional error details are available.
+
+# 开发者诊断：只进日志、控制台或错误上报，不进入界面。
+Browser recording startup cleanup failed for tab {tab}.
+Browser recording startup cancellation failed for tab {tab}.
+Browser media capture and cleanup failed for tab {tab}.
+Browser recording initialization and cleanup failed for tab {tab}.
+Browser media recorder start and cleanup failed for tab {tab}.
+Browser recording media cleanup failed for tab {tab}.
+Browser recording stop and cleanup failed for tab {tab}.
+Code highlighting failed for language "{language}", falling back to plain text.
+Could not generate DPoP proof key.
+Could not export DPoP private key.
+Could not export DPoP public key.
+Generated DPoP public key is invalid.
+Could not import DPoP private key.
+Could not load DPoP proof key.
+Could not sign DPoP proof.
+Could not {operation} the local connection catalog: {error}
+Could not {operation}: {error}
+Unknown IndexedDB remove error
+Unknown IndexedDB cursor error
+Timed out waiting for authenticated session after bootstrap.
+Desktop bootstrap is missing {fields} for the local environment.
+Open VSX returned an unexpectedly large response.
+Open VSX returned an unexpectedly large detail response.
+Open VSX returned an unexpectedly large manifest.
+Extension manifest
+That Open VSX checksum response is invalid.
+
+# 配置项名、代码与第三方结构，用户按原文查找。
+T3CODE_RELAY_URL is not configured.
+Options as ReactMarkdownOptions,
+Group as ButtonGroup,
+Menu as DropdownMenu,
+Tool input\n{input}
+System@@skill source
+
+# 运行时拼装、在渲染处翻译的文字（渲染处用 translateSidebarLabel / translateComposerLabel /
+# translateConnectionLabel / translateGitLabel 翻译），这些文件里保留英文原文。
+Expires in {seconds}s
+Expires in {minutes}m
+Expires in {minutes}m {seconds}s
+Expires in {days}d
+Expires in {days}d {tail}
+Expired terminal context
+Expired terminal contexts
+Remove {pronoun} or re-add {pronoun} to include terminal output.
+Re-add {pronoun} if you want that terminal output included.
+Review: {label}
+File comment
+L{start} to L{end}
+
+# 作为用户消息原文发给模型，不做翻译。
+Continue where you left off.
+
+# 媒体名由文件预览片区的目录负责翻译，这里不重复定义，避免出现两份译文。
+Mermaid diagram
+
+# 开发专用界面（DevReplayHost 只在 dev 服务器注册）。
+Replay: {model}
+Replay failed
+Replay a recorded turn
+Replay in {project}
+
+# SVG 路径数据，不是界面文字。
+M{runStart} {y}h{x}v1H{runStart}z

@@ -1,5 +1,5 @@
-import { useTranslation } from "~/i18n/useTranslation";
-import { composerUiMessages } from "./composerUi.messages";
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
+import { translateComposerLabel, composerUiMessages } from "./composerUi.messages";
 import { VoiceInputSetup } from "./VoiceInputSetup";
 import { useComposerTypingGuard } from "./useComposerTypingGuard";
 import { insertAttachmentReferencesForDraft } from "./composerAttachmentReferences";
@@ -484,6 +484,7 @@ const NO_PROVIDER_SLASH_COMMANDS: ServerProvider["slashCommands"] = [];
 
 export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps) {
   const t = useTranslation(composerUiMessages);
+  const locale = useLocale();
   const {
     composerDraftTarget,
     environmentId,
@@ -749,6 +750,11 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
     },
     t,
   );
+  const attachmentUploadReason = attachmentUploadBlockReason({
+    imageIds: [...composerImages, ...composerFiles].map((attachment) => attachment.id),
+    uploadsByImageId,
+    environmentId,
+  });
   const attachmentBlockReason =
     (questionAttachmentTarget &&
     !supportsQuestionAttachments &&
@@ -761,11 +767,9 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
         ? needsReattachFileCount === 1
           ? t("Attach the interrupted file again or remove it")
           : t("Attach the interrupted files again or remove them")
-        : attachmentUploadBlockReason({
-            imageIds: [...composerImages, ...composerFiles].map((attachment) => attachment.id),
-            uploadsByImageId,
-            environmentId,
-          })
+        : attachmentUploadReason === null
+          ? null
+          : translateComposerLabel(attachmentUploadReason, locale)
       : null);
   const setComposerDraftPrompt = useComposerDraftStore((store) => store.setPrompt);
   const addComposerDraftImages = useComposerDraftStore((store) => store.addImages);
@@ -898,10 +902,12 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
       ? undefined
       : clampManagedRuntimeMode(managedPolicy, compatibleRuntimeMode, compatibleRuntimeModes);
 
-  const providerSendBlockReason = getAntigravitySendBlockReason(
+  const antigravityBlockReason = getAntigravitySendBlockReason(
     selectedProviderEntry?.snapshot,
     selectedModel,
   );
+  const providerSendBlockReason =
+    antigravityBlockReason === null ? null : translateComposerLabel(antigravityBlockReason, locale);
   const sendDisabledReason =
     externalSendDisabledReason ??
     (multipleModelSelections?.length === 0 ? t("Select at least one model.") : null) ??

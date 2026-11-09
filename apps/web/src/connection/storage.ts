@@ -17,6 +17,8 @@ import {
   Persistence,
   makeStoredShellSnapshotEncoder,
 } from "@t3tools/client-runtime/platform";
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { TokenStore } from "@t3tools/client-runtime/authorization";
 import {
   ConnectionTransientError,
@@ -503,7 +505,10 @@ export function makeCatalogBackend(database: DatabaseHandle): CatalogBackend {
               : Effect.fail(
                   catalogError(
                     "save",
-                    "Desktop secure storage is unavailable in this system context.",
+                    translateNow(
+                      globalUiMessages,
+                      "Desktop secure storage is unavailable in this system context.",
+                    ),
                   ),
                 ),
           ),
@@ -675,7 +680,10 @@ export function makeBrowserPullRequestRoutingPermissions(
       if (connectionKey === null)
         return yield* new ConnectionBlockedError({
           reason: "configuration",
-          detail: "This environment does not have a saved connection endpoint.",
+          detail: translateNow(
+            globalUiMessages,
+            "This environment does not have a saved connection endpoint.",
+          ),
         });
       return yield* write(
         entry.target.environmentId,

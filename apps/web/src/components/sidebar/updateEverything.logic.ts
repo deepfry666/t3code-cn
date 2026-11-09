@@ -15,7 +15,9 @@ import {
   resolveVersionMismatch,
   supportsDesktopAppUpdate,
 } from "~/versionSkew";
+import { translateNow } from "~/i18n/useTranslation";
 import type { ServerUpdateOutcome, ServerUpdateTarget } from "../ServerUpdateAction";
+import { sidebarUiMessages } from "./sidebarUi.messages";
 
 export interface UpdateEverythingMachine {
   readonly environmentId: EnvironmentId;
@@ -538,7 +540,9 @@ export function collectUpdateEverythingResult(input: {
     updatedProviders: input.providers.filter((outcome) => outcome.status === "updated").length,
     restarting: [],
     failures: [
-      ...input.localFailures.map((failure) => `This app: ${failure}`),
+      ...input.localFailures.map((failure) =>
+        translateNow(sidebarUiMessages, "This app: {failure}", { failure }),
+      ),
       ...input.servers.flatMap(({ label, outcome }) =>
         outcome.status === "failed" ? [`${label}: ${outcome.message}`] : [],
       ),

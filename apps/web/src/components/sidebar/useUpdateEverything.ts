@@ -4,6 +4,7 @@ import { PROVIDER_DISPLAY_NAMES } from "@t3tools/contracts";
 import { APP_VERSION } from "~/branding";
 import { isDesktopLocalConnectionTarget } from "~/connection/desktopLocal";
 import { isElectron } from "~/env";
+import { translateNow } from "~/i18n/useTranslation";
 import { useEnvironments } from "~/state/environments";
 import { environmentIdsKey } from "~/state/environmentAtomList";
 import { environmentUpdateStatesAtom } from "~/state/server";
@@ -22,6 +23,7 @@ import {
   runUpdateEverything,
   type UpdateRunMachine,
 } from "./updateEverything.logic";
+import { sidebarUiMessages } from "./sidebarUi.messages";
 import {
   clearSavedUpdateEverythingResult,
   saveUpdateEverythingResult,
@@ -155,7 +157,9 @@ export function useUpdateEverything(
               if (runOutcome.status !== "updated") {
                 providerFailures.set(
                   run.environmentId,
-                  runOutcome.status === "failed" ? runOutcome.line : "Provider update interrupted",
+                  runOutcome.status === "failed"
+                    ? runOutcome.line
+                    : translateNow(sidebarUiMessages, "Provider update interrupted"),
                 );
               }
               return runOutcome;

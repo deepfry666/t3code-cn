@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { AuthOrchestrationOperateScope, type ProjectIconOverride } from "@t3tools/contracts";
 import {
   isAtomCommandInterrupted,
@@ -53,7 +55,11 @@ export function useProjectGroupUpdate() {
     if (unavailable) {
       return failWith(
         failureTitle,
-        `Connect ${unavailable.environmentLabel ?? "the selected environment"} and try again.`,
+        translateNow(globalUiMessages, "Connect {environment} and try again.", {
+          environment:
+            unavailable.environmentLabel ??
+            translateNow(globalUiMessages, "the selected environment"),
+        }),
       );
     }
     for (const member of members) {
@@ -136,7 +142,10 @@ export function checkProjectAccess(
   return denied
     ? failWith(
         failureTitle,
-        `This connection cannot change projects in ${denied.environmentLabel ?? "this environment"}.`,
+        translateNow(globalUiMessages, "This connection cannot change projects in {environment}.", {
+          environment:
+            denied.environmentLabel ?? translateNow(globalUiMessages, "this environment"),
+        }),
       )
     : null;
 }

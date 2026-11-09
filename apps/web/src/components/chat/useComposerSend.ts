@@ -1,5 +1,5 @@
-import { useTranslation } from "~/i18n/useTranslation";
-import { composerUiMessages } from "./composerUi.messages";
+import { readLocale, useTranslation } from "~/i18n/useTranslation";
+import { composerUiMessages, translateComposerLabel } from "./composerUi.messages";
 import { isClearComposerCommand, parseSideChatCommand } from "@t3tools/shared/composerTrigger";
 import { armFreshSession, disarmFreshSession, readFreshSessionArm } from "./freshSessionArms";
 import {
@@ -710,8 +710,8 @@ export function useComposerSend(input: ComposerSendInput) {
         toastManager.add(
           stackedThreadToast({
             type: "warning",
-            title: toastCopy.title,
-            description: toastCopy.description,
+            title: translateComposerLabel(toastCopy.title, readLocale()),
+            description: translateComposerLabel(toastCopy.description, readLocale()),
           }),
         );
       }
@@ -1125,8 +1125,8 @@ export function useComposerSend(input: ComposerSendInput) {
       toastManager.add(
         stackedThreadToast({
           type: "warning",
-          title: toastCopy.title,
-          description: toastCopy.description,
+          title: translateComposerLabel(toastCopy.title, readLocale()),
+          description: translateComposerLabel(toastCopy.description, readLocale()),
         }),
       );
     }

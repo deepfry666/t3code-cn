@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { scopeProjectRef } from "@t3tools/client-runtime/environment";
 import {
   type AtomCommandResult,
@@ -22,7 +24,9 @@ const copyTriageCliCommand = () =>
   writeTextToClipboard(TRIAGE_CLI_COMMAND, "command").catch(() =>
     toastManager.add({
       type: "error",
-      title: `Could not copy. Type ${TRIAGE_CLI_COMMAND} instead.`,
+      title: translateNow(globalUiMessages, "Could not copy. Type {command} instead.", {
+        command: TRIAGE_CLI_COMMAND,
+      }),
     }),
   );
 
@@ -47,8 +51,12 @@ export function useStartTriage() {
     toastManager.add(
       stackedThreadToast({
         type: "error",
-        title: "Could not start triage",
-        description: `${description} Run ${TRIAGE_CLI_COMMAND} in a terminal on that machine instead.`,
+        title: translateNow(globalUiMessages, "Could not start triage"),
+        description: translateNow(
+          globalUiMessages,
+          "{message} Run {command} in a terminal on that machine instead.",
+          { message: description, command: TRIAGE_CLI_COMMAND },
+        ),
         timeout: 0,
         actionProps: { children: "Copy command", onClick: () => void copyTriageCliCommand() },
         // "Copy command" is the copy that helps here, not the error text.
@@ -77,12 +85,12 @@ export function useStartTriage() {
     // A null result means the user went elsewhere; only a throw is a failure.
     await handleNewThread(scopeProjectRef(project.value.environmentId, project.value.id), {
       prompt: prepared.value.prompt,
-    }).catch(() => fail("T3 Code could not open a new thread."));
+    }).catch(() => fail(translateNow(globalUiMessages, "T3 Code could not open a new thread.")));
   };
 
   return async (environmentId: EnvironmentId) => {
     if (scratchWorkspaceRootFor(environmentId) === null) {
-      fail("This machine cannot start threads without a project.");
+      fail(translateNow(globalUiMessages, "This machine cannot start threads without a project."));
       return;
     }
     const requestingRouteHref = router.state.location.href;
@@ -92,7 +100,7 @@ export function useStartTriage() {
     const pendingTimer = setTimeout(() => {
       pendingToastId = toastManager.add({
         type: "loading",
-        title: "Starting triage…",
+        title: translateNow(globalUiMessages, "Starting triage…"),
         timeout: 0,
       });
     }, 400);

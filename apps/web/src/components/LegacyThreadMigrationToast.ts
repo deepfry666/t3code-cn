@@ -1,4 +1,6 @@
+import { translateNow } from "~/i18n/useTranslation";
 import { appAtomRegistry } from "../rpc/atomRegistry";
+import { globalUiMessages } from "./globalUi.messages";
 import { primaryServerLegacyThreadMigrationAtom } from "../state/server";
 import { toastManager } from "./ui/toast";
 
@@ -15,10 +17,12 @@ export function startLegacyThreadMigrationToast(): () => void {
         if (toastId !== null) return;
         toastId = toastManager.add({
           type: "loading",
-          title: "Restoring your threads…",
-          description: `Migrating ${migration.totalThreadCount.toLocaleString()} ${
-            migration.totalThreadCount === 1 ? "thread" : "threads"
-          } from the previous version. You can keep working while this finishes.`,
+          title: translateNow(globalUiMessages, "Restoring your threads…"),
+          description: translateNow(
+            globalUiMessages,
+            "Migrating {count} threads from the previous version. You can keep working while this finishes.",
+            { count: migration.totalThreadCount.toLocaleString() },
+          ),
           timeout: 0,
         });
         return;
