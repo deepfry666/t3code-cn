@@ -1272,7 +1272,7 @@ export function ChatSettingsPanel() {
         />
       </SettingsSection>
 
-      <SettingsSection id="activity" title="Activity">
+      <SettingsSection id="activity" title={t("Activity")}>
         <ToolCallVisibilityRow />
       </SettingsSection>
     </SettingsPageContainer>
@@ -1302,7 +1302,7 @@ function ToolCallVisibilityRow() {
       resetAction={
         settings.toolCallVisibility !== DEFAULT_UNIFIED_SETTINGS.toolCallVisibility ? (
           <SettingResetButton
-            label="tool calls in chat"
+            label={t("tool calls in chat")}
             onClick={() =>
               updateSettings({ toolCallVisibility: DEFAULT_UNIFIED_SETTINGS.toolCallVisibility })
             }

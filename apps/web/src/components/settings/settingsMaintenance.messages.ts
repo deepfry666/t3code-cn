@@ -273,6 +273,21 @@ export const settingsMaintenanceMessages = {
   "{size} GiB on {environment}": "{environment} 上的 {size} GiB",
   "Copy command": "复制命令",
   Dismiss: "忽略",
+  "Reclaim {amount} on {label}?": "回收 {label} 上的 {amount}？",
+  "{amount} on {label}": "{label} 上的 {amount}",
+  "Reclaiming {amount} on {label}": "正在回收 {label} 上的 {amount}",
+  "T3 Code there restarts and is back in about {minutes} min.":
+    "该设备上的 T3 Code 会重启，约 {minutes} 分钟后恢复。",
+  "Restarts T3 Code there. It is offline for about {minutes} min.":
+    "会重启该设备上的 T3 Code，大约离线 {minutes} 分钟。",
+  "The last attempt failed: {failure}": "上次尝试失败：{failure}",
+  "Could not reclaim space on {label}": "无法回收 {label} 上的空间",
+  "T3 Code on {label} stops, rebuilds its database, and starts again. It is offline for about {minutes} min. Running agents stop when it restarts.":
+    "{label} 上的 T3 Code 会停止、重建数据库后再次启动，大约离线 {minutes} 分钟。重启时正在运行的智能体会停止。",
+  "Restart and reclaim": "重启并回收",
+  Reclaim: "回收",
+  "Restarting…": "正在重启…",
+  "An error occurred.": "发生错误。",
   "Send SIGINT": "发送 SIGINT",
   "Send SIGKILL": "发送 SIGKILL",
   "OpenTelemetry export": "OpenTelemetry 导出",

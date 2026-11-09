@@ -138,6 +138,7 @@ function ReclaimRow({
   readonly status: DatabaseStorageStatus;
   readonly dismiss: ReactNode;
 }) {
+  const t = useTranslation(settingsMaintenanceMessages);
   const reclaim = useAtomCommand(serverEnvironment.reclaimDatabaseSpace);
   const [confirming, setConfirming] = useState(false);
   const [requested, setRequested] = useState(false);
@@ -152,8 +153,8 @@ function ReclaimRow({
     if (result._tag === "Success") {
       toastManager.add({
         type: "success",
-        title: `Reclaiming ${amount} on ${label}`,
-        description: `T3 Code there restarts and is back in about ${minutes} min.`,
+        title: t("Reclaiming {amount} on {label}", { amount, label }),
+        description: t("T3 Code there restarts and is back in about {minutes} min.", { minutes }),
       });
       return;
     }
@@ -162,17 +163,17 @@ function ReclaimRow({
     const error = squashAtomCommandFailure(result);
     toastManager.add({
       type: "error",
-      title: `Could not reclaim space on ${label}`,
-      description: error instanceof Error ? error.message : "An error occurred.",
+      title: t("Could not reclaim space on {label}", { label }),
+      description: error instanceof Error ? error.message : t("An error occurred."),
     });
   };
   return (
     <SettingsRow
-      title={`${amount} on ${label}`}
+      title={t("{amount} on {label}", { amount, label })}
       description={
         status.reclaimFailure === undefined
-          ? `Restarts T3 Code there. It is offline for about ${minutes} min.`
-          : `The last attempt failed: ${status.reclaimFailure}`
+          ? t("Restarts T3 Code there. It is offline for about {minutes} min.", { minutes })
+          : t("The last attempt failed: {failure}", { failure: status.reclaimFailure })
       }
       control={
         <div className="flex flex-wrap items-center gap-1.5">
@@ -182,23 +183,27 @@ function ReclaimRow({
             disabled={restarting}
             onClick={() => setConfirming(true)}
           >
-            {restarting ? "Restarting…" : "Reclaim"}
+            {restarting ? t("Restarting…") : t("Reclaim")}
           </Button>
           {dismiss}
           <AlertDialog open={confirming} onOpenChange={setConfirming}>
             <AlertDialogPopup>
               <AlertDialogHeader>
                 <AlertDialogTitle>
-                  Reclaim {amount} on {label}?
+                  {t("Reclaim {amount} on {label}?", { amount, label })}
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                  T3 Code on {label} stops, rebuilds its database, and starts again. It is offline
-                  for about {minutes} min. Running agents stop when it restarts.
+                  {t(
+                    "T3 Code on {label} stops, rebuilds its database, and starts again. It is offline for about {minutes} min. Running agents stop when it restarts.",
+                    { label, minutes },
+                  )}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogClose render={<Button variant="outline" />}>Cancel</AlertDialogClose>
-                <Button onClick={() => void start()}>Restart and reclaim</Button>
+                <AlertDialogClose render={<Button variant="outline" />}>
+                  {t("Cancel")}
+                </AlertDialogClose>
+                <Button onClick={() => void start()}>{t("Restart and reclaim")}</Button>
               </AlertDialogFooter>
             </AlertDialogPopup>
           </AlertDialog>

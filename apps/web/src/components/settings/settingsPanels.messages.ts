@@ -156,6 +156,7 @@ export const settingsPanelsMessages = {
     "所有选中的已连接环境都必须支持重启后继续。",
   "continue threads after restarts": "重启后继续会话",
   "Background activity": "后台活动",
+  Activity: "活动",
   Diagnostics: "诊断",
   "Inspect processes, resource use, and logs on this environment.":
     "查看此环境的进程、资源占用和日志。",
