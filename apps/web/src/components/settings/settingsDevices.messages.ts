@@ -201,6 +201,8 @@ export const settingsDevicesMessages = {
     "无法连接设备主机。请在设置中测试其 SSH 连接。",
   "The pool has no iOS devices.": "池中没有 iOS 设备。",
   "The pool has no Android devices.": "池中没有 Android 设备。",
+  "Multiple hosts match this SSH destination. Select the environment to edit its hosts.":
+    "多个主机匹配这个 SSH 目标。请选择要编辑其主机的环境。",
 } as const;
 
 export function translateDevicesLabel(label: string, locale: Locale): string {

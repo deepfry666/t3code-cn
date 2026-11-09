@@ -1,7 +1,7 @@
-import { useTranslation } from "~/i18n/useTranslation";
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
 
 import { MenuGroupLabel } from "../ui/menu";
-import { pullRequestUiMessages } from "./pullRequestUi.messages";
+import { pullRequestUiMessages, translatePullRequestLabel } from "./pullRequestUi.messages";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 
 export function PullRequestStackHeader({
@@ -14,6 +14,7 @@ export function PullRequestStackHeader({
   stale?: boolean;
 }) {
   const t = useTranslation(pullRequestUiMessages);
+  const locale = useLocale();
   return (
     <MenuGroupLabel>
       <div className="flex items-center justify-between gap-2">
@@ -23,7 +24,7 @@ export function PullRequestStackHeader({
             <TooltipTrigger render={<span role="status" className="text-xs font-normal" />}>
               {stale ? t("May be stale") : t("Refreshing…")}
             </TooltipTrigger>
-            <TooltipPopup>{notice}</TooltipPopup>
+            <TooltipPopup>{translatePullRequestLabel(notice, locale)}</TooltipPopup>
           </Tooltip>
         ) : null}
       </div>

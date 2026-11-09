@@ -809,7 +809,9 @@ function ManagedCodexSetup({
   );
 
   const logoutWarning =
-    auth?.phase === "idle" && auth.message?.startsWith("Signed out locally.") ? auth.message : null;
+    auth?.phase === "idle" && auth.message?.startsWith("Signed out locally.")
+      ? t("Signed out locally.")
+      : null;
 
   if (presentation === "onboarding") {
     const setupError =

@@ -40,7 +40,10 @@ import {
   visibleThreadPullRequests,
 } from "@t3tools/client-runtime/thread-pull-requests";
 
+import { translateNow } from "~/i18n/useTranslation";
+
 import { inferReviewCommentFenceLanguage, type ReviewCommentContext } from "~/reviewCommentContext";
+import { pullRequestUiMessages } from "./pullRequestUi.messages";
 
 export const PULL_REQUEST_MERGE_METHOD_LABELS: Record<PullRequestMergeMethod, string> = {
   merge: "Merge",
@@ -823,7 +826,9 @@ function reviewThreadContext(
   return {
     id: `pull-request-finding:${thread.id}`,
     sectionId: `pull-request:${pullRequestNumber}`,
-    sectionTitle: `PR #${pullRequestNumber} review`,
+    sectionTitle: translateNow(pullRequestUiMessages, "PR #{number} review", {
+      number: pullRequestNumber,
+    }),
     filePath: thread.path,
     startIndex: lineIndex,
     endIndex: lineIndex,
@@ -1156,7 +1161,9 @@ export function buildPullRequestCommentContext(
   return {
     id: `pr-comment:${pullRequest.url}:comment:${comment.id}`,
     sectionId: `pull-request:${pullRequestNumber}`,
-    sectionTitle: `PR #${pullRequestNumber} conversation`,
+    sectionTitle: translateNow(pullRequestUiMessages, "PR #{number} conversation", {
+      number: pullRequestNumber,
+    }),
     // The chip wears `filePath rangeLabel`: the file a remark names, or who wrote one that names none.
     filePath: comment.path ?? `@${author}`,
     startIndex: 0,
@@ -1263,7 +1270,9 @@ export function buildAskAboutGuideStopHandoff(input: {
       {
         id: `pull-request-guide-stop:${input.url}:${stop.index}`,
         sectionId: `pull-request:${input.number}`,
-        sectionTitle: `PR #${input.number} review guide`,
+        sectionTitle: translateNow(pullRequestUiMessages, "PR #{number} review guide", {
+          number: input.number,
+        }),
         filePath: `Guide stop ${stop.index + 1}`,
         startIndex: 0,
         endIndex: 0,

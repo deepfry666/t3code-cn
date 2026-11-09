@@ -231,4 +231,5 @@ export const deviceUiMessages = {
   Ready: "就绪",
   Retry: "重试",
   "Retrying…": "正在重试…",
+  "Fold command failed ({status}).": "折叠命令失败（{status}）。",
 } as const;

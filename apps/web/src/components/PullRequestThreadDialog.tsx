@@ -18,10 +18,16 @@ import {
 import { cn } from "~/lib/utils";
 import { parsePullRequestReference } from "@t3tools/client-runtime/pull-request-link-input";
 import { getSourceControlPresentation } from "~/sourceControlPresentation";
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { useEnvironmentQuery } from "~/state/query";
 import { readEnvironmentScope, useEnvironmentScope } from "~/state/session";
 import { vcsEnvironment } from "~/state/vcs";
+import { PULL_REQUEST_STATE_PRESENTATION } from "./pullRequest/pullRequestIcons";
 import { offHeadPullRequestCheckoutToast } from "./pullRequest/pullRequestCheckoutToast";
+import {
+  pullRequestUiMessages,
+  translatePullRequestLabel,
+} from "./pullRequest/pullRequestUi.messages";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -68,6 +74,8 @@ export function PullRequestThreadDialog({
   onOpenChange,
   onPrepared,
 }: PullRequestThreadDialogProps) {
+  const t = useTranslation(pullRequestUiMessages);
+  const locale = useLocale();
   const referenceInputRef = useRef<HTMLInputElement>(null);
   const [reference, setReference] = useState(initialReference ?? "");
   const [referenceDirty, setReferenceDirty] = useState(false);
@@ -88,6 +96,7 @@ export function PullRequestThreadDialog({
   );
   const sourceControlPresentation = getSourceControlPresentation(gitStatus?.sourceControlProvider);
   const terminology = sourceControlPresentation.terminology;
+  const kindLabel = translatePullRequestLabel(terminology.singular, locale);
   const SourceControlIcon = sourceControlPresentation.Icon;
 
   const parsedReference = parsePullRequestReference(reference);
@@ -152,7 +161,7 @@ export function PullRequestThreadDialog({
         setPrepareErrorMessage(
           error instanceof Error
             ? error.message
-            : `Failed to prepare ${terminology.singular} thread.`,
+            : t("Failed to prepare {kind} thread.", { kind: kindLabel }),
         );
       }
       return;
@@ -170,9 +179,9 @@ export function PullRequestThreadDialog({
   const validationMessage = !referenceDirty
     ? null
     : reference.trim().length === 0
-      ? `Paste a ${terminology.singular} URL, checkout command, or enter 123 / #123.`
+      ? t("Paste a {kind} URL, checkout command, or enter 123 / #123.", { kind: kindLabel })
       : parsedReference === null
-        ? `Use a ${terminology.singular} URL, checkout command, 123, or #123.`
+        ? t("Use a {kind} URL, checkout command, 123, or #123.", { kind: kindLabel })
         : null;
   const errorMessage =
     validationMessage ??
@@ -182,7 +191,7 @@ export function PullRequestThreadDialog({
       : preparePullRequestThreadAction.error instanceof Error
         ? preparePullRequestThreadAction.error.message
         : preparePullRequestThreadAction.error
-          ? `Failed to prepare ${terminology.singular} thread.`
+          ? t("Failed to prepare {kind} thread.", { kind: kindLabel })
           : null);
 
   return (
@@ -205,11 +214,13 @@ export function PullRequestThreadDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center">
             <SourceControlIcon className="me-2 size-4" />
-            Checkout {terminology.singular}
+            {t("Checkout {kind}", { kind: kindLabel })}
           </DialogTitle>
           <DialogDescription>
-            Resolve a {sourceControlPresentation.providerName} {terminology.singular}, then create
-            the draft thread in the main repo or in a dedicated worktree.
+            {t(
+              "Resolve a {host} {kind}, then create the draft thread in the main repo or in a dedicated worktree.",
+              { host: sourceControlPresentation.providerName, kind: kindLabel },
+            )}
           </DialogDescription>
         </DialogHeader>
         <DialogPanel>
@@ -219,7 +230,9 @@ export function PullRequestThreadDialog({
             </span>
             <Input
               ref={referenceInputRef}
-              placeholder={`${terminology.shortLabel} URL, checkout command, or #42`}
+              placeholder={t("{shortLabel} URL, checkout command, or #42", {
+                shortLabel: terminology.shortLabel,
+              })}
               value={reference}
               onChange={(event) => {
                 setReferenceDirty(true);
@@ -251,7 +264,10 @@ export function PullRequestThreadDialog({
                   </p>
                 </div>
                 <span className={cn("shrink-0 text-xs capitalize", statusTone)}>
-                  {resolvedPullRequest.state}
+                  {translatePullRequestLabel(
+                    PULL_REQUEST_STATE_PRESENTATION[resolvedPullRequest.state].label,
+                    locale,
+                  )}
                 </span>
               </div>
             </div>
@@ -260,7 +276,7 @@ export function PullRequestThreadDialog({
           {isResolving ? (
             <div className="flex items-center gap-2 text-muted-foreground text-xs">
               <Spinner size="sm" />
-              Resolving {terminology.singular}...
+              {t("Resolving {kind}...", { kind: kindLabel })}
             </div>
           ) : null}
 
@@ -274,7 +290,7 @@ export function PullRequestThreadDialog({
             onClick={() => onOpenChange(false)}
             disabled={preparePullRequestThreadAction.isPending}
           >
-            Cancel
+            {t("Cancel")}
           </Button>
           <Button
             type="button"
@@ -289,7 +305,7 @@ export function PullRequestThreadDialog({
               preparePullRequestThreadAction.isPending
             }
           >
-            {preparingMode === "local" ? "Preparing local..." : "Local"}
+            {preparingMode === "local" ? t("Preparing local...") : t("Local")}
           </Button>
           <Button
             type="button"
@@ -304,7 +320,7 @@ export function PullRequestThreadDialog({
               preparePullRequestThreadAction.isPending
             }
           >
-            {preparingMode === "worktree" ? "Preparing worktree..." : "Worktree"}
+            {preparingMode === "worktree" ? t("Preparing worktree...") : t("Worktree")}
           </Button>
         </DialogFooter>
       </DialogPopup>

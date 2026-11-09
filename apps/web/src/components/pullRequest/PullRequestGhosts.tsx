@@ -183,7 +183,9 @@ export function PullRequestDetailGhost({
             size="icon-xs"
             variant="ghost"
             disabled
-            aria-label={`${capitalizeTerm(terminology.singular)} actions loading`}
+            aria-label={t("{term} actions loading", {
+              term: capitalizeTerm(translatePullRequestLabel(terminology.singular, locale)),
+            })}
           >
             <EllipsisIcon aria-hidden className="size-4" />
           </Button>
@@ -191,7 +193,9 @@ export function PullRequestDetailGhost({
             <Button
               size="icon-xs"
               variant="ghost"
-              aria-label={`Collapse ${terminology.singular} panel`}
+              aria-label={t("Collapse {term} panel", {
+                term: translatePullRequestLabel(terminology.singular, locale),
+              })}
               onClick={onClose}
             >
               <PanelRightIcon aria-hidden className="size-3.5" />

@@ -49,7 +49,7 @@ export default function FontViewer(props: { readonly src: string; readonly name:
   useEffect(() => {
     const controller = new AbortController();
     const timeout = setTimeout(() => {
-      setError("The font took too long to load.");
+      setError(translateNow(filesUiMessages, "The font took too long to load."));
       controller.abort();
     }, 30_000);
     void readFont(props.src, controller.signal)

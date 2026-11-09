@@ -334,7 +334,9 @@ function ExcerptDiff({
                 text=""
                 completionScope={commenting.canComment ? commenting.completionScope : null}
                 placeholder={
-                  commenting.canComment ? "Add a comment…" : "Ask the agent about these lines…"
+                  commenting.canComment
+                    ? t("Add a comment…")
+                    : t("Ask the agent about these lines…")
                 }
                 submitLabel={commenting.canComment ? t("Add to review") : t("Ask agent")}
                 {...(commenting.canComment && onAskAgent !== null
@@ -367,13 +369,16 @@ function ExcerptDiff({
         renderHeaderMetadata={() => (
           <span className="flex items-center gap-2 text-xs text-muted-foreground">
             <span className="tabular-nums">
-              {excerpt.side === "old" ? "removed code, " : ""}showing {slice.shown} of {slice.total}{" "}
-              diff lines
+              {excerpt.side === "old" ? t("removed code, ") : null}
+              {t("showing {shown} of {total} diff lines", {
+                shown: slice.shown,
+                total: slice.total,
+              })}
             </span>
             <Button
               size="icon-xs"
               variant="ghost-muted"
-              aria-label={`Open ${excerpt.path} in Code`}
+              aria-label={t("Open {path} in Code", { path: excerpt.path })}
               onClick={() => onOpenFile(excerpt.path)}
             >
               <ArrowUpRightIcon aria-hidden />

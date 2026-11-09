@@ -11,11 +11,14 @@ import {
   squashAtomCommandFailure,
 } from "@t3tools/client-runtime/state/runtime";
 import { useEffect, useRef } from "react";
+import { translateNow } from "~/i18n/useTranslation";
+
 import { selectActiveRightPanelSurface, useRightPanelStore } from "../../rightPanelStore";
 import { threadEnvironment } from "../../state/threads";
 import { useOrchestrationCommand } from "../../state/use-orchestration-command";
 import { useLinkedThreadPullRequest } from "../ThreadStatusIndicators";
 import { stackedThreadToast, toastManager } from "../ui/toast";
+import { pullRequestUiMessages } from "./pullRequestUi.messages";
 
 /** Relink replaced closed/merged requests to the newer open request on the same branch, moving its panel. */
 export function useThreadLinkedPullRequest(input: {
@@ -89,8 +92,11 @@ export function useThreadLinkedPullRequest(input: {
       toastManager.add(
         stackedThreadToast({
           type: "error",
-          title: "Unable to update the thread pull request",
-          description: error instanceof Error ? error.message : "An error occurred.",
+          title: translateNow(pullRequestUiMessages, "Unable to update the thread pull request"),
+          description:
+            error instanceof Error
+              ? error.message
+              : translateNow(pullRequestUiMessages, "An error occurred."),
         }),
       );
     });

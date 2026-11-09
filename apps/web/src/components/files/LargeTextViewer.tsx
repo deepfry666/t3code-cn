@@ -6,7 +6,7 @@ import { FileSurfaceFailure, FileSurfaceLoading, FileSurfaceNotice } from "./fil
 import { PREVIEW_PAGE_ROWS, type TextPreviewResult } from "./largeTextProtocol";
 import VirtualTablePreview from "./VirtualTablePreview";
 
-import { useTranslation } from "~/i18n/useTranslation";
+import { translateNow, useTranslation } from "~/i18n/useTranslation";
 import { filesUiMessages } from "./filesUi.messages";
 
 const FIRST_SCREEN_BYTES = 16 * 1024;
@@ -132,7 +132,12 @@ export default function LargeTextViewer(props: {
       engine.addEventListener("error", () => {
         copyPending.current?.reject(new Error("The text viewer stopped."));
         copyPending.current = null;
-        setError("Could not load the text viewer. Close the file and try again.");
+        setError(
+          translateNow(
+            filesUiMessages,
+            "Could not load the text viewer. Close the file and try again.",
+          ),
+        );
       });
       engine.postMessage(
         {

@@ -2,8 +2,11 @@ import { LoaderCircleIcon, PauseIcon, PlayIcon, TriangleAlertIcon } from "lucide
 import { createContext, useContext, useRef, useState } from "react";
 
 import { useStableCallback } from "~/hooks/useStableCallback";
+import { useTranslation } from "~/i18n/useTranslation";
+
 import { ContextChip, ContextChipAction, ContextChipLabel } from "../ContextChip";
 import { middleTruncateAttachmentName } from "../composerInlineChip";
+import { filesUiMessages } from "./filesUi.messages";
 
 export const AudioPreviewUnmountContext = createContext<((audio: HTMLAudioElement) => void) | null>(
   null,
@@ -89,17 +92,18 @@ function AudioChip(props: AudioPreviewProps) {
         audio.current = null;
       };
   });
+  const t = useTranslation(filesUiMessages);
   const loading = !props.failed && !ready;
   const open = props.onOpen ?? (props.failed ? props.onRetry : undefined);
   const action = props.failed
     ? props.onOpen
-      ? "Open"
-      : "Retry"
+      ? t("Open {label}", { label: props.name })
+      : t("Retry {label}", { label: props.name })
     : loading
-      ? "Loading"
+      ? t("Loading {label}", { label: props.name })
       : playing
-        ? "Pause"
-        : "Play";
+        ? t("Pause {label}", { label: props.name })
+        : t("Play {label}", { label: props.name });
   const Icon = props.failed
     ? TriangleAlertIcon
     : loading
@@ -114,7 +118,7 @@ function AudioChip(props: AudioPreviewProps) {
       {...(props.failed ? { state: "invalid" as const } : {})}
       {...(props.variant === "bubble" ? { shape: "bubble" as const } : {})}
       className="relative isolate overflow-hidden"
-      title={props.failed ? "Audio unavailable. Open the file or retry playback." : props.name}
+      title={props.failed ? t("Audio unavailable. Open the file or retry playback.") : props.name}
     >
       <span
         aria-hidden
@@ -123,7 +127,7 @@ function AudioChip(props: AudioPreviewProps) {
       />
       <ContextChipAction
         className="ml-0 [&_svg]:size-[1em]"
-        aria-label={`${props.failed ? "Audio unavailable. " : ""}${action} ${props.name}`}
+        aria-label={props.failed ? t("Audio unavailable. {action}", { action }) : action}
         disabled={loading}
         onClick={() => {
           if (props.failed) {

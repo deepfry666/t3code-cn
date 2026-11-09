@@ -227,6 +227,7 @@ export const settingsProviderAccountsMessages = {
     "无法完成 Codex 安装。请检查磁盘空间和目录访问权限。",
   "The managed Codex runtime is incomplete. Remove it and reinstall.":
     "托管的 Codex 运行环境不完整。请移除后重新安装。",
+  "Signed out locally.": "已在本地退出登录。",
 } as const;
 
 export function translateProviderAccountsLabel(label: string, locale: Locale): string {
