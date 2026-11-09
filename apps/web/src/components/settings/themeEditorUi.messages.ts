@@ -111,7 +111,7 @@ export const themeEditorUiMessages = {
     "“{name}”已有{appearance}调色板，请换一个名称。",
   "Merge into “{name}”": "合并到“{name}”",
   "Add {appearance} palette": "添加{appearance}调色板",
-  use: "处使用",
+  use: "使用",
   uses: "处使用",
   "Use {name} {mode} mode": "使用 {name} 的{mode}模式",
   "e.g. Aurora": "例如 Aurora",

@@ -36,7 +36,7 @@ export const settingsThreadsMessages = {
   "Every {minutes} min": "每 {minutes} 分钟",
   "Every {seconds} sec": "每 {seconds} 秒",
   Daily: "每天",
-  Weekdays: "工作日",
+  Weekdays: "周一至周五",
   "{days} at {time}": "{days} {time}",
   "Not scheduled": "未安排",
   "in under a minute": "不到一分钟后",
@@ -135,7 +135,7 @@ export const settingsThreadsMessages = {
   "Link this environment to T3 Connect for a public URL.":
     "将此环境关联到 T3 Connect，获取公网 URL。",
   "Only this computer can call this address. Link T3 Connect for a public URL.":
-    "只有此设备可以访问此地址。关联 T3 Connect 可获取公网 URL。",
+    "只有本机可以访问此地址。关联 T3 Connect 可获取公网 URL。",
   "Works wherever this environment's address is reachable, for example over Tailscale or your own proxy. Link T3 Connect for a public URL.":
     "只要能连接此环境的地址（例如通过 Tailscale 或你自己的代理）即可使用。关联 T3 Connect 可获取公网 URL。",
   "Held for up to 24 hours while this environment is offline. ":
@@ -241,9 +241,9 @@ export const settingsThreadsMessages = {
   "Invalid run time": "运行时间无效",
   "Pick a date and time.": "请选择日期和时间。",
   "That time does not exist in your time zone.": "你所在的时区不存在这个时间。",
-  "Invalid age limit": "有效时长无效",
+  "Invalid age limit": "请求时效限制无效",
   "Enter whole minutes from 1 to {max}, or leave it blank.":
-    "请输入 1 到 {max} 之间的整数分钟，或留空。",
+    "请输入 1 到 {max} 之间的整数分钟数，或留空。",
   "Invalid webhook settings": "webhook 设置无效",
   "Duplicate request key must contain a valid request placeholder.":
     "重复请求键必须包含有效的请求占位符。",
@@ -269,8 +269,8 @@ export const settingsThreadsMessages = {
     "主机或客户端使用电池供电时，也会暂停后台检测。",
   "Uses custom intervals. Shared policy: {policy}.": "使用自定义间隔。共享策略：{policy}。",
   "Pause when host is locked": "主机锁定时暂停",
-  "Pause on host low power": "主机低电量时暂停",
-  "Pause on client low power": "客户端低电量时暂停",
+  "Pause on host low power": "主机开启低电量模式时暂停",
+  "Pause on client low power": "客户端开启低电量模式时暂停",
   "Pause on battery": "使用电池时暂停",
   "Background Activity": "后台活动",
   "Tune the shared power policy and the background intervals that feed it.":
@@ -325,7 +325,7 @@ export const settingsThreadsMessages = {
   "Same time as an option above": "与上方选项时间相同",
   "Snooze option {index}": "暂缓选项 {index}",
   "Remove snooze option {index}": "移除暂缓选项 {index}",
-  "Menus offer only Custom…": "菜单仅提供“自定义…”",
+  "Menus offer only Custom…": "菜单仅提供“自定义…”选项",
   "Menu now: {options}": "当前菜单：{options}",
   "Add option": "添加选项",
   "Up to {max} options": "最多 {max} 个选项",
