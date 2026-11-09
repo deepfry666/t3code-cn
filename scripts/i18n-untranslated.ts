@@ -32,9 +32,9 @@ const DIAGNOSTIC_LINE =
 const SKIPPED_LINE =
   /^\s*(?:\/\/|\*|\/\*|import\b|export \* )|\bt\(|translate\w*\(|className=|data-/;
 
-// "Retry…", `Open ${name}` and "Open {name}" are one text.
+// "Retry…", `Open ${name}`, "Open {name}" and "Open@@context" are one text.
 const normalize = (text: string) =>
-  text
+  (text.split("@@")[0] ?? "")
     .replace(/\$\{[^}]*\}|\{\w+\}/g, "{}")
     .replace(/\.\.\./g, "…")
     .replace(/\s+/g, " ")

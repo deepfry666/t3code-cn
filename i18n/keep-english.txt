@@ -170,7 +170,6 @@ Options as ReactMarkdownOptions,
 Group as ButtonGroup,
 Menu as DropdownMenu,
 Tool input\n{input}
-System@@skill source
 
 # 运行时拼装、在渲染处翻译的文字（渲染处用 translateSidebarLabel / translateComposerLabel /
 # translateConnectionLabel / translateGitLabel 翻译），这些文件里保留英文原文。
@@ -264,12 +263,12 @@ ChatGPT - ${name.trim()}
 Extra High
 OTel OTLP telemetry export endpoints logs traces metrics Grafana
 
-# 源码里是带 @@ 语境后缀的翻译目录键，界面按 @@ 之前的部分显示并已翻译。
-Input@@usage token type
-Input@@usage price field
 
 # 界面用正则把其中的数字套进已有译文，代码里的英文整句本身不显示。
 Up to ${sessions} at once, each stopped after ${host.maxSessionMinutes} min or ${host.idleMinutes} idle min
 Up to ${devices} at once, each released after ${host.maxLeaseMinutes} min
 Usage: ${usageMetric.label}
 Usage: Period: ${usagePeriod.label}
+
+# 写进环境注册数据、作为环境名保存的标签，按名称处理。
+WSL (default distro)

@@ -1,5 +1,3 @@
-import { translateNow } from "~/i18n/useTranslation";
-import { filesUiMessages } from "./filesUi.messages";
 import { boundedArchive, prepareOffice } from "./officeArchive";
 import { PREVIEW_PAGE_ROWS } from "./largeTextProtocol";
 import type { OfficeWorkerRequest, OfficeWorkerResult } from "./officePreviewProtocol";
@@ -48,10 +46,7 @@ self.addEventListener("message", (event: MessageEvent<OfficeWorkerRequest>) => {
   void handle(event.data).catch((cause: unknown) =>
     reply({
       type: "error",
-      message:
-        cause instanceof Error
-          ? cause.message
-          : translateNow(filesUiMessages, "Could not parse this file."),
+      message: cause instanceof Error ? cause.message : "Could not parse this file.",
     }),
   );
 });

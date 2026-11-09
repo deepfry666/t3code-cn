@@ -1,6 +1,6 @@
-import { translateNow } from "~/i18n/useTranslation";
+import { readLocale, translateNow } from "~/i18n/useTranslation";
 
-import { filesUiMessages } from "./filesUi.messages";
+import { filesUiMessages, translateFilesMessage } from "./filesUi.messages";
 import { readBinaryPreview } from "./readBinaryPreview";
 
 export async function decodeImagePreview(src: string, heif: boolean, signal: AbortSignal) {
@@ -25,7 +25,11 @@ export async function decodeImagePreview(src: string, heif: boolean, signal: Abo
       worker.addEventListener("message", (event: MessageEvent<{ blob?: Blob; error?: string }>) => {
         if (event.data.blob) resolve(event.data.blob);
         else
-          fail(event.data.error ?? translateNow(filesUiMessages, "Could not decode this image."));
+          fail(
+            event.data.error
+              ? translateFilesMessage(event.data.error, readLocale())
+              : translateNow(filesUiMessages, "Could not decode this image."),
+          );
       });
       void readBinaryPreview(src, controller.signal).then(
         (bytes) => worker.postMessage({ bytes, heif }, [bytes]),

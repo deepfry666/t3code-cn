@@ -1,9 +1,6 @@
 import type { Database } from "sql.js";
 
 import { boundedZip } from "@t3tools/client-runtime/zip/bounded-zip";
-
-import { translateNow } from "~/i18n/useTranslation";
-import { filesUiMessages } from "./filesUi.messages";
 import {
   ARCHIVE_ENTRY_MAX_BYTES,
   ARCHIVE_MAX_ENTRIES,
@@ -35,10 +32,7 @@ async function gunzip(bytes: ArrayBuffer) {
       length += value.length;
       if (length > BINARY_PREVIEW_MAX_BYTES || length > bytes.byteLength * ARCHIVE_MAX_RATIO)
         throw new Error(
-          translateNow(
-            filesUiMessages,
-            "The expanded archive exceeds the preview size or compression ratio limit.",
-          ),
+          "The expanded archive exceeds the preview size or compression ratio limit.",
         );
       chunks.push(value);
     }
@@ -249,10 +243,7 @@ self.addEventListener("message", (event: MessageEvent<BinaryWorkerRequest>) => {
   void handle(event.data).catch((cause: unknown) =>
     reply({
       type: "error",
-      message:
-        cause instanceof Error
-          ? cause.message
-          : translateNow(filesUiMessages, "Could not preview this file."),
+      message: cause instanceof Error ? cause.message : "Could not preview this file.",
     }),
   );
 });

@@ -1,5 +1,5 @@
 import { useStableCallback } from "~/hooks/useStableCallback";
-import { translateNow, useTranslation } from "~/i18n/useTranslation";
+import { translateNow, useLocale, useTranslation } from "~/i18n/useTranslation";
 import type { OfficePreviewKind } from "@t3tools/shared/filePreview";
 import { lazy, Suspense, useEffect, useState } from "react";
 import {
@@ -7,7 +7,7 @@ import {
   FileSurfaceNotice,
   FILE_SURFACE_SUBHEADER_CLASS,
 } from "./fileSurfaceChrome";
-import { filesUiMessages } from "./filesUi.messages";
+import { filesUiMessages, translateFilesMessage } from "./filesUi.messages";
 import { OFFICE_PREVIEW_MAX_BYTES, type OfficeWorkerResult } from "./officePreviewProtocol";
 const WordDocument = lazy(() => import("./office/WordDocument"));
 const Spreadsheet = lazy(() => import("./office/Spreadsheet"));
@@ -46,6 +46,7 @@ export default function OfficeViewer(props: {
   readonly sizeBytes?: number;
 }) {
   const t = useTranslation(filesUiMessages);
+  const locale = useLocale();
   const [error, setError] = useState<string | null>(null);
   const [prepared, setPrepared] = useState<Extract<OfficeWorkerResult, { bytes: ArrayBuffer }>>();
   const [details, setDetails] = useState("");
@@ -122,7 +123,9 @@ export default function OfficeViewer(props: {
       >
         <p className="text-sm font-medium">{t("No preview for this file")}</p>
         <p className="max-w-sm text-xs leading-relaxed text-muted-foreground">
-          {t("{message} Save it or open it in another app.", { message: error })}
+          {t("{message} Save it or open it in another app.", {
+            message: translateFilesMessage(error, locale),
+          })}
         </p>
       </div>
     );

@@ -1,3 +1,5 @@
+import { translate, type Locale } from "~/i18n/locale";
+
 export const filesUiMessages = {
   "This folder is no longer available.": "此文件夹已不可用。",
   "Refresh failed. Retry": "刷新失败，请重试",
@@ -241,4 +243,80 @@ export const filesUiMessages = {
     "预览受限：此 Word 文档包含通过别名引用的文档部件。",
   "Preview limited: this Word document has an unsupported document relationship.":
     "预览受限：此 Word 文档包含不受支持的文档关系。",
+  // Preview workers report these in English; the viewers translate them where they show them.
+  "An archive entry is too large or damaged.": "压缩包中的某个条目过大或已损坏。",
+  "Archive metadata is too large.": "压缩包元数据过大。",
+  "Database previews are limited to 100 tables.": "数据库预览最多支持 100 张表。",
+  "Entry previews are limited to 10 MB.": "条目预览限制为 10 MB。",
+  "Image decoding is unavailable.": "图片解码不可用。",
+  "Image previews are limited to 32 megapixels and 16,384 pixels per side.":
+    "图片预览限制为 3200 万像素，每边最多 16,384 像素。",
+  "Invalid HEIF dimensions.": "HEIF 尺寸无效。",
+  "Invalid HEIF metadata.": "HEIF 元数据无效。",
+  "Invalid TIFF LZW dictionary.": "TIFF LZW 字典无效。",
+  "Invalid TIFF metadata pointer.": "TIFF 元数据指针无效。",
+  "Invalid TIFF metadata.": "TIFF 元数据无效。",
+  "Invalid TIFF strip.": "TIFF 条带无效。",
+  "Invalid or oversized TIFF strip.": "TIFF 条带无效或过大。",
+  "Oversized TIFF strip.": "TIFF 条带过大。",
+  "Preview limited: this Word document has excessive XML nesting.":
+    "预览受限：此 Word 文档的 XML 嵌套过深。",
+  "Preview limited: this Word document has too much auxiliary markup.":
+    "预览受限：此 Word 文档的辅助标记过多。",
+  "Preview limited: this Word document has too much expanded markup.":
+    "预览受限：此 Word 文档展开后的标记过多。",
+  "Preview limited: this Word document has too much section markup.":
+    "预览受限：此 Word 文档的节标记过多。",
+  "Preview limited: this Word document has unsupported archive paths.":
+    "预览受限：此 Word 文档包含不受支持的压缩包路径。",
+  "The TAR header is damaged.": "TAR 文件头已损坏。",
+  "The TAR metadata is damaged.": "TAR 元数据已损坏。",
+  "The expanded document is too large to preview safely.": "解压后的文档过大，无法安全预览。",
+  "This HEIF image has no readable dimensions.": "无法读取此 HEIF 图片的尺寸。",
+  "This TAR uses an unsupported numeric format.": "此 TAR 使用了不受支持的数字格式。",
+  "This TIFF color format is not supported.": "不支持此 TIFF 颜色格式。",
+  "This TIFF compression is not supported.": "不支持此 TIFF 压缩方式。",
+  "This TIFF has no readable image.": "此 TIFF 没有可读取的图像。",
+  "This TIFF has too much image data.": "此 TIFF 的图像数据过多。",
+  "This TIFF has too much or truncated metadata.": "此 TIFF 的元数据过多或不完整。",
+  "This TIFF orientation is not supported.": "不支持此 TIFF 方向。",
+  "This Word document has excessive XML nesting.": "此 Word 文档的 XML 嵌套过深。",
+  "This Word document has no readable body.": "此 Word 文档没有可读取的正文。",
+  "This Word document has too much section markup.": "此 Word 文档的节标记过多。",
+  "This archive contains more than 2,048 entries.": "此压缩包包含超过 2,048 个条目。",
+  "This archive entry is unavailable.": "此压缩包条目不可用。",
+  "This archive has no readable entries.": "此压缩包没有可读取的条目。",
+  "This document contains unsupported XML declarations.": "此文档包含不受支持的 XML 声明。",
+  "This file contains too many archive entries to preview.": "此文件包含的压缩条目过多，无法预览。",
+  "This file is damaged, encrypted, or not a valid Office document.":
+    "此文件已损坏、已加密，或不是有效的 Office 文档。",
+  "This file is too large to preview.": "此文件太大，无法预览。",
+  "This file is unavailable or too large to preview.": "此文件不可用，或太大而无法预览。",
+  "This file is unavailable.": "此文件不可用。",
+  "This image has too much metadata.": "此图片的元数据过多。",
+  "This is not a valid Office Open XML file. Encrypted files are not supported.":
+    "这不是有效的 Office Open XML 文件。不支持加密文件。",
+  "This sheet is unavailable.": "此工作表不可用。",
+  "This table is unavailable.": "此表不可用。",
+  "This workbook contains excessive XML nesting.": "此工作簿的 XML 嵌套过深。",
+  "This workbook contains inconsistent cell rows.": "此工作簿的单元格行不一致。",
+  "This workbook contains invalid cell coordinates.": "此工作簿包含无效的单元格坐标。",
+  "This workbook contains invalid cell metadata.": "此工作簿包含无效的单元格元数据。",
+  "This workbook contains invalid row coordinates.": "此工作簿包含无效的行坐标。",
+  "This workbook contains invalid worksheet dimensions.": "此工作簿包含无效的工作表尺寸。",
+  "This workbook contains invalid worksheet structure.": "此工作簿的工作表结构无效。",
+  "This workbook exceeds the preview limit: 250,000 rows.":
+    "此工作簿超出预览限制：最多 250,000 行。",
+  "This workbook has a missing worksheet.": "此工作簿缺少工作表。",
+  "This workbook has invalid or too many sheets.": "此工作簿的工作表无效或过多。",
+  "This workbook has no worksheet data.": "此工作簿没有工作表数据。",
+  "Truncated TIFF strip.": "TIFF 条带不完整。",
+  "Unsupported TIFF metadata type.": "不支持的 TIFF 元数据类型。",
+  "Unsupported TIFF strip layout.": "不支持的 TIFF 条带布局。",
 };
+
+export function translateFilesMessage(message: string, locale: Locale): string {
+  return Object.hasOwn(filesUiMessages, message)
+    ? translate(locale, filesUiMessages, message as keyof typeof filesUiMessages)
+    : message;
+}
