@@ -17,6 +17,8 @@ import {
 import * as Schema from "effect/Schema";
 import { useState } from "react";
 
+import { translateNow } from "~/i18n/useTranslation";
+import { cloudUiMessages } from "~/components/cloud/cloudUi.messages";
 import { toastManager } from "../components/ui/toast";
 import { stackedThreadToast } from "../components/ui/toastHelpers";
 import { relayFailureReason } from "./relayFailureReason";
@@ -88,14 +90,17 @@ export function useCloudLinkController(environmentId: EnvironmentId | null) {
   const [tunnelLimit, setTunnelLimit] = useState<number | null>(null);
 
   const reportUpdateFailure = (cause: unknown, reason?: string) => {
-    const message = cause instanceof Error ? cause.message : "Could not update T3 Connect access.";
+    const message =
+      cause instanceof Error
+        ? cause.message
+        : translateNow(cloudUiMessages, "Could not update T3 Connect access.");
     const traceId = findErrorTraceId(cause);
     console.error("[t3-connect] Could not update T3 Connect", { message, traceId, cause });
     setOperationError(traceId ? `${message} Trace ID: ${traceId}` : message);
     toastManager.add(
       stackedThreadToast({
         type: "error",
-        title: "Could not update T3 Connect",
+        title: translateNow(cloudUiMessages, "Could not update T3 Connect"),
         description: reason ?? relayFailureReason(cause) ?? message,
         ...(traceId
           ? {
@@ -171,7 +176,10 @@ export function useCloudLinkController(environmentId: EnvironmentId | null) {
           reportUpdateFailure(
             cause,
             relayKeptLink
-              ? "Disconnected here, but T3 Connect still lists it. Remove it in Account."
+              ? translateNow(
+                  cloudUiMessages,
+                  "Disconnected here, but T3 Connect still lists it. Remove it in Account.",
+                )
               : undefined,
           );
         }

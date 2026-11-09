@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { parse, type ParseError } from "jsonc-parser";
 
 import {
@@ -167,7 +169,7 @@ function resolveName(value: Record<string, unknown>): string {
     const humanized = humanizeThemeName(candidate);
     if (humanized.length > 0) return humanized.slice(0, 48);
   }
-  return "VS Code theme";
+  return translateNow(globalUiMessages, "VS Code theme");
 }
 
 export function parseVsCodeThemeFile(value: unknown): ThemeDefinition {

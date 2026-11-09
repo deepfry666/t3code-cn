@@ -194,6 +194,56 @@ export const sidebarUiMessages = {
   "Restart the app from the update button to install it.": "从更新按钮重启应用即可安装。",
   "Dismiss provider update notice": "忽略提供方更新提示",
   "Dismiss until provider status changes": "忽略直到提供方状态变化",
+
+  // Thread actions
+  "Cannot archive while the provider is active.": "提供方仍在运行时无法归档。",
+  "This environment's server does not support settling yet. Update the server to use Settle.":
+    "此环境的服务器尚不支持收尾。请更新服务器后再使用“收尾”。",
+  "This environment's server does not support snoozing yet. Update the server to use Snooze.":
+    "此环境的服务器尚不支持暂缓。请更新服务器后再使用“暂缓”。",
+  "This thread is waiting on you. Respond to the pending request before snoozing it.":
+    "此会话正在等你处理。请先回复待处理的请求，再暂缓它。",
+  "This environment's server does not support turning auto-settle off per thread yet. Update the server to use it.":
+    "此环境的服务器尚不支持按会话关闭自动收尾。请更新服务器后再使用该功能。",
+  "This environment's server does not support pinning yet. Update the server to use Pin.":
+    "此环境的服务器尚不支持置顶。请更新服务器后再使用“置顶”。",
+  "This environment's server does not support reordering pinned threads yet. Update the server to reorder pins.":
+    "此环境的服务器尚不支持重新排列置顶会话。请更新服务器后再调整置顶顺序。",
+  "Update this environment's server to reorder active threads.":
+    "请更新此环境的服务器，以重新排列活动会话。",
+  'Unpin thread "{title}"?': "取消置顶会话“{title}”？",
+  "This will move the thread out of your pinned section.": "这会将会话移出置顶区域。",
+  "Thread deleted, but navigation failed": "会话已删除，但跳转失败",
+  "Failed to undo archive": "无法撤销归档",
+  "This thread is the only one linked to this worktree:": "此会话是唯一关联到该工作树的会话：",
+  "Delete the worktree too?": "同时删除工作树？",
+  "This connection can no longer remove worktrees.": "此连接已无法移除工作树。",
+  "Failed to delete worktree": "无法删除工作树",
+  "Worktree deleted, but Git status refresh failed": "工作树已删除，但刷新 Git 状态失败",
+  "Could not remove {path}. {message}": "无法移除 {path}。{message}",
+  "Failed to undo unpin": "无法撤销取消置顶",
+  "This app: {failure}": "此应用：{failure}",
+  "Provider update interrupted": "提供方更新已中断",
+  "Downloading update{progress}": "正在下载更新{progress}",
+
+  // Provider updates
+  "Provider updated": "提供方已更新",
+  "Provider update failed": "提供方更新失败",
+  "Provider updates failed": "提供方更新失败",
+  "{count} providers updated": "已更新 {count} 个提供方",
+  "{failed} of {total} provider updates failed": "{total} 个提供方中有 {failed} 个更新失败",
+  "{name} updated: {version}": "{name} 已更新：{version}",
+  "{name} update failed": "{name} 更新失败",
+  "Updating {targets}": "正在更新 {targets}",
+  "Updating {count} providers": "正在更新 {count} 个提供方",
+  "{names} updates are in progress.": "{names} 正在更新。",
+  "New sessions will use the updated provider.": "新会话将使用更新后的提供方。",
+  "New sessions will use the updated providers.": "新会话将使用更新后的提供方。",
+  "Failed to undo settle": "无法撤销收尾",
+  "That snooze time has passed. Choose another time.": "该暂缓时间已过，请选择其他时间。",
+  "Pending Approval": "待批准",
+  "Awaiting Input": "待输入",
+  "Plan Ready": "计划已就绪",
 } as const;
 
 export type SidebarTranslator = (
@@ -256,6 +306,13 @@ export function translateSidebarLabel(label: string, locale: Locale): string {
   const days = ELAPSED_DAYS.exec(label);
   if (days) return translate(locale, sidebarUiMessages, "{days}d ago", { days: days[1]! });
 
+  const downloadingUpdate = /^Downloading update(?: \((\d+)%\))?$/.exec(label);
+  if (downloadingUpdate) {
+    const percent = downloadingUpdate[1];
+    return translate(locale, sidebarUiMessages, "Downloading update{progress}", {
+      progress: percent === undefined ? "" : `（${percent}%）`,
+    });
+  }
   const downloading = /^[Dd]ownloading (\d+)%$/.exec(label);
   if (downloading) {
     return translate(
@@ -284,6 +341,50 @@ export function translateSidebarLabel(label: string, locale: Locale): string {
   const failedSingle = /^(\d+) failed$/.exec(label);
   if (failedSingle) {
     return translate(locale, sidebarUiMessages, "{count} failed", { count: failedSingle[1]! });
+  }
+  const providerVersionUpdated = /^(.+) updated: (v\S+)$/.exec(label);
+  if (providerVersionUpdated) {
+    return translate(locale, sidebarUiMessages, "{name} updated: {version}", {
+      name: providerVersionUpdated[1]!,
+      version: providerVersionUpdated[2]!,
+    });
+  }
+  const providerUpdateFailed = /^(.+) update failed$/.exec(label);
+  if (providerUpdateFailed) {
+    return translate(locale, sidebarUiMessages, "{name} update failed", {
+      name: providerUpdateFailed[1]!,
+    });
+  }
+  const providerUpdatesFailedCount = /^(\d+) of (\d+) provider updates failed$/.exec(label);
+  if (providerUpdatesFailedCount) {
+    return translate(locale, sidebarUiMessages, "{failed} of {total} provider updates failed", {
+      failed: providerUpdatesFailedCount[1]!,
+      total: providerUpdatesFailedCount[2]!,
+    });
+  }
+  const providersUpdated = /^(\d+) providers updated$/.exec(label);
+  if (providersUpdated) {
+    return translate(locale, sidebarUiMessages, "{count} providers updated", {
+      count: providersUpdated[1]!,
+    });
+  }
+  const updatingProviders = /^Updating (\d+) providers$/.exec(label);
+  if (updatingProviders) {
+    return translate(locale, sidebarUiMessages, "Updating {count} providers", {
+      count: updatingProviders[1]!,
+    });
+  }
+  const updating = /^Updating (.+)$/.exec(label);
+  if (updating) {
+    return translate(locale, sidebarUiMessages, "Updating {targets}", {
+      targets: translateList(updating[1]!, locale),
+    });
+  }
+  const updateInProgress = /^(.+) updates? (?:is|are) in progress\.$/.exec(label);
+  if (updateInProgress) {
+    return translate(locale, sidebarUiMessages, "{names} updates are in progress.", {
+      names: translateList(updateInProgress[1]!, locale),
+    });
   }
   const failedNamed = /^(.+) failed$/.exec(label);
   if (failedNamed) {

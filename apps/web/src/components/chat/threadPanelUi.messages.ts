@@ -318,4 +318,5 @@ export const threadPanelUiMessages = {
     "项目仍然可用，请再次尝试打开草稿。",
   "Try again": "重试",
   "Could not open the link": "无法打开链接",
+  "Chat code block": "聊天代码块",
 } as const;

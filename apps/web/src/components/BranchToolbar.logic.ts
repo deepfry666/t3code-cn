@@ -173,7 +173,9 @@ export function resolvePreviousWorktreeSeed(input: {
 }
 
 export function resolvePreviousWorktreeLabel(seed: PreviousWorktreeSeed): string {
-  return seed.branch ? `Previous worktree (${seed.branch})` : "Previous worktree";
+  return seed.branch
+    ? translateNow(gitUiMessages, "Previous worktree ({branch})", { branch: seed.branch })
+    : translateNow(gitUiMessages, "Previous worktree");
 }
 
 export function resolveEffectiveEnvMode(input: {
@@ -235,13 +237,15 @@ export function resolveBranchTriggerLabel(input: {
     startFromOrigin,
   } = input;
   if (!resolvedActiveBranch) {
-    return "Select ref";
+    return translateNow(gitUiMessages, "Select ref");
   }
   if (effectiveEnvMode === "worktree" && !activeWorktreePath) {
     // Only the server can determine a local branch's configured remote.
     return startFromOrigin && resolvedActiveBranchIsRemote === false
-      ? `From ${resolvedActiveBranch} (remote)`
-      : `From ${resolvedActiveBranch}`;
+      ? translateNow(gitUiMessages, "From {branch} (remote)", {
+          branch: resolvedActiveBranch,
+        })
+      : translateNow(gitUiMessages, "From {branch}", { branch: resolvedActiveBranch });
   }
   return resolvedActiveBranch;
 }

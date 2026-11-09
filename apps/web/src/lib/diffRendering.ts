@@ -1,6 +1,8 @@
 import { parsePatchFiles } from "@pierre/diffs/utils/parsePatchFiles";
 import { parseDiffFromFile } from "@pierre/diffs";
 import type { FileDiffMetadata } from "@pierre/diffs/types";
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { READABLE_LIGHT_THEME_NAME } from "./readableSyntaxTheme";
 
 // Light mode uses a darker pierre-light so syntax stays readable on every code surface.
@@ -175,13 +177,13 @@ export function getRenderablePatch(
     return {
       kind: "raw",
       text: patch,
-      reason: "Unsupported diff format. Showing raw patch.",
+      reason: translateNow(globalUiMessages, "Unsupported diff format. Showing raw patch."),
     };
   } catch {
     return {
       kind: "raw",
       text: patch,
-      reason: "Failed to parse patch. Showing raw patch.",
+      reason: translateNow(globalUiMessages, "Failed to parse patch. Showing raw patch."),
     };
   }
 }

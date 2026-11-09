@@ -84,7 +84,7 @@ export function resolveGitActionProgressPresentation(input: {
   return {
     status:
       currentLabel && currentLabel !== "Running source control action"
-        ? currentLabel
+        ? translateKind(currentLabel)
         : isPull
           ? translateNow(gitUiMessages, "Pulling latest changes...")
           : translateNow(gitUiMessages, "Starting source control action..."),

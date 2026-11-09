@@ -2,6 +2,7 @@ import { AuthProvidersManageScope, PROVIDER_DISPLAY_NAMES } from "@t3tools/contr
 import { settlePromise } from "@t3tools/client-runtime/state/runtime";
 import { useRef, useState } from "react";
 
+import { readLocale } from "~/i18n/useTranslation";
 import { useEnvironmentProviders, useEnvironments } from "~/state/environments";
 import { serverEnvironment } from "~/state/server";
 import { useEnvironmentsWithScope } from "~/state/session";
@@ -12,6 +13,7 @@ import {
   getProviderUpdateRunToastView,
   type ProviderUpdateRun,
 } from "./ProviderUpdateLaunchNotification.logic";
+import { translateSidebarLabel } from "./sidebar/sidebarUi.messages";
 import { Button } from "./ui/button";
 import { stackedThreadToast, toastManager } from "./ui/toast";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "./ui/tooltip";
@@ -59,7 +61,12 @@ export function useProviderUpdates() {
       toastManager.add(
         stackedThreadToast({
           ...view,
-          description: <span className="whitespace-pre-line">{view.description}</span>,
+          title: translateSidebarLabel(view.title, readLocale()),
+          description: (
+            <span className="whitespace-pre-line">
+              {translateSidebarLabel(view.description, readLocale())}
+            </span>
+          ),
         }),
       );
     }

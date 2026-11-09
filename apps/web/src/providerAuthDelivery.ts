@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { runAtomCommand } from "@t3tools/client-runtime/state/runtime";
 import { readCodexAuthDelivery } from "@t3tools/shared/codexAuthHandoff";
 
@@ -53,14 +55,14 @@ async function completeProviderAuth(delivery: ProviderAuthDelivery): Promise<voi
     if (result._tag === "Failure") {
       toastManager.add({
         type: "error",
-        title: "ChatGPT sign-in couldn't finish",
-        description: "Return to the provider and try again.",
+        title: translateNow(globalUiMessages, "ChatGPT sign-in couldn't finish"),
+        description: translateNow(globalUiMessages, "Return to the provider and try again."),
       });
     }
   } catch {
     toastManager.add({
       type: "error",
-      title: "ChatGPT sign-in couldn't finish",
+      title: translateNow(globalUiMessages, "ChatGPT sign-in couldn't finish"),
       description: "Reconnect to the environment and try again.",
     });
   }

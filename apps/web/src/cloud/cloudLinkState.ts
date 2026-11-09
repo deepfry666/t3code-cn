@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { cloudUiMessages } from "~/components/cloud/cloudUi.messages";
 import { useAtomValue } from "@effect/atom-react";
 import {
   AuthRelayReadScope,
@@ -54,7 +56,10 @@ export function useCloudLinkState(environmentId: EnvironmentId | null) {
   let error: string | null = null;
   if (result._tag === "Failure") {
     const cause = Cause.squash(result.cause);
-    error = cause instanceof Error ? cause.message : "Could not read T3 Connect link state.";
+    error =
+      cause instanceof Error
+        ? cause.message
+        : translateNow(cloudUiMessages, "Could not read T3 Connect link state.");
   }
 
   return {

@@ -52,7 +52,7 @@ export const commandPaletteUiMessages = {
   Sources: "来源",
   "Setup Required": "需要设置",
   "Open Settings -> Source control to configure this provider.":
-    "打开 设置 -> 源代码管理 以配置此提供方。",
+    "打开“设置 → 版本控制”以配置此提供方。",
   Create: "创建",
   Toggle: "开关",
   Select: "选择",
@@ -164,7 +164,7 @@ export const commandPaletteUiMessages = {
   "Repository lookup failed": "仓库查询失败",
   "Clone unavailable": "无法克隆",
   "This connection needs permission to write source control and add projects.":
-    "此连接需要写入源代码管理和添加项目的权限。",
+    "此连接需要写入版本控制和添加项目的权限。",
   "Clone failed": "克隆失败",
   "Thread search is unavailable on this server.": "此服务器不支持会话搜索。",
   "Update the server to enable it.": "更新服务器即可启用。",
@@ -174,8 +174,10 @@ export const commandPaletteUiMessages = {
   "Could not add WSL project": "无法添加 WSL 项目",
   "Start the matching WSL backend, then choose the folder again.":
     "请先启动对应的 WSL 后端，然后重新选择文件夹。",
-  "Open source control settings": "打开源代码管理设置",
-  "Open Settings -> Source control": "打开 设置 -> 源代码管理",
+  "Open source control settings": "打开版本控制设置",
+  "Open Settings -> Source control": "打开“设置 → 版本控制”",
+  "This connection cannot browse host folders.": "此连接无法浏览主机文件夹。",
+  "Git URL": "Git URL",
 } as const;
 
 export type CommandPaletteUiKey = keyof typeof commandPaletteUiMessages;

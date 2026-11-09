@@ -1,4 +1,5 @@
 import { useTranslation } from "~/i18n/useTranslation";
+import { translateTimelineLabel } from "./timelineLabels";
 import { timelineUiMessages } from "./timelineUi.messages";
 import { TimelinePendingApprovalRow } from "./TimelinePendingApprovalRow";
 import { WorkLogDetails, WorkLogRow } from "./WorkLog";
@@ -222,7 +223,7 @@ function WorkEntryLogRow(props: WorkEntryRowProps) {
       ? resetTime
         ? t("Usage limit reached. Retry after {time}.", { time: resetTime })
         : t("Usage limit reached.")
-      : workEntry.label;
+      : translateTimelineLabel(workEntry.label, t);
     const retryRunId =
       failureItem.runId !== null &&
       retryableWorkspacePreparationRunIds.has(failureItem.runId) &&

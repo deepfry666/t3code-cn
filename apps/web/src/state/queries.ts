@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { globalUiMessages } from "~/components/globalUi.messages";
 import { useAtomValue } from "@effect/atom-react";
 import {
   type CheckpointDiffTarget,
@@ -236,7 +238,7 @@ export function usePaginatedBranches(target: VcsRefTarget) {
           const cause = Cause.squash(failed.cause);
           return cause instanceof Error && cause.message.trim().length > 0
             ? cause.message
-            : "Failed to load refs.";
+            : translateNow(globalUiMessages, "Failed to load refs.");
         })()
       : null;
   const refresh = () => {
@@ -332,7 +334,8 @@ export function useProjectPathSearch(
         ? null
         : canReadFiles
           ? result.error
-          : (fileAccess.error ?? "This connection cannot search host files."),
+          : (fileAccess.error ??
+            translateNow(globalUiMessages, "This connection cannot search host files.")),
     isPending:
       !areProjectPathSearchTargetsEqual(normalizedTarget, debouncedTarget) ||
       (hasTarget && (fileAccess.isPending || result.isPending)),
@@ -394,7 +397,8 @@ export function useProjectContentSearch(target: ProjectContentSearchTarget) {
         ? null
         : canReadFiles
           ? result.error
-          : (fileAccess.error ?? "This connection cannot search host files."),
+          : (fileAccess.error ??
+            translateNow(globalUiMessages, "This connection cannot search host files.")),
     isPending:
       isCheckingAccess ||
       (canReadFiles && hasQuery && (query !== debouncedQuery || result.isPending)),

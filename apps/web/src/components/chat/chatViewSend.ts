@@ -1,5 +1,5 @@
-import { translateNow } from "~/i18n/useTranslation";
-import { composerUiMessages } from "./composerUi.messages";
+import { readLocale, translateNow } from "~/i18n/useTranslation";
+import { composerUiMessages, translateComposerLabel } from "./composerUi.messages";
 import {
   CommandId,
   type EnvironmentId,
@@ -325,7 +325,9 @@ export function resolveMultipleModelTargets(input: {
       };
     }
     const providerBlockReason = getAntigravitySendBlockReason(provider.snapshot, selection.model);
-    if (providerBlockReason) return { error: providerBlockReason };
+    if (providerBlockReason) {
+      return { error: translateComposerLabel(providerBlockReason, readLocale()) };
+    }
     const providerState = getComposerProviderState({
       provider: provider.driverKind,
       model: selection.model,

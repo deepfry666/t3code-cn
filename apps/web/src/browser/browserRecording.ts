@@ -9,6 +9,8 @@ import { Atom } from "effect/reactivity";
 
 import { previewBridge } from "~/components/preview/previewBridge";
 import { ensureClientSettingsHydrated, getClientSettings } from "~/hooks/useSettings";
+import { translateNow } from "~/i18n/useTranslation";
+import { browserUiMessages } from "./browserUi.messages";
 import { appAtomRegistry } from "~/rpc/atomRegistry";
 
 import { createRecordingCompositor } from "./recordingCompositor";
@@ -102,9 +104,10 @@ export class BrowserRecordingOperationError extends Schema.TaggedError<BrowserRe
       captureCause.name === "NotReadableError"
     ) {
       return (
-        "Unable to start the preview video source. Make sure the capture host is unlocked " +
-        "and its display is on, then retry. " +
-        `${captureCause.name}: ${captureCause.message}`
+        translateNow(
+          browserUiMessages,
+          "Unable to start the preview video source. Make sure the capture host is unlocked and its display is on, then retry.",
+        ) + ` ${captureCause.name}: ${captureCause.message}`
       );
     }
     return `Browser recording operation ${this.operation} failed for tab ${this.tabId}.`;

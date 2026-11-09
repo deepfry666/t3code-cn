@@ -61,7 +61,7 @@ export const gitUiMessages = {
   Summary: "摘要",
   "Setup Required": "需要设置",
   "Open Settings -> Source control to configure this provider.":
-    "打开 设置 -> 源代码管理 以配置此提供方。",
+    "打开“设置 → 版本控制”以配置此提供方。",
   Visibility: "可见性",
   Private: "私有",
   "Only invited people": "仅受邀者",
@@ -84,7 +84,7 @@ export const gitUiMessages = {
   Publish: "发布",
   "Publishing...": "正在发布…",
   Uncommitted: "未提交的更改",
-  "This connection cannot change source control.": "此连接无法更改源代码管理。",
+  "This connection cannot change source control.": "此连接无法更改版本控制。",
   "This action is currently unavailable.": "此操作当前不可用。",
   "Action failed": "操作失败",
   "Pull failed": "拉取失败",
@@ -129,9 +129,18 @@ export const gitUiMessages = {
   "Open {path} in editor": "在编辑器中打开 {path}",
   "vs {ref}": "对比 {ref}",
   "Provider status unavailable. Open Settings -> Source control and rescan.":
-    "无法获取提供方状态。请打开“设置 → 源代码管理”并重新扫描。",
+    "无法获取提供方状态。请打开“设置 → 版本控制”并重新扫描。",
   "{provider} is not authenticated. Open Settings -> Source control for setup guidance.":
-    "{provider} 尚未通过身份验证。请打开“设置 → 源代码管理”查看设置指引。",
+    "{provider} 尚未通过身份验证。请打开“设置 → 版本控制”查看设置指引。",
+  "Initializing repository": "正在初始化仓库",
+  "Publishing repository": "正在发布仓库",
+  "Preparing pull request thread": "正在准备 pull request 会话",
+  "Running source control action": "正在运行版本控制操作",
+  "Previous worktree ({branch})": "上一个工作树（{branch}）",
+  "Select ref": "选择引用",
+  "From {branch}": "基于 {branch}",
+  "From {branch} (remote)": "基于 {branch}（远程）",
+  "Run context: {context}": "运行上下文：{context}",
   Commit: "提交",
   Push: "推送",
   Pull: "拉取",
@@ -162,7 +171,7 @@ export const gitUiMessages = {
   "There are no changes to commit, so a feature branch can't be named. Create a branch yourself or continue on {branch}.":
     "没有可提交的改动，因此无法命名功能分支。请自行创建分支，或继续在 {branch} 上操作。",
   "Pulling latest changes...": "正在拉取最新改动…",
-  "Starting source control action...": "正在启动源代码管理操作…",
+  "Starting source control action...": "正在启动版本控制操作…",
   PR: "PR",
   MR: "MR",
 };

@@ -68,4 +68,20 @@ export const projectScriptsUiMessages = {
   Single: "单栏",
   "Side by side": "并排",
   "Stacked@@terminal layout": "上下排列",
+  "New Terminal": "新建终端",
+  "New Terminal ({shortcut})": "新建终端（{shortcut}）",
+  "Close Terminal": "关闭终端",
+  "Close Terminal ({shortcut})": "关闭终端（{shortcut}）",
+  "Split Terminal Horizontally": "水平拆分终端",
+  "Split Terminal Horizontally ({shortcut})": "水平拆分终端（{shortcut}）",
+  "Split Terminal Horizontally (max {max} per group)": "水平拆分终端（每组最多 {max} 个）",
+  "Split Terminal Vertically": "垂直拆分终端",
+  "Split Terminal Vertically ({shortcut})": "垂直拆分终端（{shortcut}）",
+  "Split Terminal Vertically (max {max} per group)": "垂直拆分终端（每组最多 {max} 个）",
+  'Close terminal "{label}"?': "关闭终端“{label}”？",
+  "This stops the running process and clears its history.":
+    "这会停止正在运行的进程并清除其历史记录。",
+  "Close {count} terminals?": "关闭 {count} 个终端？",
+  "This stops their running processes and clears their histories: {labels}.":
+    "这会停止它们正在运行的进程并清除其历史记录：{labels}。",
 };

@@ -45,6 +45,9 @@ export const browserUiMessages = {
   "Could not send the files to the page": "无法将文件发送到页面",
   "Unable to resize browser viewport": "无法调整浏览器视口大小",
   "An error occurred.": "发生错误。",
+  "Saved browser settings could not be loaded.": "无法加载已保存的浏览器设置。",
+  "Unable to start the preview video source. Make sure the capture host is unlocked and its display is on, then retry.":
+    "无法启动预览视频源。请确认采集端主机已解锁且屏幕已亮，然后重试。",
   "The integrated browser is unavailable in this runtime.": "此运行环境不支持内置浏览器。",
   "Recording canvas is unavailable.": "录制画布不可用。",
   "Link opening is unavailable.": "无法打开链接。",

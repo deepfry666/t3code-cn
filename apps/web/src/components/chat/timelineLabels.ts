@@ -21,6 +21,16 @@ const FIXED_LABELS = new Set<string>([
   "Context automatically compacted before cache expiry",
   "Context compacted before sending",
   "Thought",
+  "Provider error",
+  "Ran command",
+  "Searched files",
+  "File search",
+  "Searched the web",
+  "Web search",
+  "Checkpoint captured",
+  "Approval requested",
+  "Answered questions",
+  "Input requested",
 ]);
 
 const PATTERNS: ReadonlyArray<readonly [RegExp, TimelineUiKey, string]> = [
@@ -34,6 +44,12 @@ const PATTERNS: ReadonlyArray<readonly [RegExp, TimelineUiKey, string]> = [
   [/^Failed (\S+)$/, "Failed {command}", "command"],
   [/^Declined (\S+)$/, "Declined {command}", "command"],
   [/^Stopped (\S+)$/, "Stopped {command}", "command"],
+  [/^Changed (\d+) files$/, "Changed {count} files", "count"],
+  [/^Changed (.+)$/, "Changed {name}", "name"],
+  [/^Retrying provider \((.+)\)$/, "Retrying provider ({progress})", "progress"],
+  [/^Provider recovered \((.+) retries\)$/, "Provider recovered ({progress} retries)", "progress"],
+  [/^Provider retry stopped \((.+)\)$/, "Provider retry stopped ({progress})", "progress"],
+  [/^Provider error after (.+) retries$/, "Provider error after {progress} retries", "progress"],
 ];
 
 export function translateTimelineLabel(label: string, t: TimelineTranslator): string {
