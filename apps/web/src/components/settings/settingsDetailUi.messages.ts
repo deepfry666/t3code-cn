@@ -7,6 +7,13 @@ export const settingsDetailUiMessages = {
   "Linked environments": "关联环境",
   "Simlock device hosts (alpha)": "Simlock 设备主机（早期测试）",
   "Simlock device hosts": "Simlock 设备主机",
+  "Suggest next prompt": "建议下一条提示词",
+  "Show a predicted next message in the empty composer after a Claude or Codex turn. Tab uses it. Each is an extra cached request on your plan. Needs Codex 0.165+. Claude threads update on restart.":
+    "Claude 或 Codex 完成一轮回复后，在空输入框中预测下一条消息。按 Tab 使用它。每次预测都会在你的套餐上产生一次额外的缓存请求。需要 Codex 0.165+。Claude 会话在重启后更新。",
+  "Fast worktree checkout": "快速创建工作树",
+  "On a Mac, clone new worktrees from a checkout cached in the T3 home folder instead of writing every file. Uses Git’s normal checkout when it can’t. Turning it off deletes the cache.":
+    "在 Mac 上，从缓存在 T3 主目录中的工作副本克隆新的工作树，无需逐个写入每个文件。无法使用时改为 Git 的常规检出。关闭后会删除缓存。",
+  "tool calls in chat": "聊天中的工具调用",
   "Show all": "全部显示",
   "Hide successful": "隐藏成功的调用",
   "Hide all": "全部隐藏",
@@ -17,8 +24,8 @@ export const settingsDetailUiMessages = {
   Devices: "设备",
   "Group sidebar threads into project folders. Pinned threads stay on top, and Snoozed and Settled stay below the folders.":
     "将侧边栏会话按项目文件夹分组。置顶会话保留在顶部，已暂缓和已收尾会话显示在文件夹下方。",
-  "In the boring sidebar, show folder threads on two lines: the title, then the branch, pull request, and agent.":
-    "在简洁侧边栏中分两行显示文件夹内的会话：第一行显示标题，第二行显示分支、拉取请求和智能体。",
+  "Show folder threads on two lines: the title, then the branch, pull request, and agent.":
+    "分两行显示文件夹内的会话：第一行显示标题，第二行显示分支、拉取请求和智能体。",
   "Hide the commands, edits, and searches agents run. Hide successful keeps failures. Zen shows only final answers. Approvals, questions, and errors always show.":
     "隐藏智能体执行的命令、编辑和搜索。“隐藏成功的调用”仍保留失败项；“专注模式”仅显示最终回答。审批、提问和错误始终显示。",
   "Share a thread with a guest who watches it live in a browser and sends messages you approve. Sign in to T3 Connect to use guest links.":

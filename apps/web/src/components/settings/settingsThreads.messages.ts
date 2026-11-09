@@ -144,6 +144,7 @@ export const settingsThreadsMessages = {
     "实时转发。此环境离线时，请求会失败。",
   "Change in Sharing & access": "在“共享与访问”中更改",
   "New thread each run": "每次运行新建会话",
+  "Started by the first run": "由首次运行创建",
   "One thread, continuing the conversation": "在同一会话中继续对话",
   "One thread, fresh session each run": "在同一会话中运行，每次使用全新上下文",
   "Each run starts a new thread with the workspace and model below.":
@@ -157,6 +158,11 @@ export const settingsThreadsMessages = {
   "Each run starts a fresh session in this thread, without earlier runs' context.":
     "每次运行都在此会话中使用全新上下文，不包含之前运行的内容。",
   Destination: "目标会话",
+  "Destination thread": "目标会话",
+  "Search threads": "搜索会话",
+  "Search all threads...": "搜索全部会话…",
+  "No threads found.": "未找到会话。",
+  "Untitled thread": "未命名会话",
   "Thread {id}": "会话 {id}",
   "Deleting the thread also deletes this task.": "删除会话时也会删除此任务。",
   "Scheduled task is incomplete": "定时任务信息不完整",

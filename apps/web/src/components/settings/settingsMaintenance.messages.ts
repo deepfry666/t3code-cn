@@ -266,11 +266,28 @@ export const settingsMaintenanceMessages = {
     "删除超过设定天数且不再写入的轮转日志文件。保留当前日志。",
   Database: "数据库",
   "Reclaim freed database space": "回收数据库空闲空间",
+  "These databases still hold space freed by history cleanup.":
+    "这些数据库仍占用历史清理后腾出的空间。",
   "These databases still hold space freed by history cleanup. Run the command on each machine to reclaim it. It restarts the background service. Quit the desktop app first if it hosts the environment.":
     "这些数据库仍占用历史清理后腾出的空间。在各设备上运行此命令即可回收。命令会重启后台服务。如果此环境由桌面应用托管，请先退出桌面应用。",
   "{size} GiB on {environment}": "{environment} 上的 {size} GiB",
   "Copy command": "复制命令",
   Dismiss: "忽略",
+  "Reclaim {amount} on {label}?": "回收 {label} 上的 {amount}？",
+  "{amount} on {label}": "{label} 上的 {amount}",
+  "Reclaiming {amount} on {label}": "正在回收 {label} 上的 {amount}",
+  "T3 Code there restarts and is back in about {minutes} min.":
+    "该设备上的 T3 Code 会重启，约 {minutes} 分钟后恢复。",
+  "Restarts T3 Code there. It is offline for about {minutes} min.":
+    "会重启该设备上的 T3 Code，大约离线 {minutes} 分钟。",
+  "The last attempt failed: {failure}": "上次尝试失败：{failure}",
+  "Could not reclaim space on {label}": "无法回收 {label} 上的空间",
+  "T3 Code on {label} stops, rebuilds its database, and starts again. It is offline for about {minutes} min. Running agents stop when it restarts.":
+    "{label} 上的 T3 Code 会停止、重建数据库后再次启动，大约离线 {minutes} 分钟。重启时正在运行的智能体会停止。",
+  "Restart and reclaim": "重启并回收",
+  Reclaim: "回收",
+  "Restarting…": "正在重启…",
+  "An error occurred.": "发生错误。",
   "Send SIGINT": "发送 SIGINT",
   "Send SIGKILL": "发送 SIGKILL",
   "OpenTelemetry export": "OpenTelemetry 导出",

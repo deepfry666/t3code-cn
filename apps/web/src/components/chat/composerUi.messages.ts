@@ -24,7 +24,6 @@ export const composerUiMessages = {
     "请更新此服务器，才能在回答问题时发送文件",
   "Attach the interrupted file again or remove it": "请重新添加中断的文件，或将其移除",
   "Attach the interrupted files again or remove them": "请重新添加中断的文件，或将它们移除",
-  "Compacting is unavailable right now": "现在无法压缩",
   "Select at least one model.": "请至少选择一个模型。",
   "Resume thread": "继续会话",
   "Open composer to compact and send": "打开输入框以压缩并发送",
@@ -62,8 +61,6 @@ export const composerUiMessages = {
   "Choose an option above": "请在上方选择一个选项",
   "Type your own answer, or leave this blank to use the selected option":
     "输入你自己的回答，或留空以使用选中的选项",
-  "Add feedback to refine the plan, or leave this blank to implement it":
-    "添加反馈来完善计划，或留空直接执行",
   "Choose a project above to start a thread": "请在上方选择项目以开始会话",
   "Enable a provider in Settings to send a message": "请在设置中启用一个提供方后再发送消息",
   "Ask anything. @ files, $ skills, / commands":
@@ -276,8 +273,6 @@ export const composerUiMessages = {
   Provider: "提供方",
   "{source} Skill": "{source}技能",
   "Switch response model for this thread": "切换这个会话使用的回复模型",
-  "Switch this thread into plan mode": "将这个会话切换到计划模式",
-  "Switch this thread back to normal build mode": "将这个会话切回普通构建模式",
   "Ask a side question in a new side chat": "在新的侧聊中问一个旁支问题",
   "Same as /side": "与 /side 相同",
   "Start a fresh session; earlier messages stay visible":
@@ -325,8 +320,6 @@ export const composerUiMessages = {
   "Supported providers approve routine actions; others still ask.":
     "支持此模式的提供方会批准常规操作，其他提供方仍会询问。",
   "Allow commands and edits without prompts.": "允许执行命令和编辑，无需确认。",
-  "Plan mode. Click to return to normal build mode": "计划模式。点击返回普通构建模式",
-  "Default mode. Click to enter plan mode": "默认模式。点击进入计划模式",
   Plan: "计划",
   Build: "构建",
   "Permissions: {mode}. {description}": "权限：{mode}。{description}",
@@ -447,13 +440,8 @@ export const composerUiMessages = {
   "Dismiss fallback model notice": "关闭备用模型提示",
   "Manage usage": "管理用量",
   "Compacts automatically at about {tokens} tokens.": "大约 {tokens} token 时会自动压缩。",
-  "Context for {model} compacts automatically when needed.": "{model} 的上下文会在需要时自动压缩。",
   "Context compacts automatically when needed.": "上下文会在需要时自动压缩。",
-  "Context window {percent} used": "上下文窗口已用 {percent}",
-  "Context window {tokens} tokens used": "上下文窗口已用 {tokens} token",
   "Context Window": "上下文窗口",
-  "Context window usage": "上下文窗口用量",
-  "Total processed": "累计处理",
   Cost: "费用",
   "Compact context": "压缩上下文",
   "The previous request may have started. Open its thread to check before sending again.":
@@ -513,9 +501,6 @@ export const composerUiMessages = {
   "Restore prompt": "恢复提示词",
   "Return to the original draft and send or clear its current prompt before restoring.":
     "请回到原来的草稿，先发送或清空当前提示词，再进行恢复。",
-  "Failed to send plan follow-up.": "无法发送计划的后续消息。",
-  "Could not start implementation thread": "无法开始执行计划的会话",
-  "An error occurred while creating the new thread.": "新建会话时出错。",
   "Could not resume thread.": "无法继续会话。",
   "What should we build in": "要构建什么：",
   "?@@draft heading": "？",
@@ -568,6 +553,5 @@ export const composerUiMessages = {
     "这个 ChatGPT 连接不支持快速和极速模式。如需使用账户支持的速度选项，请改用现有的 Codex CLI 登录。",
   "Open provider settings": "打开提供方设置",
   "No provider available": "没有可用的提供方",
-  "Plan ready": "计划已就绪",
   "Usage limits are unavailable for this provider": "这个提供方无法查看用量限制",
 } as const;
