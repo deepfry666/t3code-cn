@@ -1,6 +1,16 @@
 import type { Locale } from "../i18n/locale";
 
 export const commandPaletteUiMessages = {
+  "Enter the full owner/repository name.": "请输入完整的所有者/仓库名称。",
+  "Provider status unavailable. Open Source Control settings and rescan.":
+    "无法获取提供方状态。请打开“源代码管理”设置并重新扫描。",
+  "Enter a project path.": "请输入项目路径。",
+  "Windows-style paths are only supported on Windows environments.":
+    "仅 Windows 环境支持 Windows 风格的路径。",
+  "Relative paths require an active project in this environment.":
+    "相对路径需要此环境中有活动项目。",
+  "No project in this environment can read {host}/{repository}.":
+    "此环境中没有项目能读取 {host}/{repository}。",
   // Groups, placeholders and empty states
   Suggestions: "建议",
   Threads: "会话",

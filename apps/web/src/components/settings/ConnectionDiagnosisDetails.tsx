@@ -203,7 +203,9 @@ export function ConnectionDiagnosisPanel({
         {diagnosis.facts.map(([label, value]) => (
           <div key={label} className="contents">
             <dt>{tl(label)}</dt>
-            <dd className="break-all text-foreground">{label === "Route" ? tl(value) : value}</dd>
+            <dd className="break-all text-foreground">
+              {label === "Route" || label === "Error" ? tl(value) : value}
+            </dd>
           </div>
         ))}
       </dl>

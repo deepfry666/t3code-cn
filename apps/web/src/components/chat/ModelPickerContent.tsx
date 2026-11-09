@@ -1,3 +1,4 @@
+import { translateThreadRuntimeLabel } from "./threadRuntimeLabels";
 import { useTranslation } from "~/i18n/useTranslation";
 import { composerUiMessages } from "./composerUi.messages";
 import {
@@ -736,7 +737,9 @@ export const ModelPickerContent = memo(function ModelPickerContent(props: {
       ? matchesLockedProvider(entry)
       : entry.instanceId === selectedEntry?.instanceId;
     const notice = shown ? formatProviderUpdateRequiredNotice(entry.snapshot, searchQuery) : null;
-    return notice ? [{ instanceId: entry.instanceId, notice }] : [];
+    return notice
+      ? [{ instanceId: entry.instanceId, notice: translateThreadRuntimeLabel(notice) }]
+      : [];
   });
 
   const modelJumpModelKeys = visibleModels

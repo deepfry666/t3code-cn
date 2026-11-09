@@ -1,3 +1,4 @@
+import { RuntimeErrorText } from "~/components/RuntimeErrorText";
 import { useAuth } from "@clerk/react";
 import { useAtomValue } from "@effect/atom-react";
 import type {
@@ -400,7 +401,7 @@ function ConnectionStep({
                 ) : null}
                 {environment.connection.phase === "unsupported" && environment.connection.error ? (
                   <span className="mt-0.5 block text-xs text-muted-foreground">
-                    {environment.connection.error}
+                    <RuntimeErrorText>{environment.connection.error}</RuntimeErrorText>
                   </span>
                 ) : null}
               </span>
@@ -650,7 +651,9 @@ function PairingForm({
         </div>
         {errorMessage ? (
           <Alert id="onboarding-pairing-error" variant="error">
-            <AlertDescription>{errorMessage}</AlertDescription>
+            <AlertDescription>
+              <RuntimeErrorText>{errorMessage}</RuntimeErrorText>
+            </AlertDescription>
           </Alert>
         ) : null}
         <Collapsible>

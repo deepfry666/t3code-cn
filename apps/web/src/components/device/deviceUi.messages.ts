@@ -1,4 +1,14 @@
+import { createLabelTranslator } from "../../i18n/labelTranslation";
+import { translate, type Locale } from "../../i18n/locale";
+
 export const deviceUiMessages = {
+  "This browser cannot decode {codec}.": "此浏览器无法解码 {codec}。",
+  "Video decoder: {error}": "视频解码器：{error}",
+  "This browser cannot decode this device's {codec} stream.":
+    "此浏览器无法解码此设备的 {codec} 视频流。",
+  "This browser cannot decode the Duo panel's {codec} stream.":
+    "此浏览器无法解码 Duo 面板的 {codec} 视频流。",
+  "Device stream offer failed ({status}). Retrying…": "设备流协商失败（{status}）。正在重试…",
   "iOS Simulators": "iOS 模拟器",
   "Android Emulators": "Android 模拟器",
   "Device host": "设备主机",
@@ -232,3 +242,16 @@ export const deviceUiMessages = {
   Retry: "重试",
   "Retrying…": "正在重试…",
 } as const;
+
+const translateStreamLabel = createLabelTranslator(deviceUiMessages, [
+  "This browser cannot decode {codec}.",
+  "Video decoder: {error}",
+  "This browser cannot decode this device's {codec} stream.",
+  "This browser cannot decode the Duo panel's {codec} stream.",
+  "Device stream offer failed ({status}). Retrying…",
+]);
+export function translateDeviceStreamLabel(label: string, locale: Locale): string {
+  return translateStreamLabel(label, (key, params) =>
+    translate(locale, deviceUiMessages, key, params),
+  );
+}

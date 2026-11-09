@@ -1,3 +1,4 @@
+import { RuntimeErrorText } from "~/components/RuntimeErrorText";
 import { T3CHAT_PLAN_TUNNEL_LIMITS, type RelayT3ChatLink } from "@t3tools/contracts/relay";
 import { MessageSquareIcon } from "lucide-react";
 import type { ReactNode } from "react";
@@ -73,7 +74,9 @@ export function T3ChatUserProfilePage() {
           <p className="font-medium text-destructive-foreground">
             {t("Could not load T3 Chat link")}
           </p>
-          <p className="mt-0.5 text-muted-foreground">{linkState.error}</p>
+          <p className="mt-0.5 text-muted-foreground">
+            <RuntimeErrorText>{linkState.error}</RuntimeErrorText>
+          </p>
         </div>
       ) : data === null ? null : !data.available ? (
         <p className="border-t py-4 text-xs text-muted-foreground">

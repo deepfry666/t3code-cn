@@ -1,4 +1,8 @@
+import { timelineSharedMessages } from "./timelineShared.messages";
+
 export const timelineUiMessages = {
+  ...timelineSharedMessages,
+  "{title} phase": "阶段：{title}",
   "View cited assistant text: {label}": "查看引用的助手回复：{label}",
   "Quoted assistant text: {label}": "引用的助手回复：{label}",
   "Go to source": "跳转到原文",

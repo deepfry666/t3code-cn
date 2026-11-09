@@ -1,4 +1,7 @@
-import { useTranslation } from "~/i18n/useTranslation";
+import { RuntimeErrorText } from "../RuntimeErrorText";
+import { translateTimelineLabel } from "./timelineLabels";
+import { translateConnectionLabel } from "../settings/settingsConnections.messages";
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { timelineUiMessages } from "./timelineUi.messages";
 import { pipe } from "effect/Function";
 import { useAtomValue } from "@effect/atom-react";
@@ -60,7 +63,11 @@ export function LinkRequestCard(props: {
   readonly visibility: OrchestrationV2ProjectedTurnItem["visibility"];
 }) {
   const { item } = props;
-  const display = linkRequestDisplay(item, props.visibility, accessLabel);
+  const t = useTranslation(timelineUiMessages);
+  const locale = useLocale();
+  const display = linkRequestDisplay(item, props.visibility, (access) =>
+    translateConnectionLabel(accessLabel(access), locale),
+  );
   if (display.kind === "answered" || display.kind === "pending-elsewhere") {
     const Icon =
       display.kind === "pending-elsewhere"
@@ -74,7 +81,7 @@ export function LinkRequestCard(props: {
       <WorkLogRow
         data-v2-item-type={item.type}
         icon={<Icon className="size-3.5 text-icon-muted" aria-hidden />}
-        label={display.label}
+        label={translateTimelineLabel(display.label, t)}
       />
     );
   }
@@ -131,7 +138,7 @@ function PendingLinkRequest(props: {
       </div>
       {error !== null ? (
         <p role="alert" className="text-xs text-destructive">
-          {error}
+          <RuntimeErrorText>{error}</RuntimeErrorText>
         </p>
       ) : null}
       {canAnswer ? (
@@ -445,7 +452,7 @@ function LinkRequestDialog(props: {
             ) : null}
             {error !== null ? (
               <p role="alert" className="text-xs text-destructive">
-                {error}
+                <RuntimeErrorText>{error}</RuntimeErrorText>
               </p>
             ) : null}
           </form>

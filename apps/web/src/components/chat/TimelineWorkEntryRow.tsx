@@ -1,3 +1,4 @@
+import { translateTimelineLabel, type TimelineTranslator } from "./timelineLabels";
 import { useTranslation } from "~/i18n/useTranslation";
 import { timelineUiMessages } from "./timelineUi.messages";
 import { TimelinePendingApprovalRow } from "./TimelinePendingApprovalRow";
@@ -78,8 +79,14 @@ export function useThreadReadTarget(entry: TimelineWorkEntry, environmentId: Env
   return threadId && title ? { threadId, title } : null;
 }
 
-export function threadReadLabel(label: string, target: ReturnType<typeof useThreadReadTarget>) {
-  const prefix = target && threadReadLabelPrefix(label);
+export function threadReadLabel(
+  label: string,
+  target: ReturnType<typeof useThreadReadTarget>,
+  t?: TimelineTranslator,
+) {
+  if (!target) return null;
+  const sourcePrefix = threadReadLabelPrefix(label);
+  const prefix = sourcePrefix && t ? translateTimelineLabel(sourcePrefix, t) : sourcePrefix;
   return prefix ? { ...target, prefix, text: `${prefix} “${target.title}”` } : null;
 }
 
@@ -243,7 +250,7 @@ function WorkEntryLogRow(props: WorkEntryRowProps) {
           <span
             className={cn("text-sm font-medium", warning ? "text-warning" : "text-destructive")}
           >
-            {label}
+            {translateTimelineLabel(label, t)}
           </span>
         }
         trailing={
@@ -299,6 +306,8 @@ function WorkEntryLogRow(props: WorkEntryRowProps) {
         ? t("Thinking@@activity")
         : t("Thought")
       : questionHeading || (displayLabel ?? workEntryDisplayLabel(workEntry, workspaceRoot));
+  const displayPreviewText =
+    isReasoning || questionHeading ? previewText : translateTimelineLabel(previewText, t);
   const answerPreview =
     workEntry.questionAnswer && hasQuestionAnswer(workEntry.questionAnswer)
       ? getQuestionAnswerPreview(workEntry.questionAnswer)
@@ -378,12 +387,12 @@ function WorkEntryLogRow(props: WorkEntryRowProps) {
       : workLogEntryIsToolLike(workEntry)
         ? "text-secondary-label"
         : "text-foreground/80";
-  const threadLabel = isReasoning ? null : threadReadLabel(previewText, threadTarget);
-  const accessiblePreview = [threadLabel?.text ?? previewText, answerPreview]
+  const threadLabel = isReasoning ? null : threadReadLabel(previewText, threadTarget, t);
+  const accessiblePreview = [threadLabel?.text ?? displayPreviewText, answerPreview]
     .filter(Boolean)
     .join(": ");
   const accessibleDisplayText = showFailedIndicator
-    ? `${accessiblePreview}, tool call failed`
+    ? t("{label}, tool call failed", { label: accessiblePreview })
     : accessiblePreview;
   const rowToggleProps = canExpandProjectedItem
     ? {
@@ -445,7 +454,7 @@ function WorkEntryLogRow(props: WorkEntryRowProps) {
                   linked
                 />
               ) : (
-                previewText
+                displayPreviewText
               )}
             </span>
             {answerPreview ? (

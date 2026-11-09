@@ -1,3 +1,4 @@
+import { RuntimeErrorText } from "~/components/RuntimeErrorText";
 import { RefreshIcon } from "~/components/ui/refresh-icon";
 import { useAtomValue } from "@effect/atom-react";
 import type { FileDiffContentsLoader, FileDiffMetadata } from "@pierre/diffs";
@@ -970,7 +971,9 @@ export default function DiffPanel({
                   })}
                 </DropdownMenuRadioGroup>
                 {branchCommitsQuery.error ? (
-                  <DropdownMenuItem disabled>{branchCommitsQuery.error}</DropdownMenuItem>
+                  <DropdownMenuItem disabled>
+                    <RuntimeErrorText>{branchCommitsQuery.error}</RuntimeErrorText>
+                  </DropdownMenuItem>
                 ) : !canReadFiles ? (
                   <DropdownMenuItem disabled>
                     {fileAccess.isPending
@@ -1313,7 +1316,9 @@ export default function DiffPanel({
           <DiffPanelLoadingState label={t("Checking file access...")} />
         ) : (
           <div className="flex flex-1 items-center justify-center px-5 text-center text-xs text-muted-foreground/70">
-            {fileAccess.error ?? t("This connection cannot read local diffs.")}
+            <RuntimeErrorText>
+              {fileAccess.error ?? t("This connection cannot read local diffs.")}
+            </RuntimeErrorText>
           </div>
         )
       ) : (
@@ -1344,7 +1349,9 @@ export default function DiffPanel({
             )}
             {selectedPatchError && !renderablePatch && (
               <div className="px-3">
-                <p className="mb-2 text-2xs text-error/80">{selectedPatchError}</p>
+                <p className="mb-2 text-2xs text-error/80">
+                  <RuntimeErrorText>{selectedPatchError}</RuntimeErrorText>
+                </p>
               </div>
             )}
             {!renderablePatch && toolCallPreview && toolCallPreview.content.length > 0 ? (

@@ -22,9 +22,12 @@ describe("device status details", () => {
     );
   });
 
-  it("passes device and decoder text it does not know straight through", () => {
+  it("translates the decoder prefix and preserves unknown device details", () => {
     setLocale("zh-CN");
-    expect(deviceDetail("Video decoder: bad h264 profile")).toBe("Video decoder: bad h264 profile");
+    expect(deviceDetail("Video decoder: bad h264 profile")).toBe("视频解码器：bad h264 profile");
+    expect(deviceDetail("Unknown device detail / path: unchanged")).toBe(
+      "Unknown device detail / path: unchanged",
+    );
     expect(deviceDetail(undefined)).toBeNull();
   });
 });

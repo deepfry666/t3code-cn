@@ -1,3 +1,4 @@
+import { RuntimeErrorText } from "~/components/RuntimeErrorText";
 import { findErrorTraceId } from "@t3tools/client-runtime/errors";
 import {
   type EnvironmentConnectionPresentation,
@@ -299,7 +300,9 @@ export function CloudEnvironmentConnectRows({
           <p className="text-sm font-medium text-destructive">
             {t("Could not load T3 Connect environments")}
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">{discoveryProblem}</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            <RuntimeErrorText>{discoveryProblem}</RuntimeErrorText>
+          </p>
           <Button
             size="sm"
             variant="outline"
@@ -481,7 +484,7 @@ export function CloudEnvironmentConnectRows({
                   : "text-muted-foreground",
               )}
             >
-              {statusText}
+              <RuntimeErrorText>{statusText}</RuntimeErrorText>
             </p>
           </div>
           {unsupported && !savedEnvironment ? (
