@@ -48,7 +48,10 @@
     "minimize": "最小化",
     "zoom": "缩放",
     "front": "全部置于前面",
-    "help": "帮助"
+    "help": "帮助",
+    "About {displayName}": "关于 {displayName}",
+    "Hide {displayName}": "隐藏 {displayName}",
+    "Quit {displayName}": "退出 {displayName}"
   },
   "apps/web/src/browser/browserUi.messages.ts": {
     "Browser device toolbar": "浏览器设备工具栏",
@@ -619,7 +622,7 @@
     "'{name}' is empty or could not be read.": "“{name}”为空或无法读取。",
     "Large paste attached as {name}": "大段粘贴内容已作为 {name} 附加",
     "{size} · Use {shortcut} to keep a large paste inline.": "{size} · 按 {shortcut} 可将大段内容直接粘贴到正文中。",
-    "Remove {name} from the message?nIt is referenced in your text; removing it also removes every reference.": "要从消息中移除 {name} 吗？n正文中引用了它，移除后所有引用也会一并删除。",
+    "Remove {name} from the message?\nIt is referenced in your text; removing it also removes every reference.": "要从消息中移除 {name} 吗？\n正文中引用了它，移除后所有引用也会一并删除。",
     "this image": "这张图片",
     "Pasted text is too large for this message": "粘贴的文字对这条消息来说太长了",
     "Remove some text or an attachment, then paste again.": "请删除部分文字或附件后再粘贴。",
@@ -4587,7 +4590,7 @@
     "Failed to switch the backend off.": "无法关闭后端。",
     "Could not switch backend on": "无法开启后端",
     "Could not switch backend off": "无法关闭后端",
-    "Remove {environment} from this device?nThis forgets its pairing, credentials, and cached threads here. Switch it off instead to keep it saved.": "从此设备移除 {environment}？n这会删除这里保存的配对信息、凭据和缓存的会话。若要保留这些内容，请关闭连接。",
+    "Remove {environment} from this device?\nThis forgets its pairing, credentials, and cached threads here. Switch it off instead to keep it saved.": "从此设备移除 {environment}？\n这会删除这里保存的配对信息、凭据和缓存的会话。若要保留这些内容，请关闭连接。",
     "WSL backend couldn't start: {error}": "WSL 后端无法启动：{error}",
     " (default)": "（默认）",
     "Reachable at {url}": "访问地址：{url}",
@@ -6080,8 +6083,8 @@
     "Up to date": "已是最新版本",
     "Update available ready to download": "有可下载的更新",
     "Update ready downloaded. Click to restart and install.": "更新已下载。点击重启并安装。",
-    "Install update and restart T3 Code?nnAny running tasks will be interrupted. Make sure you're ready before continuing.": "安装更新并重启 T3 Code？nn正在运行的任务会被中断。请确认已准备好再继续。",
-    "Install update {version} and restart T3 Code?nnAny running tasks will be interrupted. Make sure you're ready before continuing.": "安装更新 {version} 并重启 T3 Code？nn正在运行的任务会被中断。请确认已准备好再继续。"
+    "Install update and restart T3 Code?\n\nAny running tasks will be interrupted. Make sure you're ready before continuing.": "安装更新并重启 T3 Code？\n\n正在运行的任务会被中断。请确认已准备好再继续。",
+    "Install update {version} and restart T3 Code?\n\nAny running tasks will be interrupted. Make sure you're ready before continuing.": "安装更新 {version} 并重启 T3 Code？\n\n正在运行的任务会被中断。请确认已准备好再继续。"
   },
   "apps/web/src/components/settings/settingsProviderAccounts.messages.ts": {
     "Manage usage": "管理用量",
@@ -6644,9 +6647,9 @@
     "Reconnect {environment} to set up its providers.": "重新连接 {environment} 以设置其提供方。",
     "Waiting for {environment}'s configuration.": "正在等待 {environment} 的配置。",
     "Could not update {provider}": "无法更新 {provider}",
-    "Remove the {provider} provider instance?nIts saved settings, including any custom binary path, will be removed.": "要移除 {provider} 提供方实例吗？n其保存的设置（包括自定义可执行文件路径）将被移除。",
-    "Reset the {provider} provider to its defaults?nIts saved settings, including any custom binary path, will be removed.": "要将 {provider} 提供方恢复为默认设置吗？n其保存的设置（包括自定义可执行文件路径）将被移除。",
-    "Reset the {provider} provider to its defaults?nIts saved settings, including any custom binary path, will be removed. It will also be turned off.": "要将 {provider} 提供方恢复为默认设置吗？n其保存的设置（包括自定义可执行文件路径）将被移除，提供方也将停用。",
+    "Remove the {provider} provider instance?\nIts saved settings, including any custom binary path, will be removed.": "要移除 {provider} 提供方实例吗？\n其保存的设置（包括自定义可执行文件路径）将被移除。",
+    "Reset the {provider} provider to its defaults?\nIts saved settings, including any custom binary path, will be removed.": "要将 {provider} 提供方恢复为默认设置吗？\n其保存的设置（包括自定义可执行文件路径）将被移除。",
+    "Reset the {provider} provider to its defaults?\nIts saved settings, including any custom binary path, will be removed. It will also be turned off.": "要将 {provider} 提供方恢复为默认设置吗？\n其保存的设置（包括自定义可执行文件路径）将被移除，提供方也将停用。",
     "This session can view {environment}'s providers but can't change their settings.": "此会话可以查看 {environment} 的提供方，但无法修改设置。",
     "{provider} provider settings": "{provider} 提供方设置",
     "Checked {time}": "检查时间：{time}",
@@ -7014,7 +7017,7 @@
     "Refresh": "刷新",
     "Done": "完成",
     "The URL appears after you save.": "保存后显示 URL。",
-    "Rotate this webhook URL?nThe current URL stops working.": "更换此 webhook URL？n当前 URL 将失效。",
+    "Rotate this webhook URL?\nThe current URL stops working.": "更换此 webhook URL？\n当前 URL 将失效。",
     "Rotate this webhook URL? The current URL stops working.": "更换此 webhook URL？当前 URL 将失效。",
     "Could not rotate webhook URL": "无法更换 webhook URL",
     "Copied": "已复制",

@@ -10,10 +10,13 @@ export const SNAPSHOT_PATH = "i18n/zh-CN.json";
 
 const CJK = /[一-鿿]/;
 const ENTRY =
-  /^\s*(?:"(?<double>(?:[^"\\]|\\.)*)"|'(?<single>(?:[^'\\]|\\.)*)'|(?<bare>[A-Za-z_$][\w$]*))\s*:\s*(?:\n\s*)?"(?<value>(?:[^"\\]|\\.)*)"/gm;
-const CJK_LITERAL = /"(?:[^"\\\n]|\\.)*[一-鿿](?:[^"\\\n]|\\.)*"/g;
+  /^\s*(?:"(?<double>(?:[^"\\]|\\.)*)"|'(?<single>(?:[^'\\]|\\.)*)'|\[`(?<template>(?:[^`\\]|\\.)*)`\]|(?<bare>[A-Za-z_$][\w$]*))\s*:\s*(?:\n\s*)?(?:"(?<value>(?:[^"\\]|\\.)*)"|`(?<templateValue>(?:[^`\\]|\\.)*)`)/gm;
+const CJK_LITERAL =
+  /(?:"(?:[^"\\\n]|\\.)*[一-鿿](?:[^"\\\n]|\\.)*"|`(?:[^`\\\n]|\\.)*[一-鿿](?:[^`\\\n]|\\.)*`)/g;
 
-const unescape = (raw: string) => raw.replace(/\\(.)/g, "$1");
+const unescape = (raw: string): string => JSON.parse(`"${raw}"`);
+const templateText = (raw: string) =>
+  unescape(raw.replace(/\$\{(\w+)\}/g, "{$1}").replace(/"/g, '\\"'));
 
 export interface CatalogEntry {
   readonly file: string;
@@ -35,7 +38,9 @@ export function readCatalogs() {
   for (const file of files) {
     const text = NodeFS.readFileSync(NodePath.join(repoRoot, file), "utf8");
     if (!CJK.test(text)) continue;
-    const found = [...text.matchAll(ENTRY)].filter((match) => CJK.test(match.groups?.value ?? ""));
+    const found = [...text.matchAll(ENTRY)].filter((match) =>
+      CJK.test(match.groups?.value ?? match.groups?.templateValue ?? ""),
+    );
     // Files with Chinese but no catalog entries (search keywords, language names) are not catalogs.
     if (found.length === 0) continue;
     for (const match of found) {
@@ -43,8 +48,16 @@ export function readCatalogs() {
       entries.push({
         file,
         at: `${file}:${line}`,
-        source: unescape(match.groups?.double ?? match.groups?.single ?? match.groups?.bare ?? ""),
-        localized: unescape(match.groups?.value ?? ""),
+        source:
+          match.groups?.template !== undefined
+            ? templateText(match.groups.template)
+            : match.groups?.single !== undefined
+              ? unescape(match.groups.single.replace(/\\'/g, "'").replace(/"/g, '\\"'))
+              : unescape(match.groups?.double ?? match.groups?.bare ?? ""),
+        localized:
+          match.groups?.templateValue !== undefined
+            ? templateText(match.groups.templateValue)
+            : unescape(match.groups?.value ?? ""),
       });
     }
     const literals = text.match(CJK_LITERAL)?.length ?? 0;

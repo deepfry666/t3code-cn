@@ -64,7 +64,7 @@ const sourceKey = (source: string) =>
   source
     .replace(/([a-z])([A-Z])/g, "$1 $2")
     .toLowerCase()
-    .replace(/\s+/g, " ")
+    .replace(/[ \t]+/g, " ")
     .trim()
     .replace(/(?:\.\.\.|…|\.|:)$/, "");
 const localizedKey = (localized: string) => localized.trim().replace(/[…。：:]$/, "");
@@ -75,6 +75,19 @@ describe("Chinese catalogs", () => {
   it("reads every Chinese string in a catalog file as an entry", () => {
     expect(entries.length).toBeGreaterThan(0);
     expect(unparsed).toEqual([]);
+    expect(entries).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          source: "Rotate this webhook URL?\nThe current URL stops working.",
+          localized: "更换此 webhook URL？\n当前 URL 将失效。",
+        }),
+        ...[
+          ["About {displayName}", "关于 {displayName}"],
+          ["Hide {displayName}", "隐藏 {displayName}"],
+          ["Quit {displayName}", "退出 {displayName}"],
+        ].map(([source, localized]) => expect.objectContaining({ source, localized })),
+      ]),
+    );
   });
 
   it("matches the translation record in i18n/zh-CN.json (vp run i18n:export)", () => {
