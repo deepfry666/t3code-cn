@@ -15,7 +15,42 @@ const labels: Readonly<Record<string, string>> = {
   "Actual Size": "实际大小",
   "Zoom In": "放大",
   "Zoom Out": "缩小",
+  "No suggestions": "无建议",
+  "Copy Link": "复制链接",
+  "Copy Image": "复制图片",
+  "You're up to date!": "已是最新版本！",
+  "T3 Code {version} is currently the newest version available.":
+    "T3 Code {version} 已是最新版本。",
+  "Update check failed": "检查更新失败",
+  "Could not check for updates.": "无法检查更新。",
+  "An unknown error occurred. Please try again later.": "发生未知错误，请稍后重试。",
+  "Updates unavailable": "更新不可用",
+  "Automatic updates are not available right now.": "目前无法自动更新。",
+  "Updates are turned off on this machine.": "此设备已停用更新。",
+  "Automatic updates are not available because no update feed is configured.":
+    "尚未配置更新源，无法自动更新。",
+  "Automatic updates are only available in packaged production builds.":
+    "只有打包的正式版本支持自动更新。",
+  "Automatic updates are disabled by the T3CODE_DISABLE_AUTO_UPDATE setting.":
+    "T3CODE_DISABLE_AUTO_UPDATE 设置已停用自动更新。",
+  "Automatic updates on Linux require the AppImage or the .deb package.":
+    "Linux 自动更新需要 AppImage 或 .deb 安装包。",
+  OK: "确定",
 };
+
+export function localizeDesktopText(
+  text: string,
+  languages: readonly string[],
+  params: Readonly<Record<string, string | number>> = {},
+): string {
+  const message =
+    languages[0]?.toLowerCase().startsWith("zh") && Object.hasOwn(labels, text)
+      ? (labels[text] ?? text)
+      : text;
+  return message.replace(/\{(\w+)\}/g, (placeholder, name: string) =>
+    Object.hasOwn(params, name) ? String(params[name]) : placeholder,
+  );
+}
 
 const roles: Partial<Record<NonNullable<Electron.MenuItemConstructorOptions["role"]>, string>> = {
   services: "服务",

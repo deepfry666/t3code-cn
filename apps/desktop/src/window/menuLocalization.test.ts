@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 import type * as Electron from "electron";
 
-import { localizeApplicationMenu } from "./menuLocalization.ts";
+import { localizeApplicationMenu, localizeDesktopText } from "./menuLocalization.ts";
 
 describe("native menu localization", () => {
   it("keeps non-Chinese menus unchanged and uses only the preferred language", () => {
@@ -53,5 +53,14 @@ describe("native menu localization", () => {
       { label: "Custom theme" },
       { type: "separator" },
     ]);
+    const source = "T3 Code {version} is currently the newest version available.";
+    const version = "1.2.3-{$build}";
+    expect(localizeDesktopText(source, ["zh-CN"], { version })).toBe(
+      `T3 Code ${version} 已是最新版本。`,
+    );
+    expect(localizeDesktopText(source, ["en-US", "zh-CN"], { version })).toBe(
+      `T3 Code ${version} is currently the newest version available.`,
+    );
+    expect(localizeDesktopText("toString", ["zh-CN"])).toBe("toString");
   });
 });

@@ -162,6 +162,7 @@ const layerDesktopClientSettings = Layer.mock(DesktopClientSettings.DesktopClien
 
 const layerElectronApp = Layer.mock(ElectronApp.ElectronApp)({
   quit: Effect.void,
+  preferredSystemLanguages: Effect.succeed(["en-US"]),
 });
 
 const layerDesktopAssets = Layer.succeed(DesktopAssets.DesktopAssets, {

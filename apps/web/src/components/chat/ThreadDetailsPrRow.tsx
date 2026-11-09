@@ -1,4 +1,5 @@
-import { useTranslation } from "~/i18n/useTranslation";
+import { useTranslation, useLocale } from "~/i18n/useTranslation";
+import { translatePullRequestLabel } from "../pullRequest/pullRequestUi.messages";
 import { threadPanelUiMessages } from "./threadPanelUi.messages";
 import { resolvePullRequestDetailChecks } from "@t3tools/client-runtime/pull-request-checks";
 import {
@@ -109,6 +110,7 @@ export function ThreadDetailsPrRow({
   onStopWatching?: (() => void) | undefined;
 }) {
   const t = useTranslation(threadPanelUiMessages);
+  const locale = useLocale();
   const serverConfigs = useServerConfigs();
   const supportsPullRequests = serverConfigs.get(environmentId) !== undefined;
   const repository = sourceControlClients.repositorySelector(project?.repositoryIdentity);
@@ -276,7 +278,9 @@ export function ThreadDetailsPrRow({
                 aria-hidden
                 className={cn("size-3 shrink-0", statePresentation.toneClassName)}
               />
-              <div className="min-w-0 truncate text-foreground/75">{statePresentation.label}</div>
+              <div className="min-w-0 truncate text-foreground/75">
+                {translatePullRequestLabel(statePresentation.label, locale)}
+              </div>
             </div>
             <div className="flex min-w-0 items-center gap-2">
               <GitBranchIcon className="size-3 shrink-0 stroke-muted-foreground" />
