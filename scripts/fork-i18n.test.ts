@@ -1,12 +1,9 @@
 // @effect-diagnostics nodeBuiltinImport:off
-import * as NodeChildProcess from "node:child_process";
 import * as NodeFS from "node:fs";
 import * as NodePath from "node:path";
 import { describe, expect, it } from "vite-plus/test";
 
-// Catalogs live beside the UI they translate (web, desktop menus), so they are read as text
-// here instead of imported across package boundaries.
-const repoRoot = NodePath.resolve(import.meta.dirname, "..");
+import { readCatalogs, repoRoot, SNAPSHOT_PATH, snapshotText } from "./lib/fork-catalogs.ts";
 
 // The one Chinese term for each recurring product concept.
 const GLOSSARY: ReadonlyArray<readonly [english: RegExp, chinese: string]> = [
@@ -62,55 +59,12 @@ const KEEP_ENGLISH: ReadonlyArray<string> = [
 
 const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-const CJK = /[一-鿿]/;
-const ENTRY =
-  /^\s*(?:"(?<double>(?:[^"\\]|\\.)*)"|'(?<single>(?:[^'\\]|\\.)*)'|(?<bare>[A-Za-z_$][\w$]*))\s*:\s*(?:\n\s*)?"(?<value>(?:[^"\\]|\\.)*)"/gm;
-const CJK_LITERAL = /"(?:[^"\\\n]|\\.)*[一-鿿](?:[^"\\\n]|\\.)*"/g;
-
-const unescape = (raw: string) => raw.replace(/\\(.)/g, "$1");
-
-interface Entry {
-  readonly at: string;
-  readonly source: string;
-  readonly localized: string;
-}
-
-function readCatalogs() {
-  const files = NodeChildProcess.execFileSync(
-    "git",
-    ["ls-files", "apps/web/src", "apps/desktop/src", "packages"],
-    { cwd: repoRoot, encoding: "utf8" },
-  )
-    .split("\n")
-    .filter((file) => /\.tsx?$/.test(file) && !/\.test\./.test(file));
-  const entries: Entry[] = [];
-  const unparsed: string[] = [];
-  for (const file of files) {
-    const text = NodeFS.readFileSync(NodePath.join(repoRoot, file), "utf8");
-    if (!CJK.test(text)) continue;
-    const found = [...text.matchAll(ENTRY)].filter((match) => CJK.test(match.groups?.value ?? ""));
-    // Files with Chinese but no catalog entries (search keywords, language names) are not catalogs.
-    if (found.length === 0) continue;
-    for (const match of found) {
-      const line = text.slice(0, match.index).split("\n").length;
-      entries.push({
-        at: `${file}:${line}`,
-        source: unescape(match.groups?.double ?? match.groups?.single ?? match.groups?.bare ?? ""),
-        localized: unescape(match.groups?.value ?? ""),
-      });
-    }
-    const literals = text.match(CJK_LITERAL)?.length ?? 0;
-    if (literals !== found.length) unparsed.push(`${file}: ${literals - found.length}`);
-  }
-  return { entries, unparsed };
-}
-
 // "Settings..." and "settings", or the menu role "selectAll" and "Select All", are one source.
 const sourceKey = (source: string) =>
   source
     .replace(/([a-z])([A-Z])/g, "$1 $2")
     .toLowerCase()
-    .replace(/\s+/g, " ")
+    .replace(/[ \t]+/g, " ")
     .trim()
     .replace(/(?:\.\.\.|…|\.|:)$/, "");
 const localizedKey = (localized: string) => localized.trim().replace(/[…。：:]$/, "");
@@ -121,6 +75,24 @@ describe("Chinese catalogs", () => {
   it("reads every Chinese string in a catalog file as an entry", () => {
     expect(entries.length).toBeGreaterThan(0);
     expect(unparsed).toEqual([]);
+    expect(entries).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          source: "Rotate this webhook URL?\nThe current URL stops working.",
+          localized: "更换此 webhook URL？\n当前 URL 将失效。",
+        }),
+        ...[
+          ["About {displayName}", "关于 {displayName}"],
+          ["Hide {displayName}", "隐藏 {displayName}"],
+          ["Quit {displayName}", "退出 {displayName}"],
+        ].map(([source, localized]) => expect.objectContaining({ source, localized })),
+      ]),
+    );
+  });
+
+  it("matches the translation record in i18n/zh-CN.json (vp run i18n:export)", () => {
+    const record = NodeFS.readFileSync(NodePath.join(repoRoot, SNAPSHOT_PATH), "utf8");
+    expect(record).toBe(snapshotText(entries));
   });
 
   it("keeps every placeholder and translates every entry", () => {

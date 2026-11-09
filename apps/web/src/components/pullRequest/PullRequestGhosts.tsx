@@ -160,7 +160,10 @@ export function PullRequestDetailGhost({
                 <span className="min-w-0 truncate font-medium">{seed.repository}</span>
                 <InlineButton
                   onClick={() => void readLocalApi()?.shell.openExternal(seed.url)}
-                  aria-label={`Open ${terminology.singular} #${seed.number} on host`}
+                  aria-label={t("Open {kind} #{number} on host", {
+                    kind: translatePullRequestLabel(terminology.singular, locale),
+                    number: seed.number,
+                  })}
                 >
                   <span className={statePresentation?.toneClassName}>#{seed.number}</span>
                   <ExternalLinkIcon aria-hidden className="size-2.5" />
@@ -295,7 +298,7 @@ export function PullRequestDetailGhost({
             <PullRequestChecksStatusLine
               className={checksPresentation.toneClassName}
               icon={<checksPresentation.Icon aria-hidden className="size-3.5" />}
-              label={checksPresentation.label}
+              label={translatePullRequestLabel(checksPresentation.label, locale)}
             />
           ) : (
             <PullRequestChecksStatusLine

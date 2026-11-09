@@ -72,17 +72,18 @@ function ChecksGlyph({
 }: {
   state: NonNullable<ThreadPullRequestLink["snapshot"]>["checksState"] & string;
 }) {
+  const locale = useLocale();
   const presentation = pullRequestChecksStatePresentation(state);
   return (
     <Tooltip>
       <TooltipTrigger render={<span className="inline-flex shrink-0" />}>
         <presentation.Icon
           role="img"
-          aria-label={presentation.label}
+          aria-label={translatePullRequestLabel(presentation.label, locale)}
           className={cn("size-3.5", presentation.toneClassName)}
         />
       </TooltipTrigger>
-      <TooltipPopup>{presentation.label}</TooltipPopup>
+      <TooltipPopup>{translatePullRequestLabel(presentation.label, locale)}</TooltipPopup>
     </Tooltip>
   );
 }
