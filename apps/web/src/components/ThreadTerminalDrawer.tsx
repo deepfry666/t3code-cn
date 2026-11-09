@@ -1456,6 +1456,7 @@ function TerminalSidebarGroup({
   onActiveTerminalChange: (terminalId: string) => void;
   onCloseTerminal: (terminalId: string) => void;
 }) {
+  const t = useTranslation(projectScriptsUiMessages);
   const isGroupActive = terminalGroup.terminalIds.includes(activeTerminalId);
   const groupActiveTerminalId = isGroupActive
     ? activeTerminalId
@@ -1494,10 +1495,14 @@ function TerminalSidebarGroup({
       <div className="flex flex-col gap-0.5">
         {terminalGroup.terminalIds.map((terminalId) => {
           const isActive = terminalId === activeTerminalId;
-          const terminalLabel = terminalLabelById.get(terminalId) ?? "Terminal";
-          const closeTerminalLabel = `Close ${terminalLabel}${
-            isActive && closeShortcutLabel ? ` (${closeShortcutLabel})` : ""
-          }`;
+          const terminalLabel = terminalLabelById.get(terminalId) ?? t("Terminal");
+          const closeTerminalLabel =
+            isActive && closeShortcutLabel
+              ? t("Close {label} ({shortcut})", {
+                  label: terminalLabel,
+                  shortcut: closeShortcutLabel,
+                })
+              : t("Close {label}", { label: terminalLabel });
           return (
             <div
               key={terminalId}
@@ -1564,9 +1569,9 @@ export default function ThreadTerminalDrawer({
   terminalLaunchLocationsById,
 }: ThreadTerminalDrawerProps) {
   const canOperateTerminal = useEnvironmentScope(threadRef.environmentId, AuthTerminalOperateScope);
-  const terminalArea = workspaceAreaProps("terminal", 5, "Terminal");
-  const isPanel = mode === "panel";
   const t = useTranslation(projectScriptsUiMessages);
+  const terminalArea = workspaceAreaProps("terminal", 5, t("Terminal"));
+  const isPanel = mode === "panel";
   const [advancedTypography] = useLocalStorage(
     TYPOGRAPHY_ADVANCED_STORAGE_KEY,
     false,

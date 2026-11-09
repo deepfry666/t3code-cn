@@ -82,6 +82,8 @@ export const projectScriptsUiMessages = {
   "This stops the running process and clears its history.":
     "这会停止正在运行的进程并清除其历史记录。",
   "Close {count} terminals?": "关闭 {count} 个终端？",
+  "Close {label}": "关闭 {label}",
+  "Close {label} ({shortcut})": "关闭 {label}（{shortcut}）",
   "This stops their running processes and clears their histories: {labels}.":
     "这会停止它们正在运行的进程并清除其历史记录：{labels}。",
   "This connection cannot change keyboard shortcuts.": "此连接无法修改快捷键。",

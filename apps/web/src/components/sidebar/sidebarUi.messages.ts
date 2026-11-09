@@ -2,6 +2,7 @@ import { translateMaintenanceLabel } from "../settings/settingsMaintenance.messa
 import { translate, type Locale } from "../../i18n/locale";
 
 export const sidebarUiMessages = {
+  "now@@sidebar time": "刚刚",
   // Sidebar chrome and layout
   "Toggle main sidebar": "切换主侧边栏",
   Threads: "会话",
