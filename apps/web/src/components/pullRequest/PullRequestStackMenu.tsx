@@ -177,7 +177,7 @@ export function PullRequestStackMenu({
               position,
               size: stack.layers.length,
             })}
-            {notice ? ` · ${notice}` : null}
+            {notice ? ` · ${translatePullRequestLabel(notice, locale)}` : null}
           </TooltipPopup>
         </Tooltip>
         <MenuPopup align="start">
@@ -235,7 +235,9 @@ export function PullRequestStackMenu({
                   size="xs"
                   disabled={mergeDisabled && !stale}
                   aria-disabled={mergeDisabled || undefined}
-                  aria-description={stale ? (notice ?? undefined) : undefined}
+                  aria-description={
+                    stale && notice ? translatePullRequestLabel(notice, locale) : undefined
+                  }
                   onClick={mergeDisabled ? undefined : () => setConfirmation("merge")}
                 >
                   <PullRequestGlyph.merged aria-hidden className="size-3.5" />
@@ -247,6 +249,8 @@ export function PullRequestStackMenu({
           <TooltipPopup>
             {stale
               ? notice
+                ? translatePullRequestLabel(notice, locale)
+                : null
               : t("Merge stack through #{number} into {base} ({count} {kind})", {
                   number: reference.number,
                   base: stack.base,

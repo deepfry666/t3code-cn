@@ -1,6 +1,8 @@
 import JSZip from "jszip";
 import { checkZipDirectory } from "@t3tools/client-runtime/zip/directory";
 import { SaxesParser } from "saxes";
+import { translateNow } from "~/i18n/useTranslation";
+import { filesUiMessages } from "./filesUi.messages";
 import { externalUrl } from "./office/links";
 
 import {
@@ -305,7 +307,10 @@ function boundedWorksheet(
       maxColumn = Math.max(maxColumn, column);
       if (++budget.cells > 2_000_000 || maxRow * maxColumn > 8_000_000)
         throw new Error(
-          "This workbook exceeds the preview limit: 2 million cells or 8 million grid positions.",
+          translateNow(
+            filesUiMessages,
+            "This workbook exceeds the preview limit: 2 million cells or 8 million grid positions.",
+          ),
         );
       // Explicit coordinates also bound sheets whose rows/cells omit r.
       let letters = "";
@@ -588,10 +593,18 @@ function wordPartTypes() {
           if (!refs.has(attr("Id"))) refs.set(attr("Id"), target);
           relationships.set(owner, refs);
           if (target === "word/document.xml" && role !== "officeDocument")
-            throw new Error("Preview limited: this Word document has an aliased document part.");
+            throw new Error(
+              translateNow(
+                filesUiMessages,
+                "Preview limited: this Word document has an aliased document part.",
+              ),
+            );
           if (type === WORD_RELATIONSHIP + "officeDocument" && target !== "word/document.xml")
             throw new Error(
-              "Preview limited: this Word document has an unsupported document relationship.",
+              translateNow(
+                filesUiMessages,
+                "Preview limited: this Word document has an unsupported document relationship.",
+              ),
             );
         }
         if (

@@ -337,17 +337,17 @@ function ProjectScriptEditorForm({
       (keybinding.trim() || null) !== (request.initial.keybinding?.trim() || null);
     const canChangeKeybinding = readEnvironmentScope(environmentId, AuthSettingsWriteScope);
     if (changesKeybinding && !canChangeKeybinding) {
-      setValidationError("This connection cannot change keyboard shortcuts.");
+      setValidationError(t("This connection cannot change keyboard shortcuts."));
       return;
     }
     const trimmedName = name.trim();
     const trimmedCommand = command.trim();
     if (trimmedName.length === 0) {
-      setValidationError("Name is required.");
+      setValidationError(t("Name is required."));
       return;
     }
     if (trimmedCommand.length === 0) {
-      setValidationError("Command is required.");
+      setValidationError(t("Command is required."));
       return;
     }
 
@@ -571,14 +571,14 @@ function ProjectScriptEditorForm({
             disabled={isSaving || !canEditActions}
             onClick={() => onRequestDelete(name)}
           >
-            Delete
+            {t("Delete")}
           </Button>
         )}
         <Button type="button" variant="outline" onClick={close}>
-          Cancel
+          {t("Cancel")}
         </Button>
         <Button form={formId} type="submit" disabled={isSaving || !canEditActions}>
-          {isSaving ? "Saving…" : isEditing ? "Save changes" : "Save action"}
+          {isSaving ? t("Saving…") : isEditing ? t("Save changes") : t("Save action")}
         </Button>
       </DialogFooter>
     </>

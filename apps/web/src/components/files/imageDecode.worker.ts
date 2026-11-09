@@ -1,3 +1,6 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { filesUiMessages } from "./filesUi.messages";
+
 const MAX_PIXELS = 32_000_000;
 
 function validateTiffMetadata(bytes: ArrayBuffer) {
@@ -201,7 +204,12 @@ self.addEventListener("message", (event: MessageEvent<{ bytes: ArrayBuffer; heif
     (blob) => self.postMessage({ blob }, { transfer: [] }),
     (cause: unknown) =>
       self.postMessage(
-        { error: cause instanceof Error ? cause.message : "Could not decode this image." },
+        {
+          error:
+            cause instanceof Error
+              ? cause.message
+              : translateNow(filesUiMessages, "Could not decode this image."),
+        },
         { transfer: [] },
       ),
   );

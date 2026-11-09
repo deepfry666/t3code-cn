@@ -2,6 +2,10 @@ import type { DeviceHubAccess } from "@t3tools/client-runtime/state/deviceHubAcc
 import { withDeviceHubQuery } from "@t3tools/client-runtime/state/deviceHubAccess";
 import * as Schema from "effect/Schema";
 
+import { translateNow } from "~/i18n/useTranslation";
+
+import { deviceUiMessages } from "./deviceUi.messages";
+
 export type AndroidFoldPosture = "closed" | "opened";
 
 export interface AndroidFoldState {
@@ -61,7 +65,12 @@ const foldRequest = async (
     const payload: unknown = await response.json().catch(() => null);
     const error = isRecord(payload) ? payload.error : null;
     throw new AndroidFoldError({
-      message: typeof error === "string" ? error : `Fold command failed (${response.status}).`,
+      message:
+        typeof error === "string"
+          ? error
+          : translateNow(deviceUiMessages, "Fold command failed ({status}).", {
+              status: response.status,
+            }),
       status: response.status,
     });
   }

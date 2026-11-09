@@ -5,8 +5,11 @@ import * as Cause from "effect/Cause";
 import { useEffect, useRef, useState } from "react";
 
 import { environmentCatalog } from "~/connection/catalog";
+import { translateNow } from "~/i18n/useTranslation";
 import { appAtomRegistry } from "~/rpc/atomRegistry";
 import { projectEnvironment } from "~/state/projects";
+
+import { filesUiMessages } from "./filesUi.messages";
 
 export function useDirectoryEntries(environmentId: EnvironmentId, cwd: string) {
   const [directories, setDirectories] = useState(new Map<string, readonly ProjectEntry[]>());
@@ -65,7 +68,9 @@ export function useDirectoryEntries(environmentId: EnvironmentId, cwd: string) {
           setErrors((previous) =>
             new Map(previous).set(
               directoryPath,
-              cause instanceof Error ? cause.message : "Unable to load folder.",
+              cause instanceof Error
+                ? cause.message
+                : translateNow(filesUiMessages, "Unable to load folder."),
             ),
           );
         }

@@ -68,4 +68,11 @@ export const projectScriptsUiMessages = {
   Single: "单栏",
   "Side by side": "并排",
   "Stacked@@terminal layout": "上下排列",
+  "This connection cannot change keyboard shortcuts.": "此连接无法修改快捷键。",
+  "Name is required.": "名称不能为空。",
+  "Command is required.": "命令不能为空。",
+  Delete: "删除",
+  "Saving…": "正在保存…",
+  "Save changes": "保存更改",
+  "Save action": "保存操作",
 };

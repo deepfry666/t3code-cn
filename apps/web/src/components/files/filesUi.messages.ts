@@ -188,4 +188,57 @@ export const filesUiMessages = {
   "The selected cells could not be copied.": "无法复制所选单元格。",
   "Preview limited to 1,000 pages.": "预览仅限 1,000 页。",
   "{count} pages": "{count} 页",
+  "Open {label}": "打开 {label}",
+  "Retry {label}": "重试 {label}",
+  "Loading {label}": "正在加载 {label}",
+  "Pause {label}": "暂停 {label}",
+  "Play {label}": "播放 {label}",
+  "Audio unavailable. Open the file or retry playback.": "音频不可用。请打开文件或重试播放。",
+  "Audio unavailable. {action}": "音频不可用。{action}",
+  "Retry loading folder": "重试加载文件夹",
+  "No entries from this folder are available in the partial workspace index.":
+    "部分工作区索引中无法提供此文件夹的条目。",
+  "Browse {path}": "浏览 {path}",
+  "Resize file explorer": "调整文件浏览器宽度",
+  "The font took too long to load.": "字体加载超时。",
+  "Could not load the text viewer. Close the file and try again.":
+    "无法加载文本查看器。请关闭文件后重试。",
+  "Mermaid diagram": "Mermaid 图表",
+  "Cell {number}": "单元格 {number}",
+  "Cell {number} HTML output": "单元格 {number} 的 HTML 输出",
+  "Cell {number} output": "单元格 {number} 的输出",
+  "Could not load the Office viewer. Close the file and try again.":
+    "无法加载 Office 查看器。请关闭文件后重试。",
+  "Chapter {page} of {count}": "第 {page} 章，共 {count} 章",
+  "Previous sheet": "上一个工作表",
+  "Previous chapter": "上一章节",
+  "Next sheet": "下一个工作表",
+  "Next chapter": "下一章节",
+  "Page {current} of {total}": "第 {current} / {total} 页",
+  "Image decoding cancelled.": "已取消图片解码。",
+  "This image took too long to decode.": "此图片解码超时。",
+  "Could not load the image decoder.": "无法加载图片解码器。",
+  "Could not decode this image.": "无法解码此图片。",
+  "The path is a directory or special file, not a regular file.":
+    "此路径是文件夹或特殊文件，不是普通文件。",
+  "The file is binary and cannot be displayed as text.": "此文件是二进制文件，无法以文本显示。",
+  "The requested path is outside the workspace.": "请求的路径不在工作区内。",
+  "The path resolves to a location outside the workspace.": "此路径指向工作区之外的位置。",
+  "The workspace folder could not be accessed.": "无法访问工作区文件夹。",
+  "The file could not be accessed or read. It may be missing or inaccessible.":
+    "无法访问或读取该文件，它可能已不存在或无权访问。",
+  "Sheet {number}": "工作表 {number}",
+  "Chapter {number}": "章节 {number}",
+  "Workspace query failed.": "工作区查询失败。",
+  "Unable to load folder.": "无法加载文件夹。",
+  "The expanded archive exceeds the preview size or compression ratio limit.":
+    "解压后的归档超出预览大小或压缩比限制。",
+  "Could not preview this file.": "无法预览此文件。",
+  "Could not parse this file.": "无法解析此文件。",
+  "This workbook exceeds the preview limit: 2 million cells or 8 million grid positions.":
+    "此工作簿超出预览限制：200 万个单元格或 800 万个网格位置。",
+  "Preview limited: this Word document has an aliased document part.":
+    "预览受限：此 Word 文档包含通过别名引用的文档部件。",
+  "Preview limited: this Word document has an unsupported document relationship.":
+    "预览受限：此 Word 文档包含不受支持的文档关系。",
 };

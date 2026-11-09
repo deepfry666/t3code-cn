@@ -858,7 +858,7 @@ function PullRequestCodeTab({
         : buildDiffReviewComment({
             id: `pull-request-selection:${anchor.fileKey}:${anchor.range.start}:${anchor.range.end}`,
             sectionId: `pull-request:${detail.number}`,
-            sectionTitle: `PR #${detail.number} review`,
+            sectionTitle: t("PR #{number} review", { number: detail.number }),
             filePath: anchor.path,
             fileDiff: file,
             range: anchor.range,
@@ -1106,7 +1106,7 @@ function PullRequestCodeTab({
             <DropdownMenuTrigger
               render={<Button size="xs" variant="secondary" />}
               className="min-w-0 max-w-64"
-              aria-label={`Diff scope: ${scopeLabel}`}
+              aria-label={t("Diff scope: {scope}", { scope: scopeLabel })}
             >
               <span className="truncate">{scopeLabel}</span>
               <ChevronDownIcon className="size-3.5 shrink-0 opacity-70" />
@@ -1452,7 +1452,11 @@ function PullRequestCodeTab({
 
   const term = sourceControlClients.get(detail.provider).changeRequest.singular;
   if (diffQuery.isPending && loadedSlices.length === 0) {
-    return withToolbar(<DiffPanelLoadingState label={`Loading ${term} diff...`} />);
+    return withToolbar(
+      <DiffPanelLoadingState
+        label={t("Loading {term} diff...", { term: translatePullRequestLabel(term, locale) })}
+      />,
+    );
   }
 
   if (diffQuery.error && loadedSlices.length === 0) {

@@ -57,8 +57,8 @@ export function DiffCommentAnnotation({
   onCancel,
   onComment,
   onDelete,
-  placeholder = "Add a comment…",
-  submitLabel = "Comment",
+  placeholder,
+  submitLabel,
   pending = false,
   secondaryAction,
   focusOnMount = true,
@@ -138,8 +138,8 @@ export function DiffCommentAnnotation({
         size="sm"
         value={displayedText}
         dir={textDirection(displayedText)}
-        placeholder={placeholder}
-        aria-label={`Comment on lines ${rangeLabel}`}
+        placeholder={placeholder ?? t("Add a comment…")}
+        aria-label={t("Comment on lines {rangeLabel}", { rangeLabel })}
         onValueChange={onTextChange ?? setLocalDraftText}
         onFocus={(event) => {
           const end = event.currentTarget.value.length;
@@ -158,10 +158,12 @@ export function DiffCommentAnnotation({
         }}
       />
       <div className="mt-1.5 flex flex-wrap items-center gap-1">
-        <span className="mr-auto text-3xs text-muted-foreground/70">⌘/Ctrl Enter to send</span>
+        <span className="mr-auto text-3xs text-muted-foreground/70">
+          {t("⌘/Ctrl Enter to send")}
+        </span>
         {speech ? <TextFieldSpeechControls speech={speech} disabled={pending} /> : null}
         <Button variant="ghost-muted" size="xs" onClick={onCancel}>
-          Cancel
+          {t("Cancel")}
         </Button>
         {secondaryAction ? (
           <Button
@@ -183,7 +185,7 @@ export function DiffCommentAnnotation({
           disabled={speech?.preparing || pending || (!speech?.blocksSubmission && !trimmedText)}
           onClick={() => submit(speech, onComment)}
         >
-          {submitLabel}
+          {submitLabel ?? t("Comment")}
         </Button>
       </div>
     </div>

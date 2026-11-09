@@ -585,8 +585,8 @@ export function PullRequestDetailPanel({
   const mergeBlockedReason = canMergeSinglePullRequest
     ? null
     : nativeStackQuery.error
-      ? "Couldn't check stack membership"
-      : "Checking stack membership…";
+      ? t("Couldn't check stack membership")
+      : t("Checking stack membership…");
   const activityPending = activityQuery.isPending && activity === null;
   const activityError = activity === null ? activityQuery.error : null;
   const refreshDetail = () => {
@@ -773,7 +773,12 @@ export function PullRequestDetailPanel({
   const attachTarget = composerDraftTarget ?? null;
   const canPrepareWorktree = prepareThread.isAllowed && canOperateThread;
   const canFixFindings = attachTarget !== null || canPrepareWorktree;
-  const handoffLabels = pullRequestHandoffLabels(attachTarget !== null);
+  const rawHandoffLabels = pullRequestHandoffLabels(attachTarget !== null);
+  const handoffLabels = {
+    fixFinding: translatePullRequestLabel(rawHandoffLabels.fixFinding, locale),
+    fixCheck: translatePullRequestLabel(rawHandoffLabels.fixCheck, locale),
+    fixFindings: translatePullRequestLabel(rawHandoffLabels.fixFindings, locale),
+  };
   const guideWriter = useReviewGuideWriter({
     environmentId,
     reference,
@@ -1255,8 +1260,14 @@ export function PullRequestDetailPanel({
     if (detail === null) return;
     const confirmed = await readLocalApi()?.dialogs.confirm(
       [
-        `Delete branch ${detail.headBranch}?`,
-        `This deletes ${detail.headBranch} from ${detail.headRepositoryNameWithOwner ?? detail.repository}. Local branches and worktrees are not changed.`,
+        t("Delete branch {branch}?", { branch: detail.headBranch }),
+        t(
+          "This deletes {branch} from {repository}. Local branches and worktrees are not changed.",
+          {
+            branch: detail.headBranch,
+            repository: detail.headRepositoryNameWithOwner ?? detail.repository,
+          },
+        ),
       ].join("\n"),
       { variant: "destructive" },
     );
@@ -1459,7 +1470,9 @@ export function PullRequestDetailPanel({
             <Button
               size="icon-xs"
               variant="ghost"
-              aria-label={`Collapse ${terminology.singular} panel`}
+              aria-label={t("Collapse {term} panel", {
+                term: translatePullRequestLabel(terminology.singular, locale),
+              })}
               onClick={onClose}
             >
               <PanelRightIcon className="size-3.5" />
@@ -1786,8 +1799,14 @@ export function PullRequestDetailPanel({
           <PullRequestsUnavailableState
             {...(isPullRequestNotFound(detailQuery.failure)
               ? {
-                  title: `${capitalizeTerm(terminology.singular)} #${reference.number} not found`,
-                  error: `It may be an issue rather than a ${terminology.singular}, or this account can't see it.`,
+                  title: t("{term} #{number} not found", {
+                    term: capitalizeTerm(translatePullRequestLabel(terminology.singular, locale)),
+                    number: reference.number,
+                  }),
+                  error: t(
+                    "It may be an issue rather than a {term}, or this account can't see it.",
+                    { term: translatePullRequestLabel(terminology.singular, locale) },
+                  ),
                 }
               : { error: detailQuery.error })}
             refreshing={detailQuery.isPending}
@@ -1888,7 +1907,11 @@ export function PullRequestDetailPanel({
               <div className={cn("absolute inset-0", tab !== "code" && "invisible")}>
                 <Suspense
                   fallback={
-                    <DiffPanelLoadingState label={`Loading ${terminology.singular} diff...`} />
+                    <DiffPanelLoadingState
+                      label={t("Loading {term} diff...", {
+                        term: translatePullRequestLabel(terminology.singular, locale),
+                      })}
+                    />
                   }
                 >
                   <PullRequestCodeTab

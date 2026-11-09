@@ -114,4 +114,7 @@ export const previewUiMessages = {
   "Open preview in right panel": "在右侧面板中打开预览",
   "Open in right panel": "在右侧面板中打开",
   "Could not update annotation voice input": "无法更新标注语音输入",
+  "Reveal in Finder": "在 Finder 中显示",
+  "Reveal in File Explorer": "在文件资源管理器中显示",
+  "Reveal in Files": "在“文件”中显示",
 } as const;
