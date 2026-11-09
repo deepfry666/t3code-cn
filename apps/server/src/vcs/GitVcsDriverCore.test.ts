@@ -5100,9 +5100,12 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
     it.effect("keeps generated worktree folders short without changing long branch names", () =>
       Effect.gen(function* () {
         const pathService = yield* Path.Path;
+        const fs = yield* FileSystem.FileSystem;
         const cwd = yield* makeTmpDir();
         const { initialBranch } = yield* initRepoWithCommit(cwd);
-        const worktreesDirectory = yield* makeTmpDir("custom-worktrees-");
+        const worktreesDirectory = yield* makeTmpDir("custom-worktrees-").pipe(
+          Effect.flatMap(fs.realPath),
+        );
         const driver = yield* GitVcsDriver.GitVcsDriver;
         const folders = new Set<string>();
         const branches = [
