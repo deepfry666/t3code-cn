@@ -17,6 +17,7 @@ import {
   findScopedProject,
   mergePullRequestLists,
   pullRequestEntryKey,
+  pullRequestListErrorPlacement,
   groupPullRequestsByInvolvement,
   pullRequestStatsBatches,
   pullRequestStatsKeysToRequest,
@@ -543,6 +544,23 @@ describe("the server a saved selection names", () => {
 
   it("resolves to nothing yet for a server that is known but not ready, rather than falling back", () => {
     expect(resolveSelectedEnvironmentId(ENV_2, known, ENV_1)).toBe(ENV_2);
+  });
+});
+
+describe("where a listing failure shows", () => {
+  it("keeps an answering server's empty list when another server fails", () => {
+    expect(
+      pullRequestListErrorPlacement({ error: "relay down", answered: true, shownCount: 0 }),
+    ).toBe("banner");
+  });
+
+  it("takes over the page only when no server answered", () => {
+    expect(
+      pullRequestListErrorPlacement({ error: "relay down", answered: false, shownCount: 0 }),
+    ).toBe("page");
+    expect(pullRequestListErrorPlacement({ error: null, answered: false, shownCount: 0 })).toBe(
+      null,
+    );
   });
 });
 

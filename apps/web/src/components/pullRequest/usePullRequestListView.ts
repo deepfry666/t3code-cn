@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 
 import { useAllEnvironmentShellsBootstrapped, useProjects } from "~/state/entities";
-import { useEnvironments } from "~/state/environments";
+import { useEnvironments, usePrimaryEnvironmentId } from "~/state/environments";
 import {
   applyPullRequestOverrides,
   findProjectForRepository,
@@ -55,6 +55,7 @@ const SEARCH_DEBOUNCE_MS = 250;
 /** Which servers and projects the page reads, from the URL and what this client knows. */
 export function usePullRequestScope(search: PullRequestsSearch) {
   const { environments } = useEnvironments();
+  const primaryEnvironmentId = usePrimaryEnvironmentId();
   const allProjects = useProjects();
   const projectsKnown = useAllEnvironmentShellsBootstrapped();
   const capableEnvironments = environments
@@ -120,10 +121,11 @@ export function usePullRequestScope(search: PullRequestsSearch) {
   }> => {
     const plain = queryEnvironmentIds.map((environmentId) => ({ environmentId }));
     if (!projectsKnown || scopedProjectId !== undefined) return plain;
+    // A repository held by several servers is read from this client's own server when it has one.
     const assignment = assignProjectsToEnvironments(
       projects,
       queryEnvironmentIds,
-      queryEnvironmentIds[0],
+      primaryEnvironmentId ?? queryEnvironmentIds[0],
     );
     const totals = new Map<EnvironmentId, number>();
     for (const project of projects) {
