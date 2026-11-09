@@ -25,7 +25,7 @@ export const usagePricesMessages = {
   Optional: "可选",
   Automatic: "自动",
   "Input rate": "输入价格",
-  "Counted as {alias}": "计入为 {alias}",
+  "Counted as {alias}": "计入 {alias}",
   "{field} price for {model}": "{model} 的{field}价格",
   "Automatic pricing after saving": "保存后使用自动价格",
   "Undo reset for {model}": "撤销 {model} 的重置",
@@ -37,7 +37,7 @@ export const usagePricesMessages = {
   "Blank cache rates use the input price. Enter 0 for free tokens. A mapped model’s usage counts as the model it maps to.":
     "缓存价格留空时使用输入价格。填 0 表示 token 免费。被映射的模型，其用量计入映射目标模型。",
   " Mixed cells keep each environment’s rate until you edit them.":
-    " “各不相同”的单元格会保留各环境自己的价格，直到你修改它。",
+    " 标为“各不相同”的单元格在修改前会保留各环境自己的价格。",
   "Not saved · {error}": "未保存 · {error}",
   Saved: "已保存",
   "Saving…": "正在保存…",

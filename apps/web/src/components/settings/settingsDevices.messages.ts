@@ -57,7 +57,7 @@ export const settingsDevicesMessages = {
   "API key": "API 密钥",
   "Checking environments…": "正在检查环境…",
   "Connection checks passed": "连接检查通过",
-  "Check access before saving": "保存前请检查连接权限",
+  "Check access before saving": "保存前请测试连接",
   "Add device host": "添加设备主机",
   "Edit device host": "编辑设备主机",
   "{failed} of {count} failed": "{count} 个中有 {failed} 个失败",
@@ -87,7 +87,7 @@ export const settingsDevicesMessages = {
   "Checking the Expo account…": "正在检查 Expo 账户…",
   "Check the Expo account before choosing a project.": "选择项目前请先检查 Expo 账户。",
   "The environment's server signs in to Expo and starts the sessions. Without a token here it uses EXPO_TOKEN, then its eas login.":
-    "环境的服务器会登录 Expo 并启动会话。未在此填写 token 时，先使用 EXPO_TOKEN，再尝试 eas login。",
+    "环境的服务器会登录 Expo 并启动会话。未在此填写 token 时，先使用 EXPO_TOKEN，再使用服务器上 eas login 保存的登录状态。",
   "Expo access token": "Expo 访问 token",
   Optional: "可选",
   "Clear access token": "清空访问 token",

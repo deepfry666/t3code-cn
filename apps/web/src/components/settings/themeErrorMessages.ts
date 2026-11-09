@@ -6,7 +6,7 @@ import { translate, type Locale } from "~/i18n/locale";
  * sentence from a template, and text no rule owns, including server errors, passes through.
  */
 export const themeErrorMessages = {
-  'The theme id "{id}" is reserved.': "主题 ID“{id}”为保留名称。",
+  'The theme id "{id}" is reserved.': "主题 ID “{id}”为保留名称。",
   'A theme named "{name}" is already installed.': "已安装名为“{name}”的主题。",
   'The theme "{name}" is not installed.': "未安装主题“{name}”。",
   '"{role}" is not a supported theme color role.': "“{role}”不是受支持的主题颜色角色。",
@@ -19,9 +19,9 @@ export const themeErrorMessages = {
   "Failed to read the theme library from {storageKey}.": "无法从 {storageKey} 读取主题库。",
   "Failed to write the theme library to {storageKey}.": "无法将主题库写入 {storageKey}。",
   "{source} is not valid JSON.": "{source}不是有效的 JSON。",
-  "{source} is missing from the extension package.": "扩展包中缺少{source}。",
-  "{source} has unreadable size metadata.": "{source}的大小信息无法读取。",
-  "{source} is too large.": "{source}过大。",
+  "{source} is missing from the extension package.": "扩展包中缺少 {source}。",
+  "{source} has unreadable size metadata.": "{source} 的大小信息无法读取。",
+  "{source} is too large.": "{source} 过大。",
 } as const;
 
 type ThemeErrorKey = keyof typeof themeErrorMessages;

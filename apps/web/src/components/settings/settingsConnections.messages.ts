@@ -232,7 +232,7 @@ export const settingsConnectionsMessages = {
   "Pairing link. Scan to open on another device": "配对链接。在其他设备上扫描即可打开",
   Done: "完成",
   "Revoking…": "正在撤销…",
-  Revoke: "撤销",
+  Revoke: "撤销授权",
   "Endpoint the pairing QR code and URL use": "配对 QR 码和 URL 使用的端点",
   "Reach this machine via": "访问本机的方式",
   "Copy link": "复制链接",

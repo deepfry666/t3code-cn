@@ -21,8 +21,8 @@ export const settingsPanelsMessages = {
   "Nightly builds are not available.": "无法使用 Nightly 版。",
   "Nightly builds are not available; switch to Stable to keep getting updates.":
     "无法使用 Nightly 版；请切换到稳定版以继续获取更新。",
-  "1 machine still runs {channel}.": "仍有 1 台机器运行{channel}。",
-  "{count} machines still run {channel}.": "仍有 {count} 台机器运行{channel}。",
+  "1 machine still runs {channel}.": "仍有 1 台机器运行 {channel}。",
+  "{count} machines still run {channel}.": "仍有 {count} 台机器运行 {channel}。",
   Review: "查看",
   "Switches this app and every connected machine whose database the target release supports.":
     "切换此应用，以及所有数据库受目标版本支持的已连接机器。",
@@ -43,7 +43,7 @@ export const settingsPanelsMessages = {
   "View policy": "查看政策",
   "Notices for dependencies, assets, and optional tools used by T3 Code.":
     "T3 Code 使用的依赖项、素材和可选工具的声明。",
-  "View licenses": "查看许可",
+  "View licenses": "查看许可证",
   "Couldn’t restore theme settings": "无法恢复主题设置",
   "Try again.": "请重试。",
   "Restore default settings?": "恢复默认设置？",

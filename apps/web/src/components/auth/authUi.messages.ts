@@ -14,7 +14,7 @@ export const authUiMessages = {
   "The name is chosen by the agent. Approval returns to {host} on the computer that opened this page. Only approve a sign-in you just started.":
     "名称由智能体自行设定。批准后会返回打开此页面的电脑上的 {host}。请只批准你刚刚发起的登录。",
   "The name is chosen by the agent. Approval gives access to whoever runs {host}. Only approve a sign-in you just started there.":
-    "名称由智能体自行设定。批准后，运行 {host} 的人都将获得访问权限。请只批准你刚刚在那里发起的登录。",
+    "名称由智能体自行设定。批准后，运行 {host} 的一方将获得访问权限。请只批准你刚刚在那里发起的登录。",
   "What it may do": "允许它做什么",
   "Beyond read only, it can start, message and stop threads, and none of them can run with more than the mode you pick.":
     "除只读外，它还可以启动会话、向会话发消息和停止会话，且任何会话的权限都不会超过你选择的模式。",

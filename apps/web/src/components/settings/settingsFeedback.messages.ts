@@ -11,8 +11,8 @@ const settingsFeedbackMessages = {
   "Model preferences not saved": "模型偏好未保存",
   "Favorites not saved": "收藏未保存",
   "Could not load saved model preferences. Try again.": "无法加载已保存的模型偏好，请重试。",
-  "Could not save on {name}: {message}": "无法在{name}上保存：{message}",
-  "Saved on {names}.": "已保存到{names}。",
+  "Could not save on {name}: {message}": "无法在 {name} 上保存：{message}",
+  "Saved on {names}.": "已保存到 {names}。",
   "This connection lacks permission to change settings on {environment}.":
     "此连接没有权限更改 {environment} 的设置。",
   "the selected environment": "所选环境",
@@ -27,7 +27,7 @@ const settingsFeedbackMessages = {
   "Connect the selected checkouts, or update their environments, to reset this override.":
     "请连接所选工作副本，或更新它们所在的环境，以重置此覆盖设置。",
   "Connect the environments to reset these overrides.": "请连接这些环境以重置覆盖设置。",
-  "Connect {target} to save this setting.": "请连接{target}以保存此设置。",
+  "Connect {target} to save this setting.": "请连接 {target} 以保存此设置。",
   "an environment": "某个环境",
   "This environment does not support this setting. Update T3 Code on it.":
     "此环境不支持该设置，请更新该环境上的 T3 Code。",
@@ -40,7 +40,7 @@ const settingsFeedbackMessages = {
   "This connection cannot change environment settings.": "此连接无法修改环境设置。",
   "This connection cannot test device hosts.": "此连接无法测试设备主机。",
   "This model is unavailable on {environment}. Select that environment to choose its model separately.":
-    "此模型在{environment}上不可用。请选择该环境，以单独选择它的模型。",
+    "此模型在 {environment} 上不可用。请选择该环境，再单独为它选择模型。",
   "a selected environment": "所选环境",
 };
 
