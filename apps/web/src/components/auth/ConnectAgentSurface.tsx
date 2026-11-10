@@ -5,6 +5,7 @@ import {
   AuthMcpClientAccess,
   AuthMcpAuthorizationRequest,
   isRuntimeModeAbove,
+  parseMcpApprovalCode,
 } from "@t3tools/contracts";
 import { Radio as RadioPrimitive } from "@base-ui/react/radio";
 import { isLoopbackHost } from "@t3tools/shared/preview";
@@ -14,6 +15,15 @@ import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
 import { type ReactNode, useEffect, useState } from "react";
 
+import {
+  approveAgentUrl,
+  clearPendingApproval,
+  newApprovalNonce,
+  pendingValue,
+  readConnectApprovalReturn,
+  readPendingApproval,
+  rememberPendingApproval,
+} from "~/cloud/connectAgentApproval";
 import { PrimaryEnvironmentHttpClient } from "~/environments/primary/httpClient";
 import { fillNode } from "~/i18n/fillNode";
 import type { Locale } from "~/i18n/locale";
@@ -21,7 +31,7 @@ import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { runPrimaryHttp } from "~/lib/runtime";
 import { cn } from "~/lib/utils";
 import { authUiMessages } from "./authUi.messages";
-import { resolveMcpAccess } from "./ConnectAgentSurface.logic";
+import { resolveApprovalDecision, resolveMcpAccess } from "./ConnectAgentSurface.logic";
 import { runtimeModeConfig } from "../chat/runtimeModeConfig";
 import { translateConnectionLabel } from "../settings/settingsConnections.messages";
 import { Alert, AlertDescription } from "../ui/alert";
@@ -83,15 +93,25 @@ function runApproval<A>(
   ).catch((): Answer<A> => ({ kind: "error", message: UNREACHABLE }));
 }
 
+/** Sends the decision and follows its redirect; otherwise the message to show. */
+async function submitDecision(
+  authorization: AuthMcpAuthorizationRequest,
+  decision: AuthMcpApprovalDecision,
+): Promise<string | null> {
+  const answer = await runApproval((client) =>
+    client.mcpOAuth.decision({ payload: { authorization, decision } }),
+  );
+  if (answer.kind === "redirect") {
+    window.location.replace(answer.url);
+    return null;
+  }
+  return answer.kind === "error" ? answer.message : "The sign-in could not continue.";
+}
+
 const decodeAuthorizationRequest = Schema.decodeSync(AuthMcpAuthorizationRequest);
 
 function readAuthorizationRequest(): AuthMcpAuthorizationRequest {
   return decodeAuthorizationRequest(Object.fromEntries(new URL(window.location.href).searchParams));
-}
-
-/** Sessions can grant only scopes they hold. */
-function oneClickApproves(details: AuthMcpApprovalDetails, access: AuthMcpClientAccess) {
-  return details.csrfToken !== undefined && (details.oneClickAccess ?? []).includes(access);
 }
 
 type T = ReturnType<typeof useTranslation<typeof authUiMessages>>;
@@ -103,20 +123,35 @@ const ownMessage = (message: string, t: T) =>
 export function ConnectAgentSurface() {
   const t = useTranslation(authUiMessages);
   const locale = useLocale();
+  const accessLabel = (option: AuthMcpClientAccess) =>
+    translateConnectionLabel(accessConfig[option].label, locale);
   const [authorization] = useState(readAuthorizationRequest);
+  const [connectReturn] = useState(() =>
+    readConnectApprovalReturn(window.location.hash, window.location.search, readPendingApproval()),
+  );
   const [loaded, setLoaded] = useState<Loaded>({ status: "loading" });
-  const [requestedAccess, setAccess] = useState<AuthMcpClientAccess>("auto");
+  const [requestedAccess, setAccess] = useState<AuthMcpClientAccess | null>(null);
+  const [pairingCode, setPairingCode] = useState("");
   const access = resolveMcpAccess(
     requestedAccess,
     loaded.status === "ready" ? loaded.details.runtimeModeCeiling : undefined,
+    pairingCode.trim().length > 0,
   );
-  const [pairingCode, setPairingCode] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(
+    connectReturn.status === "discarded"
+      ? "The T3 Connect approval did not come back to the tab that started it, so it was not used. Try again here, or paste a sign-in code."
+      : "",
+  );
   const [pending, setPending] = useState<"approve" | "deny" | null>(null);
 
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- fetches the MCP OAuth approval and redirects the window or stores details, ignoring stale answers
   useEffect(() => {
     let cancelled = false;
+    // The code is one-use; keep it out of history, bookmarks and a reload.
+    if (connectReturn.status !== "none") {
+      clearPendingApproval();
+      window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+    }
     void runApproval((client) => client.mcpOAuth.approval({ payload: authorization })).then(
       (answer) => {
         if (cancelled) return;
@@ -124,38 +159,59 @@ export function ConnectAgentSurface() {
           window.location.replace(answer.url);
           return;
         }
-        setLoaded(
-          answer.kind === "error"
-            ? { status: "invalid", message: answer.message }
-            : { status: "ready", details: answer.value },
-        );
+        if (answer.kind === "error") {
+          setLoaded({ status: "invalid", message: answer.message });
+          return;
+        }
+        setLoaded({ status: "ready", details: answer.value });
+        // This tab chose the app and level before leaving for T3 Connect, so that was the approval.
+        const decision =
+          connectReturn.status === "approved"
+            ? resolveApprovalDecision({
+                code: connectReturn.code,
+                access: "read-only",
+                details: answer.value,
+              })
+            : null;
+        if (decision === null) return;
+        setPending("approve");
+        void submitDecision(authorization, decision).then((message) => {
+          if (cancelled || message === null) return;
+          setPending(null);
+          setErrorMessage(message);
+        });
       },
     );
     return () => {
       cancelled = true;
     };
-  }, [authorization]);
+  }, [authorization, connectReturn]);
 
-  const decide = async (choice: "approve" | "deny") => {
-    if (loaded.status !== "ready") return;
-    setPending(choice);
-    setErrorMessage("");
-    const { csrfToken } = loaded.details;
-    const decision: AuthMcpApprovalDecision =
+  const continueWithConnect = (connect: NonNullable<AuthMcpApprovalDetails["connectSignIn"]>) => {
+    const nonce = newApprovalNonce();
+    rememberPendingApproval(pendingValue(nonce, access, window.location.search));
+    window.location.assign(
+      approveAgentUrl(connect.hostedAppUrl, {
+        environmentId: connect.environmentId,
+        access,
+        nonce,
+        returnTo: `${window.location.origin}${window.location.pathname}${window.location.search}`,
+      }),
+    );
+  };
+
+  const decide = async (choice: "approve" | "deny", details: AuthMcpApprovalDetails) => {
+    const decision: AuthMcpApprovalDecision | null =
       choice === "deny"
         ? { _tag: "deny" }
-        : csrfToken !== undefined && oneClickApproves(loaded.details, access)
-          ? { _tag: "browser-session", access, csrfToken }
-          : { _tag: "pairing-code", access, code: pairingCode.trim() };
-    const answer = await runApproval((client) =>
-      client.mcpOAuth.decision({ payload: { authorization, decision } }),
-    );
-    if (answer.kind === "redirect") {
-      window.location.replace(answer.url);
-      return;
-    }
+        : resolveApprovalDecision({ code: pairingCode, access, details });
+    if (decision === null) return;
+    setPending(choice);
+    setErrorMessage("");
+    const message = await submitDecision(authorization, decision);
+    if (message === null) return;
     setPending(null);
-    setErrorMessage(answer.kind === "error" ? answer.message : "The sign-in could not continue.");
+    setErrorMessage(message);
   };
 
   if (loaded.status === "loading") {
@@ -185,8 +241,40 @@ export function ConnectAgentSurface() {
   }
 
   const { details } = loaded;
-  const oneClick = oneClickApproves(details, access);
-  const canApprove = pending === null && (oneClick || pairingCode.trim().length > 0);
+  const canDecide = resolveApprovalDecision({ code: pairingCode, access, details }) !== null;
+  const canApprove = pending === null && canDecide;
+  // A typed code or a browser session that can approve takes precedence.
+  const connectSignIn =
+    pairingCode.trim().length === 0 && !canDecide ? details.connectSignIn : undefined;
+  // A code from "Use T3 Code in another app" names its level, so the page does not ask again.
+  const codeAccess = parseMcpApprovalCode(pairingCode)?.access;
+  const codeField = (
+    <div className="space-y-2">
+      <label className="text-sm font-medium" htmlFor="connect-agent-pairing-code">
+        {details.connectSignIn ? t("Or paste a sign-in code") : t("Sign-in code")}
+      </label>
+      <Input
+        id="connect-agent-pairing-code"
+        autoCapitalize="none"
+        autoComplete="one-time-code"
+        autoCorrect="off"
+        disabled={pending !== null}
+        nativeInput
+        onChange={(event) => setPairingCode(event.currentTarget.value)}
+        placeholder={t("Paste a code")}
+        spellCheck={false}
+        value={pairingCode}
+      />
+      <p className="text-xs text-muted-foreground">
+        {fillNode(
+          t(
+            "Get one from Use T3 Code in another app (MCP), Settings → Sharing & access, or {command} on this machine.",
+          ),
+          <code>t3 auth pairing create</code>,
+        )}
+      </p>
+    </div>
+  );
 
   return (
     <StandalonePage>
@@ -197,73 +285,63 @@ export function ConnectAgentSurface() {
           <span className="font-medium text-foreground">{details.environmentHost}</span>,
         )}
       />
+      <dl className="mt-4 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1 text-sm">
+        <dt className="text-muted-foreground">{t("App")}</dt>
+        <dd className="min-w-0 break-words">
+          {details.clientName}{" "}
+          <span className="text-muted-foreground">{t("· name set by the app")}</span>
+        </dd>
+        <dt className="text-muted-foreground">{t("Access goes to")}</dt>
+        <dd className="min-w-0 break-words font-medium">
+          {details.redirectHost}
+          {redirectsToThisComputer(details.redirectHost) ? (
+            <span className="font-normal text-muted-foreground">
+              {" "}
+              {t("on the computer that opened this page")}
+            </span>
+          ) : null}
+        </dd>
+      </dl>
       <p className="mt-2 text-xs text-muted-foreground">
-        {redirectsToThisComputer(details.redirectHost)
-          ? t(
-              "The name is chosen by the agent. Approval returns to {host} on the computer that opened this page. Only approve a sign-in you just started.",
-              { host: details.redirectHost },
-            )
-          : fillNode(
-              t(
-                "The name is chosen by the agent. Approval gives access to whoever runs {host}. Only approve a sign-in you just started there.",
-              ),
-              <span className="font-medium text-foreground">{details.redirectHost}</span>,
-            )}
+        {t("Only approve a sign-in you just started.")}
       </p>
 
       <form
         className="mt-6 space-y-5"
         onSubmit={(event) => {
           event.preventDefault();
-          if (canApprove) void decide("approve");
+          if (canApprove) void decide("approve", details);
         }}
       >
-        <div className="space-y-2">
-          <span id="connect-agent-access-label" className="text-sm font-medium">
-            {t("What it may do")}
-          </span>
-          <RadioGroup
-            aria-labelledby="connect-agent-access-label"
-            value={access}
-            onValueChange={(value) => setAccess(value as AuthMcpClientAccess)}
-          >
-            {AuthMcpClientAccess.literals.map((option) => (
-              <AccessOption
-                key={option}
-                access={option}
-                selected={option === access}
-                managedReason={ceilingReason(details, option, t, locale)}
-              />
-            ))}
-          </RadioGroup>
-          <p className="text-xs text-muted-foreground">
-            {t(
-              "Beyond read only, it can start, message and stop threads, and none of them can run with more than the mode you pick.",
-            )}
-          </p>
-        </div>
+        {details.connectSignIn ? null : codeField}
 
-        {oneClick ? null : (
+        {codeAccess ? (
+          <p className="text-sm">
+            <span className="text-muted-foreground">{t("Access")}</span>{" "}
+            <span className="font-medium">{accessLabel(codeAccess)}</span>
+          </p>
+        ) : (
           <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="connect-agent-pairing-code">
-              {t("Pairing code")}
-            </label>
-            <Input
-              id="connect-agent-pairing-code"
-              autoCapitalize="none"
-              autoComplete="one-time-code"
-              autoCorrect="off"
-              disabled={pending !== null}
-              nativeInput
-              onChange={(event) => setPairingCode(event.currentTarget.value)}
-              placeholder={t("Paste a one-time pairing code")}
-              spellCheck={false}
-              value={pairingCode}
-            />
+            <span id="connect-agent-access-label" className="text-sm font-medium">
+              {t("What it may do")}
+            </span>
+            <RadioGroup
+              aria-labelledby="connect-agent-access-label"
+              value={access}
+              onValueChange={(value) => setAccess(value as AuthMcpClientAccess)}
+            >
+              {AuthMcpClientAccess.literals.map((option) => (
+                <AccessOption
+                  key={option}
+                  access={option}
+                  selected={option === access}
+                  disabledReason={ceilingReason(details, option, t, locale)}
+                />
+              ))}
+            </RadioGroup>
             <p className="text-xs text-muted-foreground">
-              {fillNode(
-                t("Create one in Settings → Sharing & access, or run {command} on this machine."),
-                <code>t3 auth pairing create</code>,
+              {t(
+                "Beyond read only, it can start, message and stop threads, and none of them can run with more than the mode you pick.",
               )}
             </p>
           </div>
@@ -276,18 +354,36 @@ export function ConnectAgentSurface() {
         ) : null}
 
         <div className="flex flex-wrap gap-2">
-          <Button disabled={!canApprove} type="submit">
-            {pending === "approve" ? t("Approving…") : t("Approve")}
-          </Button>
+          {connectSignIn ? (
+            <Button
+              disabled={pending !== null}
+              onClick={() => continueWithConnect(connectSignIn)}
+              type="button"
+            >
+              {pending === "approve"
+                ? t("Approving…")
+                : t("Approve {access} with T3 Connect", { access: accessLabel(access) })}
+            </Button>
+          ) : (
+            <Button disabled={!canApprove} type="submit">
+              {pending === "approve"
+                ? t("Approving…")
+                : codeAccess
+                  ? t("Approve {access}", { access: accessLabel(codeAccess) })
+                  : t("Approve")}
+            </Button>
+          )}
           <Button
             disabled={pending !== null}
-            onClick={() => void decide("deny")}
+            onClick={() => void decide("deny", details)}
             type="button"
             variant="outline"
           >
             {pending === "deny" ? t("Denying…") : t("Deny")}
           </Button>
         </div>
+
+        {details.connectSignIn ? codeField : null}
       </form>
     </StandalonePage>
   );
@@ -324,21 +420,29 @@ function ceilingReason(
       });
 }
 
-function AccessOption({
+/** One access level in a radio group; `description` replaces the level's own, null hides it. */
+export function AccessOption({
   access,
   selected,
-  managedReason,
+  disabledReason,
+  description,
 }: {
   readonly access: AuthMcpClientAccess;
   readonly selected: boolean;
-  readonly managedReason: string | undefined;
+  readonly disabledReason: string | undefined;
+  readonly description?: string | null;
 }) {
   const locale = useLocale();
-  const { label, description, icon: Icon } = accessConfig[access];
+  const { label, icon: Icon } = accessConfig[access];
+  const detail =
+    disabledReason ??
+    (description === undefined
+      ? translateConnectionLabel(accessConfig[access].description, locale)
+      : description);
   return (
     <RadioPrimitive.Root
       value={access}
-      disabled={managedReason !== undefined}
+      disabled={disabledReason !== undefined}
       className={cn(
         "flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2.5 text-left outline-none transition-[background-color,border-color,box-shadow]",
         "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
@@ -358,9 +462,9 @@ function AccessOption({
         <span className="block text-sm font-medium text-foreground">
           {translateConnectionLabel(label, locale)}
         </span>
-        <span className="block text-xs text-muted-foreground">
-          {managedReason ?? translateConnectionLabel(description, locale)}
-        </span>
+        {detail === null ? null : (
+          <span className="block text-xs text-muted-foreground">{detail}</span>
+        )}
       </span>
     </RadioPrimitive.Root>
   );

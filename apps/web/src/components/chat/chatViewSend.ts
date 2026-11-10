@@ -18,7 +18,7 @@ import {
   type AtomCommandResult,
 } from "@t3tools/client-runtime/state/runtime";
 import { readLocalApi } from "../../localApi";
-import { getUploadedAttachments } from "../../lib/attachmentUploadQueue";
+import { awaitAttachmentUploads, getUploadedAttachments } from "../../lib/attachmentUploadQueue";
 import { findRevertCheckpoint } from "../../session-logic";
 import { type ChatMessage } from "../../types";
 import { randomUUID } from "~/lib/utils";
@@ -354,7 +354,7 @@ export function resolveMultipleModelTargets(input: {
 
 /**
  * The attachments a turn sends: the server's upload records when it takes uploads, otherwise
- * images inlined as data URLs. Rejects when an attachment cannot go out.
+ * images inlined as data URLs. Waits for in-flight uploads; rejects when one cannot go out.
  */
 export function prepareTurnAttachments(input: {
   readonly environmentId: EnvironmentId;
@@ -365,10 +365,11 @@ export function prepareTurnAttachments(input: {
   return Promise.all(
     input.attachments.map(async (attachment) => {
       if (usesAttachmentUploads) {
+        await awaitAttachmentUploads([attachment.id]);
         const uploaded = getUploadedAttachments({ environmentId, images: [attachment] })?.[0];
         if (!uploaded) {
           throw new Error(
-            translateNow(composerUiMessages, "Attachment '{name}' did not finish uploading.", {
+            translateNow(composerUiMessages, "Attachment '{name}' failed to upload.", {
               name: attachment.name,
             }),
           );

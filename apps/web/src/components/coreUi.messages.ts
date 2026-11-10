@@ -154,6 +154,8 @@ export const coreUiMessages = {
   "Filter by {project}": "按 {project} 筛选",
   "Turn into project": "转换为项目",
   "Auto-settle behavior": "自动收尾行为",
+  "Follow settings": "跟随设置",
+  Never: "从不",
   Enabled: "启用",
   Disabled: "禁用",
   "Thread ID": "会话 ID",

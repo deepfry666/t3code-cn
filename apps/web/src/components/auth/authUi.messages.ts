@@ -11,17 +11,22 @@ export const authUiMessages = {
   "Connect {client}": "连接 {client}",
   "This agent wants to use the threads in every project on {host}.":
     "此智能体想要使用 {host} 上所有项目中的会话。",
-  "The name is chosen by the agent. Approval returns to {host} on the computer that opened this page. Only approve a sign-in you just started.":
-    "名称由智能体自行设定。批准后会返回打开此页面的电脑上的 {host}。请只批准你刚刚发起的登录。",
-  "The name is chosen by the agent. Approval gives access to whoever runs {host}. Only approve a sign-in you just started there.":
-    "名称由智能体自行设定。批准后，运行 {host} 的一方将获得访问权限。请只批准你刚刚在那里发起的登录。",
+  App: "应用",
+  "· name set by the app": "· 名称由应用设定",
+  "Access goes to": "授权给",
+  "on the computer that opened this page": "（位于打开此页面的电脑上）",
+  "Only approve a sign-in you just started.": "请只批准你刚刚发起的登录。",
   "What it may do": "允许它做什么",
   "Beyond read only, it can start, message and stop threads, and none of them can run with more than the mode you pick.":
     "除只读外，它还可以启动会话、向会话发消息和停止会话，且任何会话的权限都不会超过你选择的模式。",
-  "Pairing code": "配对码",
-  "Paste a one-time pairing code": "粘贴一次性配对码",
-  "Create one in Settings → Sharing & access, or run {command} on this machine.":
-    "可在“设置 → 共享与访问”中创建，或在本机运行 {command}。",
+  "Or paste a sign-in code": "或粘贴登录码",
+  "Sign-in code": "登录码",
+  "Paste a code": "粘贴登录码",
+  "Get one from Use T3 Code in another app (MCP), Settings → Sharing & access, or {command} on this machine.":
+    "可在“在其他应用中使用 T3 Code（MCP）”或“设置 → 共享与访问”中获取，也可在本机运行 {command}。",
+  Access: "访问权限",
+  "Approve {access} with T3 Connect": "通过 T3 Connect 批准（{access}）",
+  "Approve {access}": "批准（{access}）",
   "Approving…": "正在批准…",
   Approve: "批准",
   "Denying…": "正在拒绝…",

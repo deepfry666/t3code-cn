@@ -57,6 +57,8 @@ interface UpdateEverythingDialogProps {
   readonly disabledReason?: string | null;
   /** The confirmed work is starting; it cannot be cancelled from here. */
   readonly busy?: boolean;
+  /** Machines are still looking for provider updates, so more rows can appear. */
+  readonly checking?: boolean;
 }
 
 type UpdateEverythingDialogContentProps = Omit<
@@ -104,6 +106,7 @@ function UpdateEverythingDialogContent({
   notes = [],
   disabledReason = null,
   busy = false,
+  checking = false,
 }: UpdateEverythingDialogContentProps) {
   const t = useTranslation(sidebarUiMessages);
   const locale = useLocale();
@@ -148,6 +151,9 @@ function UpdateEverythingDialogContent({
             ? providerCount === 1
               ? t("{count} provider update", { count: providerCount })
               : t("{count} provider updates", { count: providerCount })
+            : null}
+          {checking
+            ? `${version !== null || providerCount > 0 ? " · " : ""}Checking for more…`
             : null}
         </AlertDialogDescription>
       </AlertDialogHeader>
