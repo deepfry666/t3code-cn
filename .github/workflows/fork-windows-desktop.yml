@@ -1,17 +1,20 @@
 # Fork-only: release.yml runs only in pingdotgg/t3code on Blacksmith runners, so this
-# builds the unsigned Windows installer on a GitHub-hosted runner. scripts/fork-release.sh
-# dispatches it and publishes the artifact.
-# Like release-desktop.yml it cross-builds on Linux; native Windows hosts install extra
-# optional natives and fail the packaged payload file limit.
+# builds the fork's release artifacts on GitHub-hosted runners: the unsigned Windows
+# installer and the Linux x64/arm64 CLI archives. scripts/fork-release.sh dispatches it
+# and publishes the artifacts. The file keeps its old name because workflow_dispatch
+# only reaches files already on the default branch.
+# Like release-desktop.yml the Windows installer cross-builds on Linux; native Windows
+# hosts install extra optional natives and fail the packaged payload file limit.
+# node-pty compiles from source on Linux, so each CLI archive builds on its own arch.
 #
 #   gh workflow run fork-windows-desktop.yml --ref main -f version=<x.y.z-cn.N>
-name: Fork Windows desktop
+name: Fork release artifacts
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Chinese Windows installer version (x.y.z-cn.N)."
+        description: "Chinese release version (x.y.z-cn.N)."
         type: string
         required: true
 
@@ -88,5 +91,90 @@ jobs:
             release/*.exe
             release/*.exe.blockmap
             release/latest.yml
+          if-no-files-found: error
+          retention-days: 14
+
+  cli_linux:
+    name: Build Linux ${{ matrix.arch }} CLI archive
+    if: github.repository == 'deepfry666/t3code-cn'
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            runner: ubuntu-24.04
+            rust_target: x86_64-unknown-linux-gnu
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            rust_target: aarch64-unknown-linux-gnu
+    env:
+      BUILD_VERSION: ${{ inputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version-file: package.json
+          run-install: false
+
+      - name: Validate release version
+        run: |
+          [[ "$BUILD_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-cn\.[0-9]+$ ]] || { echo "Expected a Chinese x.y.z-cn.N version" >&2; exit 1; }
+          node --input-type=module -e 'import {readFileSync} from "node:fs"; import {compareSemverVersions} from "./packages/shared/src/semver.ts"; const official = JSON.parse(readFileSync("apps/server/package.json", "utf8")).version; if (compareSemverVersions(process.argv[1], official) >= 0) { throw new Error(`Chinese version must be below the upstream baseline ${official}`); }' "$BUILD_VERSION"
+
+      - name: Install native build dependencies
+        run: sudo apt-get update && sudo apt-get install -y libsecret-1-dev pkg-config patchelf libatomic1 build-essential python3
+
+      - name: Install
+        run: vp install
+
+      - name: Load public T3 Code config
+        run: grep -E '^T3CODE_(CLERK_PUBLISHABLE_KEY|CLERK_JWT_TEMPLATE|CLERK_CLI_OAUTH_CLIENT_ID|RELAY_URL)=' .env.example >> "$GITHUB_ENV"
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_target }}
+
+      - name: Align package versions and build bundle
+        run: |
+          node scripts/update-release-package-versions.ts "$BUILD_VERSION"
+          vp run build:desktop
+
+      - name: Build and stage resource monitor
+        env:
+          RUST_TARGET: ${{ matrix.rust_target }}
+          ARCH: ${{ matrix.arch }}
+        run: |
+          cargo build --locked --release --manifest-path native/resource-monitor/Cargo.toml --target "$RUST_TARGET"
+          mkdir -p "$RUNNER_TEMP/cli-resource-monitor/linux-$ARCH"
+          cp "native/resource-monitor/target/$RUST_TARGET/release/t3-resource-monitor" "$RUNNER_TEMP/cli-resource-monitor/linux-$ARCH/"
+
+      - name: Build CLI executable and archive
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: |
+          node apps/server/scripts/cli.ts build-exe
+          node scripts/build-cli-archive.ts --platform linux --arch "$ARCH" --version "$BUILD_VERSION" --resource-monitor-dir "$RUNNER_TEMP/cli-resource-monitor" --output-dir release-cli
+
+      - name: Smoke-test CLI archive
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: node scripts/smoke-cli-archive.ts --archive "release-cli/t3-$BUILD_VERSION-linux-$ARCH.tar.gz" --expect-version "$BUILD_VERSION"
+
+      - name: Upload CLI archive
+        uses: actions/upload-artifact@v7
+        with:
+          name: t3code-cn-cli-linux-${{ matrix.arch }}
+          path: release-cli/t3-${{ inputs.version }}-linux-${{ matrix.arch }}.tar.gz
           if-no-files-found: error
           retention-days: 14
