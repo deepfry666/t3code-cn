@@ -463,6 +463,7 @@ export const composerUiMessages = {
   "Failed to revert thread state.": "无法回退会话状态。",
   "Provider for {model} is unavailable.": "{model} 的提供方不可用。",
   "Attachment '{name}' did not finish uploading.": "附件“{name}”尚未上传完成。",
+  "Attachment '{name}' failed to upload.": "附件“{name}”上传失败。",
   "This server does not support file attachments.": "这个服务器不支持文件附件。",
   "Waiting for the server before file attachments can send": "正在等待服务器，之后才能发送文件附件",
   "This server does not accept file attachments right now. Remove the files to send.":

@@ -266,7 +266,9 @@ export function SourceControlWritingSettingsSection() {
                   value={allInstructions ?? ""}
                   onChange={(event) => setAllInstructions(event.target.value)}
                   rows={4}
-                  aria-label={t("Custom commit and pull request instructions for all selected environments")}
+                  aria-label={t(
+                    "Custom commit and pull request instructions for all selected environments",
+                  )}
                   placeholder={t("Write the instructions each selected environment should use.")}
                 />
                 <Button
@@ -313,7 +315,9 @@ export function SourceControlWritingSettingsSection() {
                 }
               }}
               rows={4}
-              placeholder={t("Keep commit subjects under 60 characters. Keep pull request descriptions short and plain.")}
+              placeholder={t(
+                "Keep commit subjects under 60 characters. Keep pull request descriptions short and plain.",
+              )}
               aria-label={t("Custom commit and pull request instructions")}
             />
           </div>
@@ -344,7 +348,9 @@ export function SourceControlWritingSettingsSection() {
             serverScoped
             settingKeys={["reviewGuideModelSelection"]}
             {...localizedSetting("review-guide-model")}
-            description={t("Must be a coding agent: it reads the pull request over many steps. Off uses the writer model, or Codex or Claude if that model is a text generator.")}
+            description={t(
+              "Must be a coding agent: it reads the pull request over many steps. Off uses the writer model, or Codex or Claude if that model is a text generator.",
+            )}
             control={
               !hasServerTargets ? (
                 <span className="text-sm text-muted-foreground">
@@ -532,7 +538,9 @@ export function SourceControlWritingSettingsSection() {
           serverScoped
           settingKeys={["sourceControlWriterModelSelection"]}
           {...localizedSetting("source-control-writer-model")}
-          description={t("Model for commit messages, pull request text, and branch or bookmark names. When disabled, use the text generation model configured for this environment.")}
+          description={t(
+            "Model for commit messages, pull request text, and branch or bookmark names. When disabled, use the text generation model configured for this environment.",
+          )}
           control={
             !hasServerTargets ? (
               <span className="text-sm text-muted-foreground">

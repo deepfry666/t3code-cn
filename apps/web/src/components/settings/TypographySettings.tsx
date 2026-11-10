@@ -47,9 +47,7 @@ import {
   searchableSetting,
 } from "./settingsSearch";
 
-let fontDefaultFamilies:
-  | { readonly sans: string | null; readonly code: string | null }
-  | undefined;
+let fontDefaultFamilies: { readonly sans: string | null; readonly code: string | null } | undefined;
 
 function resolveFontDefaultFamilies() {
   if (fontDefaultFamilies !== undefined) return fontDefaultFamilies;

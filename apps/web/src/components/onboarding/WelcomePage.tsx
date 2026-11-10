@@ -39,6 +39,10 @@ import {
 } from "lucide-react";
 import { useEffect, useEffectEvent, useRef, useState, type ReactNode } from "react";
 
+import { fillNode } from "~/i18n/fillNode";
+import type { Locale } from "~/i18n/locale";
+import { readLocale, useLocale, useTranslation } from "~/i18n/useTranslation";
+
 import { TYPOGRAPHY_ADVANCED_STORAGE_KEY } from "../../appearanceFonts";
 import { MOBILE_APP_URL } from "../../branding";
 import { isElectron } from "../../env";
@@ -113,6 +117,11 @@ import { toastManager } from "../ui/toast";
 import { WorkspacePageHeader } from "../WorkspacePageHeader";
 import { cn } from "../../lib/utils";
 import { formatRelativeTime } from "../../timestampFormat";
+import {
+  onboardingUiMessages,
+  threadImportWarning,
+  translateOnboardingLabel,
+} from "./onboardingUi.messages";
 
 const AGENT_ONBOARDING_THREAD_ID = ThreadId.make("onboarding-agent-setup");
 const SCAN_LIMIT_MESSAGE = "Scan limit reached. Some projects or conversations may be missing.";
@@ -128,10 +137,11 @@ export function WelcomePage({
   readonly environmentId: EnvironmentId;
   readonly onDone: (projectRef?: ScopedProjectRef) => void | Promise<void>;
 }) {
+  const t = useTranslation(onboardingUiMessages);
   const { environments } = useEnvironments();
   const label =
     environments.find((environment) => environment.environmentId === environmentId)?.label ??
-    "this computer";
+    t("this computer");
   const agentReady = useWelcomeAgents(environmentId).readyCount > 0;
   // The phone and `t3` on PATH belong to the primary computer, so only it offers them.
   const isPrimary = usePrimaryEnvironmentId() === environmentId;
@@ -165,8 +175,8 @@ export function WelcomePage({
       toastManager.add({
         id: "welcome-finishing",
         type: "info",
-        title: "Finishing setup",
-        description: "One moment.",
+        title: t("Finishing setup"),
+        description: t("One moment."),
       });
       return true;
     },
@@ -202,14 +212,17 @@ export function WelcomePage({
         if (importWarning) {
           toastManager.add({
             type: "warning",
-            title: "Some history was not imported",
+            title: t("Some history was not imported"),
             description: importWarning,
             timeout: 0,
           });
         } else if (importedThreadCount > 0) {
           toastManager.add({
             type: "success",
-            title: `Imported ${importedThreadCount} ${importedThreadCount === 1 ? "thread" : "threads"}`,
+            title: t(
+              importedThreadCount === 1 ? "Imported {count} thread" : "Imported {count} threads",
+              { count: importedThreadCount },
+            ),
           });
         }
         return true;
@@ -218,8 +231,8 @@ export function WelcomePage({
         holdPageRef.current = false;
         const errorToast = {
           type: "error",
-          title: "Could not finish setup",
-          description: "Your settings could not be saved. Try again.",
+          title: t("Could not finish setup"),
+          description: t("Your settings could not be saved. Try again."),
         } as const;
         if (completionErrorToastIdRef.current === null) {
           completionErrorToastIdRef.current = toastManager.add(errorToast);
@@ -261,7 +274,7 @@ export function WelcomePage({
 
   return (
     <SidebarInset
-      {...workspaceAreaProps("home", 1, "Welcome")}
+      {...workspaceAreaProps("home", 1, t("Welcome"))}
       role="main"
       className="h-dvh min-h-0 overflow-hidden overscroll-y-none"
     >
@@ -271,10 +284,10 @@ export function WelcomePage({
         <div className="min-h-0 flex-1 overflow-y-auto scrollbar-gutter-both">
           <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col px-6 pt-12 pb-8 sm:pt-20">
             <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-              Welcome to T3 Code
+              {t("Welcome to T3 Code")}
             </h1>
             <p className="mt-1.5 text-sm text-muted-foreground">
-              Setting up <span className="text-foreground">{label}</span>.
+              {fillNode(t("Setting up {label}."), <span className="text-foreground">{label}</span>)}
             </p>
             <div className="mt-10 border-t border-border/60">
               <AgentsSection
@@ -295,23 +308,30 @@ export function WelcomePage({
                 <span />
               ) : (
                 <Button variant="ghost-muted" disabled={isImporting} onClick={start}>
-                  Start without an agent
+                  {t("Start without an agent")}
                 </Button>
               )}
               <div className="flex items-center gap-3">
                 {agentReady ? null : (
-                  <span className="text-xs text-muted-foreground">Set up one agent to start.</span>
+                  <span className="text-xs text-muted-foreground">
+                    {t("Set up one agent to start.")}
+                  </span>
                 )}
                 <Button disabled={!agentReady || isImporting} onClick={start}>
                   {isImporting
                     ? selected.length > 0
-                      ? "Importing…"
-                      : "Starting…"
+                      ? t("Importing…")
+                      : t("Starting…")
                     : newCount > 0
-                      ? `Import ${newCount} ${newCount === 1 ? "project" : "projects"} and start`
+                      ? t(
+                          newCount === 1
+                            ? "Import {count} project and start"
+                            : "Import {count} projects and start",
+                          { count: newCount },
+                        )
                       : selected.length > 0
-                        ? "Import threads and start"
-                        : "Start"}
+                        ? t("Import threads and start")
+                        : t("Start@@welcome")}
                 </Button>
               </div>
             </div>
@@ -324,20 +344,22 @@ export function WelcomePage({
 }
 
 function TelemetryNotice({ environmentId }: { readonly environmentId: EnvironmentId }) {
+  const t = useTranslation(onboardingUiMessages);
   const telemetryOff = managedTelemetryOffMessage(useManagedPolicy(environmentId));
   return (
     <p className="mt-auto pt-12 text-2xs leading-relaxed text-muted-foreground/70">
-      {telemetryOff ?? "T3 Code collects anonymous usage data to improve the app."}{" "}
-      {telemetryOff === undefined ? "To opt out, see the" : "See the"}{" "}
-      <a
-        className="underline decoration-current/40 underline-offset-2 hover:text-muted-foreground"
-        href={PRIVACY_POLICY_URL}
-        target="_blank"
-        rel="noreferrer noopener"
-      >
-        privacy policy
-      </a>
-      .
+      {telemetryOff ?? t("T3 Code collects anonymous usage data to improve the app.")}{" "}
+      {fillNode(
+        telemetryOff === undefined ? t("To opt out, see the {link}.") : t("See the {link}."),
+        <a
+          className="underline decoration-current/40 underline-offset-2 hover:text-muted-foreground"
+          href={PRIVACY_POLICY_URL}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          {t("privacy policy")}
+        </a>,
+      )}
     </p>
   );
 }
@@ -414,6 +436,7 @@ function AgentsSection({
   // The project scan only reads agents that are on, so turning one on can find more history.
   readonly onImportSourceEnabled: () => void;
 }) {
+  const t = useTranslation(onboardingUiMessages);
   const { providers, serverConfig, checking, found, available } = useWelcomeAgents(environmentId);
   const refreshProviders = useAtomCommand(serverEnvironment.refreshProviders, {
     reportFailure: false,
@@ -517,7 +540,7 @@ function AgentsSection({
         const cause = squashAtomCommandFailure(result);
         toastManager.add({
           type: "error",
-          title: `Could not turn on ${agentName(provider)}`,
+          title: t("Could not turn on {name}", { name: agentName(provider) }),
           ...(cause instanceof Error ? { description: cause.message } : {}),
         });
       }
@@ -531,31 +554,34 @@ function AgentsSection({
   const actionFor = (provider: ServerProvider) => {
     const state = stateOf(provider);
     const name = agentName(provider);
-    const settingsAction = (actionLabel: string) => (
-      <Button
-        size="xs"
-        variant="outline"
-        aria-label={`${actionLabel}: ${name}`}
-        render={
-          <Link
-            to="/settings/providers"
-            search={{ environmentId, instanceId: provider.instanceId }}
-          />
-        }
-      >
-        {actionLabel}
-      </Button>
-    );
+    const settingsAction = (actionKey: "Update" | "Sign in" | "Details" | "Set up") => {
+      const actionLabel = t(actionKey);
+      return (
+        <Button
+          size="xs"
+          variant="outline"
+          aria-label={`${actionLabel}: ${name}`}
+          render={
+            <Link
+              to="/settings/providers"
+              search={{ environmentId, instanceId: provider.instanceId }}
+            />
+          }
+        >
+          {actionLabel}
+        </Button>
+      );
+    };
     if (state === "disabled") {
       return (
         <Button
           size="xs"
           variant="outline"
-          aria-label={`Turn on: ${name}`}
+          aria-label={`${t("Turn on")}: ${name}`}
           disabled={!canManageProviders || serverConfig === null}
           onClick={() => void turnOn(provider)}
         >
-          Turn on
+          {t("Turn on")}
         </Button>
       );
     }
@@ -567,11 +593,11 @@ function AgentsSection({
         <Button
           size="xs"
           variant="outline"
-          aria-label={`Set up: ${name}`}
+          aria-label={`${t("Set up")}: ${name}`}
           aria-expanded={open}
           onClick={() => setCodexSetupId(open ? null : provider.instanceId)}
         >
-          Set up
+          {t("Set up")}
         </Button>
       );
     }
@@ -600,7 +626,7 @@ function AgentsSection({
       (provider) =>
         needsInstallOrSignIn(provider) || codexNeedsSetup(provider, serverConfig?.settings),
     )
-      ? "This connection cannot control terminals."
+      ? t("This connection cannot control terminals.")
       : null,
     !canManageProviders &&
     (acpAllowed ||
@@ -608,12 +634,12 @@ function AgentsSection({
         (provider) =>
           stateOf(provider) === "disabled" || codexNeedsSetup(provider, serverConfig?.settings),
       ))
-      ? "This connection cannot manage agents."
+      ? t("This connection cannot manage agents.")
       : null,
   ].filter((note) => note !== null);
 
   return (
-    <WelcomeSection title="Agents">
+    <WelcomeSection title={t("Agents")}>
       {found.map((provider) => (
         <AgentRow
           key={provider.instanceId}
@@ -623,7 +649,9 @@ function AgentsSection({
         />
       ))}
       {checking && found.length === 0 ? (
-        <p className="text-sm leading-10 text-muted-foreground">Checking {label}…</p>
+        <p className="text-sm leading-10 text-muted-foreground">
+          {t("Checking {label}…", { label })}
+        </p>
       ) : null}
       {notes.map((note) => (
         <p key={note} className="pl-8 text-xs text-muted-foreground">
@@ -641,7 +669,7 @@ function AgentsSection({
               found.length > 0 ? "text-muted-foreground" : "text-foreground",
             )}
           >
-            {found.length > 0 ? "Add more agents" : "Set up an agent"}
+            {found.length > 0 ? t("Add more agents") : t("Set up an agent")}
           </span>
           {showMore ? null : <AgentLogoStack providers={available} acp={acpAllowed} />}
           <ChevronDownIcon className="ml-auto size-4 text-muted-foreground group-data-panel-open:rotate-180" />
@@ -664,7 +692,7 @@ function AgentsSection({
                 <ACPRegistryIcon className="size-4" />
               </RowIcon>
               <span className="min-w-0 flex-1 text-sm text-muted-foreground">
-                More agents in the ACP Registry
+                {t("More agents in the ACP Registry")}
               </span>
               <Button
                 size="xs"
@@ -672,7 +700,7 @@ function AgentsSection({
                 disabled={!canManageProviders}
                 onClick={() => setAddingProvider(true)}
               >
-                Browse
+                {t("Browse")}
               </Button>
             </div>
           ) : null}
@@ -752,6 +780,9 @@ function ProjectsSection({
   readonly projectImport: ReturnType<typeof useProjectImport>;
   readonly isImporting: boolean;
 }) {
+  const t = useTranslation(onboardingUiMessages);
+  const locale = useLocale();
+  const sourcesLabel = importSourcesLabel(locale);
   const [reviewing, setReviewing] = useState(false);
   const {
     canWrite,
@@ -766,26 +797,26 @@ function ProjectsSection({
   if (scan === undefined) return null;
   if (scan.isPending && candidates.length === 0) {
     return (
-      <WelcomeSection title="Projects">
+      <WelcomeSection title={t("Projects")}>
         <p className="text-sm leading-10 text-muted-foreground">
-          Looking for projects in your {IMPORT_SOURCES_LABEL} history…
+          {t("Looking for projects in your {sources} history…", { sources: sourcesLabel })}
         </p>
       </WelcomeSection>
     );
   }
   const retry = (
     <Button variant="ghost" size="sm" onClick={scan.refresh}>
-      Retry
+      {t("Retry")}
     </Button>
   );
   if (scan.error !== null && candidates.length === 0) {
     return (
-      <WelcomeSection title="Projects">
+      <WelcomeSection title={t("Projects")}>
         <div
           role="alert"
           className="flex min-h-10 items-center justify-between gap-3 text-sm text-muted-foreground"
         >
-          <span>Could not check projects. {scan.error}</span>
+          <span>{t("Could not check projects. {error}", { error: scan.error })}</span>
           {retry}
         </div>
       </WelcomeSection>
@@ -793,9 +824,9 @@ function ProjectsSection({
   }
   if (candidates.length === 0) {
     return scan.data?.truncated ? (
-      <WelcomeSection title="Projects">
+      <WelcomeSection title={t("Projects")}>
         <p className="text-xs leading-10 text-muted-foreground" role="status">
-          {SCAN_LIMIT_MESSAGE}
+          {t(SCAN_LIMIT_MESSAGE)}
         </p>
       </WelcomeSection>
     ) : null;
@@ -812,7 +843,7 @@ function ProjectsSection({
     selected.length < candidates.length &&
     !(selected.length === defaultKeys.length && defaultKeys.every((key) => selectedKeys.has(key)));
   return (
-    <WelcomeSection title="Projects">
+    <WelcomeSection title={t("Projects")}>
       <div className="flex min-h-10 items-center gap-3 py-1">
         <label className="flex min-w-0 flex-1 items-center gap-3">
           <RowIcon>
@@ -828,11 +859,16 @@ function ProjectsSection({
           <span className="min-w-0 flex-1">
             <span className="block text-sm font-medium text-foreground">
               {canWrite && selected.length > 0
-                ? `Import ${selected.length} ${selected.length === 1 ? "project" : "projects"} and their threads`
-                : "Import projects and their threads"}
+                ? t(
+                    selected.length === 1
+                      ? "Import {count} project and their threads"
+                      : "Import {count} projects and their threads",
+                    { count: selected.length },
+                  )
+                : t("Import projects and their threads")}
             </span>
             <span className="block text-xs text-muted-foreground">
-              From your {IMPORT_SOURCES_LABEL} history
+              {t("From your {sources} history", { sources: sourcesLabel })}
             </span>
           </span>
         </label>
@@ -843,7 +879,7 @@ function ProjectsSection({
             aria-expanded={reviewing}
             onClick={() => setReviewing((open) => !open)}
           >
-            {reviewing ? "Hide" : `Review all ${candidates.length}`}
+            {reviewing ? t("Hide") : t("Review all {count}", { count: candidates.length })}
             <ChevronDownIcon className={cn("size-3.5", reviewing && "rotate-180")} />
           </Button>
         ) : null}
@@ -853,7 +889,10 @@ function ProjectsSection({
         <fieldset className="-mx-1.5 mt-1 min-w-0" disabled={isImporting}>
           <div className="flex items-center justify-between gap-3 px-2 text-xs text-muted-foreground">
             <span role="status">
-              {selected.length} of {candidates.length} selected
+              {t("{selected} of {total} selected", {
+                selected: selected.length,
+                total: candidates.length,
+              })}
             </span>
             <div className="flex items-center gap-1">
               <Button
@@ -862,7 +901,7 @@ function ProjectsSection({
                 disabled={selected.length === candidates.length}
                 onClick={() => setSelectedKeys(new Set(allKeys))}
               >
-                Select all
+                {t("Select all")}
               </Button>
               <Button
                 variant="ghost"
@@ -870,7 +909,7 @@ function ProjectsSection({
                 disabled={selected.length === 0}
                 onClick={() => setSelectedKeys(new Set())}
               >
-                Select none
+                {t("Select none")}
               </Button>
             </div>
           </div>
@@ -887,7 +926,7 @@ function ProjectsSection({
       ) : null}
       {scan.data?.truncated ? (
         <p className="pl-8 text-xs text-muted-foreground" role="status">
-          {SCAN_LIMIT_MESSAGE}
+          {t(SCAN_LIMIT_MESSAGE)}
         </p>
       ) : null}
       {scan.error !== null ? (
@@ -895,31 +934,34 @@ function ProjectsSection({
           role="alert"
           className="flex items-center justify-between gap-3 pl-8 text-sm text-muted-foreground"
         >
-          <span>Could not check projects again. {scan.error}</span>
+          <span>{t("Could not check projects again. {error}", { error: scan.error })}</span>
           {retry}
         </div>
       ) : null}
       {visibleImportError ? (
-        <p className="pt-1 pl-8 text-sm text-destructive">{visibleImportError}</p>
+        <p className="pt-1 pl-8 text-sm text-destructive">
+          {translateOnboardingLabel(visibleImportError, locale)}
+        </p>
       ) : null}
     </WelcomeSection>
   );
 }
 
 function PhoneSection({ environmentId }: { readonly environmentId: EnvironmentId }) {
+  const t = useTranslation(onboardingUiMessages);
   const [open, setOpen] = useState(false);
   return (
-    <WelcomeSection title="Phone">
+    <WelcomeSection title={t("Phone")}>
       <Collapsible open={open} onOpenChange={setOpen}>
         <div className="flex min-h-10 items-center gap-3 py-1">
           <RowIcon>
             <SmartphoneIcon className="size-4" />
           </RowIcon>
           <span className="min-w-0 flex-1 text-sm font-medium text-foreground">
-            Use T3 Code on your phone
+            {t("Use T3 Code on your phone")}
           </span>
           <CollapsibleTrigger render={<Button variant="ghost-muted" size="xs" />}>
-            {open ? "Hide" : "Set up"}
+            {open ? t("Hide") : t("Set up")}
             <ChevronDownIcon className={cn("size-3.5", open && "rotate-180")} />
           </CollapsibleTrigger>
         </div>
@@ -927,7 +969,9 @@ function PhoneSection({ environmentId }: { readonly environmentId: EnvironmentId
           <div className="flex items-center gap-8 pt-2 pb-3 pl-8">
             <ol className="min-w-0 flex-1 space-y-5">
               <PhoneStep step={1}>
-                <p className="text-sm text-foreground">Scan with your phone to get the app.</p>
+                <p className="text-sm text-foreground">
+                  {t("Scan with your phone to get the app.")}
+                </p>
               </PhoneStep>
               <PhoneStep step={2}>
                 <PhoneConnectLink environmentId={environmentId} />
@@ -940,7 +984,7 @@ function PhoneSection({ environmentId }: { readonly environmentId: EnvironmentId
                 size={124}
                 level="M"
                 marginSize={2}
-                title="T3 Code app for iPhone and Android"
+                title={t("T3 Code app for iPhone and Android")}
               />
             </div>
           </div>
@@ -960,6 +1004,7 @@ function PhoneStep({ step, children }: { readonly step: number; readonly childre
 }
 
 function PhoneConnectLink({ environmentId }: { readonly environmentId: EnvironmentId }) {
+  const t = useTranslation(onboardingUiMessages);
   const { isLoaded, isSignedIn, userId } = useAuth({ treatPendingAsSignedOut: false });
   const { openAuthPrompt } = useT3ConnectAuthPrompt();
   const linkState = useCloudLinkState(environmentId);
@@ -980,18 +1025,18 @@ function PhoneConnectLink({ environmentId }: { readonly environmentId: Environme
     link.managedTunnelActive !== false;
   // The server checks the tunnel on its own; until it has, the result is unknown.
   const reachability = shared ? link.reachability?.status : undefined;
-  const settingsLink = (label: string) => (
+  const settingsLink = (label: "Check T3 Connect" | "Set up T3 Connect") => (
     <Button variant="outline" size="xs" render={<Link to="/settings/access" />}>
-      {label}
+      {t(label)}
     </Button>
   );
   if (isSignedIn && link === null && linkState.isPending) {
-    return <p className="text-sm text-muted-foreground">Checking T3 Connect…</p>;
+    return <p className="text-sm text-muted-foreground">{t("Checking T3 Connect…")}</p>;
   }
   if (isSignedIn && linkState.error !== null) {
     return (
       <>
-        <p className="text-sm text-foreground">Could not check T3 Connect.</p>
+        <p className="text-sm text-foreground">{t("Could not check T3 Connect.")}</p>
         {settingsLink("Check T3 Connect")}
       </>
     );
@@ -1000,14 +1045,14 @@ function PhoneConnectLink({ environmentId }: { readonly environmentId: Environme
     return (
       <p className="flex gap-1.5 text-sm text-foreground">
         <CheckIcon className="mt-0.5 size-4 shrink-0 text-success-foreground" />
-        Your phone can reach this computer. Sign in to the app with the same account.
+        {t("Your phone can reach this computer. Sign in to the app with the same account.")}
       </p>
     );
   }
   if (isSignedIn && shared && reachability === undefined) {
     return (
       <p className="text-sm text-foreground">
-        T3 Connect is on for this computer. Sign in to the app with the same account.
+        {t("T3 Connect is on for this computer. Sign in to the app with the same account.")}
       </p>
     );
   }
@@ -1017,8 +1062,8 @@ function PhoneConnectLink({ environmentId }: { readonly environmentId: Environme
       <>
         <p className="text-sm text-foreground">
           {shared
-            ? "T3 Connect is on, but the app cannot reach this computer."
-            : "Signed in. Share this computer so the app can reach it."}
+            ? t("T3 Connect is on, but the app cannot reach this computer.")
+            : t("Signed in. Share this computer so the app can reach it.")}
         </p>
         {settingsLink(shared ? "Check T3 Connect" : "Set up T3 Connect")}
       </>
@@ -1027,10 +1072,10 @@ function PhoneConnectLink({ environmentId }: { readonly environmentId: Environme
   return (
     <>
       <p className="text-sm text-foreground">
-        Sign in to T3 Connect here, then in the app with the same account.
+        {t("Sign in to T3 Connect here, then in the app with the same account.")}
       </p>
       <Button variant="outline" size="xs" disabled={!isLoaded} onClick={openAuthPrompt}>
-        Sign in to T3 Connect
+        {t("Sign in to T3 Connect")}
       </Button>
     </>
   );
@@ -1049,6 +1094,7 @@ function OnboardingCodexSetup({
   // True asks for the CLI's install or sign-in terminal once Codex has checked the CLI.
   readonly onUseCliChange: (useCli: boolean) => void;
 }) {
+  const t = useTranslation(onboardingUiMessages);
   const canManageProviders = useEnvironmentScope(environmentId, AuthProvidersManageScope);
   const canOperateTerminal = useEnvironmentScope(environmentId, AuthTerminalOperateScope);
   const persistProviderInstance = usePersistEnvironmentProviderInstanceMutation(environmentId);
@@ -1077,7 +1123,7 @@ function OnboardingCodexSetup({
           const cause = squashAtomCommandFailure(result);
           toastManager.add({
             type: "error",
-            title: "Could not save Codex setup",
+            title: t("Could not save Codex setup"),
             ...(cause instanceof Error ? { description: cause.message } : {}),
           });
         }
@@ -1111,7 +1157,8 @@ function TerminalAction({
   readonly disabled: boolean;
   readonly onClick: () => void;
 }) {
-  const label = signIn ? "Sign in" : "Install";
+  const t = useTranslation(onboardingUiMessages);
+  const label = signIn ? t("Sign in") : t("Install");
   return (
     <Button
       size="xs"
@@ -1138,6 +1185,7 @@ function AgentRow({
   // A row in the "Add more agents" grid: the button carries the state, so no detail line.
   readonly compact?: boolean;
 }) {
+  const t = useTranslation(onboardingUiMessages);
   const name = agentName(provider);
   // Claude Code and Codex tiles show Install or Set up; other agents that are on say why not.
   const brokenMessage = isBrokenVersion(provider)
@@ -1147,7 +1195,7 @@ function AgentRow({
     state === "install"
       ? isInstallableDriver(provider.driver)
         ? null
-        : "Not installed"
+        : t("Not installed")
       : compact || state === "ready" || state === "checking"
         ? null
         : state === "attention"
@@ -1179,10 +1227,10 @@ function AgentRow({
         {state === "ready" ? (
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-success-foreground">
             <CheckIcon className="size-3.5" />
-            Ready
+            {t("Ready")}
           </span>
         ) : state === "checking" ? (
-          <span className="text-xs text-muted-foreground">Checking…</span>
+          <span className="text-xs text-muted-foreground">{t("Checking…")}</span>
         ) : (
           action
         )}
@@ -1198,6 +1246,7 @@ function AgentInstallTerminal({
   readonly session: AgentTerminalSession;
   readonly onClose: () => void;
 }) {
+  const t = useTranslation(onboardingUiMessages);
   const { command, cwd, driver, environmentId, keybindings, providerInstanceId } = session;
   const canOperateTerminal = useEnvironmentScope(environmentId, AuthTerminalOperateScope);
   const [advancedTypography] = useLocalStorage(
@@ -1296,20 +1345,18 @@ function AgentInstallTerminal({
     >
       <div className="flex items-center justify-between border-b border-border/60 bg-background/60 px-3 py-1.5">
         <span className="text-2xs font-medium text-muted-foreground">
-          {!canOperateTerminal ? (
-            "This connection cannot control terminals."
-          ) : setupState === "writeFailed" ? (
-            <>
-              Run <code className="rounded bg-muted px-1 font-mono">{command}</code> in this
-              terminal.
-            </>
-          ) : setupState === "ready" ? (
-            "Review the command, then press Enter to run it."
-          ) : setupState === "openFailed" ? (
-            "Could not open the setup terminal."
-          ) : (
-            "Preparing command..."
-          )}
+          {!canOperateTerminal
+            ? t("This connection cannot control terminals.")
+            : setupState === "writeFailed"
+              ? fillNode(
+                  t("Run {command} in this terminal."),
+                  <code className="rounded bg-muted px-1 font-mono">{command}</code>,
+                )
+              : setupState === "ready"
+                ? t("Review the command, then press Enter to run it.")
+                : setupState === "openFailed"
+                  ? t("Could not open the setup terminal.")
+                  : t("Preparing command...")}
         </span>
         <div className="flex items-center gap-1">
           {setupState === "openFailed" ? (
@@ -1323,11 +1370,11 @@ function AgentInstallTerminal({
                 }
               }}
             >
-              Retry
+              {t("Retry")}
             </Button>
           ) : null}
           <Button size="xs" variant="ghost-muted" onClick={onClose}>
-            Close
+            {t("Close")}
           </Button>
         </div>
       </div>
@@ -1337,7 +1384,7 @@ function AgentInstallTerminal({
             threadRef={threadRef}
             threadId={AGENT_ONBOARDING_THREAD_ID}
             terminalId={terminalId}
-            terminalLabel={`Install ${driver}`}
+            terminalLabel={t("Install {driver}", { driver })}
             cwd={cwd}
             providerInstanceId={providerInstanceId}
             advancedTypography={advancedTypography}
@@ -1589,15 +1636,10 @@ function useProjectImport({
     setIsImporting(false);
     const importedThreadCount = importedThreadTotal();
     if (importedProjectsCount < selection.length) {
-      if (importedThreadCount > 0 && skippedThreadCount > 0) {
-        importWarningRef.current = `Imported ${importedThreadCount} ${importedThreadCount === 1 ? "thread" : "threads"}. ${skippedThreadCount} ${skippedThreadCount === 1 ? "thread" : "threads"} could not be imported.`;
-      } else if (skippedThreadCount > 0) {
-        importWarningRef.current = `${skippedThreadCount} ${skippedThreadCount === 1 ? "thread could" : "threads could"} not be imported.`;
-      } else if (importedThreadCount > 0) {
-        importWarningRef.current = `Imported ${importedThreadCount} ${importedThreadCount === 1 ? "thread" : "threads"}. Some thread history could not be imported.`;
-      } else {
-        importWarningRef.current = "Could not import thread history.";
-      }
+      importWarningRef.current = threadImportWarning(readLocale(), {
+        imported: importedThreadCount,
+        skipped: skippedThreadCount,
+      });
     }
     finishAfterImport();
   };
@@ -1639,6 +1681,7 @@ function ImportCandidateList({
     }
     onSelectionChange(next);
   };
+  const t = useTranslation(onboardingUiMessages);
   const otherSelected = other.filter((candidate) => selectedKeys.has(candidate.key)).length;
 
   return (
@@ -1666,9 +1709,11 @@ function ImportCandidateList({
             />
             <CollapsibleTrigger className="group flex min-w-0 flex-1 items-center gap-1.5 text-left">
               <ChevronRightIcon className="size-3.5 shrink-0 text-muted-foreground transition-transform group-data-panel-open:rotate-90" />
-              <span className="truncate text-sm text-muted-foreground">Other folders</span>
+              <span className="truncate text-sm text-muted-foreground">{t("Other folders")}</span>
               <span className="ml-auto shrink-0 text-xs text-muted-foreground tabular-nums">
-                {other.length} {other.length === 1 ? "folder" : "folders"}
+                {t(other.length === 1 ? "{count} folder" : "{count} folders", {
+                  count: other.length,
+                })}
               </span>
             </CollapsibleTrigger>
           </div>
@@ -1817,9 +1862,10 @@ const IMPORT_SOURCE_NAMES: Record<AgentSessionSource, string> = {
   codex: "Codex",
   pi: "Pi",
 };
-const IMPORT_SOURCES_LABEL = new Intl.ListFormat("en", { type: "conjunction" }).format(
-  AgentSessionSource.literals.map((source) => IMPORT_SOURCE_NAMES[source]),
-);
+const importSourcesLabel = (locale: Locale) =>
+  new Intl.ListFormat(locale, { type: "conjunction" }).format(
+    AgentSessionSource.literals.map((source) => IMPORT_SOURCE_NAMES[source]),
+  );
 
 function ImportRowMeta({
   sources,
@@ -1830,8 +1876,9 @@ function ImportRowMeta({
   readonly threadCount: number;
   readonly lastActiveAt: string | null;
 }) {
+  const t = useTranslation(onboardingUiMessages);
   const relative = lastActiveAt === null ? null : formatRelativeTime(lastActiveAt);
-  const age = relative === null ? "" : relative.suffix === null ? "now" : relative.value;
+  const age = relative === null ? "" : relative.suffix === null ? t("now") : relative.value;
   return (
     <span className="ml-auto grid shrink-0 grid-cols-[1rem_1rem_1rem_2.5rem_2.25rem] items-center gap-x-1 text-xs text-muted-foreground tabular-nums">
       {AgentSessionSource.literals.map((source) => (
@@ -1855,6 +1902,7 @@ function ImportRowMeta({
 
 /** The desktop app links `t3` on a fresh install; this puts its folder on PATH when it is not. */
 function CliPathSetup() {
+  const t = useTranslation(onboardingUiMessages);
   const { state, busy, run } = useDesktopCliCommand();
   const setup = state?.pathSetup;
   if (!setup) return null;
@@ -1864,20 +1912,18 @@ function CliPathSetup() {
         <TerminalIcon className="size-4" />
       </RowIcon>
       <p className="min-w-0 flex-1 text-sm text-muted-foreground">
-        {setup.added ? (
-          <>
-            Added to {setup.file}. Open a new terminal to use <code className="font-mono">t3</code>.
-          </>
-        ) : (
-          <>
-            Use <code className="font-mono">t3</code> from any terminal. Adds one line to{" "}
-            {setup.file}.
-          </>
+        {fillNode(
+          setup.added
+            ? t("Added to {file}. Open a new terminal to use {command}.", { file: setup.file })
+            : t("Use {command} from any terminal. Adds one line to {file}.", {
+                file: setup.file,
+              }),
+          <code className="font-mono">t3</code>,
         )}
       </p>
       {setup.added ? null : (
         <Button size="xs" variant="outline" disabled={busy} onClick={() => run("addToPath")}>
-          Add to PATH
+          {t("Add to PATH")}
         </Button>
       )}
     </div>
