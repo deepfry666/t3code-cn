@@ -1673,7 +1673,8 @@ function OpenCommandPaletteDialog(props: {
   actionItems.push({
     kind: "action",
     value: "action:use-in-another-app",
-    searchTerms: [
+    ...uiLabel(
+      "Use T3 Code in another app (MCP)",
       "mcp",
       "connector",
       "another app",
@@ -1685,8 +1686,7 @@ function OpenCommandPaletteDialog(props: {
       "instinct",
       "openclaw",
       "hermes",
-    ],
-    title: "Use T3 Code in another app (MCP)",
+    ),
     icon: <PlugIcon className={ITEM_ICON_CLASS} />,
     run: async () => {
       openUseInAnotherApp(

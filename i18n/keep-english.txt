@@ -398,3 +398,11 @@ File: {attachmentName}
 
 # 代码里用来匹配翻译键的前缀，不是界面文字。
 Your DNS
+
+# 复制给 Grok Bot、Muse、Instinct 等聊天应用的消息，是发给对方智能体的指令；应用名和凭据标签按名称保留
+Add the MCP server ${url} and connect it.
+Create a custom connector for the MCP server ${url}.
+Connect the MCP server ${url}.
+Grok Bot
+Hermes Agent
+App sign-in

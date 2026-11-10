@@ -918,7 +918,7 @@ export function useComposerSend(input: ComposerSendInput) {
       const uploadBlockReason =
         readLiveAttachmentCapabilities().fileBlockReason ??
         (getUploadedAttachments({ environmentId, images: composerAttachmentsSnapshot }) === null
-          ? "Retry or remove failed uploads before sending."
+          ? t("Retry or remove failed uploads before sending.")
           : null);
       if (uploadBlockReason !== null) {
         sendInFlightRef.current = false;

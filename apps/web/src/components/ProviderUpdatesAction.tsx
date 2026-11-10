@@ -44,7 +44,9 @@ export function useCheckProviderUpdates() {
           const result = await refreshProviders({ environmentId, input: { refreshModels: true } });
           if (result._tag !== "Failure" || isAtomCommandInterrupted(result)) return [];
           const error = squashAtomCommandFailure(result);
-          return [`${label}: ${error instanceof Error ? error.message : "Refresh failed."}`];
+          return [
+            `${label}: ${error instanceof Error ? error.message : translateSidebarLabel("Refresh failed.", readLocale())}`,
+          ];
         }),
     );
     const lines = failures.flat();
@@ -52,7 +54,7 @@ export function useCheckProviderUpdates() {
     toastManager.add(
       stackedThreadToast({
         type: "error",
-        title: "Could not check provider updates",
+        title: translateSidebarLabel("Could not check provider updates", readLocale()),
         description: <span className="whitespace-pre-line">{lines.join("\n")}</span>,
       }),
     );

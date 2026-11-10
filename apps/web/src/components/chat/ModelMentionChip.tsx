@@ -3,12 +3,14 @@ import type { EnvironmentId, ProviderDriverKind } from "@t3tools/contracts";
 import * as Option from "effect/Option";
 import { Atom } from "effect/reactivity";
 
+import { useTranslation } from "~/i18n/useTranslation";
 import { brandProviderInstanceEntries, deriveProviderInstanceEntries } from "~/providerInstances";
 import { serverEnvironment } from "~/state/server";
 import { contextChipAccentWithHueOf } from "~/themePalette";
 import { ContextChipPopover } from "../contextChipParts";
 import { ProviderInstanceIcon, providerLogoColor } from "./ProviderInstanceIcon";
 import { getDisplayModelName } from "./providerIconUtils";
+import { timelineUiMessages } from "./timelineUi.messages";
 
 interface ModelMentionPresentation {
   readonly label: string;
@@ -90,6 +92,7 @@ export function ModelMentionChip(props: {
   model: string;
   source: string;
 }) {
+  const t = useTranslation(timelineUiMessages);
   const presentation = useAtomValue(
     modelMentionPresentationAtom(
       `${props.environmentId ?? ""}\u0000${modelMentionKey(props.instanceId, props.model)}`,
@@ -112,7 +115,7 @@ export function ModelMentionChip(props: {
         />
       }
       label={presentation.label}
-      accessibleLabel={`Model ${presentation.label}`}
+      accessibleLabel={t("Model {label}", { label: presentation.label })}
       copyMarkdown={props.source}
     >
       <div className="space-y-1 p-2 text-sm">

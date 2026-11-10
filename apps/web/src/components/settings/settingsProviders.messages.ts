@@ -503,6 +503,51 @@ export const settingsProvidersMessages = {
   "Cursor sign-in failed or expired. Start sign-in again.": "Cursor 登录失败或已过期。请重新登录。",
   "Signed out of Cursor.": "已退出 Cursor 登录。",
   "Cursor sign-out failed. Try again.": "Cursor 退出登录失败，请重试。",
+  // Text generators
+  "Add generator": "添加生成器",
+  "No text generators yet": "还没有文本生成器",
+  "Add a model API to write thread titles, commit messages, and other short text without starting a coding agent.":
+    "添加一个模型 API，无需启动编程智能体即可撰写会话标题、提交信息等短文本。",
+  "More actions for {name}": "{name} 的更多操作",
+  Edit: "编辑",
+  "Show models": "查看模型",
+  Remove: "移除",
+  "Remove {name}?": "移除 {name}？",
+  "This deletes the API key stored on {environment}. Anything set to use this generator falls back to the text generation model.":
+    "这会删除存储在 {environment} 上的 API 密钥。所有设为使用此生成器的地方都会改回文本生成模型。",
+  "Use it": "使用",
+  "Thread titles and other generated text": "会话标题和其他生成的文本",
+  "Commit messages, pull requests, and branch names": "提交信息、pull request 和分支名称",
+  "Voice transcript cleanup": "语音转写文本整理",
+  "Edit {name}": "编辑 {name}",
+  "Add a text generator": "添加文本生成器",
+  "Writes thread titles, commit messages, and other short text without starting a coding agent. Your API key is stored on this environment.":
+    "无需启动编程智能体即可撰写会话标题、提交信息等短文本。你的 API 密钥存储在此环境中。",
+  Service: "服务",
+  Custom: "自定义",
+  "Base URL": "Base URL",
+  "API key (optional)": "API 密钥（可选）",
+  "Name (optional)": "名称（可选）",
+  "e.g. My local model": "例如：我的本地模型",
+  "{name} is connected and lists {count} model. Switch any of these to it, or keep what they use now.":
+    "{name} 已连接，提供 {count} 个模型。可以把下面任意一项切换为它，也可以保持现状。",
+  "{name} is connected and lists {count} models. Switch any of these to it, or keep what they use now.":
+    "{name} 已连接，提供 {count} 个模型。可以把下面任意一项切换为它，也可以保持现状。",
+  Connecting: "正在连接",
+  "Save and continue": "保存并继续",
+  "{model} answered. It works.": "{model} 已响应，可以正常使用。",
+  "Follows the text generation model": "跟随文本生成模型",
+  Test: "测试",
+  "Search models": "搜索模型",
+  "Couldn't load {name} models": "无法加载 {name} 的模型",
+  "{name} models": "{name} 的模型",
+  "The model list couldn't load.": "无法加载模型列表。",
+  "Loading the model list.": "正在加载模型列表。",
+  "{count} model available. Pick one in a text generation model picker.":
+    "有 {count} 个可用模型。可在文本生成模型选择器中选用。",
+  "{count} models available. Pick one in a text generation model picker.":
+    "有 {count} 个可用模型。可在文本生成模型选择器中选用。",
+  Refresh: "刷新",
 } as const;
 
 const providerLabelTemplates = [

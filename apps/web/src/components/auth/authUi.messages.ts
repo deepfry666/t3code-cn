@@ -20,7 +20,7 @@ export const authUiMessages = {
   "Beyond read only, it can start, message and stop threads, and none of them can run with more than the mode you pick.":
     "除只读外，它还可以启动会话、向会话发消息和停止会话，且任何会话的权限都不会超过你选择的模式。",
   "Or paste a sign-in code": "或粘贴登录码",
-  "Sign-in code": "登录码",
+  "Sign-in code@@agent": "登录码",
   "Paste a code": "粘贴登录码",
   "Get one from Use T3 Code in another app (MCP), Settings → Sharing & access, or {command} on this machine.":
     "可在“在其他应用中使用 T3 Code（MCP）”或“设置 → 共享与访问”中获取，也可在本机运行 {command}。",
@@ -32,6 +32,23 @@ export const authUiMessages = {
   "Denying…": "正在拒绝…",
   Deny: "拒绝",
   "{organization} limits threads to {mode}.": "{organization} 将会话权限限制为{mode}。",
+  "The T3 Connect approval did not come back to the tab that started it, so it was not used. Try again here, or paste a sign-in code.":
+    "T3 Connect 的批准结果没有回到发起它的标签页，因此未被使用。请在此重试，或粘贴登录码。",
+  "This sign-in link is incomplete": "此登录链接不完整",
+  "You can still go back and paste a sign-in code instead.": "你仍可以返回并改为粘贴登录码。",
+  "Use another account": "使用其他账号",
+  "Approving on {host}": "正在 {host} 上批准",
+  "Sign in to T3 Connect with the account this environment is linked to.":
+    "请使用此环境所关联的账号登录 T3 Connect。",
+  "Checking that this environment belongs to your account…": "正在确认此环境属于你的账号…",
+  "Sign in": "登录",
+  "Could not approve the sign-in. Try again from the app.": "无法批准此次登录。请从应用中重试。",
+  "This sign-in did not start on that environment's T3 Connect address.":
+    "此次登录不是从该环境的 T3 Connect 地址发起的。",
+  "This account cannot approve app sign-ins on that environment.":
+    "此账号无法批准该环境上的应用登录。",
+  "Could not reach that environment through T3 Connect with this account.":
+    "无法使用此账号通过 T3 Connect 访问该环境。",
 
   "Pairing with this environment": "正在与此环境配对",
   "Validating the pairing link and preparing your session.": "正在验证配对链接并准备登录状态。",

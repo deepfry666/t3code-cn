@@ -8,16 +8,19 @@ import { useEffect, useEffectEvent, useRef, useState } from "react";
 
 import { approvedReturnUrl, readApproveAgentRequest } from "../../cloud/connectAgentApproval";
 import { isElectron } from "../../env";
+import { useTranslation } from "../../i18n/useTranslation";
 import { mintConnectMcpApprovalCode } from "../../state/peerPairingCode";
 import { resolveClerkSignInProps } from "../clerk/authRedirect";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
 import { StandalonePage, StandalonePageHeader } from "../ui/standalone-page";
+import { authUiMessages } from "./authUi.messages";
 
 const isConnectApprovalCodeError = Schema.is(ConnectApprovalCodeError);
 
 /** Signs in to T3 Connect, mints an app approval code, and returns it to the sign-in page. */
 export function ApproveAgentSurface() {
+  const t = useTranslation(authUiMessages);
   const [request] = useState(() => readApproveAgentRequest(new URL(window.location.href)));
   const clerk = useClerk();
   const { isLoaded, isSignedIn } = useAuth();
@@ -63,9 +66,9 @@ export function ApproveAgentSurface() {
     return (
       <StandalonePage>
         <StandalonePageHeader
-          context="Agent sign-in"
-          title="This sign-in link is incomplete"
-          description="Close this page and start the sign-in again from your agent."
+          context={t("Agent sign-in")}
+          title={t("This sign-in link is incomplete")}
+          description={t("Close this page and start the sign-in again from your agent.")}
         />
       </StandalonePage>
     );
@@ -75,12 +78,16 @@ export function ApproveAgentSurface() {
     return (
       <StandalonePage>
         <StandalonePageHeader
-          context="Agent sign-in"
-          title="This sign-in cannot continue"
-          description={failure}
+          context={t("Agent sign-in")}
+          title={t("This sign-in cannot continue")}
+          description={
+            Object.hasOwn(authUiMessages, failure)
+              ? t(failure as keyof typeof authUiMessages)
+              : failure
+          }
         />
         <p className="mt-4 text-sm text-muted-foreground">
-          You can still go back and paste a sign-in code instead.
+          {t("You can still go back and paste a sign-in code instead.")}
         </p>
         <div className="mt-6">
           <Button
@@ -88,7 +95,7 @@ export function ApproveAgentSurface() {
             variant="outline"
             onClick={() => void clerk.signOut({ redirectUrl: window.location.href })}
           >
-            Use another account
+            {t("Use another account")}
           </Button>
         </div>
       </StandalonePage>
@@ -98,18 +105,18 @@ export function ApproveAgentSurface() {
   return (
     <StandalonePage>
       <StandalonePageHeader
-        context="Agent sign-in"
-        title={`Approving on ${request.returnTo.host}`}
+        context={t("Agent sign-in")}
+        title={t("Approving on {host}", { host: request.returnTo.host })}
         description={
           isLoaded && !isSignedIn
-            ? "Sign in to T3 Connect with the account this environment is linked to."
-            : "Checking that this environment belongs to your account…"
+            ? t("Sign in to T3 Connect with the account this environment is linked to.")
+            : t("Checking that this environment belongs to your account…")
         }
       />
       {isLoaded && !isSignedIn ? (
         <div className="mt-6">
           <Button type="button" onClick={openSignIn}>
-            Sign in
+            {t("Sign in")}
           </Button>
         </div>
       ) : (

@@ -186,6 +186,8 @@ export const sidebarUiMessages = {
   "Could not confirm update": "无法确认更新",
   "Update confirmation failed.": "确认更新失败。",
   "Could not check for updates": "无法检查更新",
+  "Could not check provider updates": "无法检查提供方更新",
+  "Refresh failed.": "刷新失败。",
   "Update check failed.": "检查更新失败。",
   "An unexpected error occurred.": "发生了意外错误。",
   "An error occurred.": "发生错误。",

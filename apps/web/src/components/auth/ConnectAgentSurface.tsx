@@ -139,7 +139,9 @@ export function ConnectAgentSurface() {
   );
   const [errorMessage, setErrorMessage] = useState(
     connectReturn.status === "discarded"
-      ? "The T3 Connect approval did not come back to the tab that started it, so it was not used. Try again here, or paste a sign-in code."
+      ? t(
+          "The T3 Connect approval did not come back to the tab that started it, so it was not used. Try again here, or paste a sign-in code.",
+        )
       : "",
   );
   const [pending, setPending] = useState<"approve" | "deny" | null>(null);
@@ -251,7 +253,7 @@ export function ConnectAgentSurface() {
   const codeField = (
     <div className="space-y-2">
       <label className="text-sm font-medium" htmlFor="connect-agent-pairing-code">
-        {details.connectSignIn ? t("Or paste a sign-in code") : t("Sign-in code")}
+        {details.connectSignIn ? t("Or paste a sign-in code") : t("Sign-in code@@agent")}
       </label>
       <Input
         id="connect-agent-pairing-code"
