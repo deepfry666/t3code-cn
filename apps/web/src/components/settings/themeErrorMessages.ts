@@ -5,7 +5,7 @@ import { translate, type Locale } from "~/i18n/locale";
  * so a value sits inside the sentence and no catalog key matches it. Each rule rebuilds the
  * sentence from a template, and text no rule owns, including server errors, passes through.
  */
-export const themeErrorMessages = {
+const themeErrorMessages = {
   'The theme id "{id}" is reserved.': "主题 ID “{id}”为保留名称。",
   'A theme named "{name}" is already installed.': "已安装名为“{name}”的主题。",
   'The theme "{name}" is not installed.': "未安装主题“{name}”。",
