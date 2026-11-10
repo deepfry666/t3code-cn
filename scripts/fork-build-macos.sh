@@ -53,7 +53,6 @@ lowercase_identity="$(printf '%s' "$identity" | tr '[:upper:]' '[:lower:]')"
 [[ "$requirement" == *"H\"$lowercase_identity\""* ]] || { echo "Unexpected designated requirement: $requirement" >&2; exit 1; }
 bundle_version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist")"
 [[ "$bundle_version" == "$version" ]] || { echo "App reports $bundle_version, expected $version" >&2; exit 1; }
-(cd "$output_dir" && shasum -a 256 "$(basename "$dmg")" "$(basename "$zip")" latest-mac.yml > SHA256SUMS-macos.txt)
 
 echo "Built $version, designated requirement: $requirement"
 ls -l "$output_dir"
