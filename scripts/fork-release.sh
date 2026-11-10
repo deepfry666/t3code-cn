@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Fork-only: publishes a Chinese release from origin/main with both update feeds. macOS is built
-# and signed on this Mac; Windows is built by fork-windows-desktop.yml from the same commit.
+# and signed on this Mac; Windows and Linux CLI archives are built by
+# fork-windows-desktop.yml from the same commit.
 # Without latest-mac.yml in the release, installed macOS apps 404 on update checks.
 #
 #   scripts/fork-release.sh 0.1.8-cn.1 <release-notes.md>
@@ -39,12 +40,26 @@ scripts/fork-build-macos.sh "$version"
 gh run watch "$run_id" -R "$repository" --exit-status --interval 60 >/dev/null
 
 windows_dir="release/windows-$version"
+cli_dir="release/cli-$version"
 upload_dir="release/upload-$version"
 rm -rf "$windows_dir" "$upload_dir"
 gh run download "$run_id" -R "$repository" -n t3code-cn-windows-x64 -D "$windows_dir"
 grep -qx "version: $version" "$windows_dir/latest.yml" || { echo "latest.yml does not name $version" >&2; exit 1; }
 
+scripts/fork-build-cli-macos.sh "$version"
+for arch in x64 arm64; do
+  gh run download "$run_id" -R "$repository" -n "t3code-cn-cli-linux-$arch" -D "$cli_dir"
+done
+
 mkdir -p "$upload_dir"
+cli_archives=()
+for platform in darwin-arm64 linux-x64 linux-arm64; do
+  archive="t3-$version-$platform.tar.gz"
+  [[ -f "$cli_dir/$archive" ]] || { echo "Missing $cli_dir/$archive" >&2; exit 1; }
+  cp "$cli_dir/$archive" "$upload_dir/"
+  cli_archives+=("$archive")
+done
+(cd "$upload_dir" && shasum -a 256 "${cli_archives[@]}" > SHA256SUMS)
 cp "release/macos-$version"/{latest-mac.yml,"T3-Code-$version-arm64.dmg","T3-Code-$version-arm64.zip"} "$upload_dir/"
 cp "release/macos-$version"/*.blockmap "$windows_dir"/*.blockmap "$upload_dir/"
 cp "$windows_dir"/{latest.yml,"T3-Code-$version-x64.exe"} "$upload_dir/"
