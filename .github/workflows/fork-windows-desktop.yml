@@ -1,9 +1,10 @@
 # Fork-only: release.yml runs only in pingdotgg/t3code on Blacksmith runners, so this
-# builds an unsigned Windows installer on a GitHub-hosted runner for manual testing.
+# builds the unsigned Windows installer on a GitHub-hosted runner. scripts/fork-release.sh
+# dispatches it and publishes the artifact.
 # Like release-desktop.yml it cross-builds on Linux; native Windows hosts install extra
 # optional natives and fail the packaged payload file limit.
 #
-#   gh workflow run fork-windows-desktop.yml --ref main
+#   gh workflow run fork-windows-desktop.yml --ref main -f version=<x.y.z-cn.N>
 name: Fork Windows desktop
 
 on:
@@ -13,7 +14,6 @@ on:
         description: "Chinese Windows installer version (x.y.z-cn.N)."
         type: string
         required: true
-        default: "0.1.7-cn.2"
 
 permissions:
   contents: read

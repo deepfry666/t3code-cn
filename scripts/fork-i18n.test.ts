@@ -30,7 +30,6 @@ const GLOSSARY: ReadonlyArray<readonly [english: RegExp, chinese: string | Reado
     [/\bsettl\w*/i, "收尾"],
     [/\bsidebars?\b/i, "侧边栏"],
     [/\bsource control\b/i, "版本控制"],
-    [/\bsecrets?\b/i, "凭据"],
     // "设备" is a phone, simulator or emulator.
     [/\bmachines?\b/i, ["机器", "本机"]],
     [/\bbeta\b/i, "测试版"],
