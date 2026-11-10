@@ -5,14 +5,33 @@ import { LOCALE_STORAGE_KEY, resolveLocale, translate, type Locale } from "./loc
 const listeners = new Set<() => void>();
 let memoryLocale: Locale | undefined;
 
+let desktopLanguages:
+  | { readonly bridge: object; readonly languages: readonly string[] }
+  | undefined;
+
+// Packaged desktop pins `navigator.languages` to en-US, so the OS's own list leads. Read once per
+// bridge: this runs on every render and the bridge call is synchronous IPC.
+function systemLanguages(): readonly string[] {
+  const bridge = typeof window === "undefined" ? undefined : window.desktopBridge;
+  if (bridge?.getPreferredSystemLanguages) {
+    if (desktopLanguages?.bridge !== bridge) {
+      desktopLanguages = { bridge, languages: bridge.getPreferredSystemLanguages() };
+    }
+    if (desktopLanguages.languages.length > 0) return desktopLanguages.languages;
+  }
+  return typeof navigator === "undefined" ? [] : (navigator.languages ?? []);
+}
+
 /** For toasts raised outside React; components use `useLocale`. */
 export function readLocale(): Locale {
   if (memoryLocale) return memoryLocale;
+  let saved: string | null = null;
   try {
-    return resolveLocale(localStorage.getItem(LOCALE_STORAGE_KEY), navigator.languages ?? []);
+    saved = localStorage.getItem(LOCALE_STORAGE_KEY);
   } catch {
-    return resolveLocale(null, typeof navigator === "undefined" ? [] : (navigator.languages ?? []));
+    // Blocked storage falls back to the system language.
   }
+  return resolveLocale(saved, systemLanguages());
 }
 
 function publishLocale() {

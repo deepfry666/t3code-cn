@@ -1,6 +1,6 @@
 import { expect, it, vi } from "vite-plus/test";
 
-import { act, render } from "../../test/render";
+import { act, render, stubGlobal } from "../../test/render";
 import { LOCALE_STORAGE_KEY } from "./locale";
 import { setLocale, useLocale, useTranslation } from "./useTranslation";
 
@@ -63,6 +63,23 @@ it("reads a changed persisted choice after all subscribers have unmounted", asyn
     await expect.element(screen.getByRole("button", { name: "New thread" })).toBeVisible();
   } finally {
     setLocale("en");
+    if (previous === null) localStorage.removeItem(LOCALE_STORAGE_KEY);
+    else localStorage.setItem(LOCALE_STORAGE_KEY, previous);
+  }
+});
+
+it("follows the desktop OS language when packaged Electron reports only en-US", async () => {
+  const previous = localStorage.getItem(LOCALE_STORAGE_KEY);
+  try {
+    localStorage.removeItem(LOCALE_STORAGE_KEY);
+    using _languages = vi.spyOn(navigator, "languages", "get").mockReturnValue(["en-US"]);
+    using _bridge = stubGlobal("desktopBridge", {
+      getPreferredSystemLanguages: () => ["zh-Hans-CN", "en-US"],
+    });
+    // This probe has no routes.
+    await using screen = await render(<LocaleProbe />, { router: false });
+    await expect.element(screen.getByRole("button", { name: "新建会话" })).toBeVisible();
+  } finally {
     if (previous === null) localStorage.removeItem(LOCALE_STORAGE_KEY);
     else localStorage.setItem(LOCALE_STORAGE_KEY, previous);
   }

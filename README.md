@@ -52,7 +52,7 @@ macOS 安装包只支持 Apple 芯片（M 系列）的 Mac，文件名形如 `T3
 
 ## 切换语言
 
-打开 **设置 → 通用 → 语言 → 界面语言**（英文界面下为 **Settings → General → Language → Interface language**），选择 **简体中文**，无需重启。Web 版首次打开时会跟随浏览器语言自动选择；桌面应用首次打开显示英文，需要手动切换一次。
+打开 **设置 → 通用 → 语言 → 界面语言**（英文界面下为 **Settings → General → Language → Interface language**），选择 **简体中文**，无需重启。首次打开时自动选择：Web 版跟随浏览器语言，桌面应用跟随系统语言。
 
 ## 汉化内容
 
