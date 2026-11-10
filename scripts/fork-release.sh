@@ -14,6 +14,9 @@ repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$repo_root"
 
 [[ -f "$notes" ]] || { echo "Missing release notes $notes" >&2; exit 1; }
+# The macOS CLI archive needs this exact Node; fail before dispatching the Windows build.
+required_node="$(node -p 'require("./package.json").engines.node')"
+[[ "$(node --version)" == "v$required_node" ]] || { echo "Node $required_node is required; put it first on PATH (current: $(node --version))." >&2; exit 1; }
 git fetch --quiet origin main
 commit="$(git rev-parse HEAD)"
 [[ "$commit" == "$(git rev-parse origin/main)" ]] || { echo "Check out origin/main before releasing." >&2; exit 1; }
