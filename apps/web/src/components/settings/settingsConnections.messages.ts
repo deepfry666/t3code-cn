@@ -145,6 +145,9 @@ export const settingsConnectionsMessages = {
   "Remove from this device…": "从此设备移除…",
   "Enable T3 Connect": "启用 T3 Connect",
   "Get more tunnels": "获取更多隧道",
+  "Manage tunnels": "管理隧道",
+  "Run `t3 connect link` on the host, then restart T3 Code there.":
+    "请在主机上运行 `t3 connect link`，然后在那里重启 T3 Code。",
   "Your session does not have permission to manage T3 Connect access.":
     "你的会话无权管理 T3 Connect 访问权限。",
   "Sign in": "登录",

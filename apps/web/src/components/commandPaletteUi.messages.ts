@@ -1,6 +1,7 @@
 import type { Locale } from "../i18n/locale";
 
 export const commandPaletteUiMessages = {
+  "Use T3 Code in another app (MCP)": "在其他应用中使用 T3 Code（MCP）",
   "Enter the full owner/repository name.": "请输入完整的所有者/仓库名称。",
   "Provider status unavailable. Open Source Control settings and rescan.":
     "无法获取提供方状态。请打开“版本控制”设置并重新扫描。",

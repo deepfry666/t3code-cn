@@ -351,6 +351,7 @@ export const settingsMaintenanceMessages = {
   "{store} link": "{store} 链接",
   "Could not install t3": "无法安装 t3",
   "Could not remove t3": "无法移除 t3",
+  "Could not add t3 to PATH": "无法将 t3 添加到 PATH",
   "Something went wrong.": "出了点问题。",
   "Another t3 at {shadowedBy} runs first in a new terminal. Remove it to use T3 Code's.":
     "新终端会优先运行 {shadowedBy} 中的另一个 t3。请先移除它，再使用 T3 Code 的版本。",
@@ -359,6 +360,11 @@ export const settingsMaintenanceMessages = {
     "已安装到 {installedPath}。打开新终端即可使用。",
   "Installed at {installedPath}, which is not on your PATH yet. Add its folder to your PATH to run `t3`.":
     "已安装到 {installedPath}，该路径尚未加入 PATH。请将其文件夹加入 PATH 后运行 `t3`。",
+  "Installed at {installedPath}, which is not on your PATH yet.":
+    "已安装到 {installedPath}，该路径尚未加入 PATH。",
+  "Installed at {installedPath} and added to PATH in {file}. Open a new terminal to use it.":
+    "已安装到 {installedPath}，并已在 {file} 中加入 PATH。打开新终端即可使用。",
+  "Add to PATH": "添加到 PATH",
   Remove: "移除",
   Install: "安装",
   Subprocess: "子进程",
@@ -516,6 +522,15 @@ export const settingsMaintenanceMessages = {
     "新终端会优先运行 {path} 处的另一个 t3。请移除它，或直接运行 {launcher} 处的启动器。",
   "Another t3 command is already installed, or no folder on your PATH is writable. Run the launcher directly at {launcher}.":
     "已安装另一个 t3 命令，或 PATH 中没有可写文件夹。请直接运行 {launcher} 处的启动器。",
+  "Another t3 command is already in ~/.local/bin and ~/bin, or neither is writable. Run the launcher directly at {launcher}.":
+    "~/.local/bin 和 ~/bin 中已有另一个 t3 命令，或这两个文件夹都不可写。请直接运行 {launcher} 处的启动器。",
+  'T3 Code cannot put {path} on PATH because it has a ";". Run {launcher} directly.':
+    "{path} 含有“;”，T3 Code 无法将其加入 PATH。请直接运行 {launcher}。",
+  "Install the t3 command first.": "请先安装 t3 命令。",
+  "T3 Code cannot add t3 to this shell's PATH.": "T3 Code 无法将 t3 添加到此 shell 的 PATH。",
+  "Another t3 at {path} runs first; T3 Code leaves it in place.":
+    "{path} 处的另一个 t3 会优先运行；T3 Code 不会改动它。",
+  "Could not add t3 to {file}.": "无法将 t3 添加到 {file}。",
   "The desktop app failed to install the update.": "桌面应用安装更新失败。",
   "A prepared desktop update is already in progress.": "已有准备好的桌面更新正在进行。",
   "This desktop app also runs WSL backends, whose databases a remote switch cannot check. Switch it on that machine.":
@@ -553,6 +568,22 @@ const DYNAMIC_LABELS = [
     "Another t3 command is already installed, or no folder on your PATH is writable. Run the launcher directly at {launcher}.",
     ["launcher"],
   ],
+  [
+    /^Another t3 command is already in ~\/\.local\/bin and ~\/bin, or neither is writable\. Run the launcher directly at ([\s\S]+?)\.$/,
+    "Another t3 command is already in ~/.local/bin and ~/bin, or neither is writable. Run the launcher directly at {launcher}.",
+    ["launcher"],
+  ],
+  [
+    /^T3 Code cannot put ([\s\S]+?) on PATH because it has a ";"\. Run ([\s\S]+?) directly\.$/,
+    'T3 Code cannot put {path} on PATH because it has a ";". Run {launcher} directly.',
+    ["path", "launcher"],
+  ],
+  [
+    /^Another t3 at ([\s\S]+?) runs first; T3 Code leaves it in place\.$/,
+    "Another t3 at {path} runs first; T3 Code leaves it in place.",
+    ["path"],
+  ],
+  [/^Could not add t3 to ([\s\S]+?)\.$/, "Could not add t3 to {file}.", ["file"]],
   [
     /^The desktop app found no build of ([\s\S]+?)\.$/,
     "The desktop app found no build of {version}.",

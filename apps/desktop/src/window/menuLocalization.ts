@@ -9,6 +9,7 @@ const labels: Readonly<Record<string, string>> = {
   "Check for Updates...": "检查更新…",
   "Settings...": "设置…",
   "Close Window": "关闭窗口",
+  "Close Developer Tools": "关闭开发者工具",
   "Paste as Text": "粘贴为纯文本",
   Reload: "重新加载",
   "Force Reload": "强制重新加载",

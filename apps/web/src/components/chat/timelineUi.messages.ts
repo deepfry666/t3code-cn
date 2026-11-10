@@ -206,6 +206,7 @@ export const timelineUiMessages = {
   "Could not set the side chat's permission mode.": "无法设置侧聊的权限模式。",
   "Could not send the side chat message.": "无法发送侧聊消息。",
   "Skill {label}": "技能 {label}",
+  "Model {label}": "模型 {label}",
   "No description is available for this skill.": "这个技能没有描述。",
   "View instructions": "查看说明",
   "Accessibility data": "无障碍数据",

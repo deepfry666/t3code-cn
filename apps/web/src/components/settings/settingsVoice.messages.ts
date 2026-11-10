@@ -58,6 +58,11 @@ export const settingsVoiceMessages = {
     "文本整理目前使用 {environment} 的文本生成模型。可选择其他模型来降低费用或加快速度。",
   "this environment": "此环境",
   "cleanup model": "文本整理模型",
+  "Model for transcript cleanup, such as a cheaper or faster one. When disabled, use the text generation model configured for this environment.":
+    "整理转写文本所用的模型，例如更便宜或更快的模型。关闭时使用此环境配置的文本生成模型。",
+  "No text generation providers available.": "没有可用的文本生成提供方。",
+  "Use a separate cleanup model": "使用单独的文本整理模型",
+  "update server": "请更新服务器",
   "Connect an environment first.": "请先连接一个环境。",
   "No providers available.": "没有可用的提供方。",
   "Could not load transcription models": "无法加载转写模型",
@@ -77,6 +82,8 @@ export const settingsVoiceMessages = {
   "This environment can’t transcribe audio: {reason}.": "此环境无法转写音频：{reason}。",
   "Pick languages to see models that support all of them. Accuracy is word or character error rate: lower is better. Speed is the time to transcribe 30 seconds of audio on Handy’s benchmark GPU.":
     "选择语言后可查看同时支持这些语言的模型。准确率以词或字符错误率表示，越低越好。速度是在 Handy 基准测试 GPU 上转写 30 秒音频所需的时间。",
+  "Pick languages to see models that support all of them. Accuracy is word or character error rate: lower is better. Speed is the time to transcribe 30 seconds of audio on Handy’s benchmark {device}.":
+    "选择语言后可查看同时支持这些语言的模型。准确率以词或字符错误率表示，越低越好。速度是在 Handy 基准测试 {device} 上转写 30 秒音频所需的时间。",
   Languages: "语言",
   "Search languages": "搜索语言",
   "Browse models by language": "按语言浏览模型",
@@ -147,6 +154,9 @@ export const settingsVoiceMessages = {
     "在此设备上保存姓名和术语的首选拼写。如果某个词总是识别错误，可添加别名。听写所在的项目名称也会作为提示发送。",
   dictionary: "词典",
   "Cleanup@@transcript": "文本整理",
+  "Clean up transcripts": "整理转写文本",
+  "Fixes punctuation, numbers, and spoken corrections with the cleanup model on the draft’s environment. Sends the transcript and nearby draft text, never audio.":
+    "使用草稿所在环境的文本整理模型修正标点、数字和口头纠正。只发送转写文本及其附近的草稿文字，不会发送音频。",
   "Clean up transcripts with a provider": "使用提供方整理转写文本",
   "Sends the transcript and nearby draft text to the text generation provider on the draft’s environment to fix punctuation, numbers, and spoken corrections. Sends text only; off by default.":
     "将转写文本及其附近的草稿文字发送给草稿所在环境的文本生成提供方，修正标点、数字和口头纠正。只发送文本，默认关闭。",

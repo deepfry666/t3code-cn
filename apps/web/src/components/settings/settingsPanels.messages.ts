@@ -131,8 +131,13 @@ export const settingsPanelsMessages = {
   "Inactivity does not settle threads with a pull request. Merge and close still do.":
     "闲置不会让有 pull request 的会话收尾，但合并和关闭仍会。",
   "Text generation": "文本生成",
+  "See your agents, import projects, and set up your phone.":
+    "查看你的智能体、导入项目并设置手机。",
+  Open: "打开",
   "Used for thread titles and other generated text on connected devices with this provider. Source control can override it.":
     "用于在使用此提供方的已连接设备上生成会话标题和其他文本。版本控制设置可以覆盖它。",
+  "For thread titles and other generated text. Source control has its own setting. Text generators from Providers also appear here.":
+    "用于生成会话标题和其他文本。版本控制有单独的设置。“提供方”中添加的文本生成器也会显示在这里。",
   "text generation model": "文本生成模型",
   "Connect an environment to choose its text generation model.":
     "请连接一个环境以选择其文本生成模型。",

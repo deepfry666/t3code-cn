@@ -166,6 +166,28 @@ export const settingsCodeMessages = {
   "Source control writer model": "版本控制文案模型",
   "Source control writer model not saved": "未保存版本控制文案模型",
   "Use a separate source control writer model": "使用单独的版本控制文案模型",
+  "Commit messages and pull request titles and descriptions match each project's history.":
+    "提交信息以及 pull request 的标题和说明沿用各项目的历史风格。",
+  "Conventional Commit prefixes, with short pull request titles and descriptions.":
+    "使用约定式提交前缀，pull request 标题和说明保持简短。",
+  "Your instructions shape commit messages and pull request titles and descriptions.":
+    "按你的指令编写提交信息以及 pull request 的标题和说明。",
+  "Commits & pull requests": "提交与 PR",
+  "commit and pull request writing": "提交与 PR 文案",
+  "Commit and pull request writing": "提交与 PR 文案",
+  "Custom commit and pull request instructions for all selected environments":
+    "所有所选环境共用的自定义提交与 pull request 指令",
+  "Keep commit subjects under 60 characters. Keep pull request descriptions short and plain.":
+    "提交标题不超过 60 个字符，pull request 说明保持简短直白。",
+  "Custom commit and pull request instructions": "自定义提交与 pull request 指令",
+  "Must be a coding agent: it reads the pull request over many steps. Off uses the writer model, or Codex or Claude if that model is a text generator.":
+    "必须是编程智能体：它会分多步阅读 pull request。关闭时使用文案模型；若文案模型是文本生成器，则改用 Codex 或 Claude。",
+  "Use the repository's pull request template when it has one.":
+    "仓库有 pull request 模板时使用该模板。",
+  "pull request templates": "PR 模板",
+  "Follow pull request templates": "遵循 PR 模板",
+  "Model for commit messages, pull request text, and branch or bookmark names. When disabled, use the text generation model configured for this environment.":
+    "生成提交信息、pull request 文案以及分支或书签名称的模型。关闭时使用此环境配置的文本生成模型。",
   Authenticated: "已认证",
   "Not authenticated": "未认证",
   "Status unknown": "状态未知",
