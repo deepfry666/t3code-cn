@@ -2827,7 +2827,7 @@
     "SSH verification prompt failed.": "SSH 验证提示失败。",
     "This SSH verification prompt expired. Try connecting again.": "此 SSH 验证提示已过期，请重新连接。",
     "SSH verification required": "需要 SSH 验证",
-    "Enter the password or verification code required by {target}.": "请输入 {target} 所需的密码或验证码。",
+    "Enter the password or verification code required by {target}. T3 Code passes your response to the local SSH process and keeps it in memory to reuse for this host. T3 Code does not write it to disk.": "请输入 {target} 所需的密码或验证码。T3 Code 会把你的回复传给本地 SSH 进程，并保存在内存中，供连接此主机时复用。T3 Code 不会把它写入磁盘。",
     "SSH keys may replace a password, but your server can still require a verification code.": "SSH 密钥可以替代密码，但你的服务器仍可能要求输入验证码。",
     "Expired": "已过期",
     "Continue": "继续",

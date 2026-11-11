@@ -7,6 +7,7 @@ import { useId, useRef, useState, useSyncExternalStore } from "react";
 import { useDeadlinePassed } from "../../hooks/useDeadline";
 import { useNowSecond } from "../../hooks/useNowSecond";
 
+import { fillNode } from "~/i18n/fillNode";
 import { readLocale, translateNow, useTranslation } from "~/i18n/useTranslation";
 import { desktopUiMessages, translateDesktopLabel } from "./desktopUi.messages";
 import { Button } from "../ui/button";
@@ -171,9 +172,12 @@ function ActiveSshPasswordPrompt({
         <DialogHeader>
           <DialogTitle>{t("SSH verification required")}</DialogTitle>
           <DialogDescription>
-            {t("Enter the password or verification code required by {target}.", { target })} T3 Code
-            passes your response to the local SSH process and keeps it in memory to reuse for this
-            host. T3 Code does not write it to disk.
+            {fillNode(
+              t(
+                "Enter the password or verification code required by {target}. T3 Code passes your response to the local SSH process and keeps it in memory to reuse for this host. T3 Code does not write it to disk.",
+              ),
+              <code>{target}</code>,
+            )}
           </DialogDescription>
         </DialogHeader>
         <DialogPanel scrollFade={false}>
