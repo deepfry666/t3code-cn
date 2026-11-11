@@ -22,7 +22,7 @@ commit="$(git rev-parse HEAD)"
 [[ "$commit" == "$(git rev-parse origin/main)" ]] || { echo "Check out origin/main before releasing." >&2; exit 1; }
 [[ -z "$(git status --porcelain --untracked-files=no)" ]] || { echo "Working tree has changes." >&2; exit 1; }
 if gh release view "v$version" -R "$repository" >/dev/null 2>&1; then
-  echo "v$version already exists." >&2
+  echo "v$version already exists (a draft left by a failed upload counts too)." >&2
   exit 1
 fi
 
@@ -40,7 +40,14 @@ done
 echo "Windows build: https://github.com/$repository/actions/runs/$run_id"
 
 scripts/fork-build-macos.sh "$version"
-gh run watch "$run_id" -R "$repository" --exit-status --interval 60 >/dev/null
+# `gh run watch` once hung for over an hour after the run had finished, so poll instead.
+conclusion=""
+for _ in $(seq 1 90); do
+  state="$(gh run view "$run_id" -R "$repository" --json status,conclusion --jq '.status + " " + .conclusion' || true)"
+  if [[ "$state" == completed\ * ]]; then conclusion="${state#completed }"; break; fi
+  sleep 60
+done
+[[ "$conclusion" == success ]] || { echo "Windows build $run_id did not succeed (${conclusion:-still running after 90 min})." >&2; exit 1; }
 
 windows_dir="release/windows-$version"
 cli_dir="release/cli-$version"
@@ -69,6 +76,9 @@ cp "$windows_dir"/{latest.yml,"T3-Code-$version-x64.exe"} "$upload_dir/"
 (cd "$upload_dir" && shasum -a 256 "T3-Code-$version-x64.exe" "T3-Code-$version-arm64.dmg" \
   "T3-Code-$version-arm64.zip" latest.yml latest-mac.yml > SHA256SUMS.txt)
 
-gh release create "v$version" -R "$repository" --target "$commit" --latest \
+# Upload as a draft and publish only once every asset is up, so a failed upload never
+# becomes the latest release that installed apps check for updates.
+gh release create "v$version" -R "$repository" --target "$commit" --draft \
   --title "T3 Code 中文版 $version" --notes-file "$notes" "$upload_dir"/*
+gh release edit "v$version" -R "$repository" --draft=false --latest >/dev/null
 echo "Released https://github.com/$repository/releases/tag/v$version"
