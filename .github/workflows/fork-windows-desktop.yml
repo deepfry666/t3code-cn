@@ -44,7 +44,7 @@ jobs:
 
       # The JS build compiles the Linux browser import helper, as release.yml's build_bundle does.
       - name: Install libsecret headers
-        run: sudo apt-get update && sudo apt-get install -y libsecret-1-dev pkg-config
+        run: scripts/fork-apt-install.sh libsecret-1-dev pkg-config
 
       - name: Install
         run: vp install
@@ -132,7 +132,7 @@ jobs:
           node --input-type=module -e 'import {readFileSync} from "node:fs"; import {compareSemverVersions} from "./packages/shared/src/semver.ts"; const official = JSON.parse(readFileSync("apps/server/package.json", "utf8")).version; if (compareSemverVersions(process.argv[1], official) >= 0) { throw new Error(`Chinese version must be below the upstream baseline ${official}`); }' "$BUILD_VERSION"
 
       - name: Install native build dependencies
-        run: sudo apt-get update && sudo apt-get install -y libsecret-1-dev pkg-config patchelf libatomic1 build-essential python3
+        run: scripts/fork-apt-install.sh libsecret-1-dev pkg-config patchelf libatomic1 build-essential python3
 
       - name: Install
         run: vp install
