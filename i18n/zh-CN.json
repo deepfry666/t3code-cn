@@ -93,6 +93,7 @@
     "Preview · {title}": "预览 · {title}",
     "Browser preview": "浏览器预览",
     "Capture a window": "截取窗口",
+    "Copy Email Address": "复制邮箱地址",
     "services": "服务",
     "hideOthers": "隐藏其他应用",
     "unhide": "全部显示",
@@ -244,7 +245,16 @@
     "Enter a pairing token to start a session with this environment.": "输入配对 token，即可开始与此环境的连接。",
     "Desktop-managed pairing and one-time pairing tokens are both accepted for this environment.": "此环境同时接受桌面版托管配对和一次性配对 token。",
     "This environment is desktop-managed. Open it from the desktop app or paste a bootstrap credential if one was issued explicitly.": "此环境由桌面版托管。请从桌面应用打开；如果另外签发了引导凭据，也可以粘贴在这里。",
-    "This environment accepts one-time pairing tokens. Pairing links can open this page directly, or you can paste the token here.": "此环境接受一次性配对 token。配对链接可以直接打开此页面，你也可以在这里粘贴 token。"
+    "This environment accepts one-time pairing tokens. Pairing links can open this page directly, or you can paste the token here.": "此环境接受一次性配对 token。配对链接可以直接打开此页面，你也可以在这里粘贴 token。",
+    "Open this page in its own window": "请在单独的窗口中打开此页面",
+    "For your safety, agent sign-ins cannot be approved inside another site.": "为了安全，不能在其他网站内批准智能体登录。",
+    "Connecting to T3 Connect": "正在连接 T3 Connect",
+    "One moment while your account loads.": "正在加载你的账号，请稍候。",
+    "Sign in to approve": "登录以批准",
+    "Use a sign-in code instead": "改用登录码",
+    "· whoever runs it gets this access": "· 运行它的人都会获得此权限",
+    "Choose what it may do": "选择允许它做什么",
+    "The environment returned an address this page will not open.": "环境返回了一个此页面不会打开的地址。"
   },
   "apps/web/src/components/chat/chatUi.messages.ts": {
     "restart": "重新开始",
@@ -289,7 +299,10 @@
     "Previous match": "上一个匹配项",
     "Next match": "下一个匹配项",
     "Close find": "关闭查找",
-    "Copy message": "复制消息"
+    "Copy message": "复制消息",
+    "Stopped": "已停止",
+    "Stopping": "正在停止",
+    "Stopping…": "正在停止…"
   },
   "apps/web/src/components/chat/composerUi.messages.ts": {
     "Queued message": "排队消息",
@@ -811,7 +824,9 @@
     "Attachments still uploading": "附件仍在上传",
     "Reasoning effort": "推理强度",
     "Codex feedback thread ID": "Codex 反馈会话 ID",
-    "A message can have at most {count} attachments.": "一条消息最多可以有 {count} 个附件。"
+    "A message can have at most {count} attachments.": "一条消息最多可以有 {count} 个附件。",
+    "Image attachment": "图片附件",
+    "Retry now": "立即重试"
   },
   "apps/web/src/components/chat/threadPanelUi.messages.ts": {
     "No project": "无项目",
@@ -1106,7 +1121,13 @@
     "The project is still available. Try opening the draft again.": "项目仍然可用，请再次尝试打开草稿。",
     "Try again": "重试",
     "Could not open the link": "无法打开链接",
-    "Chat code block": "聊天代码块"
+    "Chat code block": "聊天代码块",
+    "Details": "详情",
+    "Background work": "后台任务",
+    "Command": "命令",
+    "Open thread": "打开会话",
+    "Open parent agent on {machine}": "打开 {machine} 上的父智能体",
+    "Failed to regenerate thread title": "重新生成会话标题失败"
   },
   "apps/web/src/components/chat/threadRuntime.messages.ts": {
     "Thread on {machine}": "{machine} 上的会话",
@@ -2264,7 +2285,16 @@
     "Preview access is unavailable for this client.": "此客户端无法使用预览。",
     "Unable to open link in browser": "无法在浏览器中打开链接",
     "Environment is not connected.": "环境未连接。",
-    "This context is no longer available. Remove it or attach it again.": "这段上下文已不可用。请移除它或重新添加。"
+    "This context is no longer available. Remove it or attach it again.": "这段上下文已不可用。请移除它或重新添加。",
+    "Open app": "打开应用",
+    "Insight": "见解",
+    "Steer · waiting to be read": "引导 · 等待读取",
+    "Waiting for the agent to read this. It reads steers between steps, after a running command finishes.": "正在等待智能体读取。它会在步骤之间读取引导消息，也就是正在运行的命令结束之后。",
+    "Click to zoom in or return to fit. Pinch or Ctrl+scroll to zoom, scroll or drag to pan. Use Enter to toggle zoom, plus or minus to zoom, and 0 to fit.": "点击放大或恢复适应窗口。双指捏合或按住 Ctrl 滚动可缩放，滚动或拖动可平移。按 Enter 切换缩放，按加号或减号缩放，按 0 适应窗口。",
+    "Editing {label}": "正在编辑 {label}",
+    "Searching the web for {label}": "正在网上搜索 {label}",
+    "Searching for {label}": "正在搜索 {label}",
+    "Thinking@@announcement": "正在思考"
   },
   "apps/web/src/components/clerk/clerkUi.messages.ts": {
     "Sign in to T3 Connect": "登录 T3 Connect",
@@ -2615,7 +2645,9 @@
     "Start the matching WSL backend, then choose the folder again.": "请先启动对应的 WSL 后端，然后重新选择文件夹。",
     "Open source control settings": "打开版本控制设置",
     "Open Settings -> Source control": "打开“设置 → 版本控制”",
-    "This connection cannot browse host folders.": "此连接无法浏览主机文件夹。"
+    "This connection cannot browse host folders.": "此连接无法浏览主机文件夹。",
+    "Find on page in browser": "在浏览器页面中查找",
+    "Thread": "会话"
   },
   "apps/web/src/components/coreUi.messages.ts": {
     "Thread copied": "已复制会话",
@@ -3939,7 +3971,8 @@
     "Add t3code under mcp_servers in ~/.hermes/config.yaml, with the URL and auth: oauth.": "在 ~/.hermes/config.yaml 的 mcp_servers 下添加 t3code，填写 URL 和 auth: oauth。",
     "Run hermes mcp login t3code.": "运行 hermes mcp login t3code。",
     "On a remote host, paste the final URL back when asked.": "在远程主机上，按提示把最终的 URL 粘贴回去。",
-    "Add a remote MCP server with OAuth.": "添加一个使用 OAuth 的远程 MCP 服务器。"
+    "Add a remote MCP server with OAuth.": "添加一个使用 OAuth 的远程 MCP 服务器。",
+    "Open {app} on the web": "在网页上打开 {app}"
   },
   "apps/web/src/components/media/mediaUi.messages.ts": {
     "Video unavailable": "视频不可用",
@@ -4245,7 +4278,13 @@
     "Could not update annotation voice input": "无法更新标注语音输入",
     "Reveal in Finder": "在 Finder 中显示",
     "Reveal in File Explorer": "在文件资源管理器中显示",
-    "Reveal in Files": "在“文件”中显示"
+    "Reveal in Files": "在“文件”中显示",
+    "Find in page": "在页面中查找",
+    "Previous match": "上一个匹配项",
+    "Next match": "下一个匹配项",
+    "Close find": "关闭查找",
+    "Find on page": "在页面上查找",
+    "Find on page isn't available for this page": "此页面不支持在页面上查找"
   },
   "apps/web/src/components/projectScriptsUi.messages.ts": {
     "Play": "运行",
@@ -5053,7 +5092,9 @@
     "Worktree": "工作树",
     "Failed to prepare {kind} thread.": "无法准备 {kind} 会话。",
     "Paste a {kind} URL, checkout command, or enter 123 / #123.": "请粘贴 {kind} URL、检出工作副本的命令，或输入 123 / #123。",
-    "Use a {kind} URL, checkout command, 123, or #123.": "请使用 {kind} URL、检出工作副本的命令、123 或 #123。"
+    "Use a {kind} URL, checkout command, 123, or #123.": "请使用 {kind} URL、检出工作副本的命令、123 或 #123。",
+    "Overview": "概览",
+    "The linked item is not in the loaded activity.": "链接的条目不在已加载的动态中。"
   },
   "apps/web/src/components/rightPanelTabsUi.messages.ts": {
     "Browser": "浏览器",
@@ -5870,7 +5911,10 @@
     "fuchsia": "紫红色",
     "pink": "粉色",
     "rose": "玫红色",
-    "This device": "此设备"
+    "This device": "此设备",
+    "This provider is not available on this environment.": "此环境上没有这个提供方。",
+    "{provider} is turned off.": "{provider} 已关闭。",
+    "{provider} is unavailable.": "{provider} 不可用。"
   },
   "apps/web/src/components/settings/settingsConnections.messages.ts": {
     "What agents here may do there": "这里的智能体在另一环境中的权限",
@@ -6442,7 +6486,9 @@
     "WSL runtime installation completed without reporting its cache path.": "WSL 运行时安装已完成，但未报告缓存路径。",
     "Failed to run wsl.exe --list --verbose: {error}": "运行 wsl.exe --list --verbose 失败：{error}",
     "Another T3 Code server, such as the background service, is using this data directory, or an older background service is set up for it. Stop that server or try `t3 update`. If the older launcher cannot update, run `t3 service uninstall` and optionally reinstall with `t3 service install` from a current CLI. Use `npx t3@latest` if `t3` is missing or outdated, and pass `--base-dir` with the service's T3 home to each command. Then reopen T3 Code. You can also set a separate T3CODE_HOME and pair with the running server.": "另一个 T3 Code 服务器（例如后台服务）正在使用此数据目录，或此目录已配置旧版后台服务。请停止该服务器，或尝试 `t3 update`。如果旧版启动器无法更新，请运行 `t3 service uninstall`，并可使用当前 CLI 运行 `t3 service install` 重新安装。如果 `t3` 缺失或过旧，请使用 `npx t3@latest`，并在每条命令中通过 `--base-dir` 指定该服务的 T3 主目录。然后重新打开 T3 Code。你也可以设置单独的 T3CODE_HOME，并与正在运行的服务器配对。",
-    "Another T3 Code server is using this distro's T3 home, or an older background service is set up for it. Stop that server or pair with it, or try `t3 update` in the distro. If the older launcher cannot update, run `t3 service uninstall` and optionally reinstall with `t3 service install` from a current CLI in the distro. Use `npx t3@latest` if `t3` is missing or outdated, and pass `--base-dir` with the service's T3 home to each command.": "另一个 T3 Code 服务器正在使用此发行版的 T3 主目录，或此目录已配置旧版后台服务。请停止该服务器或与其配对，或在发行版中尝试 `t3 update`。如果旧版启动器无法更新，请运行 `t3 service uninstall`，并可在发行版中使用当前 CLI 运行 `t3 service install` 重新安装。如果 `t3` 缺失或过旧，请使用 `npx t3@latest`，并在每条命令中通过 `--base-dir` 指定该服务的 T3 主目录。"
+    "Another T3 Code server is using this distro's T3 home, or an older background service is set up for it. Stop that server or pair with it, or try `t3 update` in the distro. If the older launcher cannot update, run `t3 service uninstall` and optionally reinstall with `t3 service install` from a current CLI in the distro. Use `npx t3@latest` if `t3` is missing or outdated, and pass `--base-dir` with the service's T3 home to each command.": "另一个 T3 Code 服务器正在使用此发行版的 T3 主目录，或此目录已配置旧版后台服务。请停止该服务器或与其配对，或在发行版中尝试 `t3 update`。如果旧版启动器无法更新，请运行 `t3 service uninstall`，并可在发行版中使用当前 CLI 运行 `t3 service install` 重新安装。如果 `t3` 缺失或过旧，请使用 `npx t3@latest`，并在每条命令中通过 `--base-dir` 指定该服务的 T3 主目录。",
+    "Check this address": "请核对此地址",
+    "This app cannot confirm it is one of your machines. The pairing code you paste is sent there.": "此应用无法确认它是你的机器之一。你粘贴的配对码会发送到那里。"
   },
   "apps/web/src/components/settings/settingsContent.messages.ts": {
     "Colors & themes": "颜色与主题",
@@ -6641,7 +6687,8 @@
     "Model Picker: Jump: 8": "模型选择器：跳转到 8",
     "Thread: Jump: 8": "会话：跳转到 8",
     "Model Picker: Jump: 9": "模型选择器：跳转到 9",
-    "Thread: Jump: 9": "会话：跳转到 9"
+    "Thread: Jump: 9": "会话：跳转到 9",
+    "Preview: Find on Page": "预览：在页面上查找"
   },
   "apps/web/src/components/settings/settingsDetailUi.messages.ts": {
     "Beta": "测试版",
@@ -6688,7 +6735,13 @@
     "Archived threads will appear here.": "已归档会话将显示在这里。",
     "Archived thread action failed": "已归档会话操作失败",
     "Archive": "归档",
-    "Archived {archivedAt} · Created {createdAt}": "归档于 {archivedAt} · 创建于 {createdAt}"
+    "Archived {archivedAt} · Created {createdAt}": "归档于 {archivedAt} · 创建于 {createdAt}",
+    "What a screen reader hears from the open thread: a turn starting, needing you, and ending. Status and messages adds what the agent writes before its last message. Everything adds each step.": "屏幕阅读器会从当前会话中播报：一轮开始、需要你处理以及结束。“状态和消息”还会播报智能体在最后一条消息之前写下的内容。“全部”会播报每一步。",
+    "screen reader announcements": "屏幕阅读器播报",
+    "Screen reader announcements": "屏幕阅读器播报",
+    "Status only": "仅状态",
+    "Status and messages": "状态和消息",
+    "Everything": "全部"
   },
   "apps/web/src/components/settings/settingsDevices.messages.ts": {
     "Stored secret, enter a new value to replace": "已保存凭据，输入新值可替换",
@@ -7370,7 +7423,9 @@
     "Update {version} did not apply on this machine. Retry it from the desktop app there.": "更新 {version} 未在此机器上生效。请在该机器的桌面应用中重试。",
     "The desktop app failed to download the update.": "桌面应用下载更新失败。",
     "The desktop app update failed.": "桌面应用更新失败。",
-    "The desktop app did not report an update result.": "桌面应用未报告更新结果。"
+    "The desktop app did not report an update result.": "桌面应用未报告更新结果。",
+    "Restarts T3 Code there. It will be offline for about {minutes} min.": "会重启该设备上的 T3 Code，大约离线 {minutes} 分钟。",
+    "T3 Code on {label} stops, rebuilds its database, and starts again. It will be offline for about {minutes} min. Running agents stop when it restarts.": "{label} 上的 T3 Code 会停止、重建数据库后再次启动，大约离线 {minutes} 分钟。重启时正在运行的智能体会停止。"
   },
   "apps/web/src/components/settings/settingsMessages.ts": {
     "Settings": "设置",
@@ -7592,7 +7647,8 @@
     "Recording key presses": "录制按键",
     "Recording mouse presses": "录制鼠标点击",
     "Floating preview": "浮动预览",
-    "This setting is saved on a server, and the hosted app is not anchored to one. Change it from the desktop app or from the server's own address.": "此设置保存在服务器上，而托管应用未固定连接某台服务器。请从桌面应用或服务器自身的地址修改。"
+    "This setting is saved on a server, and the hosted app is not anchored to one. Change it from the desktop app or from the server's own address.": "此设置保存在服务器上，而托管应用未固定连接某台服务器。请从桌面应用或服务器自身的地址修改。",
+    "Screen reader announcements": "屏幕阅读器播报"
   },
   "apps/web/src/components/settings/settingsPanels.messages.ts": {
     "Could not download update": "无法下载更新",
@@ -9514,7 +9570,13 @@
     "{task} timed out.": "{task} 超时。",
     "{task} failed: {command} exited with code {exitCode}.": "{task} 失败：{command} 已退出，退出码为 {exitCode}。",
     "{task} failed.": "{task} 失败。",
-    "Could not capture a test snapshot. {failure} macOS grants Screen Recording and Accessibility to each app separately. In System Settings, open Privacy & Security and check that \"{appName}\" is allowed for both.": "无法截取测试截图。{failure} macOS 会分别为每个应用授予屏幕录制和辅助功能权限。请在系统设置中打开“隐私与安全性”，确认“{appName}”已获得这两项权限。"
+    "Could not capture a test snapshot. {failure} macOS grants Screen Recording and Accessibility to each app separately. In System Settings, open Privacy & Security and check that \"{appName}\" is allowed for both.": "无法截取测试截图。{failure} macOS 会分别为每个应用授予屏幕录制和辅助功能权限。请在系统设置中打开“隐私与安全性”，确认“{appName}”已获得这两项权限。",
+    "Using your file at {path}": "正在使用你位于 {path} 的文件",
+    "Stop using your {model} file; the file stays on disk": "停止使用你的 {model} 文件；文件仍保留在磁盘上",
+    "Could not use a model from that path": "无法使用该路径下的模型",
+    "Path to a model file or folder already on this environment": "此环境上已有的模型文件或文件夹路径",
+    "Already downloaded elsewhere? Paste the model file or folder path": "已在别处下载过？粘贴模型文件或文件夹路径",
+    "Use existing": "使用已有"
   },
   "apps/web/src/components/settings/themeEditorUi.messages.ts": {
     "Theme JSON": "主题 JSON",
@@ -10187,7 +10249,10 @@
     "Segment": "分段",
     "No provider on the selected environments reports subscription limits.": "选中的环境上没有提供方报告订阅限制。",
     "View usage in ChatGPT with your connected account.": "用已连接的账户在 ChatGPT 中查看用量。",
-    "Manage usage": "管理用量"
+    "Manage usage": "管理用量",
+    "{label} · {count} left": "{label} · 剩余 {count} 次",
+    "Use@@reset credit": "使用",
+    "{label}: {description} This cannot be undone.": "{label}：{description} 此操作无法撤销。"
   },
   "apps/web/src/speech/speechUi.messages.ts": {
     "Microphone {index}": "麦克风 {index}",

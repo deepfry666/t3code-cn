@@ -752,6 +752,8 @@ export const pullRequestUiMessages = {
     "请粘贴 {kind} URL、检出工作副本的命令，或输入 123 / #123。",
   "Use a {kind} URL, checkout command, 123, or #123.":
     "请使用 {kind} URL、检出工作副本的命令、123 或 #123。",
+  Overview: "概览",
+  "The linked item is not in the loaded activity.": "链接的条目不在已加载的动态中。",
 };
 
 // Only for application-owned labels; user content must remain unchanged.

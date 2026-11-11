@@ -208,7 +208,7 @@ export function useSystemComposerBanners(input: SystemComposerBannersInput) {
         ) : undefined,
         actions: (
           <>
-            {!environmentReconnecting ? (
+            {unavailableConnection.phase !== "connecting" ? (
               <Button
                 size="xs"
                 variant="ghost"
@@ -218,7 +218,7 @@ export function useSystemComposerBanners(input: SystemComposerBannersInput) {
                   )
                 }
               >
-                {t("Reconnect")}
+                {environmentReconnecting ? t("Retry now") : t("Reconnect")}
               </Button>
             ) : null}
             {disconnectAction}

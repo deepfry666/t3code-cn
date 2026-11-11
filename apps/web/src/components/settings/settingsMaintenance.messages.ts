@@ -548,6 +548,10 @@ export const settingsMaintenanceMessages = {
   "The desktop app failed to download the update.": "桌面应用下载更新失败。",
   "The desktop app update failed.": "桌面应用更新失败。",
   "The desktop app did not report an update result.": "桌面应用未报告更新结果。",
+  "Restarts T3 Code there. It will be offline for about {minutes} min.":
+    "会重启该设备上的 T3 Code，大约离线 {minutes} 分钟。",
+  "T3 Code on {label} stops, rebuilds its database, and starts again. It will be offline for about {minutes} min. Running agents stop when it restarts.":
+    "{label} 上的 T3 Code 会停止、重建数据库后再次启动，大约离线 {minutes} 分钟。重启时正在运行的智能体会停止。",
 } as const;
 
 const DYNAMIC_LABELS = [

@@ -319,4 +319,10 @@ export const threadPanelUiMessages = {
   "Try again": "重试",
   "Could not open the link": "无法打开链接",
   "Chat code block": "聊天代码块",
+  Details: "详情",
+  "Background work": "后台任务",
+  Command: "命令",
+  "Open thread": "打开会话",
+  "Open parent agent on {machine}": "打开 {machine} 上的父智能体",
+  "Failed to regenerate thread title": "重新生成会话标题失败",
 } as const;

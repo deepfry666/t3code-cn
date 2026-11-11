@@ -172,7 +172,7 @@ function ReclaimRow({
       title={t("{amount} on {label}", { amount, label })}
       description={
         status.reclaimFailure === undefined
-          ? t("Restarts T3 Code there. It is offline for about {minutes} min.", { minutes })
+          ? t("Restarts T3 Code there. It will be offline for about {minutes} min.", { minutes })
           : t("The last attempt failed: {failure}", { failure: status.reclaimFailure })
       }
       control={
@@ -194,7 +194,7 @@ function ReclaimRow({
                 </AlertDialogTitle>
                 <AlertDialogDescription>
                   {t(
-                    "T3 Code on {label} stops, rebuilds its database, and starts again. It is offline for about {minutes} min. Running agents stop when it restarts.",
+                    "T3 Code on {label} stops, rebuilds its database, and starts again. It will be offline for about {minutes} min. Running agents stop when it restarts.",
                     { label, minutes },
                   )}
                 </AlertDialogDescription>

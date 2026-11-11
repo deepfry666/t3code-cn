@@ -438,4 +438,15 @@ export const timelineUiMessages = {
   "Environment is not connected.": "环境未连接。",
   "This context is no longer available. Remove it or attach it again.":
     "这段上下文已不可用。请移除它或重新添加。",
+  "Open app": "打开应用",
+  Insight: "见解",
+  "Steer · waiting to be read": "引导 · 等待读取",
+  "Waiting for the agent to read this. It reads steers between steps, after a running command finishes.":
+    "正在等待智能体读取。它会在步骤之间读取引导消息，也就是正在运行的命令结束之后。",
+  "Click to zoom in or return to fit. Pinch or Ctrl+scroll to zoom, scroll or drag to pan. Use Enter to toggle zoom, plus or minus to zoom, and 0 to fit.":
+    "点击放大或恢复适应窗口。双指捏合或按住 Ctrl 滚动可缩放，滚动或拖动可平移。按 Enter 切换缩放，按加号或减号缩放，按 0 适应窗口。",
+  "Editing {label}": "正在编辑 {label}",
+  "Searching the web for {label}": "正在网上搜索 {label}",
+  "Searching for {label}": "正在搜索 {label}",
+  "Thinking@@announcement": "正在思考",
 } as const;

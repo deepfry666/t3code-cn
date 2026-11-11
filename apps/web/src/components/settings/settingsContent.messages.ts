@@ -214,6 +214,7 @@ export const settingsContentMessages = {
   "Thread: Jump: 8": "会话：跳转到 8",
   "Model Picker: Jump: 9": "模型选择器：跳转到 9",
   "Thread: Jump: 9": "会话：跳转到 9",
+  "Preview: Find on Page": "预览：在页面上查找",
 } as const;
 
 // Only use this for application-owned labels; user content must remain unchanged.

@@ -227,6 +227,7 @@ export const settingsMessages = {
   "Floating preview": "浮动预览",
   "This setting is saved on a server, and the hosted app is not anchored to one. Change it from the desktop app or from the server's own address.":
     "此设置保存在服务器上，而托管应用未固定连接某台服务器。请从桌面应用或服务器自身的地址修改。",
+  "Screen reader announcements": "屏幕阅读器播报",
 } as const;
 
 // This lookup is only for application-owned settings metadata, never user content.

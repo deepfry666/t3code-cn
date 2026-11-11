@@ -102,6 +102,7 @@ export const mcpUiMessages = {
   "On a remote host, paste the final URL back when asked.":
     "在远程主机上，按提示把最终的 URL 粘贴回去。",
   "Add a remote MCP server with OAuth.": "添加一个使用 OAuth 的远程 MCP 服务器。",
+  "Open {app} on the web": "在网页上打开 {app}",
 } as const;
 
 /** Translate a setup step, note or message that mcpApps and mcpGate keep in English. */

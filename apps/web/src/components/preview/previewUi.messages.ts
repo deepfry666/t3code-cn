@@ -117,4 +117,10 @@ export const previewUiMessages = {
   "Reveal in Finder": "在 Finder 中显示",
   "Reveal in File Explorer": "在文件资源管理器中显示",
   "Reveal in Files": "在“文件”中显示",
+  "Find in page": "在页面中查找",
+  "Previous match": "上一个匹配项",
+  "Next match": "下一个匹配项",
+  "Close find": "关闭查找",
+  "Find on page": "在页面上查找",
+  "Find on page isn't available for this page": "此页面不支持在页面上查找",
 } as const;

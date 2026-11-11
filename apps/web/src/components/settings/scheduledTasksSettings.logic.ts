@@ -5,6 +5,7 @@ import {
   type ProjectId,
   ScheduledTaskId,
   type ScheduledTask,
+  type ScheduledTaskSchedule,
   type ScheduledTaskThreadMode,
   type ScheduledTaskUpsertSchedule,
   scheduledTaskThreadMode,
@@ -22,14 +23,67 @@ import {
   webhookFilterDraftsChanged,
   type WebhookFilterDraft,
 } from "@t3tools/client-runtime/scheduled-task-webhook";
+import { scheduleTimeZoneLabel } from "@t3tools/client-runtime/scheduled-task-time-zone";
 
 import {
   resolveProjectSettings,
   type LegacyProjectSettingsFields,
 } from "@t3tools/shared/projectSettings";
+import { translate, type Locale } from "../../i18n/locale";
 import type { ProviderInstanceEntry } from "../../providerInstances";
 
+import { settingsThreadsMessages, translateThreadsLabel } from "./settingsThreads.messages";
 import type { ResolvedSettingsScope } from "./settingsScope";
+
+export const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+
+const ONCE_FORMATTER = new Intl.DateTimeFormat(undefined, {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
+
+const ZH_ONCE_FORMATTER = new Intl.DateTimeFormat("zh-CN", {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
+
+export function scheduleLabel(
+  schedule: ScheduledTaskSchedule,
+  timeZone?: string,
+  runAt?: string | null,
+  locale: Locale = "en",
+): string {
+  const t = (
+    key: keyof typeof settingsThreadsMessages,
+    params?: Readonly<Record<string, string | number>>,
+  ) => translate(locale, settingsThreadsMessages, key, params);
+  const tl = (label: string) => translateThreadsLabel(label, locale);
+  if (schedule.type === "webhook") return t("On webhook");
+  if (schedule.type === "once")
+    return t("Once, {date}", {
+      date: (locale === "zh-CN" ? ZH_ONCE_FORMATTER : ONCE_FORMATTER).format(
+        new Date(schedule.runAt),
+      ),
+    });
+  if (schedule.type === "interval") {
+    const minutes = schedule.everyMs / 60_000;
+    return Number.isInteger(minutes)
+      ? t("Every {minutes} min", { minutes })
+      : t("Every {seconds} sec", { seconds: Math.round(schedule.everyMs / 1000) });
+  }
+  const weekdays = schedule.weekdays ?? [];
+  const days =
+    weekdays.length === 0
+      ? t("Daily")
+      : weekdays.length === 5 && weekdays.every((day) => day >= 1 && day <= 5)
+        ? t("Weekdays")
+        : weekdays
+            .map((day) => tl(WEEKDAY_LABELS[day] ?? ""))
+            .join(locale === "zh-CN" ? "、" : ", ");
+  const zone = scheduleTimeZoneLabel(timeZone, runAt);
+  const label = t("{days} at {time}", { days, time: schedule.timeOfDay });
+  return zone === undefined ? label : `${label} ${zone}`;
+}
 
 export function matchesScheduledTaskScope(
   scope: ResolvedSettingsScope,
