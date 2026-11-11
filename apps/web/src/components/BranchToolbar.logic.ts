@@ -128,7 +128,11 @@ export function resolveLockedWorkspaceLabel(
   activeWorktreePath: string | null,
   effectiveEnvMode: EnvMode,
 ): string {
-  if (activeWorktreePath) return translateNow(gitUiMessages, "Worktree");
+  if (activeWorktreePath) {
+    return (
+      activeWorktreePath.split(/[\\/]/).findLast(Boolean) ?? translateNow(gitUiMessages, "Worktree")
+    );
+  }
   return effectiveEnvMode === "worktree"
     ? resolveEnvModeLabel("worktree")
     : translateNow(gitUiMessages, "Local checkout");

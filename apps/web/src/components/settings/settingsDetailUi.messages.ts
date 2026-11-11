@@ -55,4 +55,11 @@ export const settingsDetailUiMessages = {
   "Archived thread action failed": "已归档会话操作失败",
   Archive: "归档",
   "Archived {archivedAt} · Created {createdAt}": "归档于 {archivedAt} · 创建于 {createdAt}",
+  "What a screen reader hears from the open thread: a turn starting, needing you, and ending. Status and messages adds what the agent writes before its last message. Everything adds each step.":
+    "屏幕阅读器会从当前会话中播报：一轮开始、需要你处理以及结束。“状态和消息”还会播报智能体在最后一条消息之前写下的内容。“全部”会播报每一步。",
+  "screen reader announcements": "屏幕阅读器播报",
+  "Screen reader announcements": "屏幕阅读器播报",
+  "Status only": "仅状态",
+  "Status and messages": "状态和消息",
+  Everything: "全部",
 } as const;

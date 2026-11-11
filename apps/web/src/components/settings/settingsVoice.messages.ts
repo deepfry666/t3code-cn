@@ -699,6 +699,15 @@ export const settingsVoiceMessages = {
   "{task} failed.": "{task} 失败。",
   'Could not capture a test snapshot. {failure} macOS grants Screen Recording and Accessibility to each app separately. In System Settings, open Privacy & Security and check that "{appName}" is allowed for both.':
     "无法截取测试截图。{failure} macOS 会分别为每个应用授予屏幕录制和辅助功能权限。请在系统设置中打开“隐私与安全性”，确认“{appName}”已获得这两项权限。",
+  "Using your file at {path}": "正在使用你位于 {path} 的文件",
+  "Stop using your {model} file; the file stays on disk":
+    "停止使用你的 {model} 文件；文件仍保留在磁盘上",
+  "Could not use a model from that path": "无法使用该路径下的模型",
+  "Path to a model file or folder already on this environment":
+    "此环境上已有的模型文件或文件夹路径",
+  "Already downloaded elsewhere? Paste the model file or folder path":
+    "已在别处下载过？粘贴模型文件或文件夹路径",
+  "Use existing": "使用已有",
 } as const;
 
 const desktopMessagePatterns = (

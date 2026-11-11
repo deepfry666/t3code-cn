@@ -601,6 +601,8 @@ export const composerUiMessages = {
   "Reasoning effort": "推理强度",
   "Codex feedback thread ID": "Codex 反馈会话 ID",
   "A message can have at most {count} attachments.": "一条消息最多可以有 {count} 个附件。",
+  "Image attachment": "图片附件",
+  "Retry now": "立即重试",
 } as const;
 
 /**

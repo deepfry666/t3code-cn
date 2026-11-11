@@ -152,6 +152,9 @@ export const usageUiMessages = {
     "选中的环境上没有提供方报告订阅限制。",
   "View usage in ChatGPT with your connected account.": "用已连接的账户在 ChatGPT 中查看用量。",
   "Manage usage": "管理用量",
+  "{label} · {count} left": "{label} · 剩余 {count} 次",
+  "Use@@reset credit": "使用",
+  "{label}: {description} This cannot be undone.": "{label}：{description} 此操作无法撤销。",
 } as const;
 
 const translateUsageLabel = createLabelTranslator(usageUiMessages, [

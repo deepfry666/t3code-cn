@@ -690,6 +690,9 @@ export const settingsCodeMessages = {
   pink: "粉色",
   rose: "玫红色",
   "This device": "此设备",
+  "This provider is not available on this environment.": "此环境上没有这个提供方。",
+  "{provider} is turned off.": "{provider} 已关闭。",
+  "{provider} is unavailable.": "{provider} 不可用。",
 } as const;
 
 const dynamicMessages = [

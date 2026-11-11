@@ -189,6 +189,8 @@ export const commandPaletteUiMessages = {
   "Open Settings -> Source control": "打开“设置 → 版本控制”",
   "This connection cannot browse host folders.": "此连接无法浏览主机文件夹。",
   "Git URL": "Git URL",
+  "Find on page in browser": "在浏览器页面中查找",
+  Thread: "会话",
 } as const;
 
 export type CommandPaletteUiKey = keyof typeof commandPaletteUiMessages;

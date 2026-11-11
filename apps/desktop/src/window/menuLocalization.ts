@@ -103,6 +103,7 @@ const labels: Readonly<Record<string, string>> = {
   "Preview · {title}": "预览 · {title}",
   "Browser preview": "浏览器预览",
   "Capture a window": "截取窗口",
+  "Copy Email Address": "复制邮箱地址",
 };
 
 export function localizeDesktopText(

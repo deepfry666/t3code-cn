@@ -43,4 +43,7 @@ export const chatUiMessages = {
   "Next match": "下一个匹配项",
   "Close find": "关闭查找",
   "Copy message": "复制消息",
+  Stopped: "已停止",
+  Stopping: "正在停止",
+  "Stopping…": "正在停止…",
 } as const;

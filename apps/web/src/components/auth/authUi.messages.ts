@@ -85,4 +85,15 @@ export const authUiMessages = {
     "此环境由桌面版托管。请从桌面应用打开；如果另外签发了引导凭据，也可以粘贴在这里。",
   "This environment accepts one-time pairing tokens. Pairing links can open this page directly, or you can paste the token here.":
     "此环境接受一次性配对 token。配对链接可以直接打开此页面，你也可以在这里粘贴 token。",
+  "Open this page in its own window": "请在单独的窗口中打开此页面",
+  "For your safety, agent sign-ins cannot be approved inside another site.":
+    "为了安全，不能在其他网站内批准智能体登录。",
+  "Connecting to T3 Connect": "正在连接 T3 Connect",
+  "One moment while your account loads.": "正在加载你的账号，请稍候。",
+  "Sign in to approve": "登录以批准",
+  "Use a sign-in code instead": "改用登录码",
+  "· whoever runs it gets this access": "· 运行它的人都会获得此权限",
+  "Choose what it may do": "选择允许它做什么",
+  "The environment returned an address this page will not open.":
+    "环境返回了一个此页面不会打开的地址。",
 } as const;
