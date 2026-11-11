@@ -39,7 +39,7 @@ describe("shared runtime labels at web display boundaries", () => {
     [
       translateRuntimeError,
       "Could not list relay-managed environments: Relay rejected the cloud session token.",
-      "无法通过中继列出环境：中继拒绝了云端会话 token。",
+      "无法列出中继托管的环境：中继拒绝了云端会话 token。",
     ],
     [
       translateRuntimeError,
@@ -61,7 +61,7 @@ describe("shared runtime labels at web display boundaries", () => {
     [timeline, "Requested cancellation of 2 tasks", "已请求取消 2 个任务"],
     [timeline, "Tried to hand off to 1 worktree", "尝试交接到 1 个工作树"],
     [timeline, "Started 2 review guides, 1 failed", "已启动 2 个审查导览，1 个失败"],
-    [timeline, "Failed to read a T3 thread", "读取失败：一个 T3 会话"],
+    [timeline, "Failed to read a T3 thread", "读取 T3 会话失败"],
     [timeline, "Declined to link PR #34", "已拒绝关联 PR #34"],
     [timeline, "Requested thread creation 2 times", "已请求创建会话 2 次"],
     [translateThreadRuntimeLabel, "Thread on Mac mini", "Mac mini 上的会话"],
