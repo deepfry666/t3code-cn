@@ -1,4 +1,4 @@
-import type { Locale } from "../i18n/locale";
+import { translate, type Locale } from "../i18n/locale";
 
 export const commandPaletteUiMessages = {
   "Choose a folder in the environment the repository is cloned into.":
@@ -193,6 +193,14 @@ export const commandPaletteUiMessages = {
   "Git URL": "Git URL",
   "Find on page in browser": "在浏览器页面中查找",
   Thread: "会话",
+
+  // Row metadata composed in CommandPalette.logic.ts and CommandPaletteLookups.ts
+  Local: "本地",
+  "{label} (Local)": "{label}（本地）",
+  "just now": "刚刚",
+  "{count}m ago": "{count} 分钟前",
+  "{count}h ago": "{count} 小时前",
+  "{count}d ago": "{count} 天前",
 } as const;
 
 export type CommandPaletteUiKey = keyof typeof commandPaletteUiMessages;
@@ -206,4 +214,42 @@ export function translateCommandPaletteFixedLabel(label: string, locale: Locale)
   return locale === "zh-CN" && Object.hasOwn(commandPaletteUiMessages, label)
     ? commandPaletteUiMessages[label as CommandPaletteUiKey]
     : label;
+}
+
+const PARENTHESIZED_LOCAL = /^(.+) \(Local\)$/;
+
+/** Which environment a row sits in: only the app's own word for a local one is translated. */
+export function translateCommandPaletteLocationLabel(label: string, locale: Locale): string {
+  if (locale !== "zh-CN") return label;
+  const parenthesized = PARENTHESIZED_LOCAL.exec(label);
+  if (parenthesized) {
+    return translate(locale, commandPaletteUiMessages, "{label} (Local)", {
+      label: parenthesized[1]!,
+    });
+  }
+  return label === "Local" ? translate(locale, commandPaletteUiMessages, "Local") : label;
+}
+
+const RELATIVE_TIME = [
+  [/^just now$/, "just now", null],
+  [/^(\d+)m ago$/, "{count}m ago", "count"],
+  [/^(\d+)h ago$/, "{count}h ago", "count"],
+  [/^(\d+)d ago$/, "{count}d ago", "count"],
+] as const satisfies ReadonlyArray<readonly [RegExp, CommandPaletteUiKey, string | null]>;
+
+/** Rows show `formatRelativeTimeLabel`, which the sidebar keeps short and this list does not. */
+export function translateCommandPaletteTimestamp(label: string, locale: Locale): string {
+  if (locale !== "zh-CN") return label;
+  for (const [pattern, key, parameter] of RELATIVE_TIME) {
+    const match = pattern.exec(label);
+    if (match) {
+      return translate(
+        locale,
+        commandPaletteUiMessages,
+        key,
+        parameter === null ? {} : { [parameter]: match[1]! },
+      );
+    }
+  }
+  return label;
 }

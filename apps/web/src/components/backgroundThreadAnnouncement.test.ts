@@ -8,6 +8,7 @@ import {
   nextBackgroundThreadAnnouncement,
   resolveBackgroundThreadRequest,
 } from "./backgroundThreadAnnouncement";
+import { setLocale } from "../../test/locale";
 
 const firstRun = RunId.make("run-1");
 const secondRun = RunId.make("run-2");
@@ -69,6 +70,26 @@ describe("nextBackgroundThreadAnnouncement", () => {
       "Failed: Fix login redirect",
       "Stopped: Fix login redirect",
     ]);
+  });
+
+  it("names the thread in the interface language, keeping its title as written", () => {
+    try {
+      setLocale("zh-CN");
+      expect(
+        speak([
+          { threads: [login()] },
+          { threads: [login({ request: "input" })] },
+          { threads: [login({ runStatus: "completed" })] },
+          { threads: [login({ runId: secondRun, runStatus: "failed" })] },
+        ]),
+      ).toEqual([
+        "需要你的输入：Fix login redirect",
+        "完成：Fix login redirect",
+        "失败：Fix login redirect",
+      ]);
+    } finally {
+      setLocale("en");
+    }
   });
 
   it("announces each run's ending once", () => {

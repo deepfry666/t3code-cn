@@ -649,11 +649,11 @@ function WorkGroupHeader(props: {
   onToggle: () => void;
 }) {
   const t = useTranslation(timelineUiMessages);
+  // The summary is composed in client-runtime, which mobile shares.
+  const label = translateTimelineLabel(props.label, t);
   return (
     <WorkLogButton
-      aria-label={
-        props.failed ? t("{label}, tool call failed", { label: props.label }) : props.label
-      }
+      aria-label={props.failed ? t("{label}, tool call failed", { label }) : label}
       aria-expanded={props.expanded}
       onClick={props.onToggle}
       icon={
@@ -664,7 +664,7 @@ function WorkGroupHeader(props: {
           muted
         />
       }
-      label={<span className="block truncate">{props.label}</span>}
+      label={<span className="block truncate">{label}</span>}
       trailing={
         <TimelineRowTimestamp createdAt={props.createdAt} timestampFormat={props.timestampFormat} />
       }

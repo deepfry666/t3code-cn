@@ -298,6 +298,7 @@ export const timelineUiMessages = {
   "Ran command": "已运行命令",
   "Changed {count} files": "已更改 {count} 个文件",
   "Changed {name}": "已更改 {name}",
+  "Tasks {done}/{total}": "任务 {done}/{total}",
   "Searched files": "已搜索文件",
   "Read file": "已读取文件",
   "Could not load history.": "无法加载历史记录。",
