@@ -7,11 +7,10 @@ repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$repo_root"
 
 [[ "$(uname -s)/$(uname -m)" == "Darwin/arm64" ]] || { echo "Build on an Apple silicon Mac." >&2; exit 1; }
-[[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+-cn\.[0-9]+$ ]] || { echo "Expected a Chinese x.y.z-cn.N version" >&2; exit 1; }
+scripts/fork-validate-version.sh "$version"
 [[ -z "$(git status --porcelain)" ]] || { echo "Working tree has changes; commit or remove them before building." >&2; exit 1; }
 required_node="$(node -p 'require("./package.json").engines.node')"
 [[ "$(node --version)" == "v$required_node" ]] || { echo "Node $required_node is required; put it first on PATH (current: $(node --version))." >&2; exit 1; }
-node --input-type=module -e 'import {readFileSync} from "node:fs"; import {compareSemverVersions} from "./packages/shared/src/semver.ts"; const official = JSON.parse(readFileSync("apps/server/package.json", "utf8")).version; if (compareSemverVersions(process.argv[1], official) >= 0) { throw new Error(`Chinese version must be below the upstream baseline ${official}`); }' "$version"
 
 output_dir="$repo_root/release/cli-$version"
 resource_dir="$(mktemp -d)"

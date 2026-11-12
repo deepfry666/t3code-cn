@@ -26,6 +26,14 @@ if gh release view "v$version" -R "$repository" >/dev/null 2>&1; then
   exit 1
 fi
 
+scripts/fork-validate-version.sh "$version"
+if git ls-remote --exit-code --tags origin "refs/tags/v$version" >/dev/null 2>&1; then
+  echo "Tag v$version already exists." >&2
+  exit 1
+fi
+gh release create "v$version" -R "$repository" --target "$commit" --draft \
+  --title "T3 Code 中文版 $version" --notes-file "$notes"
+
 dispatched_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 gh workflow run fork-windows-desktop.yml -R "$repository" --ref main -f version="$version"
 run_id=""
@@ -49,36 +57,36 @@ for _ in $(seq 1 90); do
 done
 [[ "$conclusion" == success ]] || { echo "Windows build $run_id did not succeed (${conclusion:-still running after 90 min})." >&2; exit 1; }
 
-windows_dir="release/windows-$version"
 cli_dir="release/cli-$version"
 upload_dir="release/upload-$version"
-rm -rf "$windows_dir" "$upload_dir"
-gh run download "$run_id" -R "$repository" -n t3code-cn-windows-x64 -D "$windows_dir"
-grep -qx "version: $version" "$windows_dir/latest.yml" || { echo "latest.yml does not name $version" >&2; exit 1; }
-
-scripts/fork-build-cli-macos.sh "$version"
-for arch in x64 arm64; do
-  gh run download "$run_id" -R "$repository" -n "t3code-cn-cli-linux-$arch" -D "$cli_dir"
-done
-
+rm -rf "$upload_dir"
 mkdir -p "$upload_dir"
-cli_archives=()
-for platform in darwin-arm64 linux-x64 linux-arm64; do
-  archive="t3-$version-$platform.tar.gz"
-  [[ -f "$cli_dir/$archive" ]] || { echo "Missing $cli_dir/$archive" >&2; exit 1; }
-  cp "$cli_dir/$archive" "$upload_dir/"
-  cli_archives+=("$archive")
-done
-(cd "$upload_dir" && shasum -a 256 "${cli_archives[@]}" > SHA256SUMS)
+scripts/fork-build-cli-macos.sh "$version"
+cp "$cli_dir/t3-$version-darwin-arm64.tar.gz" "$upload_dir/"
 cp "release/macos-$version"/{latest-mac.yml,"T3-Code-$version-arm64.dmg","T3-Code-$version-arm64.zip"} "$upload_dir/"
-cp "release/macos-$version"/*.blockmap "$windows_dir"/*.blockmap "$upload_dir/"
-cp "$windows_dir"/{latest.yml,"T3-Code-$version-x64.exe"} "$upload_dir/"
-(cd "$upload_dir" && shasum -a 256 "T3-Code-$version-x64.exe" "T3-Code-$version-arm64.dmg" \
-  "T3-Code-$version-arm64.zip" latest.yml latest-mac.yml > SHA256SUMS.txt)
+cp "release/macos-$version"/*.blockmap "$upload_dir/"
+(cd "$upload_dir" && shasum -a 256 * > SHA256SUMS-mac)
+# Only this small text asset crosses from CI to the Mac.
+gh release download "v$version" -R "$repository" -p SHA256SUMS-ci -D "$upload_dir"
+cat "$upload_dir/SHA256SUMS-ci" "$upload_dir/SHA256SUMS-mac" > "$upload_dir/SHA256SUMS"
+rm "$upload_dir/SHA256SUMS-mac" "$upload_dir/SHA256SUMS-ci"
+gh release upload "v$version" -R "$repository" "$upload_dir"/* --clobber
 
-# Upload as a draft and publish only once every asset is up, so a failed upload never
-# becomes the latest release that installed apps check for updates.
-gh release create "v$version" -R "$repository" --target "$commit" --draft \
-  --title "T3 Code 中文版 $version" --notes-file "$notes" "$upload_dir"/*
+expected=(
+  "T3-Code-$version-x64.exe" "T3-Code-$version-x64.exe.blockmap" latest.yml
+  "T3-Code-$version-arm64.dmg" "T3-Code-$version-arm64.dmg.blockmap"
+  "T3-Code-$version-arm64.zip" "T3-Code-$version-arm64.zip.blockmap" latest-mac.yml
+  "t3-$version-darwin-arm64.tar.gz" "t3-$version-linux-x64.tar.gz" "t3-$version-linux-arm64.tar.gz"
+)
+assets="$(gh release view "v$version" -R "$repository" --json isDraft,assets)"
+printf '%s' "$assets" | jq -e '.isDraft == true' >/dev/null
+for asset in "${expected[@]}" SHA256SUMS SHA256SUMS-ci; do
+  printf '%s' "$assets" | jq -e --arg name "$asset" '.assets | any(.name == $name and .size > 0)' >/dev/null || { echo "Missing or empty asset: $asset" >&2; exit 1; }
+done
+# Checksum metadata is temporary; the single public list covers every payload.
+for asset in "${expected[@]}"; do
+  awk -v name="$asset" '$2 == name || $2 == "./" name { found = 1 } END { exit !found }' "$upload_dir/SHA256SUMS" || { echo "Missing checksum: $asset" >&2; exit 1; }
+done
+gh release delete-asset "v$version" SHA256SUMS-ci -R "$repository" --yes
 gh release edit "v$version" -R "$repository" --draft=false --latest >/dev/null
 echo "Released https://github.com/$repository/releases/tag/v$version"
