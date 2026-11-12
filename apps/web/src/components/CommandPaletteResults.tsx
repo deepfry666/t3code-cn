@@ -9,6 +9,7 @@ import { cn } from "~/lib/utils";
 import {
   commandPaletteUiMessages,
   translateCommandPaletteFixedLabel,
+  translateCommandPaletteTimestamp,
 } from "./commandPaletteUi.messages";
 import { textDirection } from "~/textDirection";
 import { shortcutLabelForCommand } from "../keybindings";
@@ -256,6 +257,7 @@ function CommandPaletteResultRow(props: {
   onExecuteItem: (item: CommandPaletteActionItem | CommandPaletteSubmenuItem) => void;
 }) {
   const t = useTranslation(commandPaletteUiMessages);
+  const locale = useLocale();
   const shortcutLabel = props.item.shortcutCommand
     ? shortcutLabelForCommand(props.keybindings, props.item.shortcutCommand)
     : null;
@@ -317,7 +319,7 @@ function CommandPaletteResultRow(props: {
       ) : null}
       {props.item.timestamp ? (
         <span className="min-w-12 shrink-0 text-right text-xs tabular-nums text-muted-foreground/70">
-          {props.item.timestamp}
+          {translateCommandPaletteTimestamp(props.item.timestamp, locale)}
         </span>
       ) : null}
       {shortcutLabel ? <CommandShortcut>{shortcutLabel}</CommandShortcut> : null}

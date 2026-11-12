@@ -12,8 +12,11 @@ import {
 import { EnvironmentMachineIcon } from "./EnvironmentMachineIcon";
 import { ProjectFavicon } from "./ProjectFavicon";
 import { COMMAND_PALETTE_META_ICON_CLASS, CommandPaletteMetaDot } from "./ThreadCommandSubtitle";
-import { useTranslation } from "~/i18n/useTranslation";
-import { commandPaletteUiMessages } from "./commandPaletteUi.messages";
+import { useTranslation, useLocale } from "~/i18n/useTranslation";
+import {
+  commandPaletteUiMessages,
+  translateCommandPaletteLocationLabel,
+} from "./commandPaletteUi.messages";
 
 export interface CommandPaletteProjectLocation {
   readonly kind: "local" | "remote";
@@ -104,9 +107,14 @@ export function buildNewThreadInProjectItems(
 
 function ProjectEnvironmentLabels(props: { readonly labels: ReadonlyArray<string | null> }) {
   const t = useTranslation(commandPaletteUiMessages);
+  const locale = useLocale();
   return (
     <span className="truncate">
-      {props.labels.map((label) => label ?? t("Remote")).join(" · ")}
+      {props.labels
+        .map((label) =>
+          label === null ? t("Remote") : translateCommandPaletteLocationLabel(label, locale),
+        )
+        .join(" · ")}
     </span>
   );
 }
@@ -117,6 +125,7 @@ function ProjectLocationDescription(props: {
   readonly current?: boolean;
 }) {
   const t = useTranslation(commandPaletteUiMessages);
+  const locale = useLocale();
   // Only the fallback is the app's own copy; an environment's label is the user's name.
   const location = props.location ?? { ...UNKNOWN_PROJECT_LOCATION, label: t("Remote") };
   return (
@@ -135,7 +144,9 @@ function ProjectLocationDescription(props: {
             className={COMMAND_PALETTE_META_ICON_CLASS}
           />
         ) : null}
-        <span className="truncate">{location.label}</span>
+        <span className="truncate">
+          {translateCommandPaletteLocationLabel(location.label, locale)}
+        </span>
       </span>
       <CommandPaletteMetaDot />
       <span className="min-w-0 flex-1 truncate">{props.workspaceRoot}</span>

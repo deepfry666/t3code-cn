@@ -258,6 +258,10 @@ export const sidebarUiMessages = {
   "Pending Approval": "待批准",
   "Awaiting Input": "待输入",
   "Plan Ready": "计划已就绪",
+  // Status pills beside a row, composed in Sidebar.logic.ts.
+  Connecting: "正在连接",
+  "Guest Request": "访客请求",
+  Completed: "已完成",
 } as const;
 
 export type SidebarTranslator = (

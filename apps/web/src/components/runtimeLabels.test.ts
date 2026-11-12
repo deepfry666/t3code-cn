@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vite-plus/test";
 
 import { translate } from "../i18n/locale";
+import {
+  translateCommandPaletteLocationLabel,
+  translateCommandPaletteTimestamp,
+} from "./commandPaletteUi.messages";
 import { translateRuntimeError } from "./runtimeErrorLabels";
 import { translateTimelineLabel } from "./chat/timelineLabels";
 import { timelineUiMessages } from "./chat/timelineUi.messages";
@@ -101,6 +105,16 @@ describe("shared runtime labels at web display boundaries", () => {
       "已使用 Foo and Bar 集成，已读取 2 个文件",
     ],
     [timeline, "Read thread", "已读取会话"],
+    [timeline, "Changed 1 file and ran 1 command", "已修改 1 个文件，已运行 1 条命令"],
+    [timeline, "Tasks 3/3", "任务 3/3"],
+    [timeline, "Tasks 0/1 · Verify the change", "任务 0/1 · Verify the change"],
+    [translateCommandPaletteTimestamp, "2m ago", "2 分钟前"],
+    [translateCommandPaletteTimestamp, "3h ago", "3 小时前"],
+    [translateCommandPaletteTimestamp, "2d ago", "2 天前"],
+    [translateCommandPaletteTimestamp, "just now", "刚刚"],
+    [translateCommandPaletteLocationLabel, "Local", "本地"],
+    [translateCommandPaletteLocationLabel, "Mac mini (Local)", "Mac mini（本地）"],
+    [translateCommandPaletteLocationLabel, "Mac mini", "Mac mini"],
     [translateRuntimeError, "My Mac froze for 3s", "My Mac 卡顿了 3 秒"],
   ] as const)(
     "translates shared label %# and preserves English",

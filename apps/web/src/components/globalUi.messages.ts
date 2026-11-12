@@ -171,6 +171,11 @@ export const globalUiMessages = {
   // Thread activity announcements
   "Needs approval": "待批准",
   "Needs your input": "需要你的输入",
+  Done: "完成",
+  Working: "运行中",
+  Failed: "失败",
+  Stopped: "已停止",
+  "{label}: {title}": "{label}：{title}",
 
   // Composer context chips
   "Open {kind} {label}: {title}": "打开{kind}{label}：{title}",

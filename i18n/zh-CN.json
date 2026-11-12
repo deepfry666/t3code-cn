@@ -2159,6 +2159,7 @@
     "Ran command": "已运行命令",
     "Changed {count} files": "已更改 {count} 个文件",
     "Changed {name}": "已更改 {name}",
+    "Tasks {done}/{total}": "任务 {done}/{total}",
     "Searched files": "已搜索文件",
     "Read file": "已读取文件",
     "Could not load history.": "无法加载历史记录。",
@@ -2653,7 +2654,13 @@
     "Open Settings -> Source control": "打开“设置 → 版本控制”",
     "This connection cannot browse host folders.": "此连接无法浏览主机文件夹。",
     "Find on page in browser": "在浏览器页面中查找",
-    "Thread": "会话"
+    "Thread": "会话",
+    "Local": "本地",
+    "{label} (Local)": "{label}（本地）",
+    "just now": "刚刚",
+    "{count}m ago": "{count} 分钟前",
+    "{count}h ago": "{count} 小时前",
+    "{count}d ago": "{count} 天前"
   },
   "apps/web/src/components/coreUi.messages.ts": {
     "Thread copied": "已复制会话",
@@ -3774,6 +3781,10 @@
     "Sidebar hidden": "侧边栏已隐藏",
     "Needs approval": "待批准",
     "Needs your input": "需要你的输入",
+    "Done": "完成",
+    "Working": "运行中",
+    "Failed": "失败",
+    "Stopped": "已停止",
     "Open {kind} {label}: {title}": "打开{kind}{label}：{title}",
     "Image attachment, {name}, {size}": "图片附件，{name}，{size}",
     "Unavailable context, {label}": "不可用的上下文：{label}",
@@ -10071,7 +10082,10 @@
     "That snooze time has passed. Choose another time.": "该暂缓时间已过，请选择其他时间。",
     "Pending Approval": "待批准",
     "Awaiting Input": "待输入",
-    "Plan Ready": "计划已就绪"
+    "Plan Ready": "计划已就绪",
+    "Connecting": "正在连接",
+    "Guest Request": "访客请求",
+    "Completed": "已完成"
   },
   "apps/web/src/components/usage/usagePrices.messages.ts": {
     "Custom model prices": "自定义模型价格",
