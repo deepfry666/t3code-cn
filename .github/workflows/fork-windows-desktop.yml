@@ -1,6 +1,6 @@
 # Fork-only: release.yml runs only in pingdotgg/t3code on Blacksmith runners, so this
 # builds the fork's release artifacts on GitHub-hosted runners: the unsigned Windows
-# installer and the Linux x64/arm64 CLI archives. scripts/fork-release.sh dispatches it
+# installer, Linux x64/arm64 AppImage/deb desktop packages and CLI archives. scripts/fork-release.sh dispatches it
 # and publishes the draft after all assets are verified. The file keeps its old name because workflow_dispatch
 # only reaches files already on the default branch.
 # Like release-desktop.yml the Windows installer cross-builds on Linux; native Windows
@@ -101,7 +101,7 @@ jobs:
           retention-days: 14
 
   cli_linux:
-    name: Build Linux ${{ matrix.arch }} CLI archive
+    name: Build Linux ${{ matrix.arch }} desktop and CLI
     if: github.repository == 'deepfry666/t3code-cn'
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 75
@@ -181,6 +181,57 @@ jobs:
         with:
           name: t3code-cn-cli-linux-${{ matrix.arch }}
           path: release-cli/t3-${{ inputs.version }}-linux-${{ matrix.arch }}.tar.gz
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Install Linux desktop build libraries
+        run: scripts/fork-apt-install.sh libgtk-3-0t64 libnss3 libasound2t64 libgbm1 imagemagick xvfb
+
+      - name: Build Linux desktop and capture helpers
+        env:
+          ARCH: ${{ matrix.arch }}
+          T3CODE_DESKTOP_UPDATE_REPOSITORY: deepfry666/t3code-cn
+          T3CODE_DESKTOP_REUSE_RESOURCE_MONITOR: true
+          ELECTRON_BUILDER_BINARIES_MIRROR: https://npmmirror.com/mirrors/electron-builder-binaries/
+          ELECTRON_MIRROR: https://npmmirror.com/mirrors/electron/
+          ELECTRON_CUSTOM_DIR: "{{ version }}"
+        run: |
+          node scripts/build-desktop-artifact.ts --platform linux --target AppImage --arch "$ARCH" --build-version "$BUILD_VERSION" --skip-build --verbose
+          appimage_arch="$ARCH"
+          deb_arch="$ARCH"
+          if [[ "$ARCH" == x64 ]]; then appimage_arch=x86_64; deb_arch=amd64; fi
+          test -s "release/T3-Code-$BUILD_VERSION-$appimage_arch.AppImage"
+          test -s "release/T3-Code-$BUILD_VERSION-$deb_arch.deb"
+          manifest=latest-linux.yml
+          if [[ "$ARCH" == arm64 ]]; then manifest=latest-linux-arm64.yml; fi
+          grep -qx "version: $BUILD_VERSION" "release/$manifest"
+
+      - name: Launch packaged AppImage
+        if: matrix.arch == 'x64'
+        run: |
+          appimage="$GITHUB_WORKSPACE/release/T3-Code-$BUILD_VERSION-x86_64.AppImage"
+          chmod +x "$appimage"
+          (cd "$RUNNER_TEMP" && "$appimage" --appimage-extract >/dev/null)
+          xvfb-run -a node scripts/smoke-desktop-app.ts --artifacts-dir "$RUNNER_TEMP/desktop-launch-check" --executable "$RUNNER_TEMP/squashfs-root/t3code"
+
+      - name: Upload launch check output
+        if: failure() && matrix.arch == 'x64'
+        uses: actions/upload-artifact@v7
+        with:
+          name: desktop-launch-check-linux-x64
+          path: ${{ runner.temp }}/desktop-launch-check
+          if-no-files-found: ignore
+
+      - name: Upload Linux desktop
+        uses: actions/upload-artifact@v7
+        with:
+          name: t3code-cn-desktop-linux-${{ matrix.arch }}
+          path: |
+            release/*.AppImage
+            release/*.deb
+            release/*.blockmap
+            release/latest-linux*.yml
+          compression-level: 0
           if-no-files-found: error
           retention-days: 14
 
