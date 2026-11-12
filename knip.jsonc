@@ -37,7 +37,6 @@
         "prove-scenario.ts",
         "scenarios/*.ts",
         "setup-worktree.ts",
-        "fork-macos-update-acceptance.ts",
         "fork-sign-macos.ts",
         "sign-macos.ts",
         "prepare-server-compile-cache.cjs",
