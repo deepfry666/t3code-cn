@@ -197,8 +197,11 @@ jobs:
           ELECTRON_CUSTOM_DIR: "{{ version }}"
         run: |
           node scripts/build-desktop-artifact.ts --platform linux --target AppImage --arch "$ARCH" --build-version "$BUILD_VERSION" --skip-build --verbose
-          test -s "release/T3-Code-$BUILD_VERSION-$ARCH.AppImage"
-          test -s "release/T3-Code-$BUILD_VERSION-$ARCH.deb"
+          appimage_arch="$ARCH"
+          deb_arch="$ARCH"
+          if [[ "$ARCH" == x64 ]]; then appimage_arch=x86_64; deb_arch=amd64; fi
+          test -s "release/T3-Code-$BUILD_VERSION-$appimage_arch.AppImage"
+          test -s "release/T3-Code-$BUILD_VERSION-$deb_arch.deb"
           manifest=latest-linux.yml
           if [[ "$ARCH" == arm64 ]]; then manifest=latest-linux-arm64.yml; fi
           grep -qx "version: $BUILD_VERSION" "release/$manifest"
@@ -206,7 +209,7 @@ jobs:
       - name: Launch packaged AppImage
         if: matrix.arch == 'x64'
         run: |
-          appimage="$GITHUB_WORKSPACE/release/T3-Code-$BUILD_VERSION-x64.AppImage"
+          appimage="$GITHUB_WORKSPACE/release/T3-Code-$BUILD_VERSION-x86_64.AppImage"
           chmod +x "$appimage"
           (cd "$RUNNER_TEMP" && "$appimage" --appimage-extract >/dev/null)
           xvfb-run -a node scripts/smoke-desktop-app.ts --artifacts-dir "$RUNNER_TEMP/desktop-launch-check" --executable "$RUNNER_TEMP/squashfs-root/t3code"
