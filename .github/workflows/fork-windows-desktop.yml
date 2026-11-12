@@ -1,7 +1,7 @@
 # Fork-only: release.yml runs only in pingdotgg/t3code on Blacksmith runners, so this
 # builds the fork's release artifacts on GitHub-hosted runners: the unsigned Windows
 # installer and the Linux x64/arm64 CLI archives. scripts/fork-release.sh dispatches it
-# and publishes the artifacts. The file keeps its old name because workflow_dispatch
+# and publishes the draft after all assets are verified. The file keeps its old name because workflow_dispatch
 # only reaches files already on the default branch.
 # Like release-desktop.yml the Windows installer cross-builds on Linux; native Windows
 # hosts install extra optional natives and fail the packaged payload file limit.
@@ -23,6 +23,7 @@ permissions:
 
 jobs:
   build:
+    needs: [cli_linux]
     name: Build Windows x64 installer
     if: github.repository == 'deepfry666/t3code-cn'
     runs-on: ubuntu-24.04
@@ -68,6 +69,12 @@ jobs:
 
       # GitHub release downloads of Electron and electron-builder-binaries returned 504s on
       # 2026-11-08. Builder tools are sha256-pinned; Electron is checked against the mirror's SHASUMS.
+      - name: Download same-run Linux x64 runtime
+        uses: actions/download-artifact@v8
+        with:
+          name: t3code-cn-cli-linux-x64
+          path: wsl-runtime
+
       - name: Build installer
         env:
           BUILD_VERSION: ${{ inputs.version }}
@@ -77,9 +84,8 @@ jobs:
           ELECTRON_MIRROR: https://npmmirror.com/mirrors/electron/
           ELECTRON_CUSTOM_DIR: "{{ version }}"
         run: |
-          [[ "$BUILD_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-cn\.[0-9]+$ ]] || { echo "Expected a Chinese x.y.z-cn.N version" >&2; exit 1; }
-          node --input-type=module -e 'import {readFileSync} from "node:fs"; import {compareSemverVersions} from "./packages/shared/src/semver.ts"; const official = JSON.parse(readFileSync("apps/server/package.json", "utf8")).version; if (compareSemverVersions(process.argv[1], official) >= 0) { throw new Error(`Chinese version must be below the upstream baseline ${official}`); }' "$BUILD_VERSION"
-          node scripts/build-desktop-artifact.ts --platform win --target nsis --arch x64 --build-version "$BUILD_VERSION" --verbose
+          scripts/fork-validate-version.sh "$BUILD_VERSION"
+          node scripts/build-desktop-artifact.ts --platform win --target nsis --arch x64 --build-version "$BUILD_VERSION" --wsl-runtime "wsl-runtime/t3-$BUILD_VERSION-linux-x64.tar.gz" --verbose
           test -f release/latest.yml
           test -f "release/T3-Code-${BUILD_VERSION}-x64.exe"
 
@@ -128,8 +134,7 @@ jobs:
 
       - name: Validate release version
         run: |
-          [[ "$BUILD_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-cn\.[0-9]+$ ]] || { echo "Expected a Chinese x.y.z-cn.N version" >&2; exit 1; }
-          node --input-type=module -e 'import {readFileSync} from "node:fs"; import {compareSemverVersions} from "./packages/shared/src/semver.ts"; const official = JSON.parse(readFileSync("apps/server/package.json", "utf8")).version; if (compareSemverVersions(process.argv[1], official) >= 0) { throw new Error(`Chinese version must be below the upstream baseline ${official}`); }' "$BUILD_VERSION"
+          scripts/fork-validate-version.sh "$BUILD_VERSION"
 
       - name: Install native build dependencies
         run: scripts/fork-apt-install.sh libsecret-1-dev pkg-config patchelf libatomic1 build-essential python3
@@ -178,3 +183,27 @@ jobs:
           path: release-cli/t3-${{ inputs.version }}-linux-${{ matrix.arch }}.tar.gz
           if-no-files-found: error
           retention-days: 14
+
+  upload_release:
+    name: Upload CI files to existing draft
+    needs: [build, cli_linux]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: t3code-cn-*
+          merge-multiple: true
+          path: release-upload
+      - name: Upload without publishing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          BUILD_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          test "$(gh release view "v$BUILD_VERSION" --json isDraft --jq .isDraft)" = true
+          cd release-upload
+          sha256sum * > SHA256SUMS-ci
+          gh release upload "v$BUILD_VERSION" ./* --clobber
