@@ -54,4 +54,4 @@ vp run i18n:export
 
 同步时若 `apps/web/src/i18n/translations/zh.json` 冲突，先取官方版本，再运行 `vp run i18n:export`：脚本按 `en.json` 的英文匹配分叉目录，重写中文。官方独有文字默认保留；需要修正术语时，在分叉 `*.messages.ts` 增加对应英文和译文。测试同时检查生成结果和术语。
 
-合并后运行 `vp run i18n:untranslated -- <合并前的提交>`，并人工阅读新增文件及多行 JSX。补译后再次导出。刻意保留的品牌、诊断和技术文字列在 `keep-english.txt`。
+合并后运行 `vp run i18n:untranslated -- <合并前的提交>`（`--path <路径前缀>` 只看某个目录），并人工阅读新增文件及多行 JSX，扫描器会漏掉它们。和手机端共用的 `packages/client-runtime` 里的英文不能直接改成 `t()`，要在网页显示它的地方翻译。补译后再次导出。刻意保留的品牌、诊断和技术文字列在 `keep-english.txt`。
