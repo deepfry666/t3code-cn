@@ -113,6 +113,7 @@ describe("Chinese catalogs", () => {
       officialChineseText(),
     );
     expect(Object.values(zh).join(" ")).not.toContain("线程");
+    expect(zh[Object.entries(en).find(([, source]) => source === "Direct")![0]]).toBe("直接退出");
   });
 
   it("reads every Chinese string in a catalog file as an entry", () => {

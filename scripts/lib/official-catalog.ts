@@ -12,7 +12,9 @@ export function officialChineseCatalog() {
     NodeFS.readFileSync(NodePath.join(repoRoot, OFFICIAL_ZH_PATH), "utf8"),
   ) as Record<string, string>;
   const translations = new Map(
-    readCatalogs().entries.map((entry) => [entry.source.split("@@")[0], entry.localized]),
+    readCatalogs()
+      .entries.filter((entry) => !entry.source.includes("@@"))
+      .map((entry) => [entry.source, entry.localized]),
   );
   return Object.fromEntries(
     Object.entries(english).map(([key, source]) => [key, translations.get(source) ?? chinese[key]]),

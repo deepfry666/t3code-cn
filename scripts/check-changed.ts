@@ -337,7 +337,13 @@ const checkChanged = Effect.fn("checkChanged")(function* (input: {
   // It reads files other than the ones beside it, so no changed file selects it.
   if (affected.includes("t3")) tests.add("apps/server/src/provider/AgentContextBudget.test.ts");
   // The fork's zh-CN checks read every catalog, so no catalog sits beside them.
-  if (files.some((file) => /(?:\.messages|Messages|menuLocalization)\.ts$|^i18n\//.test(file))) {
+  if (
+    files.some((file) =>
+      /(?:\.messages|Messages|menuLocalization)\.ts$|^i18n\/|^apps\/web\/src\/i18n\/translations\/(?:en|zh)\.json$/.test(
+        file,
+      ),
+    )
+  ) {
     tests.add("scripts/fork-i18n.test.ts");
   }
   const { vitestTests, nodeTests } = splitTests(tests);
