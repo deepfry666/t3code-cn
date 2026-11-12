@@ -444,7 +444,14 @@ export function limitNotices(presentations: LimitPresentations): readonly LimitN
         notices.push({ subject, message: null, reason: "noAccounts" });
     }
   }
-  return notices;
+  return [
+    ...new Map(
+      notices.map((notice) => [
+        `${notice.subject}: ${notice.message ?? (notice.reason ? LIMIT_NOTICE_REASONS[notice.reason] : "")}`,
+        notice,
+      ]),
+    ).values(),
+  ];
 }
 
 export function collectLimitNotices(presentations: LimitPresentations): readonly string[] {

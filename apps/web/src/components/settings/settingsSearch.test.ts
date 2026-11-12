@@ -87,7 +87,7 @@ describe("searchSettings", () => {
       expect(
         searchSettings(query, undefined, (message) => translateSettingsLabel(message, "zh-CN"))[0],
       ).toMatchObject({
-        id: "interface-language",
+        id: "language",
         to: "/settings/general",
       });
     }

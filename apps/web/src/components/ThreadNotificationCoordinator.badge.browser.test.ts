@@ -6,7 +6,7 @@ import { Atom, AtomRegistry } from "effect/reactivity";
 import { expect, it, vi } from "vite-plus/test";
 
 import { fakeTimers, stubGlobal } from "../../test/render";
-import { LOCALE_STORAGE_KEY } from "../i18n/locale";
+import { setLocale } from "../../test/locale";
 import { RELEASED_COMPLETION_GRACE_MS } from "./ThreadNotificationCoordinator.logic";
 
 const state = vi.hoisted(() => ({
@@ -263,9 +263,9 @@ it.each(["hasPendingApprovals", "hasPendingUserInput"] as const)(
 
 it("titles notifications and the open action in the interface language", async () => {
   await using app = setup();
-  localStorage.setItem(LOCALE_STORAGE_KEY, "zh-CN");
+  setLocale("zh-CN");
   await using _locale = {
-    [Symbol.asyncDispose]: async () => localStorage.removeItem(LOCALE_STORAGE_KEY),
+    [Symbol.asyncDispose]: async () => setLocale("en"),
   };
   app.start();
   state.shells.set("one", shell({ hasPendingUserInput: true }));
