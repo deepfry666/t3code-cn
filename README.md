@@ -175,7 +175,7 @@ T3 Code 本身不带模型，它调用你电脑上已经装好的智能体。至
 ## 参与改进
 
 - **发现翻得不对、漏翻的地方**：到 [Issues](https://github.com/deepfry666/t3code-cn/issues) 提交，附上截图和所在页面就行。
-- **想自己改译文**：全部译文都在 [`i18n/zh-CN.json`](i18n/zh-CN.json) 里，按文件列出“英文原文 → 中文”，术语约定见 [`i18n/README.md`](i18n/README.md)。
+- **想自己改译文**：全部译文都在 [`i18n/zh-CN.json`](i18n/zh-CN.json) 里，按文件列出“英文原文 → 中文”，术语约定见 [`i18n/README.md`](i18n/README.md)。同步官方和发布新版的流程见 [`docs/operations/fork-maintenance.md`](docs/operations/fork-maintenance.md)。
 - **与汉化无关的功能问题**：请先确认官方版本是否也有，再到 [官方仓库](https://github.com/pingdotgg/t3code/issues) 反馈。
 
 觉得好用的话，点个 Star 让更多人看到。
