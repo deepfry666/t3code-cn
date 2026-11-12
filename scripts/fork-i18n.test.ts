@@ -5,6 +5,8 @@ import { describe, expect, it } from "vite-plus/test";
 
 import { readCatalogs, repoRoot, SNAPSHOT_PATH, snapshotText } from "./lib/fork-catalogs.ts";
 
+import { OFFICIAL_ZH_PATH, officialChineseText } from "./lib/official-catalog.ts";
+
 // The one Chinese term for each recurring product concept.
 const GLOSSARY: ReadonlyArray<readonly [english: RegExp, chinese: string | ReadonlyArray<string>]> =
   [
@@ -95,6 +97,24 @@ const localizedKey = (localized: string) => localized.trim().replace(/[…。：
 
 describe("Chinese catalogs", () => {
   const { entries, unparsed } = readCatalogs();
+  const en = JSON.parse(
+    NodeFS.readFileSync(NodePath.join(repoRoot, "apps/web/src/i18n/translations/en.json"), "utf8"),
+  ) as Record<string, string>;
+  const zh = JSON.parse(
+    NodeFS.readFileSync(NodePath.join(repoRoot, OFFICIAL_ZH_PATH), "utf8"),
+  ) as Record<string, string>;
+  const officialEntries = Object.entries(en).map(([key, source]) => ({
+    source,
+    localized: zh[key] ?? "",
+    at: `${OFFICIAL_ZH_PATH}:${key}`,
+  }));
+  it("keeps official Chinese generated from fork wording", () => {
+    expect(NodeFS.readFileSync(NodePath.join(repoRoot, OFFICIAL_ZH_PATH), "utf8")).toBe(
+      officialChineseText(),
+    );
+    expect(Object.values(zh).join(" ")).not.toContain("线程");
+    expect(zh[Object.entries(en).find(([, source]) => source === "Direct")![0]]).toBe("直接退出");
+  });
 
   it("reads every Chinese string in a catalog file as an entry", () => {
     expect(entries.length).toBeGreaterThan(0);
@@ -140,7 +160,7 @@ describe("Chinese catalogs", () => {
   });
 
   it("uses the glossary term for recurring concepts", () => {
-    const misses = entries.flatMap((entry) => {
+    const misses = [...entries, ...officialEntries].flatMap((entry) => {
       // Placeholders and file names are not prose to translate.
       const source = (entry.source.split("@@")[0] ?? "").replace(
         /\{\w+\}|[\w-]+\.[a-z]{2,4}\b/g,
@@ -158,7 +178,7 @@ describe("Chinese catalogs", () => {
   });
 
   it("keeps product names and abbreviations in English", () => {
-    const misses = entries.flatMap((entry) => {
+    const misses = [...entries, ...officialEntries].flatMap((entry) => {
       const source = entry.source.split("@@")[0] ?? "";
       return KEEP_ENGLISH.map((term) =>
         typeof term === "string" ? new RegExp(`\\b${escapeRegExp(term)}\\b`) : term,

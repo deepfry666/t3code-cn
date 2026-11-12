@@ -1,6 +1,9 @@
 import { translate, type Locale } from "~/i18n/locale";
 
 export const filesUiMessages = {
+  "File contents": "文件内容",
+  "This file changed since the diff was loaded. Refresh the diff to expand it.":
+    "加载差异后此文件已更改。刷新差异后再展开。",
   "This folder is no longer available.": "此文件夹已不可用。",
   "Refresh failed. Retry": "刷新失败，请重试",
   "Some workspace entries are not shown.": "部分工作区条目未显示。",

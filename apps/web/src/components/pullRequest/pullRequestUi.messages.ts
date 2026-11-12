@@ -3,6 +3,8 @@ import { capitalizeTerm } from "@t3tools/client-runtime/source-control-clients";
 import type { Locale } from "~/i18n/locale";
 
 export const pullRequestUiMessages = {
+  "Resolved conversation": "已解决的讨论",
+  "{count} resolved conversations": "{count} 个已解决的讨论",
   "Context, no code": "背景说明，无代码",
   "1 file": "1 个文件",
   "opened@@timestamp": "创建于",

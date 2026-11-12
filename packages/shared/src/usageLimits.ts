@@ -28,7 +28,8 @@ export function exhaustedUsageWindow(
   now: number,
   model?: string,
 ) {
-  const exhausted = (provider?.usageLimits?.windows ?? []).filter(
+  const windows = provider?.usageLimits?.windows ?? [];
+  const exhausted = windows.filter(
     (window) =>
       (window.usedPercent ?? 0) >= 100 &&
       (!window.resetsAt ||
@@ -53,6 +54,13 @@ export function exhaustedUsageWindow(
           (pool === "3p" && (family === "claude" || family === "gpt"))
         );
       });
+    }
+    case "codex": {
+      // Seat-based plans spend credits only past their plan windows, so the credit cap blocks only plans without them.
+      const hasPlanWindows = windows.some(
+        (window) => window.id === "primary" || window.id === "secondary",
+      );
+      return exhausted.find((window) => window.id !== "individual" || !hasPlanWindows);
     }
     case "opencode":
       return exhausted.find(
@@ -119,12 +127,12 @@ export const CURSOR_USAGE_WINDOWS = [
   {
     id: "totalPercentUsed",
     label: "Overall",
-    description: "Combined usage across both allowances, not a third quota.",
+    description: "All usage on your plan this billing cycle.",
   },
   {
     id: "autoPercentUsed",
     label: "Cursor Models",
-    description: "Grok and Composer use this first. Auto can use either pool.",
+    description: "Grok, Composer, and Auto use this allowance.",
   },
   {
     id: "apiPercentUsed",
@@ -436,7 +444,14 @@ export function limitNotices(presentations: LimitPresentations): readonly LimitN
         notices.push({ subject, message: null, reason: "noAccounts" });
     }
   }
-  return notices;
+  return [
+    ...new Map(
+      notices.map((notice) => [
+        `${notice.subject}: ${notice.message ?? (notice.reason ? LIMIT_NOTICE_REASONS[notice.reason] : "")}`,
+        notice,
+      ]),
+    ).values(),
+  ];
 }
 
 export function collectLimitNotices(presentations: LimitPresentations): readonly string[] {

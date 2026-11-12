@@ -291,11 +291,18 @@ export const OpenInPicker = memo(function OpenInPicker({
     ? t("Open in {editor}", { editor: primaryOption?.label ?? t("editor") })
     : t("Open");
 
+  const unavailableReason =
+    remote.mode === "remote-unavailable"
+      ? t("No SSH route to {environment}", { environment: environmentLabel })
+      : remote.mode === "remote-links" && options.length === 0
+        ? t("Open from a computer to edit on {environment}", { environment: environmentLabel })
+        : null;
+
   const editorItems = (
     <>
-      {remote.mode === "remote-unavailable" ? (
+      {unavailableReason !== null ? (
         <MenuItem density={presentation === "menu" ? "touch" : "default"} disabled>
-          No SSH route to {environmentLabel}
+          {unavailableReason}
         </MenuItem>
       ) : (
         <>

@@ -1,7 +1,4 @@
 import type { OrchestrationV2Run, OrchestrationV2RunStatus, RunId } from "@t3tools/contracts";
-
-import { translateNow } from "~/i18n/useTranslation";
-import { globalUiMessages } from "../globalUi.messages";
 import { latestExecutedRun } from "@t3tools/shared/orchestrationV2ThreadError";
 
 export type ThreadActivityStatus = "working" | "approval" | "input" | "idle";
@@ -141,11 +138,11 @@ export function nextThreadAnnouncement(
       next.status === "approval"
         ? previous.snapshot.status === "approval" && previous.snapshot.requestId === next.requestId
           ? null
-          : translateNow(globalUiMessages, THREAD_STATUS_TEXT.approval)
+          : THREAD_STATUS_TEXT.approval
         : next.status === "input"
           ? previous.snapshot.status === "input" && previous.snapshot.requestId === next.requestId
             ? null
-            : translateNow(globalUiMessages, THREAD_STATUS_TEXT.input)
+            : THREAD_STATUS_TEXT.input
           : turnStarted
             ? "Working"
             : null;

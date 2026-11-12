@@ -23,7 +23,11 @@ import {
   type ChannelSwitchRelease,
 } from "../sidebar/updateEverything.logic";
 import { isHostedByThisApp, useUpdateEverything } from "../sidebar/useUpdateEverything";
-import { localUpdaterStaysPut, prepareLocalTrackSwitch } from "./updateTrackSwitch.logic";
+import {
+  localUpdaterStaysPut,
+  nothingToMove,
+  prepareLocalTrackSwitch,
+} from "./updateTrackSwitch.logic";
 import {
   AlertDialog,
   AlertDialogClose,
@@ -94,6 +98,15 @@ function SwitchPlan({
   const [checking, setChecking] = useState(false);
   const everything = useUpdateEverything(switchesLocal ? release.version : null, release);
   const label = translateMaintenanceLabel(channelSwitchLabel(release.channel), locale);
+  const idle = nothingToMove({
+    label,
+    channel: release.channel,
+    savedChannel: updateState?.channel ?? null,
+    switchesLocal,
+    crossesLocal,
+    rows: everything.rows,
+    hasTargets: everything.hasUpdates,
+  });
   // This app's reinstall restarts every server it hosts, so each of their databases must allow it.
   const localBlocked = localSwitchBlockReason(
     APP_VERSION,
@@ -180,13 +193,7 @@ function SwitchPlan({
       providerCount={0}
       rows={everything.rows}
       notes={[
-        ...(everything.rows.length === 0 && !crossesLocal
-          ? [
-              t("Every connected machine is already on {label}. This only saves the track.", {
-                label,
-              }),
-            ]
-          : []),
+        ...(idle.note === null ? [] : [translateMaintenanceLabel(idle.note, locale)]),
         ...(crossesLocal && updatesOff
           ? [t("This app's updates are off here, so reinstall it yourself to switch.")]
           : []),
@@ -198,11 +205,13 @@ function SwitchPlan({
       confirmLabel={checking ? t("Checking…") : t("Switch to {label}", { label })}
       busy={checking}
       disabledReason={
-        !switchesLocal || localBlocked === null
-          ? null
-          : t("This app cannot switch: {localBlocked}.", {
+        switchesLocal && localBlocked !== null
+          ? t("This app cannot switch: {localBlocked}.", {
               localBlocked: translateMaintenanceLabel(localBlocked, locale),
             })
+          : idle.disabledReason === null
+            ? null
+            : translateMaintenanceLabel(idle.disabledReason, locale)
       }
       onConfirm={() => void run()}
     />

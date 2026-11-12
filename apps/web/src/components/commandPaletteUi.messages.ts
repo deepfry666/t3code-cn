@@ -1,6 +1,8 @@
 import type { Locale } from "../i18n/locale";
 
 export const commandPaletteUiMessages = {
+  "Choose a folder in the environment the repository is cloned into.":
+    "在克隆仓库的环境中选择文件夹。",
   "Use T3 Code in another app (MCP)": "在其他应用中使用 T3 Code（MCP）",
   "Enter the full owner/repository name.": "请输入完整的所有者/仓库名称。",
   "Provider status unavailable. Open Source Control settings and rescan.":

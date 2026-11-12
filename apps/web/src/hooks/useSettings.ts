@@ -65,6 +65,9 @@ import {
 import { environmentIdsKey } from "~/state/environmentAtomList";
 import { appAtomRegistry } from "~/rpc/atomRegistry";
 
+import { migrateLanguage } from "~/i18n/migrateLanguage";
+import { LOCALE_STORAGE_KEY } from "~/i18n/locale";
+
 const CLIENT_SETTINGS_PERSISTENCE_ERROR_SCOPE = "[CLIENT_SETTINGS]";
 
 type UnifiedSettingsPatch = ServerSettingsPatch & ClientSettingsPatch;
@@ -152,8 +155,26 @@ async function hydrateClientSettings(): Promise<void> {
       if (hydrationGeneration !== clientSettingsHydrationGeneration) {
         return;
       }
-      if (persistedSettings) {
-        replaceClientSettingsSnapshot({ ...DEFAULT_CLIENT_SETTINGS, ...persistedSettings });
+      let legacy: string | null = null;
+      try {
+        legacy = localStorage.getItem(LOCALE_STORAGE_KEY);
+      } catch {
+        // Storage may be disabled by the browser.
+      }
+      const language = migrateLanguage(persistedSettings?.language, legacy);
+      const settings = {
+        ...DEFAULT_CLIENT_SETTINGS,
+        ...persistedSettings,
+        ...(language ? { language } : {}),
+      };
+      if (persistedSettings || language !== undefined) replaceClientSettingsSnapshot(settings);
+      if (legacy !== null) {
+        await ensureLocalApi().persistence.setClientSettings(settings);
+        try {
+          localStorage.removeItem(LOCALE_STORAGE_KEY);
+        } catch {
+          // Retaining the legacy key is harmless once the official setting is saved.
+        }
       }
       setClientSettingsHydrationStatus("ready");
     } catch (error) {

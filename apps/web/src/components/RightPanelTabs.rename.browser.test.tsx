@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 import { page, userEvent } from "vite-plus/test/browser";
 
-import { setLocale } from "../i18n/useTranslation";
+import { setLocale } from "../../test/locale";
 import { render } from "../../test/render";
 import { DeviceTabRenameInput } from "./RightPanelTabs";
 

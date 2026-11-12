@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vite-plus/test";
 
-import { setLocale } from "~/i18n/useTranslation";
+import { setLocale } from "../../../test/locale";
 import { deviceDetail } from "./deviceDetail";
 
 afterEach(() => setLocale("en"));

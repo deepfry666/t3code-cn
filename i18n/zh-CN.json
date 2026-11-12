@@ -305,6 +305,8 @@
     "Stopping…": "正在停止…"
   },
   "apps/web/src/components/chat/composerUi.messages.ts": {
+    "Answer or dismiss the question first, then add it to chat.": "先回答或关闭问题，再将其添加到聊天中。",
+    "Terminal output can't be added to a question answer.": "终端输出无法添加到问题回答中。",
     "Queued message": "排队消息",
     "Voice transcription was cancelled.": "语音转写已取消。",
     "Preview {name}": "预览 {name}",
@@ -829,6 +831,8 @@
     "Retry now": "立即重试"
   },
   "apps/web/src/components/chat/threadPanelUi.messages.ts": {
+    "No SSH route to {environment}": "没有通往{environment}的 SSH 路由",
+    "Open from a computer to edit on {environment}": "从电脑打开以在{environment}上编辑",
     "No project": "无项目",
     "Thread title cannot be empty": "会话标题不能为空",
     "Failed to rename thread": "重命名会话失败",
@@ -1882,6 +1886,7 @@
     "Sent messages to {threads} threads": "已向 {threads} 个会话发送消息"
   },
   "apps/web/src/components/chat/timelineUi.messages.ts": {
+    "Go to quoted response: {label}": "前往引用的回复：{label}",
     "{title} phase": "阶段：{title}",
     "View cited assistant text: {label}": "查看引用的助手回复：{label}",
     "Quoted assistant text: {label}": "引用的助手回复：{label}",
@@ -2480,6 +2485,7 @@
     "Could not configure environment relay access.": "无法配置环境中继访问。"
   },
   "apps/web/src/components/commandPaletteUi.messages.ts": {
+    "Choose a folder in the environment the repository is cloned into.": "在克隆仓库的环境中选择文件夹。",
     "Use T3 Code in another app (MCP)": "在其他应用中使用 T3 Code（MCP）",
     "Enter the full owner/repository name.": "请输入完整的所有者/仓库名称。",
     "Provider status unavailable. Open Source Control settings and rescan.": "无法获取提供方状态。请打开“版本控制”设置并重新扫描。",
@@ -3195,6 +3201,8 @@
     "Use remote version of {ref}": "使用 {ref} 的远端版本"
   },
   "apps/web/src/components/files/filesUi.messages.ts": {
+    "File contents": "文件内容",
+    "This file changed since the diff was loaded. Refresh the diff to expand it.": "加载差异后此文件已更改。刷新差异后再展开。",
     "This folder is no longer available.": "此文件夹已不可用。",
     "Refresh failed. Retry": "刷新失败，请重试",
     "Some workspace entries are not shown.": "部分工作区条目未显示。",
@@ -3473,6 +3481,7 @@
     "Unsupported TIFF strip layout.": "不支持的 TIFF 条带布局。"
   },
   "apps/web/src/components/gitUi.messages.ts": {
+    "Stop the current turn to switch worktrees.": "停止当前轮次后才能切换工作树。",
     "Search refs...": "搜索引用…",
     "No refs found.": "未找到引用。",
     "Start from remote": "从远程分支开始",
@@ -4425,6 +4434,8 @@
     "Check out": "检出"
   },
   "apps/web/src/components/pullRequest/pullRequestUi.messages.ts": {
+    "Resolved conversation": "已解决的讨论",
+    "{count} resolved conversations": "{count} 个已解决的讨论",
     "Context, no code": "背景说明，无代码",
     "1 file": "1 个文件",
     "opened@@timestamp": "创建于",
@@ -6942,6 +6953,9 @@
     "a selected environment": "所选环境"
   },
   "apps/web/src/components/settings/settingsMaintenance.messages.ts": {
+    "Every connected machine is already on {label}.": "每台已连接的机器都已使用{label}。",
+    "No machine can switch to {label} now.": "目前没有机器可以切换到{label}。",
+    "No machine can switch to {label} now. This only saves the track.": "目前没有机器可以切换到{label}。这只会保存更新通道。",
     "Copied trace ID": "已复制追踪 ID",
     "Copy trace ID": "复制追踪 ID",
     "Copied": "已复制",
@@ -9833,6 +9847,17 @@
     "System monospace": "系统等宽字体"
   },
   "apps/web/src/components/sidebar/sidebarUi.messages.ts": {
+    "Pinned 1 thread": "已置顶 1 个会话",
+    "Undid settle of {count} thread": "已撤销 {count} 个会话的收尾",
+    "Undid settle of {count} threads": "已撤销 {count} 个会话的收尾",
+    "Undid snooze of {count} thread": "已撤销 {count} 个会话的暂缓",
+    "Undid snooze of {count} threads": "已撤销 {count} 个会话的暂缓",
+    "Undid unpin of {count} thread": "已撤销 {count} 个会话的取消置顶",
+    "Undid unpin of {count} threads": "已撤销 {count} 个会话的取消置顶",
+    "Undid archive of {count} thread": "已撤销 {count} 个会话的归档",
+    "Undid archive of {count} threads": "已撤销 {count} 个会话的归档",
+    "Undid discard of {count} draft": "已撤销 {count} 份草稿的丢弃",
+    "Undid discard of {count} drafts": "已撤销 {count} 份草稿的丢弃",
     "now@@sidebar time": "刚刚",
     "Toggle main sidebar": "切换主侧边栏",
     "Threads": "会话",
@@ -10271,5 +10296,9 @@
   "apps/web/src/timestampFormat.messages.ts": {
     "yesterday at {time}": "昨天 {time}",
     "tomorrow at {time}": "明天 {time}"
+  },
+  "packages/client-runtime/src/locales.ts": {
+    "ja": "日本語",
+    "zh": "中文（简体）"
   }
 }

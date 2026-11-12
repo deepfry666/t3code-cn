@@ -2,7 +2,7 @@ import { RegistryProvider } from "@effect/atom-react";
 import { describe, expect, it, vi } from "vite-plus/test";
 import { page, userEvent, type Locator } from "vite-plus/test/browser";
 
-import { setLocale } from "../../i18n/useTranslation";
+import { setLocale } from "../../../test/locale";
 import { render } from "../../../test/render";
 
 vi.mock(import("../../state/session"), async (original) => ({

@@ -2,6 +2,17 @@ import { translateMaintenanceLabel } from "../settings/settingsMaintenance.messa
 import { translate, type Locale } from "../../i18n/locale";
 
 export const sidebarUiMessages = {
+  "Pinned 1 thread": "已置顶 1 个会话",
+  "Undid settle of {count} thread": "已撤销 {count} 个会话的收尾",
+  "Undid settle of {count} threads": "已撤销 {count} 个会话的收尾",
+  "Undid snooze of {count} thread": "已撤销 {count} 个会话的暂缓",
+  "Undid snooze of {count} threads": "已撤销 {count} 个会话的暂缓",
+  "Undid unpin of {count} thread": "已撤销 {count} 个会话的取消置顶",
+  "Undid unpin of {count} threads": "已撤销 {count} 个会话的取消置顶",
+  "Undid archive of {count} thread": "已撤销 {count} 个会话的归档",
+  "Undid archive of {count} threads": "已撤销 {count} 个会话的归档",
+  "Undid discard of {count} draft": "已撤销 {count} 份草稿的丢弃",
+  "Undid discard of {count} drafts": "已撤销 {count} 份草稿的丢弃",
   "now@@sidebar time": "刚刚",
   // Sidebar chrome and layout
   "Toggle main sidebar": "切换主侧边栏",

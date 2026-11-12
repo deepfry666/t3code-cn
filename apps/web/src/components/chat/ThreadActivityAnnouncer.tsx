@@ -1,3 +1,7 @@
+import { createLabelTranslator } from "~/i18n/labelTranslation";
+import { translate } from "~/i18n/locale";
+import { readLocale } from "~/i18n/useTranslation";
+import { globalUiMessages } from "../globalUi.messages";
 import type { ScreenReaderAnnouncements } from "@t3tools/contracts";
 import { memo, useEffect, useRef } from "react";
 
@@ -8,13 +12,15 @@ import {
   nextThreadAnnouncement,
   type ThreadActivitySnapshot,
   type ThreadAnnouncementMemory,
-} from "./threadActivityAnnouncement";
+} from "@t3tools/client-runtime/state/thread-activity-announcement";
 import {
   nextTurnDetailAnnouncement,
   NO_TURN_DETAIL,
   turnDetail,
   type TurnDetailMemory,
 } from "./turnDetailAnnouncement";
+
+const translateStatusLabel = createLabelTranslator(globalUiMessages);
 
 // Long enough for a screen reader to finish a short label before the next one.
 const ACTIVITY_GAP_MS = 2_000;
@@ -136,11 +142,22 @@ export const ThreadActivityAnnouncer = memo(function ThreadActivityAnnouncer({
       // NVDA reads two regions written in the same frame in either order, so a
       // status that lands with a message is read as its last sentence.
       const text = asOneAnnouncement(
-        turn.announcement === null ? detail.messages : [...detail.messages, turn.announcement],
+        turn.announcement === null
+          ? detail.messages
+          : [
+              ...detail.messages,
+              translateStatusLabel(turn.announcement, (key, params) =>
+                translate(readLocale(), globalUiMessages, key, params),
+              ),
+            ],
       );
       write(text, holdAfter(text));
     } else if (turn.announcement !== null) {
-      announce(turn.announcement);
+      announce(
+        translateStatusLabel(turn.announcement, (key, params) =>
+          translate(readLocale(), globalUiMessages, key, params),
+        ),
+      );
       step.quietUntil = Math.max(step.quietUntil, Date.now() + ACTIVITY_GAP_MS);
     }
     // A waiting label is stale once its step is over or the level no longer reads steps.
