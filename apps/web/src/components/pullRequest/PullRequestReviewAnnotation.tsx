@@ -127,6 +127,7 @@ export function InlineReviewThreads({
   threads: ReadonlyArray<PullRequestReviewThread>;
   renderThread: (thread: PullRequestReviewThread, hidden: boolean) => ReactNode;
 }) {
+  const t = useTranslation(pullRequestUiMessages);
   const [shown, setShown] = useState<ReadonlySet<string>>(() => new Set());
   // A conversation seen open stays shown once resolved, so it does not vanish under the reader.
   const open = threads.filter((thread) => !thread.isResolved);
@@ -141,7 +142,9 @@ export function InlineReviewThreads({
   }
   if (authors.size === 0) authors.set("ghost", null);
   const label =
-    resolved.length === 1 ? "Resolved conversation" : `${resolved.length} resolved conversations`;
+    resolved.length === 1
+      ? t("Resolved conversation")
+      : t("{count} resolved conversations", { count: resolved.length });
   return (
     <>
       {resolved.length > 0 ? (

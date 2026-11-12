@@ -20,6 +20,8 @@ import {
   type TurnDetailMemory,
 } from "./turnDetailAnnouncement";
 
+const translateStatusLabel = createLabelTranslator(globalUiMessages);
+
 // Long enough for a screen reader to finish a short label before the next one.
 const ACTIVITY_GAP_MS = 2_000;
 // A polite region queues what it can't say yet, so steps written while a
@@ -144,7 +146,7 @@ export const ThreadActivityAnnouncer = memo(function ThreadActivityAnnouncer({
           ? detail.messages
           : [
               ...detail.messages,
-              createLabelTranslator(globalUiMessages)(turn.announcement, (key, params) =>
+              translateStatusLabel(turn.announcement, (key, params) =>
                 translate(readLocale(), globalUiMessages, key, params),
               ),
             ],
@@ -152,7 +154,7 @@ export const ThreadActivityAnnouncer = memo(function ThreadActivityAnnouncer({
       write(text, holdAfter(text));
     } else if (turn.announcement !== null) {
       announce(
-        createLabelTranslator(globalUiMessages)(turn.announcement, (key, params) =>
+        translateStatusLabel(turn.announcement, (key, params) =>
           translate(readLocale(), globalUiMessages, key, params),
         ),
       );

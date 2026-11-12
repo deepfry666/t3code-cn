@@ -3201,6 +3201,8 @@
     "Use remote version of {ref}": "使用 {ref} 的远端版本"
   },
   "apps/web/src/components/files/filesUi.messages.ts": {
+    "File contents": "文件内容",
+    "This file changed since the diff was loaded. Refresh the diff to expand it.": "加载差异后此文件已更改。刷新差异后再展开。",
     "This folder is no longer available.": "此文件夹已不可用。",
     "Refresh failed. Retry": "刷新失败，请重试",
     "Some workspace entries are not shown.": "部分工作区条目未显示。",
@@ -4432,6 +4434,8 @@
     "Check out": "检出"
   },
   "apps/web/src/components/pullRequest/pullRequestUi.messages.ts": {
+    "Resolved conversation": "已解决的讨论",
+    "{count} resolved conversations": "{count} 个已解决的讨论",
     "Context, no code": "背景说明，无代码",
     "1 file": "1 个文件",
     "opened@@timestamp": "创建于",
@@ -9843,6 +9847,17 @@
     "System monospace": "系统等宽字体"
   },
   "apps/web/src/components/sidebar/sidebarUi.messages.ts": {
+    "Pinned 1 thread": "已置顶 1 个会话",
+    "Undid settle of {count} thread": "已撤销 {count} 个会话的收尾",
+    "Undid settle of {count} threads": "已撤销 {count} 个会话的收尾",
+    "Undid snooze of {count} thread": "已撤销 {count} 个会话的暂缓",
+    "Undid snooze of {count} threads": "已撤销 {count} 个会话的暂缓",
+    "Undid unpin of {count} thread": "已撤销 {count} 个会话的取消置顶",
+    "Undid unpin of {count} threads": "已撤销 {count} 个会话的取消置顶",
+    "Undid archive of {count} thread": "已撤销 {count} 个会话的归档",
+    "Undid archive of {count} threads": "已撤销 {count} 个会话的归档",
+    "Undid discard of {count} draft": "已撤销 {count} 份草稿的丢弃",
+    "Undid discard of {count} drafts": "已撤销 {count} 份草稿的丢弃",
     "now@@sidebar time": "刚刚",
     "Toggle main sidebar": "切换主侧边栏",
     "Threads": "会话",

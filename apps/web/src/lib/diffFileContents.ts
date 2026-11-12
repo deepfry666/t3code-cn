@@ -1,3 +1,5 @@
+import { translateNow } from "../i18n/useTranslation";
+import { filesUiMessages } from "../components/files/filesUi.messages";
 import type { FileDiffContentsLoader, FileDiffMetadata } from "@pierre/diffs";
 import {
   squashAtomCommandFailure,
@@ -128,7 +130,10 @@ function createDiffFileContentsLoader(
     }
     if (!reproducesPatch(fileDiff, contents.oldContents, contents.newContents)) {
       throw new Error(
-        "This file changed since the diff was loaded. Refresh the diff to expand it.",
+        translateNow(
+          filesUiMessages,
+          "This file changed since the diff was loaded. Refresh the diff to expand it.",
+        ),
       );
     }
     return {

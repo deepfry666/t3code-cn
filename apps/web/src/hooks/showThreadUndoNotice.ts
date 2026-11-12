@@ -1,3 +1,4 @@
+import { createLabelTranslator } from "../i18n/labelTranslation";
 import {
   type AtomCommandResult,
   isAtomCommandInterrupted,
@@ -29,6 +30,8 @@ type UndoNotice = {
 };
 
 export const useThreadUndoNotice = create<{ notice: UndoNotice | null }>(() => ({ notice: null }));
+
+const translateUndoAnnouncement = createLabelTranslator(sidebarUiMessages);
 
 const UNDONE_ACTION = {
   Settled: "settle",
@@ -131,7 +134,12 @@ function refreshNotice() {
       );
       // Failures already raise a toast, so only what was actually restored is spoken.
       if (undone > 0) {
-        announce(`Undid ${UNDONE_ACTION[latest.action]} of ${countLabel(latest.action, undone)}`);
+        announce(
+          translateUndoAnnouncement(
+            `Undid ${UNDONE_ACTION[latest.action]} of ${countLabel(latest.action, undone)}`,
+            (key, params) => translateNow(sidebarUiMessages, key, params),
+          ),
+        );
       }
     },
   });
