@@ -85,7 +85,7 @@ vi.mock("../ui/toast", () => ({
 }));
 
 import { MediaActions, useMediaActions, type MediaActionSource } from "./MediaActions";
-import { setLocale } from "~/i18n/useTranslation";
+import { setLocale } from "../../../test/locale";
 
 const environmentId = EnvironmentId.make("media-environment");
 const threadId = ThreadId.make("media-thread");

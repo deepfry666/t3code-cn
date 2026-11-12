@@ -1,4 +1,6 @@
 export const threadPanelUiMessages = {
+  "No SSH route to {environment}": "没有通往{environment}的 SSH 路由",
+  "Open from a computer to edit on {environment}": "从电脑打开以在{environment}上编辑",
   "No project": "无项目",
   "Thread title cannot be empty": "会话标题不能为空",
   "Failed to rename thread": "重命名会话失败",

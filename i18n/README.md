@@ -48,14 +48,10 @@ vp run i18n:export
 
 产品名、品牌和技术缩写保持英文，例如 Agent Platform、ACP Registry、Span、T3 Code、T3 Connect、GitHub、Codex、Claude、Cursor、CLI、MCP、SSH、API、URL、JSON、token、macOS、Windows、Finder。GitHub 的 issue 保留英文。导航、标签页、分区标题、按钮、菜单项和字段名等短标签中，pull request 用 PR，merge request 用 MR；描述、提示、错误和通知等完整句子保留 pull request / merge request，句首首字母大写，句中照原文小写。来自代码的 `{kind}` 占位符值及其译文保持原样。change request 保留英文。完整清单以 [`scripts/fork-i18n.test.ts`](../scripts/fork-i18n.test.ts) 为准。
 
-## 同步官方后补翻译
+## 同步策略
 
-合并官方更新后，列出新增的英文界面文字：
+代码跟随官方，措辞沿用本分叉。官方已经使用 `gt()` / `<T>` 的文字保留官方包装，其余界面继续使用旁边的 `*.messages.ts`。语言统一由官方客户端 `language` 设置控制，旧版语言选择在升级时迁移。
 
-```bash
-vp run i18n:untranslated -- <合并前的提交>
-```
+同步时若 `apps/web/src/i18n/translations/zh.json` 冲突，先取官方版本，再运行 `vp run i18n:export`：脚本按 `en.json` 的英文匹配分叉目录，重写中文。官方独有文字默认保留；需要修正术语时，在分叉 `*.messages.ts` 增加对应英文和译文。测试同时检查生成结果和术语。
 
-不带参数时检查网页端、桌面端，以及和手机端共用的 `packages/client-runtime`。共用代码里的英文不能直接改成 `t()`，要在网页显示它的地方翻译。`--path <路径前缀>` 只看某个目录。把需要翻译的文字用 `t()` 包起来，在同一区域的 `*.messages.ts` 里加上中文，再运行 `vp run i18n:export`。
-
-发给智能体的指令、日志和报错诊断、品牌名、快捷键这类文字刻意保留英文。确认要保留英文的，写进 [`keep-english.txt`](keep-english.txt)，检查脚本就不会再报告。
+合并后运行 `vp run i18n:untranslated -- <合并前的提交>`，并人工阅读新增文件及多行 JSX。补译后再次导出。刻意保留的品牌、诊断和技术文字列在 `keep-english.txt`。

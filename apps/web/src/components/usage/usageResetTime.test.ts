@@ -2,7 +2,7 @@ import type { ServerProviderUsageWindow } from "@t3tools/contracts";
 import { formatResetsIn as formatSharedResetsIn } from "@t3tools/shared/usageLimits";
 import { afterEach, describe, expect, it } from "vite-plus/test";
 
-import { setLocale } from "~/i18n/useTranslation";
+import { setLocale } from "../../../test/locale";
 import { formatResetsIn, formatResetsInShort } from "./usageResetTime";
 
 const now = Date.parse("2026-09-03T12:00:00.000Z");

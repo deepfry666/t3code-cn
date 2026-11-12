@@ -8,7 +8,7 @@ import { describe, expect, it, vi } from "vite-plus/test";
 import { userEvent } from "vite-plus/test/browser";
 
 import { act, render } from "../../test/render";
-import { setLocale } from "~/i18n/useTranslation";
+import { setLocale } from "../../test/locale";
 
 const mocks = vi.hoisted(() => ({
   createClient: vi.fn<(target: unknown, handlers: PreviewStreamEvents) => unknown>(),

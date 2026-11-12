@@ -2,6 +2,9 @@ import { translate, type Locale } from "../../i18n/locale";
 import { threadRuntimeMessages } from "./threadRuntime.messages";
 
 export const composerUiMessages = {
+  "Answer or dismiss the question first, then add it to chat.":
+    "先回答或关闭问题，再将其添加到聊天中。",
+  "Terminal output can't be added to a question answer.": "终端输出无法添加到问题回答中。",
   ...threadRuntimeMessages,
   "Queued message": "排队消息",
   "Voice transcription was cancelled.": "语音转写已取消。",

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 
-import { setLocale } from "./i18n/useTranslation";
+import { setLocale } from "../test/locale";
 import { formatDayAwareTimestamp, formatUpcomingTimestamp } from "./timestampFormat";
 
 describe("timestamps in an explicit time zone", () => {

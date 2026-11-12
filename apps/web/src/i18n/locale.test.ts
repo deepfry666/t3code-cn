@@ -1,16 +1,8 @@
 import { describe, expect, it } from "vite-plus/test";
 
-import { resolveLocale, translate } from "./locale";
+import { translate } from "./locale";
 
 describe("interface locale", () => {
-  it("respects an explicit choice and otherwise follows the preferred browser language", () => {
-    expect(resolveLocale("en", ["zh-CN"])).toBe("en");
-    expect(resolveLocale("zh-CN", ["en-US"])).toBe("zh-CN");
-    expect(resolveLocale(null, ["zh-TW", "en"])).toBe("zh-CN");
-    expect(resolveLocale("invalid", ["en-US", "zh-CN"])).toBe("en");
-    expect(resolveLocale(null, [])).toBe("en");
-  });
-
   it("uses the unchanged source message in English", () => {
     const messages = { "New thread": "新建会话" } as const;
     expect(translate("en", messages, "New thread")).toBe("New thread");

@@ -6,6 +6,17 @@ import * as NodePath from "node:path";
 
 import { readCatalogs, repoRoot, SNAPSHOT_PATH, snapshotText } from "./lib/fork-catalogs.ts";
 
+import { OFFICIAL_ZH_PATH, officialChineseText } from "./lib/official-catalog.ts";
+
+const officialTarget = NodePath.join(repoRoot, OFFICIAL_ZH_PATH);
+const officialNext = officialChineseText();
+if (process.argv.includes("--check")) {
+  if (NodeFS.readFileSync(officialTarget, "utf8") !== officialNext)
+    throw new Error("Official zh.json is stale. Run vp run i18n:export");
+} else {
+  NodeFS.writeFileSync(officialTarget, officialNext);
+}
+
 const target = NodePath.join(repoRoot, SNAPSHOT_PATH);
 const { entries } = readCatalogs();
 const next = snapshotText(entries);

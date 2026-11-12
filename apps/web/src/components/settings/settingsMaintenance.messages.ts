@@ -1,6 +1,10 @@
 import { translate, type Locale } from "../../i18n/locale";
 
 export const settingsMaintenanceMessages = {
+  "Every connected machine is already on {label}.": "每台已连接的机器都已使用{label}。",
+  "No machine can switch to {label} now.": "目前没有机器可以切换到{label}。",
+  "No machine can switch to {label} now. This only saves the track.":
+    "目前没有机器可以切换到{label}。这只会保存更新通道。",
   "Copied trace ID": "已复制追踪 ID",
   "Copy trace ID": "复制追踪 ID",
   Copied: "已复制",

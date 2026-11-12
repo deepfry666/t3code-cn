@@ -43,6 +43,30 @@ describe("client settings hydration", () => {
   const onboardingCompletedAt = "2026-09-05T12:00:00.000Z";
   const complete = (current: ClientSettings) => ({ ...current, onboardingCompletedAt });
 
+  it("persists a legacy language before removing its key and retains it after a failed write", async () => {
+    const values = new Map([["t3code-cn:locale", "zh-CN"]]);
+    vi.stubGlobal("localStorage", {
+      getItem: (key: string) => values.get(key) ?? null,
+      removeItem: (key: string) => values.delete(key),
+    });
+    try {
+      persistenceMocks.getClientSettings.mockResolvedValue(savedSettings);
+      persistenceMocks.setClientSettings.mockRejectedValueOnce(new Error("disk unavailable"));
+      vi.spyOn(console, "error").mockImplementation(() => undefined);
+      await expect(ensureClientSettingsHydrated()).rejects.toThrow("disk unavailable");
+      expect(values.get("t3code-cn:locale")).toBe("zh-CN");
+      await ensureClientSettingsHydrated();
+      expect(persistenceMocks.setClientSettings).toHaveBeenLastCalledWith({
+        ...savedSettings,
+        language: "zh",
+      });
+      expect(getClientSettings().language).toBe("zh");
+      expect(values.has("t3code-cn:locale")).toBe(false);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it("waits for saved model preferences before applying the first server edit", async () => {
     const provider = ProviderInstanceId.make("codex_work");
     let finishRead!: (settings: ClientSettings) => void;

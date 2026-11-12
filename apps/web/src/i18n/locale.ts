@@ -1,11 +1,6 @@
 export type Locale = "en" | "zh-CN";
 export const LOCALE_STORAGE_KEY = "t3code-cn:locale";
 
-export function resolveLocale(saved: string | null, languages: readonly string[]): Locale {
-  if (saved === "en" || saved === "zh-CN") return saved;
-  return languages[0]?.toLowerCase().startsWith("zh") ? "zh-CN" : "en";
-}
-
 // "When@@snooze" lets one English word take a different Chinese meaning per context;
 // everything from "@@" on is dropped from the English text.
 const CONTEXT_SEPARATOR = "@@";
