@@ -1,10 +1,14 @@
 <div align="center">
 
+<a href="https://github.com/deepfry666/t3code-cn/releases/latest">
+  <img src="./assets/prod/t3-black-web-icon-192x192.png" width="80" height="80" alt="T3 Code 图标" />
+</a>
+
 # T3 Code 中文版
 
 **用中文操控你电脑上的编程智能体。**
 
-Claude Code、Codex、Cursor、OpenCode 等智能体都可以在一个窗口里管理：<br>
+Claude Code、Codex、Cursor、OpenCode、Antigravity、Kiro 等主流智能体及 ACP 智能体都可以在一个窗口里管理：<br>
 桌面、浏览器和手机都能用，用的是你自己的订阅。
 
 [![最新版本](https://img.shields.io/github/v/release/deepfry666/t3code-cn?label=%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC&color=2f6feb)](https://github.com/deepfry666/t3code-cn/releases/latest)
@@ -22,11 +26,11 @@ Claude Code、Codex、Cursor、OpenCode 等智能体都可以在一个窗口里�
 
 ## 为什么做这个版本
 
-[T3 Code](https://github.com/pingdotgg/t3code) 是一个开源的智能体控制台：在一个界面里同时跑多个会话，看智能体读了哪些文件、改了哪些代码，随时批准、回退、开 PR。它很好用，但是英文界面。
+[T3 Code](https://github.com/pingdotgg/t3code) 是一个开源的智能体控制台：在一个界面里同时跑多个会话，看智能体读了哪些文件、改了哪些代码，支持工作树隔离、引用回复、自定义主题与工作时保持唤醒，随时批准、回退、开 PR。它很好用，但是英文界面。
 
 中文版只做一件事：**把界面完整地翻成好懂的中文**。功能和官方完全一致，官方每发一个新版，这里通常一两天内跟进。
 
-- **翻得全**：一万多条界面文字，覆盖设置、侧边栏、会话、命令面板、Git 与 PR、文件预览、浏览器、设备、用量，以及桌面应用的原生菜单。
+- **翻得全**：10,500 多条界面文字，覆盖设置、侧边栏、会话、命令面板、主题外观、Git 与 PR、文件预览、浏览器、设备、定时任务、语音与用量，以及桌面应用的原生菜单。
 - **译得一致**：同一个英文词在任何地方都是同一个中文词。thread 一律是“会话”，agent 一律是“智能体”，由自动检查保证，不会这里一个说法、那里又是另一个说法。
 - **读得顺**：按中文习惯重写句子，不逐字硬翻；Finder、PR 这类大家习惯说英文的词保留英文。
 - **更新省心**：安装一次，之后在应用内自动更新，不会被官方英文版覆盖。
@@ -73,12 +77,12 @@ Claude Code、Codex、Cursor、OpenCode 等智能体都可以在一个窗口里�
 
 到 [最新版本](https://github.com/deepfry666/t3code-cn/releases/latest) 下载对应系统的安装包：
 
-| 系统                 | 下载这个文件               | 备注                                                          |
-| -------------------- | -------------------------- | ------------------------------------------------------------- |
-| Windows（x64）       | `T3-Code-<版本>-x64.exe`   | 出现 SmartScreen 提示时，点“更多信息”→“仍要运行”              |
-| macOS（Apple 芯片）  | `T3-Code-<版本>-arm64.dmg` | 首次打开需要手动放行一次，见[下方说明](#macos-首次打开)       |
-| Linux（x64 / arm64） | `.AppImage` 或 `.deb`      | AppImage 支持应用内自动更新；x64 文件名带 `x86_64` 或 `amd64` |
-| Linux / macOS 命令行 | `t3-<版本>-<系统>.tar.gz`  | 也可以用下面的一行命令安装                                    |
+| 系统                 | 下载这个文件                                           | 备注                                                                                                |
+| -------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| Windows（x64）       | `T3-Code-<版本>-x64.exe`                               | 出现 SmartScreen 提示时，点“更多信息”→“仍要运行”                                                    |
+| macOS（Apple 芯片）  | `T3-Code-<版本>-arm64.dmg`                             | 首次打开需要手动放行一次，见[下方说明](#macos-首次打开)                                             |
+| Linux（x64 / arm64） | `T3-Code-x86_64.AppImage` / `arm64.AppImage` 或 `.deb` | AppImage 支持应用内自动更新（文件名不含版本号）；`.deb` 为 `T3-Code-<版本>-amd64.deb` / `arm64.deb` |
+| Linux / macOS 命令行 | `t3-<版本>-<系统>.tar.gz`                              | 也可以用下面的一行命令安装                                                                          |
 
 只想要命令行版（`t3`）的话，在 macOS（Apple 芯片）或 Linux 上运行：
 
@@ -97,7 +101,7 @@ T3 Code 本身不带模型，它调用你电脑上已经装好的智能体。至
 | Cursor   | [Cursor CLI](https://cursor.com/cli)                  | `agent login`         |
 | OpenCode | [OpenCode](https://opencode.ai)                       | `opencode auth login` |
 
-更多智能体见官方的 [安装与首次运行](docs/user/install.md)。
+也支持 Antigravity、Kiro、Grok Build、Pi、Muse Code、fx 及任何 [ACP](docs/user/providers-acp.md) 智能体，详细配置见官方的 [安装与首次运行](docs/user/install.md#providers)。
 
 **3. 切到中文**
 
@@ -141,11 +145,11 @@ T3 Code 本身不带模型，它调用你电脑上已经装好的智能体。至
 </details>
 
 <details>
-<summary><b>官方的安装命令、winget、Homebrew 能装中文版吗？</b></summary>
+<summary><b>官方的安装命令、npx t3@latest、winget、Homebrew 能装中文版吗？</b></summary>
 
 <br>
 
-不能，它们安装的是官方英文版。中文版请从本仓库的 [Releases](https://github.com/deepfry666/t3code-cn/releases) 下载，或使用上面的命令行安装脚本。
+不能，它们（以及 AUR、Nix 等官方分发渠道）安装的是官方英文版。中文版请从本仓库的 [Releases](https://github.com/deepfry666/t3code-cn/releases) 下载，或使用上面的命令行安装脚本。
 
 </details>
 
