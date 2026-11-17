@@ -1,12 +1,12 @@
 # Fork-only: release.yml runs only in pingdotgg/t3code on Blacksmith runners, so this
-# builds the fork's release artifacts on GitHub-hosted runners: the unsigned Windows
-# installer, Linux x64/arm64 AppImage/deb desktop packages and CLI archives. scripts/fork-release.sh dispatches it
-# and publishes the draft after all assets are verified. The file keeps its old name because workflow_dispatch
-# only reaches files already on the default branch.
-# Like release-desktop.yml the Windows installer cross-builds on Linux; native Windows
+# builds and publishes the fork's full release on GitHub-hosted runners: the signed macOS
+# arm64 dmg/zip, unsigned Windows x64 installer, Linux x64/arm64 AppImage/deb packages,
+# and macOS/Linux CLI archives. The file keeps its old name so workflow_dispatch scripts
+# and muscle memory keep working.
+# Like release-desktop.yml, the Windows installer cross-builds on Linux; native Windows
 # hosts install extra optional natives and fail the packaged payload file limit.
-# node-pty compiles from source on Linux, so each CLI archive builds on its own arch.
 #
+#   scripts/fork-release.sh <x.y.z-cn.N> <release-notes.md>
 #   gh workflow run fork-windows-desktop.yml --ref main -f version=<x.y.z-cn.N>
 name: Fork release artifacts
 
@@ -17,13 +17,86 @@ on:
         description: "Chinese release version (x.y.z-cn.N)."
         type: string
         required: true
+      notes:
+        description: "Release notes markdown (optional; ignored when a draft release already exists)."
+        type: string
+        required: false
+        default: ""
+      publish:
+        description: "Publish the draft release as latest after all 18 assets pass verification."
+        type: boolean
+        required: false
+        default: true
 
 permissions:
   contents: read
 
 jobs:
+  prepare:
+    name: Prepare draft release
+    if: github.repository == 'deepfry666/t3code-cn'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version-file: package.json
+          run-install: false
+
+      - name: Validate version and ensure draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          BUILD_VERSION: ${{ inputs.version }}
+          RELEASE_NOTES: ${{ inputs.notes }}
+        run: |
+          set -euo pipefail
+          scripts/fork-validate-version.sh "$BUILD_VERSION"
+          tag="v$BUILD_VERSION"
+
+          if info="$(gh release view "$tag" --json isDraft,targetCommitish 2>/dev/null)"; then
+            is_draft="$(printf '%s' "$info" | jq -r '.isDraft')"
+            target_commitish="$(printf '%s' "$info" | jq -r '.targetCommitish')"
+            if [[ "$is_draft" != "true" ]]; then
+              echo "Release $tag is already published." >&2
+              exit 1
+            fi
+            if [[ "$target_commitish" != "$GITHUB_SHA" && "$target_commitish" != "main" ]]; then
+              echo "Draft $tag targets $target_commitish, expected $GITHUB_SHA." >&2
+              exit 1
+            fi
+            echo "Using existing draft release $tag."
+            exit 0
+          fi
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; then
+            echo "Tag $tag already exists." >&2
+            exit 1
+          fi
+
+          if [[ -n "$RELEASE_NOTES" ]]; then
+            notes_file="$RUNNER_TEMP/release-notes.md"
+            printf '%s\n' "$RELEASE_NOTES" > "$notes_file"
+            gh release create "$tag" --target "$GITHUB_SHA" --draft --prerelease=false \
+              --title "T3 Code 中文版 $BUILD_VERSION" --notes-file "$notes_file"
+          else
+            gh release create "$tag" --target "$GITHUB_SHA" --draft --prerelease=false \
+              --title "T3 Code 中文版 $BUILD_VERSION" --generate-notes
+          fi
+
   build:
-    needs: [cli_linux]
+    needs: [prepare, cli_linux]
     name: Build Windows x64 installer
     if: github.repository == 'deepfry666/t3code-cn'
     runs-on: ubuntu-24.04
@@ -97,10 +170,12 @@ jobs:
             release/*.exe
             release/*.exe.blockmap
             release/latest.yml
+          compression-level: 0
           if-no-files-found: error
           retention-days: 14
 
   cli_linux:
+    needs: [prepare]
     name: Build Linux ${{ matrix.arch }} desktop and CLI
     if: github.repository == 'deepfry666/t3code-cn'
     runs-on: ${{ matrix.runner }}
@@ -133,8 +208,7 @@ jobs:
           run-install: false
 
       - name: Validate release version
-        run: |
-          scripts/fork-validate-version.sh "$BUILD_VERSION"
+        run: scripts/fork-validate-version.sh "$BUILD_VERSION"
 
       - name: Install native build dependencies
         run: scripts/fork-apt-install.sh libsecret-1-dev pkg-config patchelf libatomic1 build-essential python3
@@ -154,6 +228,7 @@ jobs:
         run: |
           node scripts/update-release-package-versions.ts "$BUILD_VERSION"
           vp run build:desktop
+          node scripts/apply-web-brand-assets.ts production apps/server/dist/client
 
       - name: Build and stage resource monitor
         env:
@@ -181,6 +256,7 @@ jobs:
         with:
           name: t3code-cn-cli-linux-${{ matrix.arch }}
           path: release-cli/t3-${{ inputs.version }}-linux-${{ matrix.arch }}.tar.gz
+          compression-level: 0
           if-no-files-found: error
           retention-days: 14
 
@@ -235,10 +311,172 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+  macos:
+    needs: [prepare]
+    name: Build macOS arm64 desktop and CLI
+    if: github.repository == 'deepfry666/t3code-cn'
+    runs-on: macos-15
+    timeout-minutes: 75
+    env:
+      BUILD_VERSION: ${{ inputs.version }}
+      # Pinned SHA-1 of the fork's self-signed certificate; changing it breaks Squirrel.Mac updates.
+      EXPECTED_SIGNING_IDENTITY: A839365945BD24B57F1D02A1FA403FC6FDE2E97A
+    steps:
+      - name: Verify Apple silicon runner
+        run: |
+          [[ "$(uname -s)/$(uname -m)" == "Darwin/arm64" ]] || { echo "Expected Darwin/arm64 runner, got $(uname -s)/$(uname -m)" >&2; exit 1; }
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version-file: package.json
+          run-install: false
+
+      - name: Validate release version
+        run: scripts/fork-validate-version.sh "$BUILD_VERSION"
+
+      - name: Install
+        run: vp install
+
+      - name: Load public T3 Code config
+        run: grep -E '^T3CODE_(CLERK_PUBLISHABLE_KEY|CLERK_JWT_TEMPLATE|CLERK_CLI_OAUTH_CLIENT_ID|RELAY_URL)=' .env.example >> "$GITHUB_ENV"
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin
+
+      - name: Import macOS self-signing certificate
+        env:
+          CERT_P12_BASE64: ${{ secrets.T3CODE_CN_MACOS_CERT_P12 }}
+          CERT_PASSWORD: ${{ secrets.T3CODE_CN_MACOS_CERT_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$CERT_P12_BASE64" || -z "$CERT_PASSWORD" ]]; then
+            echo "Missing T3CODE_CN_MACOS_CERT_P12 or T3CODE_CN_MACOS_CERT_PASSWORD secret." >&2
+            exit 1
+          fi
+          keychain="$RUNNER_TEMP/t3code-cn-signing.keychain-db"
+          keychain_password="$(openssl rand -hex 16)"
+          echo "::add-mask::$keychain_password"
+          cert_path="$RUNNER_TEMP/t3code-cn-signing.p12"
+          printf '%s' "$CERT_P12_BASE64" | base64 --decode > "$cert_path"
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          security import "$cert_path" -k "$keychain" -P "$CERT_PASSWORD" -T /usr/bin/codesign
+          rm -f "$cert_path"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$keychain_password" "$keychain" >/dev/null
+          existing_keychains=()
+          while IFS= read -r line; do
+            clean="$(printf '%s' "$line" | tr -d ' "')"
+            [[ -n "$clean" ]] && existing_keychains+=("$clean")
+          done < <(security list-keychains -d user)
+          security list-keychains -d user -s "$keychain" "${existing_keychains[@]}"
+          identity="$(security find-identity -p codesigning "$keychain" | sed -n 's/^ *1) \([0-9A-F]\{40\}\) .*/\1/p')"
+          if [[ "$identity" != "$EXPECTED_SIGNING_IDENTITY" ]]; then
+            echo "Unexpected signing identity '${identity:-empty}'; expected '$EXPECTED_SIGNING_IDENTITY'." >&2
+            exit 1
+          fi
+          echo "T3CODE_MACOS_SELF_SIGN_IDENTITY=$identity" >> "$GITHUB_ENV"
+          echo "T3CODE_MACOS_SELF_SIGN_KEYCHAIN=$keychain" >> "$GITHUB_ENV"
+
+      - name: Align package versions and build bundle
+        run: |
+          node scripts/update-release-package-versions.ts "$BUILD_VERSION"
+          vp run build:desktop
+          node scripts/apply-web-brand-assets.ts production apps/server/dist/client
+
+      - name: Build and stage resource monitor
+        run: |
+          cargo build --locked --release --manifest-path native/resource-monitor/Cargo.toml --target aarch64-apple-darwin
+          mkdir -p "$RUNNER_TEMP/cli-resource-monitor/darwin-arm64"
+          cp native/resource-monitor/target/aarch64-apple-darwin/release/t3-resource-monitor "$RUNNER_TEMP/cli-resource-monitor/darwin-arm64/"
+
+      - name: Build and smoke-test CLI archive
+        run: |
+          node apps/server/scripts/cli.ts build-exe
+          node scripts/build-cli-archive.ts --platform mac --arch arm64 --version "$BUILD_VERSION" --resource-monitor-dir "$RUNNER_TEMP/cli-resource-monitor" --output-dir release-cli
+          node scripts/smoke-cli-archive.ts --archive "release-cli/t3-$BUILD_VERSION-darwin-arm64.tar.gz" --expect-version "$BUILD_VERSION"
+
+      - name: Upload CLI archive
+        uses: actions/upload-artifact@v7
+        with:
+          name: t3code-cn-cli-macos-arm64
+          path: release-cli/t3-${{ inputs.version }}-darwin-arm64.tar.gz
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Build and verify macOS desktop installer
+        env:
+          T3CODE_DESKTOP_UPDATE_REPOSITORY: deepfry666/t3code-cn
+          T3CODE_DESKTOP_REUSE_RESOURCE_MONITOR: true
+          ELECTRON_BUILDER_BINARIES_MIRROR: https://npmmirror.com/mirrors/electron-builder-binaries/
+          ELECTRON_MIRROR: https://npmmirror.com/mirrors/electron/
+          ELECTRON_CUSTOM_DIR: "{{ version }}"
+        run: |
+          set -euo pipefail
+          node scripts/build-desktop-artifact.ts --platform mac --target dmg --arch arm64 \
+            --build-version "$BUILD_VERSION" --skip-build --verbose
+
+          dmg="release/T3-Code-$BUILD_VERSION-arm64.dmg"
+          zip="release/T3-Code-$BUILD_VERSION-arm64.zip"
+          for file in "$dmg" "$dmg.blockmap" "$zip" "$zip.blockmap" release/latest-mac.yml; do
+            test -s "$file" || { echo "Missing or empty $file" >&2; exit 1; }
+          done
+          grep -qx "version: $BUILD_VERSION" release/latest-mac.yml || { echo "latest-mac.yml does not name $BUILD_VERSION" >&2; exit 1; }
+
+          check_dir="$RUNNER_TEMP/macos-verify"
+          rm -rf "$check_dir"
+          mkdir -p "$check_dir"
+          ditto -x -k "$zip" "$check_dir"
+          app="$(find "$check_dir" -maxdepth 1 -name '*.app' -print -quit)"
+          codesign --verify --deep --strict "$app"
+          requirement="$(codesign -d -r- "$app" 2>&1 | sed -n 's/^designated => //p')"
+          lowercase_identity="$(printf '%s' "$EXPECTED_SIGNING_IDENTITY" | tr '[:upper:]' '[:lower:]')"
+          if [[ "$requirement" != *'identifier "com.t3tools.t3code"'* || "$requirement" != *"H\"$lowercase_identity\""* ]]; then
+            echo "Unexpected designated requirement: $requirement" >&2
+            exit 1
+          fi
+          bundle_version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist")"
+          [[ "$bundle_version" == "$BUILD_VERSION" ]] || { echo "App reports $bundle_version, expected $BUILD_VERSION" >&2; exit 1; }
+          rm -rf "$check_dir"
+
+      - name: Upload macOS desktop
+        uses: actions/upload-artifact@v7
+        with:
+          name: t3code-cn-desktop-macos-arm64
+          path: |
+            release/*.dmg
+            release/*.zip
+            release/*.blockmap
+            release/latest-mac.yml
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Delete temporary signing keychain
+        if: always()
+        run: |
+          if [[ -n "${T3CODE_MACOS_SELF_SIGN_KEYCHAIN:-}" ]]; then
+            security delete-keychain "$T3CODE_MACOS_SELF_SIGN_KEYCHAIN" 2>/dev/null || rm -f "$T3CODE_MACOS_SELF_SIGN_KEYCHAIN"
+          fi
+
   upload_release:
-    name: Upload CI files to existing draft
-    needs: [build, cli_linux]
+    name: Upload and publish release
+    needs: [build, cli_linux, macos]
+    if: github.repository == 'deepfry666/t3code-cn'
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     permissions:
       contents: write
     steps:
@@ -247,14 +485,47 @@ jobs:
           pattern: t3code-cn-*
           merge-multiple: true
           path: release-upload
-      - name: Upload without publishing
+
+      - name: Verify assets, upload to draft, and publish
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           BUILD_VERSION: ${{ inputs.version }}
+          PUBLISH_RELEASE: ${{ inputs.publish }}
         run: |
           set -euo pipefail
-          test "$(gh release view "v$BUILD_VERSION" --json isDraft --jq .isDraft)" = true
+          tag="v$BUILD_VERSION"
+          test "$(gh release view "$tag" --json isDraft --jq .isDraft)" = true
+
+          expected=(
+            "T3-Code-$BUILD_VERSION-x64.exe" "T3-Code-$BUILD_VERSION-x64.exe.blockmap" latest.yml
+            "T3-Code-$BUILD_VERSION-arm64.dmg" "T3-Code-$BUILD_VERSION-arm64.dmg.blockmap"
+            "T3-Code-$BUILD_VERSION-arm64.zip" "T3-Code-$BUILD_VERSION-arm64.zip.blockmap" latest-mac.yml
+            "T3-Code-x86_64.AppImage" "T3-Code-$BUILD_VERSION-amd64.deb" latest-linux.yml
+            "T3-Code-arm64.AppImage" "T3-Code-$BUILD_VERSION-arm64.deb" latest-linux-arm64.yml
+            "t3-$BUILD_VERSION-darwin-arm64.tar.gz" "t3-$BUILD_VERSION-linux-x64.tar.gz" "t3-$BUILD_VERSION-linux-arm64.tar.gz"
+          )
+
           cd release-upload
-          sha256sum * > SHA256SUMS-ci
-          gh release upload "v$BUILD_VERSION" ./* --clobber
+          for asset in "${expected[@]}"; do
+            test -s "$asset" || { echo "Missing or empty artifact: $asset" >&2; exit 1; }
+          done
+          sha256sum * > SHA256SUMS
+          for asset in "${expected[@]}"; do
+            awk -v name="$asset" '$2 == name || $2 == "./" name { found = 1 } END { exit !found }' SHA256SUMS || { echo "Missing checksum: $asset" >&2; exit 1; }
+          done
+
+          gh release upload "$tag" ./* --clobber
+
+          assets="$(gh release view "$tag" --json isDraft,assets)"
+          printf '%s' "$assets" | jq -e '.isDraft == true' >/dev/null
+          for asset in "${expected[@]}" SHA256SUMS; do
+            printf '%s' "$assets" | jq -e --arg name "$asset" '.assets | any(.name == $name and .size > 0)' >/dev/null || { echo "Missing or empty uploaded asset: $asset" >&2; exit 1; }
+          done
+
+          if [[ "$PUBLISH_RELEASE" == "true" ]]; then
+            gh release edit "$tag" --draft=false --prerelease=false --latest >/dev/null
+            echo "Released https://github.com/$GH_REPO/releases/tag/$tag"
+          else
+            echo "Uploaded verified draft https://github.com/$GH_REPO/releases/tag/$tag"
+          fi

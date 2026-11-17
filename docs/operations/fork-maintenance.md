@@ -31,27 +31,27 @@
 ## 发布
 
 ```bash
-scripts/fork-release.sh 0.1.9-cn.3 <发布说明.md>
+scripts/fork-release.sh 0.1.10-cn.4 <发布说明.md>
 ```
 
-要在 `origin/main` 的干净工作副本里运行，大约一小时。脚本先建一个草稿 Release，触发 `fork-windows-desktop.yml` 在 GitHub 上构建 Windows、Linux 安装包和 Linux 命令行程序并直接传进草稿，同时在本机打包、签名 macOS 版。最后合并校验值、检查全部文件都在，才把草稿正式发布。用户的应用读取 `latest*.yml`，发布后就会收到更新。
+要在 `origin/main` 的干净工作副本里运行（也可以加 `--no-wait` 派发后直接退出，或直接在 GitHub Actions 的 `Fork release artifacts` 页面手动触发）。脚本先建一个草稿 Release，再触发 `fork-windows-desktop.yml` 在 GitHub 云端并行构建 Windows、Linux 和 macOS 全部桌面安装包与命令行程序（共 18 个产物，其中 macOS 使用同一张自签名证书签名）。云端任务生成并核对 `SHA256SUMS`、确认全部文件非空后，自动把草稿设为正式 Latest Release。用户的应用读取 `latest*.yml`，发布后就会收到更新。
 
 两次官方版本之间修了翻译或加了功能，合并后照样运行这个脚本，把 `N` 加 1。
 
 发布说明参考上一个 Release 的格式：下载安装、本版变化、已知限制。
 
-### 运行发布的机器
+### 签名证书与环境要求
 
-- Apple 芯片的 Mac，已登录 `gh`，能推送 `deepfry666/t3code-cn`。
-- `PATH` 最前面是 `package.json` 里 `engines.node` 指定的 Node 版本，脚本会先检查。
-- `~/.t3code-cn-signing` 里有 `signing.keychain-db` 和 `passphrase`。这是自签名证书，每个版本都必须用同一张签名，否则已安装的 macOS 应用会拒绝更新。**不要重新生成它，并在别处保留一份备份。** 换电脑时把整个目录复制过去。
+- 运行发布脚本的机器只需安装 Node、`gh`、`jq`，并已登录 `gh` 能访问 `deepfry666/t3code-cn`（不再要求本机编译或上传大文件）。
+- macOS 云端签名读取仓库的 GitHub Actions Secrets：`T3CODE_CN_MACOS_CERT_P12`（`t3code-cn-signing.p12` 的 Base64）和 `T3CODE_CN_MACOS_CERT_PASSWORD`（证书口令）。
+- 本机 `~/.t3code-cn-signing` 目录保存着同一张证书的原件（`t3code-cn-signing.p12`、`signing.keychain-db` 和 `passphrase`）。每个版本都必须用同一张证书（SHA-1 `A839365945BD24B57F1D02A1FA403FC6FDE2E97A`）签名，否则已安装的 macOS 应用会拒绝更新。**不要重新生成它，并在别处保留一份离线备份。**
 
 ### 发布失败
 
-脚本中途失败时会留下草稿 Release。看清报错并修好原因后，删掉草稿再重新运行：
+云端构建中途失败时不会发布正式版，只会留下草稿 Release。看清报错并修好原因后，如果无需改代码可在 GitHub Actions 页面直接点击 **Re-run failed jobs**；如果要改代码重新发，先删掉草稿再重新运行：
 
 ```bash
-gh release delete v0.1.9-cn.3 -R deepfry666/t3code-cn --yes
+gh release delete v0.1.10-cn.4 -R deepfry666/t3code-cn --yes
 ```
 
 草稿还没有打 tag，删掉不会影响已发布的版本。

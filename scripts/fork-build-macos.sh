@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Fork-only: builds the Chinese macOS arm64 dmg, update zip and latest-mac.yml on this Mac.
-# Every release must be signed with the same self-signed certificate, or installed apps
-# reject the update (Squirrel.Mac checks the running app's designated requirement).
+# Fork-only: builds the Chinese macOS arm64 dmg, update zip and latest-mac.yml locally.
+# Official Chinese releases build and sign macOS in .github/workflows/fork-windows-desktop.yml;
+# keep this script for local verification. Every build must use the same self-signed certificate,
+# or installed apps reject the update (Squirrel.Mac checks the running app's designated requirement).
 #
 #   scripts/fork-build-macos.sh 0.1.7-cn.3
 #
