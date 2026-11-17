@@ -22,9 +22,11 @@
 手动同步的步骤和定时任务相同：
 
 1. 在新工作树里从 `origin/main` 建分支，记下合并前的提交 `pre`。
-2. `git fetch official main && git merge official/main`。冲突以官方为准，只重新套用中文分支的 `t()` 改动和指向 `deepfry666/t3code-cn` 的发布源。`apps/web/src/i18n/translations/zh.json` 直接取官方版本。
+2. 同步指定正式版时，先 `git fetch official tag v0.1.10`，再 `git merge v0.1.10`，不要把发布后 `official/main` 的提交一起带入。冲突以官方为准，只重新套用仍在使用的中文文案和指向 `deepfry666/t3code-cn` 的发布源。`apps/web/src/i18n/translations/zh.json` 直接取官方版本。
 3. `vp run i18n:untranslated -- $pre` 找出新增英文，翻译进旁边的 `*.messages.ts`，再运行 `vp run i18n:export`。
 4. `vp run check:changed` 全部通过后提交、开 PR。
+
+官方在发布后才更新源码中的版本号，因此正式 tag 的 manifest 可能仍写着上一版。中文版的合并提交不能依赖官方“HEAD 正好位于稳定 tag”的版本推断；合并时把 `apps/server`、`apps/web`、`apps/desktop` 和 `packages/contracts` 的 `package.json` 版本对齐到此次正式版，再用 `scripts/fork-validate-version.sh` 校验对应的 `-cn.N` 版本。
 
 ## 发布
 

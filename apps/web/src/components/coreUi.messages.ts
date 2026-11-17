@@ -165,4 +165,6 @@ export const coreUiMessages = {
   "Regenerate titles ({count})": "重新生成标题（{count}）",
   "Unpin ({count})": "取消置顶（{count}）",
   "This connection cannot change threads.": "此连接无法修改会话。",
+  "Retry sign-in": "重试登录",
+  "No {value1} in {value2}{value3}": "{value2}{value3}中没有{value1}",
 } as const;

@@ -243,6 +243,7 @@ export const deviceUiMessages = {
   Retry: "重试",
   "Retrying…": "正在重试…",
   "Fold command failed ({status}).": "折叠命令失败（{status}）。",
+  "Android emulators": "Android 模拟器",
 } as const;
 
 const translateStreamLabel = createLabelTranslator(deviceUiMessages, [

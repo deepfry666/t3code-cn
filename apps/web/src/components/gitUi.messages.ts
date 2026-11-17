@@ -175,6 +175,17 @@ export const gitUiMessages = {
   "Starting source control action...": "正在启动版本控制操作…",
   PR: "PR",
   MR: "MR",
+  "Branch: {value1}": "分支：{value1}",
+  "Detached HEAD: check out a branch before creating a {value1}.":
+    "当前处于分离 HEAD 状态，请先切换到分支，再创建{value1}。",
+  "No local commits to include in a {value1}.": "没有可纳入{value1}的本地提交。",
+  "Branch is behind upstream. Pull/rebase before creating a {value1}.":
+    "当前分支落后于上游。请先拉取或变基，再创建{value1}。",
+  "Create {value1} is currently unavailable.": "目前无法创建{value1}。",
+  "There are no changes to commit, so a feature branch can't be named. Create a branch yourself or continue on {value1}.":
+    "没有可提交的改动，无法为功能分支命名。请自行创建分支，或继续在 {value1} 上操作。",
+  "This action doesn't commit your changes, so a feature branch can't be named. Create a branch yourself or continue on {value1}.":
+    "此操作不会提交改动，无法为功能分支命名。请自行创建分支，或继续在 {value1} 上操作。",
 };
 
 // Labels are authored where the worktree is described, so read them through one lookup that

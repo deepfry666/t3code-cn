@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { threadActivityBannersMessages } from "./ThreadActivityBanners.messages";
 import { translateThreadRuntimeLabel } from "./threadRuntimeLabels";
 import type {
   EnvironmentId,
@@ -31,6 +33,7 @@ import { tickTextContent } from "~/lib/tickTextContent";
 import { BackgroundWorkDetails } from "./BackgroundWorkDetails";
 import { Button, InlineButton } from "../ui/button";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
+import { Popover, PopoverPopup, PopoverTrigger } from "../ui/popover";
 import type { ComposerBannerStackItem } from "./ComposerBannerStack";
 import type { ThreadNowItem } from "./ThreadNow";
 import type { ThreadPanelTranslator } from "./chatTranslators";
@@ -106,10 +109,22 @@ export function goalNowItem(
   return {
     id: `goal:${input.threadId}`,
     icon: <TargetIcon />,
-    title:
-      presentation.usage === null
-        ? translateThreadRuntimeLabel(presentation.title)
-        : `${translateThreadRuntimeLabel(presentation.title)} · ${presentation.usage}`,
+    title: (
+      <Popover>
+        <PopoverTrigger openOnHover render={<InlineButton />}>
+          {translateThreadRuntimeLabel(presentation.title)}
+          {presentation.usage === null ? null : ` · ${presentation.usage}`}
+        </PopoverTrigger>
+        <PopoverPopup
+          side="top"
+          width="md"
+          padding="compact"
+          aria-label={translateNow(threadActivityBannersMessages, "Goal objective")}
+        >
+          <p className="whitespace-pre-wrap wrap-anywhere text-sm">{presentation.objective}</p>
+        </PopoverPopup>
+      </Popover>
+    ),
     description: presentation.objective,
     // Clear stops goal work; Resume would stop unrelated work, so it waits.
     actions: (
@@ -195,9 +210,11 @@ export function backgroundWorkNowItem(
   const presentation = presentPendingBackgroundWork(input.tasks);
   if (presentation === null) return null;
   const rows = presentation.items.map((task) => {
+    const itemKey =
+      input.tasks.find((pending) => pending.taskId === task.taskId)?.nativeItemId ?? task.taskId;
     // Same key derivePendingBackgroundWork gives turn-item tasks; subagent items carry progress.
     const item = input.turnItems.findLast(
-      (candidate) => (candidate.nativeItemRef?.nativeId || candidate.id) === task.taskId,
+      (candidate) => (candidate.nativeItemRef?.nativeId || candidate.id) === itemKey,
     );
     const subagent = item?.type === "subagent" ? item : undefined;
     return {
@@ -215,7 +232,6 @@ export function backgroundWorkNowItem(
       activity: subagent?.progress?.replace(/\s+/gu, " ").trim() || null,
       startedAtMs: item?.startedAt ? DateTime.toEpochMillis(item.startedAt) : null,
       updatedAtMs: subagent ? DateTime.toEpochMillis(subagent.updatedAt) : 0,
-      childThreadId: task.childThreadId ?? subagent?.childThreadId ?? undefined,
     };
   });
   const [only] = rows.length === 1 ? rows : [];
@@ -223,7 +239,6 @@ export function backgroundWorkNowItem(
     .filter((row) => row.activity)
     .toSorted((left, right) => right.updatedAtMs - left.updatedAtMs)[0];
   const isCommand = (row: (typeof rows)[number]) => row.task.kind !== "subagent";
-  const onlyThreadId = only?.childThreadId;
   const startedAtMs = only?.startedAtMs ?? null;
   return {
     id: `background-work:${input.threadId}`,
@@ -268,11 +283,6 @@ export function backgroundWorkNowItem(
           turnItems={input.turnItems}
           onOpenThread={onOpenThread}
         />
-        {onlyThreadId === undefined ? null : (
-          <InlineButton tone="muted" onClick={() => onOpenThread(onlyThreadId)}>
-            {t("Open")}
-          </InlineButton>
-        )}
         <InlineButton disabled={input.stopDisabled} onClick={() => void input.onStop()}>
           {input.stopping ? t("Stopping...") : t("Stop")}
         </InlineButton>

@@ -86,7 +86,7 @@ export function BackgroundWorkDetails(props: {
                         props.onOpenThread(childThreadId);
                       }}
                     >
-                      {t("Open thread")}
+                      {t("Open subagent")}
                     </InlineButton>
                   ) : null}
                 </section>

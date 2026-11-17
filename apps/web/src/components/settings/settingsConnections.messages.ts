@@ -2,6 +2,16 @@ import { translateRuntimeError } from "../runtimeErrorLabels";
 import { translate, type Locale } from "~/i18n/locale";
 
 export const settingsConnectionsMessages = {
+  "Agents here can then launch, message and wait on threads there. It appears under Authorized clients in that environment's Sharing & access, where it can be revoked.":
+    "这里的智能体随后就能在该环境中启动会话、发送消息并等待结果。此连接将显示在该环境“共享与访问”的“已授权客户端”中，可在那里撤销。",
+  "Require approval for new T3 Connect devices": "新 T3 Connect 设备需要批准",
+
+  "Create a link on {target}: Settings → Sharing & access → Authorized clients → Create link, then paste its code here.":
+    "在{target}上打开“设置 → 共享与访问 → 已授权客户端 → 创建链接”，然后将链接验证码粘贴到此处。",
+  'Forget {name}? Agents here stop working there. Revoke "T3 Code · …" in {name}\'s Sharing & access to end the session there too.':
+    "忘记{name}？此处的智能体将停止在该环境工作。若要同时结束远端会话，请在{name}的“共享与访问”中撤销“T3 Code · …”。",
+  "From Sharing & access there, or t3 pair": "从远端“共享与访问”页面或 t3 pair 获取",
+  "this device": "此设备",
   "What agents here may do there": "这里的智能体在另一环境中的权限",
   "Read projects and threads. Cannot start, message or change anything.":
     "读取项目和会话，不能启动会话、发送消息或进行任何更改。",
@@ -703,6 +713,13 @@ export const settingsConnectionsMessages = {
   "Check this address": "请核对此地址",
   "This app cannot confirm it is one of your machines. The pairing code you paste is sent there.":
     "此应用无法确认它是你的机器之一。你粘贴的配对码会发送到那里。",
+  "Revoke {value1}?": "撤销{value1}？",
+  "Revoke all other clients?": "撤销其他所有客户端？",
+  "Create a link on": "在以下环境创建链接：",
+  "Waiting for approval": "等待批准",
+  "Devices that sign in to your T3 Connect account wait until someone already connected here approves them.":
+    "登录你的 T3 Connect 账号的设备，需要等待已连接到此环境的人员批准。",
+  "Your session does not have permission to manage access.": "你的会话没有管理访问权限的许可。",
 } as const;
 
 const dynamicLabels = [

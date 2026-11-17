@@ -1,6 +1,12 @@
 import { translate, type Locale } from "../../i18n/locale";
 
 export const settingsVoiceMessages = {
+  Smallest: "最小",
+  Fastest: "最快",
+  "{environment} can’t transcribe audio locally. Choose another destination.":
+    "{environment} 无法在本地转写音频，请选择其他目标。",
+  Instructions: "指令",
+  ", downloaded only": "，仅限已下载",
   "Auto: press to toggle, hold to record": "自动：点按切换，按住录音",
   "Hold: record while held": "按住：按住时录音",
   "Toggle: press to start, press again to stop": "切换：点按开始，再次点按停止",
@@ -708,6 +714,48 @@ export const settingsVoiceMessages = {
   "Already downloaded elsewhere? Paste the model file or folder path":
     "已在别处下载过？粘贴模型文件或文件夹路径",
   "Use existing": "使用已有",
+  "Tap to toggle, hold to talk": "点按切换，按住说话",
+  "Record while held": "按住时录音",
+  "Tap to start, tap to stop": "点按开始，再次点按停止",
+  "Using your file at": "使用你的文件：",
+  "Cancel {value1} download": "取消下载{value1}",
+  "Delete {value1}": "删除{value1}",
+  "Add words, separated by commas": "添加词语，以逗号分隔",
+  "Add a word or phrase to the {value1}": "向{value1}添加词语或短语",
+  "Alias for {value1}": "{value1}的别名",
+  "Used by everyone who dictates in {value1}.": "供在{value1}中使用语音输入的所有人使用。",
+  "Used by everyone who dictates on this environment.": "供在此环境中使用语音输入的所有人使用。",
+  "Streaming transcription": "流式转写",
+  "Transcribe while recording. Turn off to transcribe after stopping, which may help when live transcription falls behind.":
+    "边录音边转写。关闭后会在停止录音后转写，适合实时转写跟不上录音的情况。",
+  "This model doesn’t support native streaming.": "此模型不支持原生流式转写。",
+  "Most accurate": "最准确",
+  Models: "模型",
+  "This environment can’t transcribe audio: {value1}.": "此环境无法转写音频：{value1}。",
+  "Grades are error rates and speed is seconds per 30 s of audio, from Handy’s benchmark {value1}.":
+    "评分表示错误率，速度表示处理 30 秒音频所需的秒数，数据来自 Handy 的 {value1} 基准测试。",
+  "Filter by language: {value1}": "按语言筛选：{value1}",
+  "Sort and filter models: {value1}{value2}": "排序和筛选模型：{value1}{value2}",
+  "Most accurate in {value1}": "{value1}最准确的模型",
+  "Say a sentence. Cleanup is skipped, so you see exactly what the model heard.":
+    "说一句话。测试会跳过整理步骤，直接显示模型听到的内容。",
+  "Voice input uses the first connected microphone in this list.":
+    "语音输入会使用此列表中排在最前且已连接的麦克风。",
+  "Where your speech is turned into text.": "将语音转为文本的位置。",
+  "The provider detects your language automatically.": "提供方会自动检测语言。",
+  "This model": "此模型",
+  "OpenAI handles silence itself.": "OpenAI 会自行处理静音。",
+  "Skip silence and background noise before transcribing.": "转写前跳过静音和背景噪声。",
+  "Drop “um” and “uh” from transcripts.": "从转写文本中移除“嗯”“呃”等语气词。",
+  "Your dictionary": "你的词典",
+  "Names and terms to spell your way, saved on this device.":
+    "按你的习惯拼写姓名和术语，保存在此设备上。",
+  "Off by default. Sends the transcript and nearby draft text, never audio, to the cleanup model.":
+    "默认关闭。仅将转写文本及附近的草稿文字发送给整理模型，不发送音频。",
+  "Your own instructions for cleanup.": "你自定义的整理指令。",
+  "Fix punctuation, numbers, lists, and spoken corrections.": "修正标点、数字、列表和口头更正。",
+  "The phrase you say to fix a mistake, like “scratch that”.":
+    "用于更正错误的口头指令，例如“撤销刚才的话”。",
 } as const;
 
 const desktopMessagePatterns = (

@@ -68,5 +68,8 @@ describe("native menu localization", () => {
       `T3 Code ${version} is currently the newest version available.`,
     );
     expect(localizeDesktopText("toString", ["zh-CN"])).toBe("toString");
+    expect(localizeDesktopText("Restart@@update", ["en-US"])).toBe("Restart");
+    expect(localizeDesktopText("Restart@@update", ["zh-CN"])).toBe("重启");
+    expect(localizeDesktopText("Custom@@literal", ["en-US"])).toBe("Custom@@literal");
   });
 });

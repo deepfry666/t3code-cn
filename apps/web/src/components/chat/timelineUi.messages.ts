@@ -1,6 +1,13 @@
 import { timelineSharedMessages } from "./timelineShared.messages";
 
 export const timelineUiMessages = {
+  "Agents here can then launch, message and wait on threads there. Revoke it in that machine's Sharing & access.":
+    "这里的智能体随后就能在该机器上启动会话、发送消息并等待结果。可在该机器的“共享与访问”中撤销此连接。",
+  "Create a link on {target}: Settings → Sharing & access → Authorized clients → Create link, then paste its code here.":
+    "在{target}上打开“设置 → 共享与访问 → 已授权客户端 → 创建链接”，然后将链接验证码粘贴到此处。",
+  "This environment is already linked to {target}. The agent can use that link as it is; change its access in Settings → Environments.":
+    "此环境已链接到{target}。智能体可以直接使用该链接；要更改访问权限，请前往“设置 → 环境”。",
+
   "Go to quoted response: {label}": "前往引用的回复：{label}",
   ...timelineSharedMessages,
   "{title} phase": "阶段：{title}",
@@ -451,4 +458,12 @@ export const timelineUiMessages = {
   "Searching the web for {label}": "正在网上搜索 {label}",
   "Searching for {label}": "正在搜索 {label}",
   "Thinking@@announcement": "正在思考",
+  "Go to quoted response: {value1}": "跳转到引用的回答：{value1}",
+  "Go to the response this replies to: {value1}": "跳转到所回复的回答：{value1}",
+  "Back, close {value1} preview": "返回并关闭{value1}预览",
+  "Link {value1}": "链接{value1}",
+  "Create a link on": "在以下环境创建链接：",
+  "This environment is already linked to": "此环境已链接到",
+  "Failed to copy {value1}": "无法复制{value1}",
+  "Reply to this response": "回复这条回答",
 } as const;

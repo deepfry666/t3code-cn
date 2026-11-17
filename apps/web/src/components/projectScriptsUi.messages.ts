@@ -1,4 +1,5 @@
 export const projectScriptsUiMessages = {
+  "{message}. Close and reopen the terminal to retry.": "{message}。请关闭后重新打开终端以重试。",
   Play: "运行",
   Test: "测试",
   Lint: "代码检查",
@@ -93,4 +94,7 @@ export const projectScriptsUiMessages = {
   "Saving…": "正在保存…",
   "Save changes": "保存更改",
   "Save action": "保存操作",
+  "Failed to close interrupted paste": "无法结束中断的粘贴",
+  "Terminal paste interrupted. Paste again when the terminal is ready.":
+    "终端粘贴已中断。请在终端就绪后重新粘贴。",
 };

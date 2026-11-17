@@ -75,6 +75,8 @@ const checkForUpdatesFromMenu = Effect.gen(function* () {
   const languages = yield* (yield* ElectronApp.ElectronApp).preferredSystemLanguages;
   const t = (text: string, params?: Record<string, string | number>) =>
     localizeDesktopText(text, languages, params);
+  const describeUpdate = (version: string | null) =>
+    version === null ? t("A new version of T3 Code") : `T3 Code ${version}`;
 
   if (updateState.status === "up-to-date") {
     yield* electronDialog.showMessageBox({
@@ -85,6 +87,41 @@ const checkForUpdatesFromMenu = Effect.gen(function* () {
       }),
       buttons: [t("OK")],
     });
+  } else if (updateState.status === "available") {
+    const { response } = yield* electronDialog.showMessageBox({
+      type: "info",
+      title: t("Update available"),
+      message: t("{release} is available.", {
+        release: describeUpdate(updateState.availableVersion),
+      }),
+      detail: t("You're running T3 Code {version}.", { version: updateState.currentVersion }),
+      buttons: [t("Download"), t("Later")],
+      defaultId: 0,
+      cancelId: 1,
+    });
+    if (response === 0) yield* updates.download;
+  } else if (updateState.status === "downloading") {
+    yield* electronDialog.showMessageBox({
+      type: "info",
+      title: t("Update downloading"),
+      message: t("{release} is already downloading.", {
+        release: describeUpdate(updateState.availableVersion),
+      }),
+      buttons: [t("OK")],
+    });
+  } else if (updateState.status === "downloaded") {
+    const { response } = yield* electronDialog.showMessageBox({
+      type: "info",
+      title: t("Update ready"),
+      message: t("{release} is ready to install.", {
+        release: describeUpdate(updateState.downloadedVersion ?? updateState.availableVersion),
+      }),
+      detail: t("T3 Code will restart to install it. Any running tasks will be interrupted."),
+      buttons: [t("Restart@@update"), t("Later")],
+      defaultId: 0,
+      cancelId: 1,
+    });
+    if (response === 0) yield* updates.install;
   } else if (updateState.status === "error") {
     yield* electronDialog.showMessageBox({
       type: "warning",

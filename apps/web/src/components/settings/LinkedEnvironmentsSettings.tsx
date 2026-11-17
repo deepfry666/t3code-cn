@@ -48,6 +48,7 @@ import { ITEM_ROW_CLASSNAME, ITEM_ROW_INNER_CLASSNAME } from "./itemRows";
 import { LinkAccessPicker } from "./LinkAccessPicker";
 import { LinkAddressWarning, LinkMachineSelect } from "./LinkMachineSelect";
 import { SettingsRow, SettingsSection } from "./settingsLayout";
+import { useLiveRefresh } from "../../hooks/useLiveRefresh";
 import { useNowMinute } from "../../hooks/useNowMinute";
 import { useLocalizedSetting } from "./useLocalizedSetting";
 
@@ -68,6 +69,19 @@ export function LinkedEnvironmentsSettings({
   const localizedSetting = useLocalizedSetting();
   const t = useTranslation(settingsConnectionsMessages);
   const links = useEnvironmentQuery(peerLinkEnvironment.list({ environmentId, input: {} }));
+  // Links made outside this client bump nothing the shared list reads, so showing the panel
+  // asks again. Listing probes every linked environment, too costly for a timer nobody asked for.
+  // A list still loading counts as read now, so the next return to the window asks again.
+  useLiveRefresh(
+    () => {
+      if (!links.isPending) links.refresh();
+    },
+    {
+      key: `linked-environments:${environmentId}`,
+      intervalMs: null,
+      refreshOnShow: true,
+    },
+  );
   const canLink = useAtomValue(peerLinkEnvironment.link.permissionAtom(environmentId));
   const search = localizedSetting("linked-environments");
   return (
@@ -121,8 +135,8 @@ function LinkedEnvironmentRow({
   const forget = async () => {
     const confirmed = await (requestConfirmDialog(
       t(
-        'Forget {environment}? Agents here stop working there. Revoke "T3 Code · …" in {environment}\'s Connections to end the session there too.',
-        { environment: link.label },
+        'Forget {name}? Agents here stop working there. Revoke "T3 Code · …" in {name}\'s Sharing & access to end the session there too.',
+        { name: link.label },
       ),
       { variant: "destructive" },
     ) ?? Promise.resolve(false));
@@ -311,7 +325,7 @@ function LinkEnvironmentAction({ environmentId }: { readonly environmentId: Envi
           <DialogTitle>{t("Link an environment")}</DialogTitle>
           <DialogDescription>
             {t(
-              "Agents here can then launch, message and wait on threads there. It appears in that environment's Connections, where it can be revoked.",
+              "Agents here can then launch, message and wait on threads there. It appears under Authorized clients in that environment's Sharing & access, where it can be revoked.",
             )}
           </DialogDescription>
         </DialogHeader>
@@ -375,7 +389,7 @@ function LinkEnvironmentAction({ environmentId }: { readonly environmentId: Envi
                   onChange={(event) => setPairingCode(event.target.value)}
                   placeholder={
                     machine === null
-                      ? t("From that environment's Connections, or t3 pair there")
+                      ? t("From Sharing & access there, or t3 pair")
                       : t("Paste the code")
                   }
                   disabled={busy}
@@ -386,8 +400,8 @@ function LinkEnvironmentAction({ environmentId }: { readonly environmentId: Envi
                 {machine !== null ? (
                   <span className="block text-xs text-muted-foreground">
                     {t(
-                      "Create a link on {machine}: Settings → Connections → Create link, then paste its code here.",
-                      { machine: machine.label },
+                      "Create a link on {target}: Settings → Sharing & access → Authorized clients → Create link, then paste its code here.",
+                      { target: machine.label },
                     )}
                   </span>
                 ) : null}

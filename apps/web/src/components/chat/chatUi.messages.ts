@@ -1,4 +1,8 @@
 export const chatUiMessages = {
+  "Create a link on {target}: Settings → Sharing & access → Authorized clients → Create link, then paste its code here.":
+    "在{target}上打开“设置 → 共享与访问 → 已授权客户端 → 创建链接”，然后将链接验证码粘贴到此处。",
+  "This environment is already linked to {target}. The agent can use that link as it is; change its access in Settings → Environments.":
+    "此环境已链接到{target}。智能体可以直接使用该链接；要更改访问权限，请前往“设置 → 环境”。",
   restart: "重新开始",
   "Submitting...": "正在提交…",
   Submit: "提交",

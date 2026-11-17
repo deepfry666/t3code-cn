@@ -1,3 +1,4 @@
+import { translateNow } from "~/i18n/useTranslation";
 import {
   connectionStatusText,
   type EnvironmentConnectionPresentation,
@@ -34,8 +35,10 @@ export function presentSavedCloudEnvironmentConnection(
       };
     case "reconnecting":
       return {
-        buttonLabel: label("Reconnecting…"),
-        statusText,
+        buttonLabel: connection.awaitingApproval
+          ? translateNow(cloudUiMessages, "Waiting for approval…")
+          : translateNow(cloudUiMessages, "Reconnecting…"),
+        statusText: connectionStatusText(connection),
         tone: "connecting",
       };
     case "unsupported":

@@ -1,9 +1,11 @@
+import { translateNow } from "~/i18n/useTranslation";
 import { useTranslation } from "~/i18n/useTranslation";
 import { composerUiMessages } from "./composerUi.messages";
-import type { ComposerTranslator } from "./chatTranslators";
+
 import { BookmarkIcon, FileIcon, FileTextIcon } from "lucide-react";
 import { memo, useEffect, useEffectEvent, useRef, useState, type RefObject } from "react";
 import { assistantCitationsToPlainText } from "@t3tools/shared/assistantCitations";
+import { replaceComposerContextReferences } from "@t3tools/shared/composerContextReferences";
 
 import { RelativeTime } from "../RelativeTime";
 import { cn } from "~/lib/utils";
@@ -16,23 +18,37 @@ function missingImageCount(entry: PromptStashEntry): number {
   return entry.droppedImageNames.length + (entry.unreadableImageNames?.length ?? 0);
 }
 
-function stashEntrySnippet(entry: PromptStashEntry, t: ComposerTranslator): string {
-  const trimmed = assistantCitationsToPlainText(entry.prompt).trim().replace(/\s+/g, " ");
+export function stashEntrySnippet(entry: PromptStashEntry): string {
+  const trimmed = assistantCitationsToPlainText(
+    replaceComposerContextReferences(entry.prompt, (reference) => reference.label),
+  )
+    .trim()
+    .replace(/\s+/g, " ");
   if (trimmed.length > 0) {
-    return trimmed.length > SNIPPET_MAX_CHARS ? `${trimmed.slice(0, SNIPPET_MAX_CHARS)}…` : trimmed;
+    if (trimmed.length <= SNIPPET_MAX_CHARS) return trimmed;
+    // Never end on a lone high surrogate, the first half of an emoji.
+    const last = trimmed.charCodeAt(SNIPPET_MAX_CHARS - 1);
+    const end = last >= 0xd800 && last <= 0xdbff ? SNIPPET_MAX_CHARS - 1 : SNIPPET_MAX_CHARS;
+    return `${trimmed.slice(0, end)}…`;
   }
   const imageCount = entry.attachments.length + entry.droppedImageNames.length;
   const fileCount = entry.files?.length ?? 0;
   const attachmentCount = imageCount + fileCount;
   if (attachmentCount === 0) {
-    return t("(empty)");
+    return translateNow(composerUiMessages, "(empty)");
   }
   const one = attachmentCount === 1;
   return imageCount > 0 && fileCount > 0
-    ? t(one ? "({count} attachment)" : "({count} attachments)", { count: attachmentCount })
+    ? translateNow(composerUiMessages, one ? "({count} attachment)" : "({count} attachments)", {
+        count: attachmentCount,
+      })
     : fileCount > 0
-      ? t(one ? "({count} file)" : "({count} files)", { count: attachmentCount })
-      : t(one ? "({count} image)" : "({count} images)", { count: attachmentCount });
+      ? translateNow(composerUiMessages, one ? "({count} file)" : "({count} files)", {
+          count: attachmentCount,
+        })
+      : translateNow(composerUiMessages, one ? "({count} image)" : "({count} images)", {
+          count: attachmentCount,
+        });
 }
 
 /** Window capture gives the open menu priority over composer key handlers. */
@@ -132,7 +148,11 @@ export const ComposerStashMenu = memo(function ComposerStashMenu(props: {
   }, []);
 
   return (
-    <ComposerBanner.Root ref={drawerRef} data-composer-stash-drawer="true">
+    <ComposerBanner.Root
+      ref={drawerRef}
+      className="flex min-h-0 flex-col after:shrink-0"
+      data-composer-stash-drawer="true"
+    >
       <ComposerBanner.Row
         render={<button type="button" />}
         aria-label={t("Close stash")}
@@ -151,7 +171,7 @@ export const ComposerStashMenu = memo(function ComposerStashMenu(props: {
           <ComposerBanner.ToggleIcon expanded />
         </ComposerBanner.Actions>
       </ComposerBanner.Row>
-      <ComposerBanner.Scroll>
+      <ComposerBanner.Scroll className="flex flex-col">
         <ComposerBanner.Children render={<ul role="list" />} aria-label={t("Stashed prompts")}>
           {entries.length === 0 ? (
             <ComposerBanner.Row render={<li />}>
@@ -190,12 +210,12 @@ export const ComposerStashMenu = memo(function ComposerStashMenu(props: {
                     className="min-w-0 flex-1 cursor-pointer truncate text-left text-foreground/80 outline-none before:absolute before:inset-0 before:rounded-sm focus-visible:before:ring-2 focus-visible:before:ring-inset focus-visible:before:ring-ring"
                     data-stash-restore={entry.id}
                     aria-label={t("Restore stashed prompt: {prompt}", {
-                      prompt: stashEntrySnippet(entry, t),
+                      prompt: stashEntrySnippet(entry),
                     })}
                     onPointerDown={(event) => event.preventDefault()}
                     onClick={() => onRestore(entry)}
                   >
-                    {stashEntrySnippet(entry, t)}
+                    {stashEntrySnippet(entry)}
                   </button>
                 </ComposerBanner.Content>
                 <ComposerBanner.Actions>

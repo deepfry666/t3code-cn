@@ -143,4 +143,9 @@ export const cloudUiMessages = {
     "已在本地断开，但 T3 Connect 未确认已移除该环境",
   "Could not obtain environment link proof.": "无法获取环境关联凭证。",
   "Could not configure environment relay access.": "无法配置环境中继访问。",
+  "Retry sign-in": "重试登录",
+  "Require approval for new devices": "新设备连接需要审批",
+  "Devices that sign in to your T3 Connect account wait until someone already connected here approves them.":
+    "登录你的 T3 Connect 账号的设备，需要等待已连接到此环境的人员批准。",
+  "Waiting for approval…": "等待批准…",
 } as const;

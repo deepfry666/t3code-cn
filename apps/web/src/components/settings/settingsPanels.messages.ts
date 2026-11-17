@@ -196,6 +196,13 @@ export const settingsPanelsMessages = {
     "安装更新并重启 T3 Code？\n\n正在运行的任务会被中断。请确认已准备好再继续。",
   "Install update {version} and restart T3 Code?\n\nAny running tasks will be interrupted. Make sure you're ready before continuing.":
     "安装更新 {version} 并重启 T3 Code？\n\n正在运行的任务会被中断。请确认已准备好再继续。",
+  "Screen reader window title": "屏幕阅读器窗口标题",
+  "Keep awake while agents work": "智能体工作时保持唤醒",
+  "Screen reader": "屏幕阅读器",
+  "Start the window title with the thread's status, like Needs approval, and its name, so screen readers read them first when you switch apps. Taskbars, shared screens, and time trackers see it too.":
+    "将会话状态（如需要审批）和名称放在窗口标题开头，便于屏幕阅读器在切换应用时优先朗读。任务栏、共享屏幕和时间记录工具也会显示这些内容。",
+  "Stop the computer from going to sleep while agents are working, and let it sleep once they finish. Closing a laptop lid still puts it to sleep.":
+    "智能体工作时阻止电脑进入睡眠，完成后恢复正常睡眠。合上笔记本盖仍会进入睡眠。",
 } as const;
 
 const UPDATE_TEXT_TEMPLATES = [

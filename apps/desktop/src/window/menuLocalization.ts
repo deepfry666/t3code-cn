@@ -1,6 +1,33 @@
 import type * as Electron from "electron";
 
 const labels: Readonly<Record<string, string>> = {
+  "Trust and Remember": "信任并记住",
+  "{host} has an untrusted certificate": "{host} 的证书不受信任",
+  "No trusted authority issued this certificate.": "此证书并非由受信任的机构签发。",
+  "This certificate is not for this address.": "此证书不适用于当前地址。",
+  "This certificate has expired or is not valid yet.": "此证书已过期或尚未生效。",
+  "Issued to: {name}": "颁发给：{name}",
+  "Issued by: {name}": "颁发者：{name}",
+  "Valid: {start} – {end}": "有效期：{start} – {end}",
+  "Fingerprint: {fingerprint}": "指纹：{fingerprint}",
+  "Trust it only if you know this certificate belongs to the site. Clearing this browser profile's cookies forgets it.":
+    "仅在确认此证书属于该网站时信任它。清除此浏览器配置的 cookies 后将不再信任此证书。",
+  "Could not trust the certificate for {host}": "无法信任 {host} 的证书",
+  "T3 Code could not save this approval, so the page stays blocked. Check that the disk is not full and its data folder is writable, then try again.":
+    "T3 Code 无法保存此次批准，因此页面仍被阻止。请检查磁盘空间和数据目录的写入权限后重试。",
+  "A new version of T3 Code": "T3 Code 新版本",
+  "Update available": "有可用更新",
+  "{release} is available.": "{release} 已可用。",
+  "You're running T3 Code {version}.": "你当前运行的是 T3 Code {version}。",
+  Download: "下载",
+  Later: "稍后",
+  "Update downloading": "正在下载更新",
+  "{release} is already downloading.": "正在下载 {release}。",
+  "Update ready": "更新已就绪",
+  "{release} is ready to install.": "{release} 已可安装。",
+  "T3 Code will restart to install it. Any running tasks will be interrupted.":
+    "T3 Code 将重启以安装更新，正在运行的任务会被中断。",
+  "Restart@@update": "重启",
   File: "文件",
   Edit: "编辑",
   View: "查看",
@@ -111,10 +138,10 @@ export function localizeDesktopText(
   languages: readonly string[],
   params: Readonly<Record<string, string | number>> = {},
 ): string {
+  const known = Object.hasOwn(labels, text);
+  const source = known ? (text.split("@@")[0] ?? text) : text;
   const message =
-    languages[0]?.toLowerCase().startsWith("zh") && Object.hasOwn(labels, text)
-      ? (labels[text] ?? text)
-      : text;
+    languages[0]?.toLowerCase().startsWith("zh") && known ? (labels[text] ?? source) : source;
   return message.replace(/\{(\w+)\}/g, (placeholder, name: string) =>
     Object.hasOwn(params, name) ? String(params[name]) : placeholder,
   );

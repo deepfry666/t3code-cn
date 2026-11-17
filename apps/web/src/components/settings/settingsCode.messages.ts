@@ -693,6 +693,12 @@ export const settingsCodeMessages = {
   "This provider is not available on this environment.": "此环境上没有这个提供方。",
   "{provider} is turned off.": "{provider} 已关闭。",
   "{provider} is unavailable.": "{provider} 不可用。",
+  "Different actions across checkouts": "各工作副本的操作不同",
+  "Narrow the selection above to one checkout to edit its list. Adding an action here adds it to every selected checkout.":
+    "请在上方选定一个工作副本后编辑其操作列表。在此添加操作会将其加入所有选中的工作副本。",
+  "Offer {value1} when adding or publishing a project": "添加或发布项目时提供 {value1} 选项",
+  "Offer when adding or publishing a project": "添加或发布项目时提供此选项",
+  "Writer model not saved": "写作模型未保存",
 } as const;
 
 const dynamicMessages = [

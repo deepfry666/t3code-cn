@@ -1,3 +1,4 @@
+import { useTranslation } from "~/i18n/useTranslation";
 import { translateNow } from "~/i18n/useTranslation";
 import { globalUiMessages } from "~/components/globalUi.messages";
 import { useAtomValue } from "@effect/atom-react";
@@ -14,7 +15,11 @@ import {
   type ThreadSearchResultsState,
   type ThreadSearchScope,
 } from "@t3tools/client-runtime/state/thread-search";
-import { THREAD_SEARCH_QUERY_MAX_LENGTH } from "@t3tools/contracts";
+import {
+  ProjectSearchContentsError,
+  PROJECT_SEARCH_CONTENTS_QUERY_MAX_LENGTH,
+  THREAD_SEARCH_QUERY_MAX_LENGTH,
+} from "@t3tools/contracts";
 import { messageSearchTokens } from "@t3tools/shared/paletteSearch";
 import { type VcsRefTarget } from "@t3tools/client-runtime/state/vcs";
 import type {
@@ -29,6 +34,7 @@ import type {
   VcsRef,
 } from "@t3tools/contracts";
 import * as Cause from "effect/Cause";
+import * as Schema from "effect/Schema";
 import { AsyncResult, Atom } from "effect/reactivity";
 import { useEffect, useState } from "react";
 
@@ -45,6 +51,8 @@ const PROJECT_PATH_SEARCH_DEBOUNCE_MS = 120;
 const COMPOSER_PATH_SEARCH_LIMIT = 80;
 const PROJECT_CONTENT_SEARCH_DEBOUNCE_MS = 120;
 const PROJECT_CONTENT_SEARCH_LIMIT = 500;
+const PROJECT_CONTENT_SEARCH_SCAN_RETRY_MS = 30_000;
+const isProjectSearchContentsError = Schema.is(ProjectSearchContentsError);
 const THREAD_SEARCH_DEBOUNCE_MS = 120;
 const VCS_REF_LIST_LIMIT = 100;
 const EMPTY_REFS: ReadonlyArray<VcsRef> = [];
@@ -347,7 +355,7 @@ export function useProjectPathSearch(
 }
 
 export function useComposerPathSearch(target: ComposerPathSearchTarget) {
-  return useProjectPathSearch(target, COMPOSER_PATH_SEARCH_LIMIT);
+  return useProjectPathSearch(target, COMPOSER_PATH_SEARCH_LIMIT, { allowEmptyQuery: true });
 }
 
 interface ProjectContentSearchTarget {
@@ -360,6 +368,7 @@ interface ProjectContentSearchTarget {
 }
 
 export function useProjectContentSearch(target: ProjectContentSearchTarget) {
+  const tx = useTranslation(globalUiMessages);
   const hasTarget = target.environmentId !== null && target.cwd !== null;
   const fileAccess = useFilesystemReadAccess(target.environmentId);
   const canReadFiles = hasTarget && fileAccess.canReadFiles;
@@ -367,13 +376,16 @@ export function useProjectContentSearch(target: ProjectContentSearchTarget) {
   // Preserve query whitespace; trim only to detect blank input.
   const query = target.query;
   const hasQuery = query.trim().length > 0;
+  const queryTooLong = query.length > PROJECT_SEARCH_CONTENTS_QUERY_MAX_LENGTH;
   const debouncedQuery = useDebouncedValue(query, PROJECT_CONTENT_SEARCH_DEBOUNCE_MS);
   const result = useEnvironmentQuery(
     canReadFiles &&
       target.environmentId !== null &&
       target.cwd !== null &&
       hasQuery &&
-      debouncedQuery.trim().length > 0
+      !queryTooLong &&
+      debouncedQuery.trim().length > 0 &&
+      debouncedQuery.length <= PROJECT_SEARCH_CONTENTS_QUERY_MAX_LENGTH
       ? projectContentSearch({
           environmentId: target.environmentId,
           input: {
@@ -387,6 +399,22 @@ export function useProjectContentSearch(target: ProjectContentSearchTarget) {
         })
       : null,
   );
+  // Only once the timeout has come back: a refresh restarts a search still in flight.
+  const settledScanTimeout =
+    !result.isPending &&
+    isProjectSearchContentsError(result.failure) &&
+    result.failure.failure === "search_index_scan_timed_out"
+      ? result.failure
+      : null;
+  const { refresh } = result;
+  // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- retry timer: nothing tells the client when the server's first scan ends
+  useEffect(() => {
+    if (settledScanTimeout === null) return;
+    const timer = window.setTimeout(refresh, PROJECT_CONTENT_SEARCH_SCAN_RETRY_MS);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [refresh, settledScanTimeout]);
 
   return {
     canReadFiles,
@@ -395,13 +423,17 @@ export function useProjectContentSearch(target: ProjectContentSearchTarget) {
     error:
       !hasTarget || isCheckingAccess
         ? null
-        : canReadFiles
-          ? result.error
-          : (fileAccess.error ??
-            translateNow(globalUiMessages, "This connection cannot search host files.")),
+        : !canReadFiles
+          ? (fileAccess.error ??
+            translateNow(globalUiMessages, "This connection cannot search host files."))
+          : queryTooLong
+            ? tx("Search is limited to {value1} characters.", {
+                value1: String(PROJECT_SEARCH_CONTENTS_QUERY_MAX_LENGTH),
+              })
+            : result.error,
     isPending:
       isCheckingAccess ||
-      (canReadFiles && hasQuery && (query !== debouncedQuery || result.isPending)),
+      (canReadFiles && hasQuery && !queryTooLong && (query !== debouncedQuery || result.isPending)),
     hasQuery,
     truncated: result.data?.truncated ?? false,
     invalidRegex: target.useRegex && result.data?.regexFallbackError !== undefined,

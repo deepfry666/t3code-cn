@@ -86,6 +86,7 @@ vi.mock("../ui/toast", () => ({
 
 import { MediaActions, useMediaActions, type MediaActionSource } from "./MediaActions";
 import { setLocale } from "../../../test/locale";
+import { ClipboardWriteError } from "../../hooks/useCopyToClipboard";
 
 const environmentId = EnvironmentId.make("media-environment");
 const threadId = ThreadId.make("media-thread");
@@ -201,7 +202,9 @@ it("words a failed copy in the interface language", async () => {
   const completed = deferred<void>();
   state.menuFinished = () => completed.resolve();
   state.showMenu.mockResolvedValue("copy-relative-path");
-  state.copyText.mockRejectedValue(new Error("ClipboardWriteError"));
+  state.copyText.mockRejectedValue(
+    new ClipboardWriteError({ target: "file path", cause: new Error("Write denied") }),
+  );
 
   openMenu(hostSource());
   await completed.promise;
@@ -222,7 +225,9 @@ it("words a failed copy in Chinese", async () => {
   const completed = deferred<void>();
   state.menuFinished = () => completed.resolve();
   state.showMenu.mockResolvedValue("copy-relative-path");
-  state.copyText.mockRejectedValue(new Error("ClipboardWriteError"));
+  state.copyText.mockRejectedValue(
+    new ClipboardWriteError({ target: "file path", cause: new Error("Write denied") }),
+  );
 
   openMenu(hostSource());
   await completed.promise;

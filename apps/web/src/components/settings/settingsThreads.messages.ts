@@ -1,6 +1,7 @@
 import { translate, type Locale } from "~/i18n/locale";
 
 export const settingsThreadsMessages = {
+  'Delete "{title}"?\nThis cannot be undone.': "删除“{title}”？\n此操作无法撤销。",
   Filters: "筛选条件",
   "Run only when every filter matches. Other requests are logged as filtered. Separate “is one of” values with commas; a value can't contain a comma.":
     "仅在所有筛选条件都满足时运行。其他请求会记为已过滤。“属于以下值之一”的多个值用英文逗号分隔，值本身不能包含逗号。",
@@ -386,6 +387,7 @@ export const settingsThreadsMessages = {
   "This machine": "本机",
   "Remote link": "远程连接",
   "via {route}": "通过 {route}",
+  "Pick a time.": "请选择时间。",
 } as const;
 
 const DYNAMIC_LABELS = [

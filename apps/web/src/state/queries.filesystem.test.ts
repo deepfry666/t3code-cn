@@ -24,6 +24,7 @@ vi.mock("react", async (importOriginal) => ({
   useEffect: () => {},
   useMemo: <A>(factory: () => A) => factory(),
   useState: <A>(value: A) => [value, vi.fn()],
+  useSyncExternalStore: <A>(_subscribe: unknown, getSnapshot: () => A) => getSnapshot(),
 }));
 vi.mock("./session", () => ({
   environmentSession: { sessionStateAtom: () => state.sessionAtom },
@@ -100,6 +101,7 @@ const contentTarget = {
 };
 
 it.each([
+  { query: "", expected: "" },
   { query: "src", expected: "src" },
   { query: "a".repeat(256), expected: "a".repeat(256) },
   {
@@ -123,6 +125,16 @@ it.each([
     expect(result.isPending).toBe(false);
   },
 );
+
+it("explains an overlong content query instead of sending it", () => {
+  state.session = { authenticated: true, scopes: [AuthFilesystemReadScope] };
+  const result = useProjectContentSearch({ ...contentTarget, query: "a".repeat(257) });
+
+  expect(state.contentRequests).not.toHaveBeenCalled();
+  expect(result.matches).toEqual([]);
+  expect(result.isPending).toBe(false);
+  expect(result.error).toMatch(/256/);
+});
 
 it("shows content-search denial before typing and never issues an unauthorized request", () => {
   state.session = { authenticated: true, scopes: [] };

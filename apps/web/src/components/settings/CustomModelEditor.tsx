@@ -1,7 +1,7 @@
 import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { settingsProvidersMessages, translateProviderLabel } from "./settingsProviders.messages";
 import { PlusIcon, XIcon } from "lucide-react";
-import { useState } from "react";
+import { useState, type SetStateAction } from "react";
 import type { ProviderDriverKind, ServerProviderModel } from "@t3tools/contracts";
 import type { CustomModelDefinition } from "@t3tools/shared/model";
 
@@ -35,6 +35,7 @@ interface CustomModelEditorProps {
   readonly builtInModels: ReadonlyArray<ServerProviderModel>;
   readonly onSave: (next: CustomModelDefinition) => void;
   readonly onCancel: () => void;
+  readonly onDraftChange: () => void;
 }
 
 export function CustomModelEditor({
@@ -44,12 +45,17 @@ export function CustomModelEditor({
   builtInModels,
   onSave,
   onCancel,
+  onDraftChange,
 }: CustomModelEditorProps) {
   const t = useTranslation(settingsProvidersMessages);
   const locale = useLocale();
   const tl = (label: string) => translateProviderLabel(label, locale);
   const [draft, setDraft] = useState<CustomModelDraft>(() => draftFromDefinition(entry));
   const [error, setError] = useState<string | null>(null);
+  const updateDraft = (next: SetStateAction<CustomModelDraft>) => {
+    onDraftChange();
+    setDraft(next);
+  };
   const presets = driverKind ? (DESCRIPTOR_PRESETS_BY_KIND[driverKind] ?? []) : [];
   const startFromCandidates = builtInModels.filter(
     (model) => (model.capabilities?.optionDescriptors?.length ?? 0) > 0,
@@ -58,7 +64,7 @@ export function CustomModelEditor({
 
   const updateDescriptor = (key: string, patch: Partial<EditorDescriptor>) => {
     setError(null);
-    setDraft((current) => ({
+    updateDraft((current) => ({
       ...current,
       descriptors: current.descriptors.map((descriptor) =>
         descriptor.key === key ? { ...descriptor, ...patch } : descriptor,
@@ -68,7 +74,7 @@ export function CustomModelEditor({
 
   const updateChoice = (descriptorKey: string, choiceKey: string, patch: Partial<EditorChoice>) => {
     setError(null);
-    setDraft((current) => ({
+    updateDraft((current) => ({
       ...current,
       descriptors: current.descriptors.map((descriptor) => {
         if (descriptor.key !== descriptorKey) return descriptor;
@@ -85,7 +91,7 @@ export function CustomModelEditor({
 
   const removeDescriptor = (key: string) => {
     setError(null);
-    setDraft((current) => ({
+    updateDraft((current) => ({
       ...current,
       descriptors: current.descriptors.filter((descriptor) => descriptor.key !== key),
     }));
@@ -93,7 +99,7 @@ export function CustomModelEditor({
 
   const addDescriptor = (descriptor: EditorDescriptor) => {
     setError(null);
-    setDraft((current) => ({ ...current, descriptors: [...current.descriptors, descriptor] }));
+    updateDraft((current) => ({ ...current, descriptors: [...current.descriptors, descriptor] }));
   };
 
   const applyPresetId = (descriptor: EditorDescriptor, value: string | null) => {
@@ -119,7 +125,7 @@ export function CustomModelEditor({
     const model = startFromCandidates.find((candidate) => candidate.slug === slug);
     if (!model) return;
     setError(null);
-    setDraft((current) => ({
+    updateDraft((current) => ({
       ...current,
       descriptors: descriptorsFromCapabilities(model.capabilities, driverKind),
     }));
@@ -301,7 +307,7 @@ export function CustomModelEditor({
           size="sm"
           autoFocus
           value={draft.name}
-          onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))}
+          onChange={(event) => updateDraft((current) => ({ ...current, name: event.target.value }))}
           placeholder={draft.slug}
           className="sm:w-72"
           spellCheck={false}
