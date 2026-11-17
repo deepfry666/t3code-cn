@@ -1,4 +1,4 @@
-import { useTranslation } from "~/i18n/useTranslation";
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { composerUiMessages } from "./composerUi.messages";
 import type { ChatComposerProps } from "./ChatComposer";
 import type { PromptUltrathink } from "./TraitsPicker";
@@ -164,7 +164,8 @@ export function ComposerControlsBar(props: {
     promptUltrathink,
     onPromptEdit,
   });
-  const effort = describeComposerEffort(traitsInput, props.effortDisplay, controlSize);
+  const locale = useLocale();
+  const effort = describeComposerEffort(traitsInput, props.effortDisplay, controlSize, locale);
   const restingBlockDefs = showModeBlock
     ? [
         {

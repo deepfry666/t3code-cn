@@ -6,7 +6,7 @@ import {
 } from "@t3tools/client-runtime/state/runtime";
 import { useRef, useState } from "react";
 
-import { readLocale } from "~/i18n/useTranslation";
+import { readLocale, useTranslation } from "~/i18n/useTranslation";
 import { useEnvironmentProviders, useEnvironments } from "~/state/environments";
 import { serverEnvironment } from "~/state/server";
 import { useEnvironmentsWithScope } from "~/state/session";
@@ -18,6 +18,7 @@ import {
   type ProviderUpdateRun,
 } from "./ProviderUpdateLaunchNotification.logic";
 import { translateSidebarLabel } from "./sidebar/sidebarUi.messages";
+import { globalUiMessages } from "./globalUi.messages";
 import { Button } from "./ui/button";
 import { stackedThreadToast, toastManager } from "./ui/toast";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "./ui/tooltip";
@@ -130,6 +131,7 @@ export function useProviderUpdates() {
 }
 
 export function ProviderUpdatesAction() {
+  const t = useTranslation(globalUiMessages);
   const { machines, updateAll } = useProviderUpdates();
   const pending = useRef(false);
   const [isPending, setIsPending] = useState(false);
@@ -156,7 +158,7 @@ export function ProviderUpdatesAction() {
             disabled={isPending}
             onClick={() => void handleUpdate()}
           >
-            {isPending ? "Updating…" : "Update all"}
+            {isPending ? t("Updating…") : t("Update all")}
           </Button>
         }
       />

@@ -9,8 +9,9 @@ import { useState } from "react";
 import { expect, it } from "vite-plus/test";
 import { page, userEvent } from "vite-plus/test/browser";
 
-import { render } from "../../../test/render";
+import { act, render } from "../../../test/render";
 import { ComposerEffortColumn, describeComposerEffort } from "./ComposerModelEffort";
+import { setLocale } from "../../../test/locale";
 import type { TraitsSelectionInput } from "./TraitsPicker";
 
 // Shaped like Devin over ACP: its session mode comes first, and its reasoning id is its own.
@@ -121,4 +122,65 @@ it("draws an agent's reasoning as bars and keeps its mode out of the levels", as
     .element(screen.getByRole("button", { name: "Session Mode: Plan" }))
     .toBeInTheDocument();
   await expect.element(page.getByRole("menuitemradio")).not.toBeInTheDocument();
+});
+
+it("translates provider options live while persisting their original values", async () => {
+  const changes: Array<ReadonlyArray<ProviderOptionSelection> | undefined> = [];
+  const traits: TraitsSelectionInput = {
+    ...traitsInput([], (next) => changes.push(next)),
+    models: [
+      {
+        slug: "fusion",
+        name: "Fusion",
+        isCustom: false,
+        capabilities: createModelCapabilities({
+          optionDescriptors: [
+            {
+              id: "reasoningEffort",
+              label: "Reasoning",
+              role: "reasoning",
+              type: "select",
+              currentValue: "high",
+              options: [
+                { id: "low", label: "Low" },
+                { id: "high", label: "High" },
+              ],
+            },
+            {
+              id: "cyberAccess",
+              label: "Cyber Access",
+              type: "select",
+              currentValue: "standard",
+              options: [
+                { id: "standard", label: "Standard" },
+                { id: "restricted", label: "Restricted" },
+              ],
+            },
+          ],
+        }),
+      },
+    ],
+  };
+  try {
+    setLocale("zh-CN");
+    // The picker writes options directly; no routes involved.
+    await using screen = await render(<ComposerEffortColumn traits={traits} />, { router: false });
+    await expect.element(screen.getByRole("radiogroup", { name: "推理" })).toBeVisible();
+    await userEvent.click(screen.getByRole("radio", { name: "低" }));
+    expect(changes.at(-1)).toEqual(
+      expect.arrayContaining([{ id: "reasoningEffort", value: "low" }]),
+    );
+    await userEvent.click(screen.getByRole("button", { name: "网络安全访问: 标准" }));
+    await userEvent.click(page.getByRole("menuitemradio", { name: "受限" }));
+    expect(changes.at(-1)).toEqual(
+      expect.arrayContaining([{ id: "cyberAccess", value: "restricted" }]),
+    );
+    await act(() => setLocale("en"));
+    await expect.element(screen.getByRole("radiogroup", { name: "Reasoning" })).toBeVisible();
+    await expect
+      .element(screen.getByRole("button", { name: "Cyber Access: Standard" }))
+      .toBeVisible();
+  } finally {
+    setLocale("en");
+  }
 });

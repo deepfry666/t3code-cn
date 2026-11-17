@@ -1,7 +1,7 @@
 import { type TimestampFormat } from "@t3tools/contracts/settings";
 
-import { translateNow } from "./i18n/useTranslation";
-import { timestampFormatMessages } from "./timestampFormat.messages";
+import { readLocale, translateNow } from "./i18n/useTranslation";
+import { timestampFormatMessages, translateTimestampLabel } from "./timestampFormat.messages";
 
 function getTimestampFormatOptions(
   timestampFormat: TimestampFormat,
@@ -291,7 +291,10 @@ export function formatRelativeTime(
 export function formatRelativeTimeLabel(isoDate: string, nowMs: number = Date.now()) {
   const relative = formatRelativeTime(isoDate, nowMs);
   if (!relative) return "";
-  return relative.suffix ? `${relative.value} ${relative.suffix}` : relative.value;
+  return translateTimestampLabel(
+    relative.suffix ? `${relative.value} ${relative.suffix}` : relative.value,
+    readLocale(),
+  );
 }
 
 export function formatElapsedDurationLabel(isoDate: string, nowMs: number = Date.now()): string {

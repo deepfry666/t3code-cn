@@ -1,6 +1,6 @@
-import { useTranslation } from "~/i18n/useTranslation";
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
 import { SettingsGroup } from "./SettingsGroup";
-import { settingsMessages } from "./settingsMessages";
+import { settingsMessages, translateSettingsLabel } from "./settingsMessages";
 import { AuthSettingsWriteScope } from "@t3tools/contracts";
 import { usePrimaryEnvironmentId, usePrimaryEnvironment } from "../../state/environments";
 import { useEnvironmentScope, useEnvironmentsWithScope } from "../../state/session";
@@ -342,6 +342,7 @@ export function SettingsRow({
   managed?: string | undefined;
   children?: ReactNode;
 }) {
+  const locale = useLocale();
   const targetRef = useSettingsSearchTarget<HTMLDivElement>(rowProps.id);
   const t = useTranslation(settingsMessages);
   const primarySettingsAvailable = usePrimarySettingsAvailable();
@@ -520,7 +521,9 @@ export function SettingsRow({
       <div className="flex flex-col gap-3 @min-[32rem]/settings-row:grid @min-[32rem]/settings-row:grid-cols-[minmax(0,1fr)_auto] @min-[32rem]/settings-row:items-center @min-[32rem]/settings-row:gap-8">
         <div className="min-w-0 flex-1 space-y-1">
           <div className="flex min-h-5 items-center gap-1.5">
-            <h3 className="text-sm font-medium text-foreground">{title}</h3>
+            <h3 className="text-sm font-medium text-foreground">
+              {typeof title === "string" ? translateSettingsLabel(title, locale) : title}
+            </h3>
             {renderedInheritance ? (
               <span
                 className={cn(

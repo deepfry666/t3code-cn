@@ -278,6 +278,7 @@ export const globalUiMessages = {
   "Switch tracks in About → Update track": "在“关于 → 更新通道”中切换通道",
   "Server update failed.": "服务器更新失败。",
   "Update all": "全部更新",
+  "Updating…": "正在更新…",
   Update: "更新",
   "Desktop app relaunched on {version}.": "桌面应用已重新启动，版本为 {version}。",
   "Reconnected on t3@{version}.": "已重新连接到 t3@{version}。",

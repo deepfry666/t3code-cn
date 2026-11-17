@@ -679,7 +679,7 @@ export const AuthorizedClientsHeaderAction = memo(function AuthorizedClientsHead
     <div className="flex flex-wrap items-center justify-end gap-2">
       <Button size="xs" variant="outline" onClick={() => openUseInAnotherApp(environmentId)}>
         <PlugIcon className="size-3" />
-        Use in another app (MCP)
+        {t("Use in another app (MCP)")}
       </Button>
       <Button
         size="xs"

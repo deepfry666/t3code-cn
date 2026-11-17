@@ -2,6 +2,7 @@ import { translateRuntimeError } from "../runtimeErrorLabels";
 import { translate, type Locale } from "~/i18n/locale";
 
 export const settingsConnectionsMessages = {
+  "Use in another app (MCP)": "在其他应用中使用（MCP）",
   "Agents here can then launch, message and wait on threads there. It appears under Authorized clients in that environment's Sharing & access, where it can be revoked.":
     "这里的智能体随后就能在该环境中启动会话、发送消息并等待结果。此连接将显示在该环境“共享与访问”的“已授权客户端”中，可在那里撤销。",
   "Require approval for new T3 Connect devices": "新 T3 Connect 设备需要批准",
