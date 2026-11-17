@@ -76,8 +76,8 @@ expected=(
   "T3-Code-$version-x64.exe" "T3-Code-$version-x64.exe.blockmap" latest.yml
   "T3-Code-$version-arm64.dmg" "T3-Code-$version-arm64.dmg.blockmap"
   "T3-Code-$version-arm64.zip" "T3-Code-$version-arm64.zip.blockmap" latest-mac.yml
-  "T3-Code-$version-x86_64.AppImage" "T3-Code-$version-amd64.deb" latest-linux.yml
-  "T3-Code-$version-arm64.AppImage" "T3-Code-$version-arm64.deb" latest-linux-arm64.yml
+  "T3-Code-x86_64.AppImage" "T3-Code-$version-amd64.deb" latest-linux.yml
+  "T3-Code-arm64.AppImage" "T3-Code-$version-arm64.deb" latest-linux-arm64.yml
   "t3-$version-darwin-arm64.tar.gz" "t3-$version-linux-x64.tar.gz" "t3-$version-linux-arm64.tar.gz"
 )
 assets="$(gh release view "v$version" -R "$repository" --json isDraft,assets)"

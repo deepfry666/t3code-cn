@@ -86,7 +86,7 @@ interface SourceRow {
   readonly description: ReactNode;
   readonly environments: ReadonlyArray<SourceEnvironment>;
   /**
-   * One machine or account every environment reaches the same way (an SSH host, EAS, a Simlock
+   * One machine or account every environment reaches the same way (an SSH host, Expo, a Simlock
    * pool), so its platforms are the same for all of them. Local simulators differ per machine.
    */
   readonly shared: boolean;
@@ -274,7 +274,7 @@ export function DeviceSourcesSettings(props: {
           ),
         },
       })),
-      remove ? t("EAS host not removed everywhere") : t("EAS host not saved everywhere"),
+      remove ? t("Expo host not removed everywhere") : t("Expo host not saved everywhere"),
     );
     if (saved) setEditing(null);
   };
@@ -484,8 +484,8 @@ export function DeviceSourcesSettings(props: {
         key: `eas:${host.id}`,
         shared: true,
         title: host.label,
-        kind: "EAS",
-        description: tl(easSessionLimits(host)),
+        kind: "Expo",
+        description: easSessionLimits(host),
         environments: active.map((member) => {
           const added = (member.settings?.easDeviceHosts ?? []).some(
             (candidate) => candidate.id === host.id,
@@ -575,7 +575,7 @@ export function DeviceSourcesSettings(props: {
               })
             }
           >
-            {t("EAS Simulator")}
+            {t("Expo Simulators")}
           </MenuItem>
         ) : null}
         {props.supportsSimlock && simlockEnabled ? (

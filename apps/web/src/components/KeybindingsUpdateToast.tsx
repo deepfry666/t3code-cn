@@ -7,24 +7,13 @@ import { translateNow } from "~/i18n/useTranslation";
 import { globalUiMessages } from "./globalUi.messages";
 import { stackedThreadToast, toastManager } from "./ui/toast";
 
-/** Toasts each keybindings reload the primary server reports. */
 export function startKeybindingsUpdateToasts(): () => void {
   const controller = createKeybindingsUpdateToastController({});
   return subscribeAtomChanges(primaryServerConfigEventAtom, (event) => {
     const decision = controller.handle(event);
     if (!decision) return;
 
-    if (decision._tag === "Success") {
-      toastManager.add({
-        type: "success",
-        title: translateNow(globalUiMessages, "Keybindings updated"),
-        description: translateNow(
-          globalUiMessages,
-          "Keybindings configuration reloaded successfully.",
-        ),
-      });
-      return;
-    }
+    if (decision._tag === "Success") return;
 
     const serverConfig = appAtomRegistry.get(primaryServerConfigAtom);
     toastManager.add(

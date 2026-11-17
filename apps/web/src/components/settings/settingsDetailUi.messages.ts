@@ -62,4 +62,6 @@ export const settingsDetailUiMessages = {
   "Status only": "仅状态",
   "Status and messages": "状态和消息",
   Everything: "全部",
+  "Screen reader window title": "屏幕阅读器窗口标题",
+  "Keep awake while agents work": "智能体工作时保持唤醒",
 } as const;

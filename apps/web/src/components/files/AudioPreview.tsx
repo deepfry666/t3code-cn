@@ -1,3 +1,4 @@
+import { filesUiMessages } from "./filesUi.messages";
 import { LoaderCircleIcon, PauseIcon, PlayIcon, TriangleAlertIcon } from "lucide-react";
 import { createContext, useContext, useRef, useState } from "react";
 
@@ -6,7 +7,7 @@ import { useTranslation } from "~/i18n/useTranslation";
 
 import { ContextChip, ContextChipAction, ContextChipLabel } from "../ContextChip";
 import { middleTruncateAttachmentName } from "../composerInlineChip";
-import { filesUiMessages } from "./filesUi.messages";
+import { Spinner } from "../ui/spinner";
 
 export const AudioPreviewUnmountContext = createContext<((audio: HTMLAudioElement) => void) | null>(
   null,
@@ -144,7 +145,7 @@ function AudioChip(props: AudioPreviewProps) {
             });
         }}
       >
-        <Icon aria-hidden className={loading && props.src ? "animate-spin" : undefined} />
+        {loading && props.src ? <Spinner aria-hidden /> : <Icon aria-hidden />}
       </ContextChipAction>
       <ContextChipLabel className={props.variant === "bubble" ? "flex-1" : "max-w-72"}>
         {open ? (

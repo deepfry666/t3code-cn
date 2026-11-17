@@ -2,6 +2,7 @@ import { createLabelTranslator } from "../../i18n/labelTranslation";
 import { translate, type Locale } from "../../i18n/locale";
 
 export const usageUiMessages = {
+  "$0 cap": "上限 $0",
   "Updating {count} providers…": "正在更新 {count} 个提供方…",
   "Updating {count} environments…": "正在更新 {count} 个环境…",
   "Updating {provider}…": "正在更新 {provider}…",

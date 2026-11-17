@@ -548,6 +548,9 @@ export const settingsProvidersMessages = {
   "{count} models available. Pick one in a text generation model picker.":
     "有 {count} 个可用模型。可在文本生成模型选择器中选用。",
   Refresh: "刷新",
+  "This sign-in link is not a web address, so it was not opened.":
+    "此登录链接不是网页地址，因此未打开。",
+  "Enter a valid value. It was not saved.": "请输入有效值，当前值未保存。",
 } as const;
 
 const providerLabelTemplates = [

@@ -16,12 +16,16 @@ import {
   sessionGrantsScope,
   type SessionGrantInput,
 } from "@t3tools/contracts";
-import * as Schema from "effect/Schema";
 import { AsyncResult } from "effect/reactivity";
+import * as Schema from "effect/Schema";
 import { useRef, useState, type ReactElement } from "react";
 
 import { translateNow } from "~/i18n/useTranslation";
-import { ClipboardApiUnavailableError, writeTextToClipboard } from "../../hooks/useCopyToClipboard";
+import {
+  ClipboardApiUnavailableError,
+  ClipboardWriteError,
+  writeTextToClipboard,
+} from "../../hooks/useCopyToClipboard";
 import { readLocalApi } from "../../localApi";
 import { appAtomRegistry } from "../../rpc/atomRegistry";
 import { assetEnvironment } from "../../state/assets";
@@ -32,8 +36,6 @@ import { stackedThreadToast, toastManager } from "../ui/toast";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 import { downloadMedia, readMediaPng } from "./mediaContent";
 import { mediaUiMessages } from "./mediaUi.messages";
-
-const isClipboardApiUnavailable = Schema.is(ClipboardApiUnavailableError);
 
 /** Failure titles stay per action so each reads naturally in either language. */
 function mediaActionFailure(action: MediaActionId, kind: MediaActionSource["kind"]) {
@@ -57,6 +59,21 @@ function mediaActionFailure(action: MediaActionId, kind: MediaActionSource["kind
 /** Imperative menu labels and toasts; the component itself renders no text of its own. */
 const t = (key: keyof typeof mediaUiMessages, params?: Readonly<Record<string, string | number>>) =>
   translateNow(mediaUiMessages, key, params);
+
+const isClipboardApiUnavailable = Schema.is(ClipboardApiUnavailableError);
+const isClipboardWriteError = Schema.is(ClipboardWriteError);
+
+function mediaActionDescription(error: unknown) {
+  if (isClipboardApiUnavailable(error) || isClipboardWriteError(error)) {
+    return t(
+      isClipboardApiUnavailable(error)
+        ? "Clipboard API is unavailable while copying {target}."
+        : "Failed to copy {target} to the clipboard.",
+      { target: error.target === "file path" ? t("file path") : error.target },
+    );
+  }
+  return error instanceof Error ? error.message : t("The media action failed.");
+}
 
 export interface MediaActionSource {
   readonly kind: "image" | "video";
@@ -212,23 +229,10 @@ export function MediaActions({
       if (text !== undefined) {
         const clipboardText =
           reference?.kind === "file" ? formatFilePathForClipboard(text, reference.path) : text;
-        const target = reference?.kind === "file" ? t("file path") : t("URL");
-        // The clipboard hook's own messages name its target in English, which the toast translates.
-        await writeTextToClipboard(clipboardText, target).catch((cause: unknown) => {
-          throw new Error(
-            translateNow(
-              mediaUiMessages,
-              isClipboardApiUnavailable(cause)
-                ? "Clipboard API is unavailable while copying {target}."
-                : "Failed to copy {target} to the clipboard.",
-              { target },
-            ),
-          );
-        });
-        toastManager.add({
-          type: "success",
-          title: action === "copy-url" ? t("URL copied") : t("Path copied"),
-        });
+        await writeTextToClipboard(
+          clipboardText,
+          reference?.kind === "file" ? t("file path") : t("URL"),
+        );
       } else if (action === "open-file") {
         assertCanReadMedia();
         source.onOpenFile?.();
@@ -239,10 +243,7 @@ export function MediaActions({
             action === "save" ? t("Preparing {noun} download…", { noun }) : t("Copying image…"),
         });
         await (action === "save" ? save() : copyImage());
-        toastManager.update(progressToast, {
-          type: "success",
-          title: action === "save" ? t("Download started") : t("Image copied"),
-        });
+        toastManager.close(progressToast);
       }
     });
     if (AsyncResult.isFailure(result)) {
@@ -250,7 +251,7 @@ export function MediaActions({
       const toast = stackedThreadToast({
         type: "error",
         title: failureTitle,
-        description: error instanceof Error ? error.message : t("The media action failed."),
+        description: mediaActionDescription(error),
       });
       if (progressToast) toastManager.update(progressToast, toast);
       else toastManager.add(toast);

@@ -317,6 +317,8 @@ export const filesUiMessages = {
   "Truncated TIFF strip.": "TIFF 条带不完整。",
   "Unsupported TIFF metadata type.": "不支持的 TIFF 元数据类型。",
   "Unsupported TIFF strip layout.": "不支持的 TIFF 条带布局。",
+  "Resizing preview...": "正在调整预览大小…",
+  "This row or column could not be resized.": "无法调整此行或列的大小。",
 };
 
 export function translateFilesMessage(message: string, locale: Locale): string {

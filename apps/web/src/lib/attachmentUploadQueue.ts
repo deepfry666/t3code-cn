@@ -1,5 +1,6 @@
 import {
   AuthOrchestrationOperateScope,
+  AuthOrchestrationReadScope,
   PROVIDER_SEND_TURN_SUPPORTED_IMAGE_MIME_TYPES,
   type ChatAttachment,
   type EnvironmentId,
@@ -403,6 +404,7 @@ export function startAttachmentUpload(input: {
   readonly environmentId: EnvironmentId;
   readonly image: ComposerImageAttachment | ComposerFileAttachment;
   readonly draftTarget?: ComposerThreadTarget;
+  readonly force?: boolean;
 }): void {
   if (!readEnvironmentScope(input.environmentId, AuthOrchestrationOperateScope)) return;
   const existingJob = jobsByImageId.get(input.image.id);
@@ -411,7 +413,11 @@ export function startAttachmentUpload(input: {
   }
 
   const existing = readAttachmentUpload(input.image.id);
-  if (existing?.status === "ready" && existing.environmentId === input.environmentId) {
+  if (
+    !input.force &&
+    existing?.status === "ready" &&
+    existing.environmentId === input.environmentId
+  ) {
     // A file restored into a draft after its upload finished (stash, failed send) missed the
     // completion stamp; stamping here keeps it from re-uploading after a reload.
     stampDraftFileUpload(input, existing.attachmentId);
@@ -430,6 +436,8 @@ export function startAttachmentUpload(input: {
       deletePendingUpload(existing.environmentId, existing.attachmentId);
     }
     setUploadState(input.image.id, existing.previous);
+    // Retargeting a scratch draft cleared the file's upload stamp; restore it for reloads.
+    stampDraftFileUpload(input, existing.previous.attachmentId);
     return;
   }
 
@@ -446,7 +454,8 @@ export function startAttachmentUpload(input: {
     environmentId: input.environmentId,
     ...(input.draftTarget !== undefined ? { draftTarget: input.draftTarget } : {}),
     ...(previous ? { previous } : {}),
-    ...(input.image.type === "file" &&
+    ...(!input.force &&
+    input.image.type === "file" &&
     input.image.uploadEnvironmentId === input.environmentId &&
     input.image.uploadedAttachmentId
       ? { persistedAttachmentId: input.image.uploadedAttachmentId }
@@ -586,6 +595,75 @@ export function verifyStashedAttachmentUpload(input: {
 
 export async function awaitAttachmentUploads(imageIds: ReadonlyArray<string>): Promise<void> {
   await Promise.all(imageIds.map((imageId) => jobsByImageId.get(imageId)?.settled));
+}
+
+/** Revalidate ready uploads at send time; a long-lived draft can outlive server cleanup. */
+export async function refreshExpiredAttachmentUploads(input: {
+  readonly environmentId: EnvironmentId;
+  readonly images: ReadonlyArray<ComposerImageAttachment | ComposerFileAttachment>;
+  readonly draftTarget?: ComposerThreadTarget;
+}): Promise<void> {
+  const canVerify = readEnvironmentScope(input.environmentId, AuthOrchestrationReadScope);
+  await Promise.all(
+    input.images.map(async (image) => {
+      const upload = readAttachmentUpload(image.id);
+      if (upload?.status !== "ready" || upload.environmentId !== input.environmentId) return;
+      if (!canVerify) {
+        if (image.file) {
+          startAttachmentUpload({
+            environmentId: input.environmentId,
+            image,
+            force: true,
+            ...(input.draftTarget !== undefined ? { draftTarget: input.draftTarget } : {}),
+          });
+        } else {
+          setUploadState(image.id, {
+            status: "failed",
+            environmentId: input.environmentId,
+            previous: upload,
+            reason: translateNow(
+              composerUiMessages,
+              "Uploaded attachment could not be verified. Attach the file again.",
+            ),
+          });
+        }
+        return;
+      }
+      const verification = await verifyStashedAttachmentUpload({
+        environmentId: input.environmentId,
+        attachmentId: upload.attachmentId,
+      }).catch((error: unknown): PersistedAttachmentVerification => ({ status: "failed", error }));
+      // The user may have removed or replaced the attachment while verification was in flight.
+      if (readAttachmentUpload(image.id) !== upload) return;
+      if (verification.status === "verified") return;
+      if (verification.status === "missing" && image.file) {
+        clearUploadState(image.id);
+        startAttachmentUpload({
+          environmentId: input.environmentId,
+          image,
+          force: true,
+          ...(input.draftTarget !== undefined ? { draftTarget: input.draftTarget } : {}),
+        });
+        return;
+      }
+      setUploadState(image.id, {
+        status: "failed",
+        environmentId: input.environmentId,
+        previous: upload,
+        reason:
+          verification.status === "missing"
+            ? translateNow(
+                composerUiMessages,
+                "Uploaded attachment expired. Remove it and attach it again.",
+              )
+            : translateNow(
+                composerUiMessages,
+                "Uploaded attachment could not be verified. Retry when the server reconnects.",
+              ),
+      });
+    }),
+  );
+  await awaitAttachmentUploads(input.images.map((image) => image.id));
 }
 
 export function getUploadedAttachments(input: {

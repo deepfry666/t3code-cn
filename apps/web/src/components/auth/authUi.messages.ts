@@ -96,4 +96,8 @@ export const authUiMessages = {
   "Choose what it may do": "选择允许它做什么",
   "The environment returned an address this page will not open.":
     "环境返回了一个此页面不会打开的地址。",
+  "Could not load sign-in": "无法加载登录页面",
+  "T3 Connect sign-in did not load. Check your connection, then try again.":
+    "T3 Connect 登录页面未能加载。请检查连接后重试。",
+  "Retry sign-in": "重试登录",
 } as const;

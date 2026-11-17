@@ -152,6 +152,7 @@ export const onboardingUiMessages = {
   "Use {command} from any terminal. Adds one line to {file}.":
     "在任意终端使用 {command}。会在 {file} 中添加一行。",
   "Add to PATH": "添加到 PATH",
+  "Retry sign-in": "重试登录",
 } as const;
 
 /**

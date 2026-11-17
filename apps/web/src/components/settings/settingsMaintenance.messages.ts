@@ -556,6 +556,8 @@ export const settingsMaintenanceMessages = {
     "会重启该设备上的 T3 Code，大约离线 {minutes} 分钟。",
   "T3 Code on {label} stops, rebuilds its database, and starts again. It will be offline for about {minutes} min. Running agents stop when it restarts.":
     "{label} 上的 T3 Code 会停止、重建数据库后再次启动，大约离线 {minutes} 分钟。重启时正在运行的智能体会停止。",
+  "Spans with a duration of {value1} or longer.": "耗时达到或超过 {value1} 的 Span。",
+  "Sampling every ...": "采样间隔…",
 } as const;
 
 const DYNAMIC_LABELS = [

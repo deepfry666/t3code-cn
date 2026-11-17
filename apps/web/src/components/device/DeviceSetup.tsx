@@ -159,17 +159,7 @@ export function platformSetupStatus(state: DeviceServiceState, platform: DeviceP
     ready: true,
     message:
       remoteHost?.kind === "eas"
-        ? translateNow(
-            deviceUiMessages,
-            "{host} starts {platform} in the cloud with EAS Simulator.",
-            {
-              host: remoteHost.label,
-              platform:
-                platform === "ios"
-                  ? translateNow(deviceUiMessages, "iOS Simulators")
-                  : translateNow(deviceUiMessages, "Android Emulators"),
-            },
-          )
+        ? `${remoteHost.label} starts ${platform === "ios" ? translateNow(deviceUiMessages, "iOS Simulators") : translateNow(deviceUiMessages, "Android emulators")} in the cloud with Expo Simulators.`
         : platform === "ios"
           ? translateNow(deviceUiMessages, "Xcode and iOS Simulator are available{location}.", {
               location,

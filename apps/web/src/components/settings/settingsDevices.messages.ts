@@ -1,6 +1,7 @@
 import { translate, type Locale } from "../../i18n/locale";
 
 export const settingsDevicesMessages = {
+  "Could not reach the server": "无法连接服务器",
   "Stored secret, enter a new value to replace": "已保存凭据，输入新值可替换",
   "Not set": "未设置",
   Value: "值",
@@ -203,6 +204,19 @@ export const settingsDevicesMessages = {
   "The pool has no Android devices.": "池中没有 Android 设备。",
   "Multiple hosts match this SSH destination. Select the environment to edit its hosts.":
     "多个主机匹配这个 SSH 目标。请选择要编辑其主机的环境。",
+  "Expo host not removed everywhere": "未能从所有位置移除 Expo 主机",
+  "Expo host not saved everywhere": "未能保存到所有 Expo 主机位置",
+  "Expo Simulators": "Expo 模拟器",
+  "Add Expo host": "添加 Expo 主机",
+  "Edit Expo host": "编辑 Expo 主机",
+  "Expo project": "Expo 项目",
+  "Expo Simulators needs a paid Expo account. A session runs for up to 115 minutes and stops early when it is idle for the idle minutes, so idle minutes must be less than session minutes.":
+    "Expo 模拟器需要付费 Expo 账号。会话最长运行 115 分钟，闲置达到指定时间后会提前停止，因此闲置时长必须短于会话时长。",
+  "You cannot check secrets on this environment": "你无法检查此环境中的凭据",
+  "Check that the secret resolves": "检查凭据能否解析",
+  "Checking the secret": "正在检查凭据",
+  "Secret resolved": "凭据已解析",
+  "Check {value1}": "检查{value1}",
 } as const;
 
 export function translateDevicesLabel(label: string, locale: Locale): string {

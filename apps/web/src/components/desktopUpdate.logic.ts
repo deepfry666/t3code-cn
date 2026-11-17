@@ -1,3 +1,5 @@
+import { translateNow } from "~/i18n/useTranslation";
+import { desktopUpdatelogicMessages } from "./desktopUpdate.logic.messages";
 import type { DesktopUpdateActionResult, DesktopUpdateState } from "@t3tools/contracts";
 
 export type DesktopUpdateButtonAction = "download" | "install" | "none";
@@ -94,6 +96,17 @@ export function getDesktopUpdateButtonTooltip(state: DesktopUpdateState): string
   ) {
     return `Update ${state.notAppliedVersion} did not apply. Click to retry.`;
   }
+  if (
+    (state.status === "available" || state.status === "error") &&
+    state.errorContext === "download" &&
+    state.availableVersion
+  ) {
+    return translateNow(
+      desktopUpdatelogicMessages,
+      "Download failed for {value1}. Click to retry.",
+      { value1: String(state.availableVersion) },
+    );
+  }
   if (state.status === "available") {
     return `Update ${state.availableVersion ?? "available"} ready to download`;
   }
@@ -106,9 +119,6 @@ export function getDesktopUpdateButtonTooltip(state: DesktopUpdateState): string
     return `Update ${state.downloadedVersion ?? state.availableVersion ?? "ready"} downloaded. Click to restart and install.`;
   }
   if (state.status === "error") {
-    if (state.errorContext === "download" && state.availableVersion) {
-      return `Download failed for ${state.availableVersion}. Click to retry.`;
-    }
     if (state.errorContext === "install" && state.downloadedVersion) {
       return `Install failed for ${state.downloadedVersion}. Click to retry.`;
     }

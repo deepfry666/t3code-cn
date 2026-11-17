@@ -2,6 +2,11 @@ import type { Locale } from "~/i18n/locale";
 import { translateThemeErrorMessage } from "./themeErrorMessages";
 
 export const settingsShellMessages = {
+  "on@@settings scope": "在",
+  across: "应用于",
+  "in@@checkout scope": "在",
+  "Checkout scope": "工作副本范围",
+  "Search checkouts": "搜索工作副本",
   Advanced: "高级",
   "Applying settings for {projects} across {environments}":
     "正在为{environments}中的{projects}应用设置",
@@ -179,6 +184,9 @@ export const settingsShellMessages = {
   Cancel: "取消",
   light: "浅色",
   dark: "深色",
+  "Applying settings for": "设置将应用于",
+  "Unavailable checkout": "不可用的工作副本",
+  "All checkouts": "所有工作副本",
 } as const;
 
 export function translateSettingsShellLabel(label: string, locale: Locale): string {

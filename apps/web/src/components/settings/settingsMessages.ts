@@ -1,6 +1,13 @@
 import type { Locale } from "../../i18n/locale";
 
 export const settingsMessages = {
+  Preferences: "偏好设置",
+  More: "更多",
+
+  "Screen reader window title": "屏幕阅读器窗口标题",
+  "Streaming transcription": "流式转写",
+  "Keep awake while agents work": "智能体工作时保持唤醒",
+  "Require approval for new devices": "新设备连接需要审批",
   Settings: "设置",
   "Interface language": "界面语言",
   Language: "语言",
@@ -228,6 +235,8 @@ export const settingsMessages = {
   "This setting is saved on a server, and the hosted app is not anchored to one. Change it from the desktop app or from the server's own address.":
     "此设置保存在服务器上，而托管应用未固定连接某台服务器。请从桌面应用或服务器自身的地址修改。",
   "Screen reader announcements": "屏幕阅读器播报",
+  "Saved on this device. Select All projects to change it.":
+    "保存在此设备上，请选择“所有项目”后更改。",
 } as const;
 
 // This lookup is only for application-owned settings metadata, never user content.

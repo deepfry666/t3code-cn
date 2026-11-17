@@ -327,4 +327,17 @@ export const threadPanelUiMessages = {
   "Open thread": "打开会话",
   "Open parent agent on {machine}": "打开 {machine} 上的父智能体",
   "Failed to regenerate thread title": "重新生成会话标题失败",
+  "Try replying after the connection or pending input is resolved.":
+    "请在连接恢复或待处理的输入完成后重试回复。",
+  "Open subagent": "打开子智能体",
+  "Opened in {value1}": "已在 {value1} 中打开",
+  "Added to the composer": "已添加到输入框",
+  "The task is in the composer. Read it over, then send.": "任务已在输入框中。请检查后发送。",
+  "Resolve the conflicts in this thread": "在此会话中解决冲突",
+  "Preparing fix": "正在准备修复",
+  "Fix the failing checks in this thread": "在此会话中修复未通过的检查",
+  "Could not open the parent thread": "无法打开父会话",
+  "The parent thread was deleted": "父会话已被删除",
+  "Answer changed while preparing attachments. Review it and send again.":
+    "准备附件期间回答已更改，请检查后重新发送。",
 } as const;

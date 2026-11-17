@@ -1,5 +1,29 @@
 {
   "apps/desktop/src/window/menuLocalization.ts": {
+    "Trust and Remember": "信任并记住",
+    "{host} has an untrusted certificate": "{host} 的证书不受信任",
+    "No trusted authority issued this certificate.": "此证书并非由受信任的机构签发。",
+    "This certificate is not for this address.": "此证书不适用于当前地址。",
+    "This certificate has expired or is not valid yet.": "此证书已过期或尚未生效。",
+    "Issued to: {name}": "颁发给：{name}",
+    "Issued by: {name}": "颁发者：{name}",
+    "Valid: {start} – {end}": "有效期：{start} – {end}",
+    "Fingerprint: {fingerprint}": "指纹：{fingerprint}",
+    "Trust it only if you know this certificate belongs to the site. Clearing this browser profile's cookies forgets it.": "仅在确认此证书属于该网站时信任它。清除此浏览器配置的 cookies 后将不再信任此证书。",
+    "Could not trust the certificate for {host}": "无法信任 {host} 的证书",
+    "T3 Code could not save this approval, so the page stays blocked. Check that the disk is not full and its data folder is writable, then try again.": "T3 Code 无法保存此次批准，因此页面仍被阻止。请检查磁盘空间和数据目录的写入权限后重试。",
+    "A new version of T3 Code": "T3 Code 新版本",
+    "Update available": "有可用更新",
+    "{release} is available.": "{release} 已可用。",
+    "You're running T3 Code {version}.": "你当前运行的是 T3 Code {version}。",
+    "Download": "下载",
+    "Later": "稍后",
+    "Update downloading": "正在下载更新",
+    "{release} is already downloading.": "正在下载 {release}。",
+    "Update ready": "更新已就绪",
+    "{release} is ready to install.": "{release} 已可安装。",
+    "T3 Code will restart to install it. Any running tasks will be interrupted.": "T3 Code 将重启以安装更新，正在运行的任务会被中断。",
+    "Restart@@update": "重启",
     "File": "文件",
     "Edit": "编辑",
     "View": "查看",
@@ -178,6 +202,19 @@
     "This server's host blocks the sandbox its browser runs in. Run this once on the host, then try again:": "此服务器的主机阻止了其浏览器所需的沙箱。请在主机上运行一次以下命令，然后重试：",
     "This server's host is missing libraries its browser needs. Run this once on the host, then try again:": "此服务器的主机缺少其浏览器所需的库。请在主机上运行一次以下命令，然后重试："
   },
+  "apps/web/src/components/ConnectDeviceApprovalCoordinator.messages.ts": {
+    "{device}. Approve only if it shows code {code}.": "{device}。仅当设备上显示的验证码为 {code} 时才批准。",
+    "Approve": "批准",
+    "Deny": "拒绝",
+    "Review": "查看",
+    "An error occurred.": "发生错误。",
+    "A device wants to connect to {value1}": "有设备请求连接到{value1}",
+    "Could not approve the device": "无法批准设备",
+    "Could not deny the device": "无法拒绝设备"
+  },
+  "apps/web/src/components/RightPanelSheet.messages.ts": {
+    "Workspace panel": "工作区面板"
+  },
   "apps/web/src/components/auth/authUi.messages.ts": {
     "Could not reach this environment. Try again.": "无法访问此环境。请重试。",
     "The sign-in could not continue.": "无法继续登录。",
@@ -254,9 +291,17 @@
     "Use a sign-in code instead": "改用登录码",
     "· whoever runs it gets this access": "· 运行它的人都会获得此权限",
     "Choose what it may do": "选择允许它做什么",
-    "The environment returned an address this page will not open.": "环境返回了一个此页面不会打开的地址。"
+    "The environment returned an address this page will not open.": "环境返回了一个此页面不会打开的地址。",
+    "Could not load sign-in": "无法加载登录页面",
+    "T3 Connect sign-in did not load. Check your connection, then try again.": "T3 Connect 登录页面未能加载。请检查连接后重试。",
+    "Retry sign-in": "重试登录"
+  },
+  "apps/web/src/components/chat/ThreadActivityBanners.messages.ts": {
+    "Goal objective": "目标内容"
   },
   "apps/web/src/components/chat/chatUi.messages.ts": {
+    "Create a link on {target}: Settings → Sharing & access → Authorized clients → Create link, then paste its code here.": "在{target}上打开“设置 → 共享与访问 → 已授权客户端 → 创建链接”，然后将链接验证码粘贴到此处。",
+    "This environment is already linked to {target}. The agent can use that link as it is; change its access in Settings → Environments.": "此环境已链接到{target}。智能体可以直接使用该链接；要更改访问权限，请前往“设置 → 环境”。",
     "restart": "重新开始",
     "Submitting...": "正在提交…",
     "Submit": "提交",
@@ -305,6 +350,7 @@
     "Stopping…": "正在停止…"
   },
   "apps/web/src/components/chat/composerUi.messages.ts": {
+    "Settings": "设置",
     "Answer or dismiss the question first, then add it to chat.": "先回答或关闭问题，再将其添加到聊天中。",
     "Terminal output can't be added to a question answer.": "终端输出无法添加到问题回答中。",
     "Queued message": "排队消息",
@@ -828,7 +874,56 @@
     "Codex feedback thread ID": "Codex 反馈会话 ID",
     "A message can have at most {count} attachments.": "一条消息最多可以有 {count} 个附件。",
     "Image attachment": "图片附件",
-    "Retry now": "立即重试"
+    "Retry now": "立即重试",
+    "Replying to {value1}": "正在回复{value1}",
+    "Replying to": "正在回复",
+    "Cancel reply": "取消回复",
+    "Type your answer": "输入你的回答",
+    "Downloading model {value1}%": "正在下载模型 {value1}%",
+    "Starting…": "正在启动…",
+    "Transcribing…": "正在转写…",
+    "Cleaning up…": "正在整理…",
+    "Searching project models...": "正在搜索项目模型…",
+    "Preview {value1}": "预览{value1}",
+    "Mic blocked": "麦克风被阻止",
+    "Already recording": "正在录音",
+    "Still transcribing": "仍在转写",
+    "Couldn’t start": "无法开始",
+    "Couldn’t finish": "无法完成",
+    "No speech heard": "未检测到语音",
+    "Mic failed": "麦克风出错",
+    "Mic disconnected": "麦克风已断开",
+    "Dismiss": "忽略",
+    "Couldn’t list microphones. The system default still works.": "无法列出麦克风，仍可使用系统默认麦克风。",
+    "Voice input is ready": "语音输入已就绪",
+    "Download a speech model once. Your audio is transcribed on {value1}.": "首次使用需下载语音模型，音频将在{value1}上转写。",
+    "Pick a microphone, then start talking.": "选择麦克风后即可开始说话。",
+    "Recommended for {value1}. ": "推荐用于{value1}。",
+    "Includes a 1.2 MB silence detector.": "包含 1.2 MB 的静音检测组件。",
+    "Verifying…": "正在验证…",
+    "That microphone is unplugged. Pick another one.": "该麦克风已拔出，请选择其他麦克风。",
+    "Other models": "其他模型",
+    "Choose a model": "选择模型",
+    "Needs an admin to download": "需要管理员下载",
+    "Voice settings": "语音设置",
+    "Still sending your previous message.": "仍在发送上一条消息。",
+    "Send again once it goes through or fails.": "请在发送成功或失败后重试。",
+    "Queued message not updated": "排队消息未更新",
+    "A queued message can't move to a side chat. Remove /side or /btw to save it.": "排队消息无法移到侧聊。请移除 /side 或 /btw 后保存。",
+    "Draft changed while preparing this message. Review it and send again.": "准备消息期间草稿已更改，请检查后重新发送。",
+    "Message may not have been sent": "消息可能未发送",
+    "Message not sent": "消息未发送",
+    "Your new draft was kept. Copy the failed message to send it again.": "新草稿已保留，请复制发送失败的消息后重试。",
+    "Your new draft was kept.": "新草稿已保留。",
+    "Copy message": "复制消息",
+    "Stashed machines can't go in an answer": "暂存的机器无法加入回答",
+    "Restore this prompt after the agent's question is answered.": "请回答智能体的问题后再恢复此提示词。",
+    "Stash again once it finishes compressing.": "请在压缩完成后重新暂存。",
+    "Draft changed while preparing this message. Review it and save again.": "准备消息期间草稿已更改，请检查后重新保存。",
+    "The earlier edit was saved. Review your newer changes and save again.": "之前的编辑已保存，请检查新改动后再次保存。",
+    "Uploaded attachment could not be verified. Attach the file again.": "无法验证已上传的附件，请重新添加。",
+    "Uploaded attachment expired. Remove it and attach it again.": "已上传的附件已过期，请移除后重新添加。",
+    "Uploaded attachment could not be verified. Retry when the server reconnects.": "无法验证已上传的附件，请在服务器重新连接后重试。"
   },
   "apps/web/src/components/chat/threadPanelUi.messages.ts": {
     "No SSH route to {environment}": "没有通往{environment}的 SSH 路由",
@@ -1131,7 +1226,18 @@
     "Command": "命令",
     "Open thread": "打开会话",
     "Open parent agent on {machine}": "打开 {machine} 上的父智能体",
-    "Failed to regenerate thread title": "重新生成会话标题失败"
+    "Failed to regenerate thread title": "重新生成会话标题失败",
+    "Try replying after the connection or pending input is resolved.": "请在连接恢复或待处理的输入完成后重试回复。",
+    "Open subagent": "打开子智能体",
+    "Opened in {value1}": "已在 {value1} 中打开",
+    "Added to the composer": "已添加到输入框",
+    "The task is in the composer. Read it over, then send.": "任务已在输入框中。请检查后发送。",
+    "Resolve the conflicts in this thread": "在此会话中解决冲突",
+    "Preparing fix": "正在准备修复",
+    "Fix the failing checks in this thread": "在此会话中修复未通过的检查",
+    "Could not open the parent thread": "无法打开父会话",
+    "The parent thread was deleted": "父会话已被删除",
+    "Answer changed while preparing attachments. Review it and send again.": "准备附件期间回答已更改，请检查后重新发送。"
   },
   "apps/web/src/components/chat/threadRuntime.messages.ts": {
     "Thread on {machine}": "{machine} 上的会话",
@@ -1886,6 +1992,9 @@
     "Sent messages to {threads} threads": "已向 {threads} 个会话发送消息"
   },
   "apps/web/src/components/chat/timelineUi.messages.ts": {
+    "Agents here can then launch, message and wait on threads there. Revoke it in that machine's Sharing & access.": "这里的智能体随后就能在该机器上启动会话、发送消息并等待结果。可在该机器的“共享与访问”中撤销此连接。",
+    "Create a link on {target}: Settings → Sharing & access → Authorized clients → Create link, then paste its code here.": "在{target}上打开“设置 → 共享与访问 → 已授权客户端 → 创建链接”，然后将链接验证码粘贴到此处。",
+    "This environment is already linked to {target}. The agent can use that link as it is; change its access in Settings → Environments.": "此环境已链接到{target}。智能体可以直接使用该链接；要更改访问权限，请前往“设置 → 环境”。",
     "Go to quoted response: {label}": "前往引用的回复：{label}",
     "{title} phase": "阶段：{title}",
     "View cited assistant text: {label}": "查看引用的助手回复：{label}",
@@ -2300,7 +2409,15 @@
     "Editing {label}": "正在编辑 {label}",
     "Searching the web for {label}": "正在网上搜索 {label}",
     "Searching for {label}": "正在搜索 {label}",
-    "Thinking@@announcement": "正在思考"
+    "Thinking@@announcement": "正在思考",
+    "Go to quoted response: {value1}": "跳转到引用的回答：{value1}",
+    "Go to the response this replies to: {value1}": "跳转到所回复的回答：{value1}",
+    "Back, close {value1} preview": "返回并关闭{value1}预览",
+    "Link {value1}": "链接{value1}",
+    "Create a link on": "在以下环境创建链接：",
+    "This environment is already linked to": "此环境已链接到",
+    "Failed to copy {value1}": "无法复制{value1}",
+    "Reply to this response": "回复这条回答"
   },
   "apps/web/src/components/clerk/clerkUi.messages.ts": {
     "Sign in to T3 Connect": "登录 T3 Connect",
@@ -2369,7 +2486,8 @@
     "Could not load T3 Connect environments": "无法加载 T3 Connect 环境",
     "Loading environments…": "正在加载环境…",
     "No T3 Connect environments": "没有 T3 Connect 环境",
-    "Link an environment from its local Settings to make it available through T3 Connect.": "在环境本地的“设置”中关联它，即可通过 T3 Connect 访问。"
+    "Link an environment from its local Settings to make it available through T3 Connect.": "在环境本地的“设置”中关联它，即可通过 T3 Connect 访问。",
+    "Retry T3 Connect": "重试 T3 Connect"
   },
   "apps/web/src/components/cloud/cloudUi.messages.ts": {
     "Connected": "已连接",
@@ -2483,7 +2601,11 @@
     "Could not unlink the environment from cloud.": "无法解除该环境与云端的关联。",
     "Disconnected locally, but T3 Connect did not confirm it removed this environment": "已在本地断开，但 T3 Connect 未确认已移除该环境",
     "Could not obtain environment link proof.": "无法获取环境关联凭证。",
-    "Could not configure environment relay access.": "无法配置环境中继访问。"
+    "Could not configure environment relay access.": "无法配置环境中继访问。",
+    "Retry sign-in": "重试登录",
+    "Require approval for new devices": "新设备连接需要审批",
+    "Devices that sign in to your T3 Connect account wait until someone already connected here approves them.": "登录你的 T3 Connect 账号的设备，需要等待已连接到此环境的人员批准。",
+    "Waiting for approval…": "等待批准…"
   },
   "apps/web/src/components/commandPaletteUi.messages.ts": {
     "Choose a folder in the environment the repository is cloned into.": "在克隆仓库的环境中选择文件夹。",
@@ -2824,7 +2946,9 @@
     "Regenerating… ({count})": "正在重新生成…（{count}）",
     "Regenerate titles ({count})": "重新生成标题（{count}）",
     "Unpin ({count})": "取消置顶（{count}）",
-    "This connection cannot change threads.": "此连接无法修改会话。"
+    "This connection cannot change threads.": "此连接无法修改会话。",
+    "Retry sign-in": "重试登录",
+    "No {value1} in {value2}{value3}": "{value2}{value3}中没有{value1}"
   },
   "apps/web/src/components/desktop/desktopUi.messages.ts": {
     "Could not open the link": "无法打开链接",
@@ -2855,6 +2979,9 @@
     "Error report": "错误报告",
     "Copied": "已复制",
     "Copy error": "复制错误信息"
+  },
+  "apps/web/src/components/desktopUpdate.logic.messages.ts": {
+    "Download failed for {value1}. Click to retry.": "{value1}下载失败，点击重试。"
   },
   "apps/web/src/components/device/deviceDetail.messages.ts": {
     "No video received from the device. Reconnect to try again.": "未收到来自设备的视频，请重新连接后重试。",
@@ -3122,7 +3249,8 @@
     "Ready": "就绪",
     "Retry": "重试",
     "Retrying…": "正在重试…",
-    "Fold command failed ({status}).": "折叠命令失败（{status}）。"
+    "Fold command failed ({status}).": "折叠命令失败（{status}）。",
+    "Android emulators": "Android 模拟器"
   },
   "apps/web/src/components/diffs/diffsUi.messages.ts": {
     "Loading diff…": "正在加载差异…",
@@ -3485,7 +3613,9 @@
     "This workbook has no worksheet data.": "此工作簿没有工作表数据。",
     "Truncated TIFF strip.": "TIFF 条带不完整。",
     "Unsupported TIFF metadata type.": "不支持的 TIFF 元数据类型。",
-    "Unsupported TIFF strip layout.": "不支持的 TIFF 条带布局。"
+    "Unsupported TIFF strip layout.": "不支持的 TIFF 条带布局。",
+    "Resizing preview...": "正在调整预览大小…",
+    "This row or column could not be resized.": "无法调整此行或列的大小。"
   },
   "apps/web/src/components/gitUi.messages.ts": {
     "Stop the current turn to switch worktrees.": "停止当前轮次后才能切换工作树。",
@@ -3642,9 +3772,17 @@
     "This action will push local commits and create a {kind} on {branch}. You can continue on this ref or create a feature ref and run the same action there.": "此操作会在 {branch} 上推送本地提交并创建 {kind}。你可以继续在此引用上操作，或创建功能引用后在那里执行相同操作。",
     "There are no changes to commit, so a feature branch can't be named. Create a branch yourself or continue on {branch}.": "没有可提交的改动，因此无法命名功能分支。请自行创建分支，或继续在 {branch} 上操作。",
     "Pulling latest changes...": "正在拉取最新改动…",
-    "Starting source control action...": "正在启动版本控制操作…"
+    "Starting source control action...": "正在启动版本控制操作…",
+    "Branch: {value1}": "分支：{value1}",
+    "Detached HEAD: check out a branch before creating a {value1}.": "当前处于分离 HEAD 状态，请先切换到分支，再创建{value1}。",
+    "No local commits to include in a {value1}.": "没有可纳入{value1}的本地提交。",
+    "Branch is behind upstream. Pull/rebase before creating a {value1}.": "当前分支落后于上游。请先拉取或变基，再创建{value1}。",
+    "Create {value1} is currently unavailable.": "目前无法创建{value1}。",
+    "There are no changes to commit, so a feature branch can't be named. Create a branch yourself or continue on {value1}.": "没有可提交的改动，无法为功能分支命名。请自行创建分支，或继续在 {value1} 上操作。",
+    "This action doesn't commit your changes, so a feature branch can't be named. Create a branch yourself or continue on {value1}.": "此操作不会提交改动，无法为功能分支命名。请自行创建分支，或继续在 {value1} 上操作。"
   },
   "apps/web/src/components/globalUi.messages.ts": {
+    " Search to find the rest.": " 可搜索其余文件。",
     "Confirm action": "确认操作",
     "This action requires your confirmation.": "此操作需要你的确认。",
     "Cancel": "取消",
@@ -3870,7 +4008,14 @@
     "Update the desktop app on that machine to update this server.": "请在那台机器上更新桌面应用以更新此服务器。",
     "{server} update failed": "{server} 更新失败",
     "{server} updated": "{server} 已更新",
-    "Update the T3 Code desktop app that runs the {server}? It will close and relaunch on that machine.": "要更新运行 {server} 的 T3 Code 桌面应用吗？它会在那台机器上关闭并重新启动。"
+    "Update the T3 Code desktop app that runs the {server}? It will close and relaunch on that machine.": "要更新运行 {server} 的 T3 Code 桌面应用吗？它会在那台机器上关闭并重新启动。",
+    "Search ignored files": "搜索已忽略的文件",
+    "No ignored files match.": "没有匹配的已忽略文件。",
+    "Showing the first": "仅显示前",
+    "Thread, {value1}": "会话，{value1}",
+    "Could not read the preferred editor.": "无法读取首选编辑器。",
+    "Could not save the preferred editor.": "无法保存首选编辑器。",
+    "Search is limited to {value1} characters.": "搜索内容不能超过 {value1} 个字符。"
   },
   "apps/web/src/components/guest/guestUi.messages.ts": {
     "Could not load earlier turns. Try again.": "无法加载更早的对话。请重试。",
@@ -3992,7 +4137,9 @@
     "Run hermes mcp login t3code.": "运行 hermes mcp login t3code。",
     "On a remote host, paste the final URL back when asked.": "在远程主机上，按提示把最终的 URL 粘贴回去。",
     "Add a remote MCP server with OAuth.": "添加一个使用 OAuth 的远程 MCP 服务器。",
-    "Open {app} on the web": "在网页上打开 {app}"
+    "Open {app} on the web": "在网页上打开 {app}",
+    "Open {value1}": "打开{value1}",
+    "Get {value1}": "获取{value1}"
   },
   "apps/web/src/components/media/mediaUi.messages.ts": {
     "Video unavailable": "视频不可用",
@@ -4178,7 +4325,8 @@
     "now": "刚刚",
     "Added to {file}. Open a new terminal to use {command}.": "已添加到 {file}。打开新终端即可使用 {command}。",
     "Use {command} from any terminal. Adds one line to {file}.": "在任意终端使用 {command}。会在 {file} 中添加一行。",
-    "Add to PATH": "添加到 PATH"
+    "Add to PATH": "添加到 PATH",
+    "Retry sign-in": "重试登录"
   },
   "apps/web/src/components/permissions/permissionsUi.messages.ts": {
     "Allow": "允许",
@@ -4307,6 +4455,7 @@
     "Find on page isn't available for this page": "此页面不支持在页面上查找"
   },
   "apps/web/src/components/projectScriptsUi.messages.ts": {
+    "{message}. Close and reopen the terminal to retry.": "{message}。请关闭后重新打开终端以重试。",
     "Play": "运行",
     "Test": "测试",
     "Lint": "代码检查",
@@ -4394,7 +4543,9 @@
     "Delete": "删除",
     "Saving…": "正在保存…",
     "Save changes": "保存更改",
-    "Save action": "保存操作"
+    "Save action": "保存操作",
+    "Failed to close interrupted paste": "无法结束中断的粘贴",
+    "Terminal paste interrupted. Paste again when the terminal is ready.": "终端粘贴已中断。请在终端就绪后重新粘贴。"
   },
   "apps/web/src/components/promptLinks/promptLinksUi.messages.ts": {
     "This prompt had hidden characters, it may be malicious": "此提示词含有隐藏字符，可能是恶意内容",
@@ -4445,6 +4596,8 @@
     "Check out": "检出"
   },
   "apps/web/src/components/pullRequest/pullRequestUi.messages.ts": {
+    "checks@@count": "项检查",
+    "{count} merge loaded": "已加载 {count} 次合并",
     "Resolved conversation": "已解决的讨论",
     "{count} resolved conversations": "{count} 个已解决的讨论",
     "Context, no code": "背景说明，无代码",
@@ -5116,7 +5269,17 @@
     "Paste a {kind} URL, checkout command, or enter 123 / #123.": "请粘贴 {kind} URL、检出工作副本的命令，或输入 123 / #123。",
     "Use a {kind} URL, checkout command, 123, or #123.": "请使用 {kind} URL、检出工作副本的命令、123 或 #123。",
     "Overview": "概览",
-    "The linked item is not in the loaded activity.": "链接的条目不在已加载的动态中。"
+    "The linked item is not in the loaded activity.": "链接的条目不在已加载的动态中。",
+    "Couldn't load this diff.": "无法加载此差异。",
+    "No text diff for this file.": "此文件没有文本差异。",
+    "Diff too large to display.": "差异过大，无法显示。",
+    "Load diff": "加载差异",
+    "Could not put {value1} on": "无法添加{value1}",
+    "Could not take {value1} off": "无法移除{value1}",
+    "Could not ask {value1} for a review": "无法向{value1}请求审查",
+    "Could not take back the review request to {value1}": "无法撤回向{value1}发出的审查请求",
+    "Showing the last pull requests loaded.": "正在显示最近加载的 pull requests。",
+    "Failed to copy {value1} link": "无法复制{value1}链接"
   },
   "apps/web/src/components/rightPanelTabsUi.messages.ts": {
     "Browser": "浏览器",
@@ -5326,6 +5489,72 @@
     "Windows-style paths are only supported on Windows environments.": "仅 Windows 环境支持 Windows 风格的路径。",
     "Relative paths require an active project in this environment.": "相对路径需要此环境中有活动项目。",
     "No project in this environment can read {host}/{repository}.": "此环境中没有项目能读取 {host}/{repository}。"
+  },
+  "apps/web/src/components/settings/ConnectDeviceApprovalSettings.messages.ts": {
+    "{device}. Approve only if the device in front of you shows this code.": "{device}。仅当你面前的设备显示此验证码时才批准。",
+    "Approve": "批准",
+    "Revoke": "撤销授权",
+    "An error occurred.": "发生错误。",
+    "T3 Connect devices": "T3 Connect 设备",
+    "Waiting for approval ·": "等待批准 ·",
+    "Could not deny the device": "无法拒绝设备",
+    "Deny": "拒绝",
+    "Could not approve the device": "无法批准设备",
+    "Saving…": "正在保存…",
+    "Trusted since": "信任时间：",
+    "Revoke {value1}?": "撤销{value1}？",
+    "Could not revoke the device": "无法撤销设备",
+    "Revoking…": "正在撤销授权…",
+    "No device has connected through T3 Connect yet.": "尚无设备通过 T3 Connect 连接。"
+  },
+  "apps/web/src/components/settings/ConnectionsSettings.logic.messages.ts": {
+    "this device": "此设备",
+    "Unknown device": "未知设备"
+  },
+  "apps/web/src/components/settings/MicrophoneOrderList.messages.ts": {
+    "Microphones, preferred first": "麦克风，优先使用排在前面的设备",
+    "System default": "系统默认",
+    "Saved microphone": "已保存的麦克风",
+    "In use": "正在使用",
+    "Not connected": "未连接",
+    "Move {value1} up": "上移{value1}",
+    "Move {value1} down": "下移{value1}",
+    "Forget {value1}": "忘记{value1}"
+  },
+  "apps/web/src/components/settings/MicrophoneTest.messages.ts": {
+    "No microphone found.": "未找到麦克风。",
+    "Stop": "停止",
+    "Record": "录音",
+    "Record again": "重新录音",
+    "Opening microphone…": "正在打开麦克风…",
+    "Recording time": "录音时长",
+    "Microphone input level": "输入音量",
+    "Test microphone": "测试麦克风",
+    "Record ten seconds and play it back. The audio stays on this device.": "录制十秒后回放，音频只保存在此设备上。",
+    "Discard recording": "丢弃录音",
+    "Cancel microphone test": "取消麦克风测试"
+  },
+  "apps/web/src/components/settings/ResourceTelemetryDiagnostics.logic.messages.ts": {
+    "Sampling on demand": "按需采样",
+    "Sampling every {value1} ms": "每 {value1} ms 采样一次",
+    "Sampling every {value1} {value2}": "每 {value1} {value2} 采样一次"
+  },
+  "apps/web/src/components/settings/RevokeConnectDeviceDialog.messages.ts": {
+    "Approval for new devices is off, so a revoked device signed in to your T3 Connect account can connect again on its own.": "新设备审批未开启，因此已撤销但仍登录你的 T3 Connect 账号的设备可以自行重新连接。",
+    "Require approval for new devices": "新设备连接需要审批",
+    "The device has to be approved here before it can connect again.": "设备必须在此获批后才能重新连接。",
+    "Cancel": "取消",
+    "Revoke": "撤销授权"
+  },
+  "apps/web/src/components/settings/ThemeCssEditor.messages.ts": {
+    "Tab indents. Shift+Tab unindents. Press Escape, then Tab to leave.": "Tab 缩进，Shift+Tab 减少缩进。先按 Escape，再按 Tab 离开。",
+    "Ln {line}, Col {column}": "{line} 行，{column} 列",
+    "Custom CSS": "自定义 CSS",
+    "Tab moves to the next control.": "Tab 移动到下一个控件。",
+    "Clear CSS": "清空 CSS"
+  },
+  "apps/web/src/components/settings/easDeviceHostsSettings.logic.messages.ts": {
+    "Expo Simulators": "Expo 模拟器"
   },
   "apps/web/src/components/settings/generalMessages.ts": {
     "Notifications": "通知",
@@ -5936,9 +6165,20 @@
     "This device": "此设备",
     "This provider is not available on this environment.": "此环境上没有这个提供方。",
     "{provider} is turned off.": "{provider} 已关闭。",
-    "{provider} is unavailable.": "{provider} 不可用。"
+    "{provider} is unavailable.": "{provider} 不可用。",
+    "Different actions across checkouts": "各工作副本的操作不同",
+    "Narrow the selection above to one checkout to edit its list. Adding an action here adds it to every selected checkout.": "请在上方选定一个工作副本后编辑其操作列表。在此添加操作会将其加入所有选中的工作副本。",
+    "Offer {value1} when adding or publishing a project": "添加或发布项目时提供 {value1} 选项",
+    "Offer when adding or publishing a project": "添加或发布项目时提供此选项",
+    "Writer model not saved": "写作模型未保存"
   },
   "apps/web/src/components/settings/settingsConnections.messages.ts": {
+    "Agents here can then launch, message and wait on threads there. It appears under Authorized clients in that environment's Sharing & access, where it can be revoked.": "这里的智能体随后就能在该环境中启动会话、发送消息并等待结果。此连接将显示在该环境“共享与访问”的“已授权客户端”中，可在那里撤销。",
+    "Require approval for new T3 Connect devices": "新 T3 Connect 设备需要批准",
+    "Create a link on {target}: Settings → Sharing & access → Authorized clients → Create link, then paste its code here.": "在{target}上打开“设置 → 共享与访问 → 已授权客户端 → 创建链接”，然后将链接验证码粘贴到此处。",
+    "Forget {name}? Agents here stop working there. Revoke \"T3 Code · …\" in {name}'s Sharing & access to end the session there too.": "忘记{name}？此处的智能体将停止在该环境工作。若要同时结束远端会话，请在{name}的“共享与访问”中撤销“T3 Code · …”。",
+    "From Sharing & access there, or t3 pair": "从远端“共享与访问”页面或 t3 pair 获取",
+    "this device": "此设备",
     "What agents here may do there": "这里的智能体在另一环境中的权限",
     "Read projects and threads. Cannot start, message or change anything.": "读取项目和会话，不能启动会话、发送消息或进行任何更改。",
     "Ask before commands and file changes.": "执行命令和修改文件前询问。",
@@ -6510,7 +6750,13 @@
     "Another T3 Code server, such as the background service, is using this data directory, or an older background service is set up for it. Stop that server or try `t3 update`. If the older launcher cannot update, run `t3 service uninstall` and optionally reinstall with `t3 service install` from a current CLI. Use `npx t3@latest` if `t3` is missing or outdated, and pass `--base-dir` with the service's T3 home to each command. Then reopen T3 Code. You can also set a separate T3CODE_HOME and pair with the running server.": "另一个 T3 Code 服务器（例如后台服务）正在使用此数据目录，或此目录已配置旧版后台服务。请停止该服务器，或尝试 `t3 update`。如果旧版启动器无法更新，请运行 `t3 service uninstall`，并可使用当前 CLI 运行 `t3 service install` 重新安装。如果 `t3` 缺失或过旧，请使用 `npx t3@latest`，并在每条命令中通过 `--base-dir` 指定该服务的 T3 主目录。然后重新打开 T3 Code。你也可以设置单独的 T3CODE_HOME，并与正在运行的服务器配对。",
     "Another T3 Code server is using this distro's T3 home, or an older background service is set up for it. Stop that server or pair with it, or try `t3 update` in the distro. If the older launcher cannot update, run `t3 service uninstall` and optionally reinstall with `t3 service install` from a current CLI in the distro. Use `npx t3@latest` if `t3` is missing or outdated, and pass `--base-dir` with the service's T3 home to each command.": "另一个 T3 Code 服务器正在使用此发行版的 T3 主目录，或此目录已配置旧版后台服务。请停止该服务器或与其配对，或在发行版中尝试 `t3 update`。如果旧版启动器无法更新，请运行 `t3 service uninstall`，并可在发行版中使用当前 CLI 运行 `t3 service install` 重新安装。如果 `t3` 缺失或过旧，请使用 `npx t3@latest`，并在每条命令中通过 `--base-dir` 指定该服务的 T3 主目录。",
     "Check this address": "请核对此地址",
-    "This app cannot confirm it is one of your machines. The pairing code you paste is sent there.": "此应用无法确认它是你的机器之一。你粘贴的配对码会发送到那里。"
+    "This app cannot confirm it is one of your machines. The pairing code you paste is sent there.": "此应用无法确认它是你的机器之一。你粘贴的配对码会发送到那里。",
+    "Revoke {value1}?": "撤销{value1}？",
+    "Revoke all other clients?": "撤销其他所有客户端？",
+    "Create a link on": "在以下环境创建链接：",
+    "Waiting for approval": "等待批准",
+    "Devices that sign in to your T3 Connect account wait until someone already connected here approves them.": "登录你的 T3 Connect 账号的设备，需要等待已连接到此环境的人员批准。",
+    "Your session does not have permission to manage access.": "你的会话没有管理访问权限的许可。"
   },
   "apps/web/src/components/settings/settingsContent.messages.ts": {
     "Colors & themes": "颜色与主题",
@@ -6763,9 +7009,12 @@
     "Screen reader announcements": "屏幕阅读器播报",
     "Status only": "仅状态",
     "Status and messages": "状态和消息",
-    "Everything": "全部"
+    "Everything": "全部",
+    "Screen reader window title": "屏幕阅读器窗口标题",
+    "Keep awake while agents work": "智能体工作时保持唤醒"
   },
   "apps/web/src/components/settings/settingsDevices.messages.ts": {
+    "Could not reach the server": "无法连接服务器",
     "Stored secret, enter a new value to replace": "已保存凭据，输入新值可替换",
     "Not set": "未设置",
     "Value": "值",
@@ -6931,7 +7180,19 @@
     "Cannot reach device host. Test its SSH connection in Settings.": "无法连接设备主机。请在设置中测试其 SSH 连接。",
     "The pool has no iOS devices.": "池中没有 iOS 设备。",
     "The pool has no Android devices.": "池中没有 Android 设备。",
-    "Multiple hosts match this SSH destination. Select the environment to edit its hosts.": "多个主机匹配这个 SSH 目标。请选择要编辑其主机的环境。"
+    "Multiple hosts match this SSH destination. Select the environment to edit its hosts.": "多个主机匹配这个 SSH 目标。请选择要编辑其主机的环境。",
+    "Expo host not removed everywhere": "未能从所有位置移除 Expo 主机",
+    "Expo host not saved everywhere": "未能保存到所有 Expo 主机位置",
+    "Expo Simulators": "Expo 模拟器",
+    "Add Expo host": "添加 Expo 主机",
+    "Edit Expo host": "编辑 Expo 主机",
+    "Expo project": "Expo 项目",
+    "Expo Simulators needs a paid Expo account. A session runs for up to 115 minutes and stops early when it is idle for the idle minutes, so idle minutes must be less than session minutes.": "Expo 模拟器需要付费 Expo 账号。会话最长运行 115 分钟，闲置达到指定时间后会提前停止，因此闲置时长必须短于会话时长。",
+    "You cannot check secrets on this environment": "你无法检查此环境中的凭据",
+    "Check that the secret resolves": "检查凭据能否解析",
+    "Checking the secret": "正在检查凭据",
+    "Secret resolved": "凭据已解析",
+    "Check {value1}": "检查{value1}"
   },
   "apps/web/src/components/settings/settingsFeedback.messages.ts": {
     "Setting not saved": "设置未保存",
@@ -7450,9 +7711,17 @@
     "The desktop app update failed.": "桌面应用更新失败。",
     "The desktop app did not report an update result.": "桌面应用未报告更新结果。",
     "Restarts T3 Code there. It will be offline for about {minutes} min.": "会重启该设备上的 T3 Code，大约离线 {minutes} 分钟。",
-    "T3 Code on {label} stops, rebuilds its database, and starts again. It will be offline for about {minutes} min. Running agents stop when it restarts.": "{label} 上的 T3 Code 会停止、重建数据库后再次启动，大约离线 {minutes} 分钟。重启时正在运行的智能体会停止。"
+    "T3 Code on {label} stops, rebuilds its database, and starts again. It will be offline for about {minutes} min. Running agents stop when it restarts.": "{label} 上的 T3 Code 会停止、重建数据库后再次启动，大约离线 {minutes} 分钟。重启时正在运行的智能体会停止。",
+    "Spans with a duration of {value1} or longer.": "耗时达到或超过 {value1} 的 Span。",
+    "Sampling every ...": "采样间隔…"
   },
   "apps/web/src/components/settings/settingsMessages.ts": {
+    "Preferences": "偏好设置",
+    "More": "更多",
+    "Screen reader window title": "屏幕阅读器窗口标题",
+    "Streaming transcription": "流式转写",
+    "Keep awake while agents work": "智能体工作时保持唤醒",
+    "Require approval for new devices": "新设备连接需要审批",
     "Settings": "设置",
     "Interface language": "界面语言",
     "Language": "语言",
@@ -7673,7 +7942,8 @@
     "Recording mouse presses": "录制鼠标点击",
     "Floating preview": "浮动预览",
     "This setting is saved on a server, and the hosted app is not anchored to one. Change it from the desktop app or from the server's own address.": "此设置保存在服务器上，而托管应用未固定连接某台服务器。请从桌面应用或服务器自身的地址修改。",
-    "Screen reader announcements": "屏幕阅读器播报"
+    "Screen reader announcements": "屏幕阅读器播报",
+    "Saved on this device. Select All projects to change it.": "保存在此设备上，请选择“所有项目”后更改。"
   },
   "apps/web/src/components/settings/settingsPanels.messages.ts": {
     "Could not download update": "无法下载更新",
@@ -7834,7 +8104,12 @@
     "Update available ready to download": "有可下载的更新",
     "Update ready downloaded. Click to restart and install.": "更新已下载。点击重启并安装。",
     "Install update and restart T3 Code?\n\nAny running tasks will be interrupted. Make sure you're ready before continuing.": "安装更新并重启 T3 Code？\n\n正在运行的任务会被中断。请确认已准备好再继续。",
-    "Install update {version} and restart T3 Code?\n\nAny running tasks will be interrupted. Make sure you're ready before continuing.": "安装更新 {version} 并重启 T3 Code？\n\n正在运行的任务会被中断。请确认已准备好再继续。"
+    "Install update {version} and restart T3 Code?\n\nAny running tasks will be interrupted. Make sure you're ready before continuing.": "安装更新 {version} 并重启 T3 Code？\n\n正在运行的任务会被中断。请确认已准备好再继续。",
+    "Screen reader window title": "屏幕阅读器窗口标题",
+    "Keep awake while agents work": "智能体工作时保持唤醒",
+    "Screen reader": "屏幕阅读器",
+    "Start the window title with the thread's status, like Needs approval, and its name, so screen readers read them first when you switch apps. Taskbars, shared screens, and time trackers see it too.": "将会话状态（如需要审批）和名称放在窗口标题开头，便于屏幕阅读器在切换应用时优先朗读。任务栏、共享屏幕和时间记录工具也会显示这些内容。",
+    "Stop the computer from going to sleep while agents are working, and let it sleep once they finish. Closing a laptop lid still puts it to sleep.": "智能体工作时阻止电脑进入睡眠，完成后恢复正常睡眠。合上笔记本盖仍会进入睡眠。"
   },
   "apps/web/src/components/settings/settingsProviderAccounts.messages.ts": {
     "Manage usage": "管理用量",
@@ -8042,7 +8317,9 @@
     "Installation cancelled. The previous runtime is unchanged.": "已取消安装，原有运行环境保持不变。",
     "Could not finish the Codex installation. Check disk space and directory access.": "无法完成 Codex 安装。请检查磁盘空间和目录访问权限。",
     "The managed Codex runtime is incomplete. Remove it and reinstall.": "托管的 Codex 运行环境不完整。请移除后重新安装。",
-    "Signed out locally.": "已在本地退出登录。"
+    "Signed out locally.": "已在本地退出登录。",
+    "Could not finish sign-in on this computer. Try again.": "无法在本机完成登录，请重试。",
+    "Update Codex": "更新 Codex"
   },
   "apps/web/src/components/settings/settingsProviders.messages.ts": {
     "Account": "账户",
@@ -8521,9 +8798,16 @@
     "Loading the model list.": "正在加载模型列表。",
     "{count} model available. Pick one in a text generation model picker.": "有 {count} 个可用模型。可在文本生成模型选择器中选用。",
     "{count} models available. Pick one in a text generation model picker.": "有 {count} 个可用模型。可在文本生成模型选择器中选用。",
-    "Refresh": "刷新"
+    "Refresh": "刷新",
+    "This sign-in link is not a web address, so it was not opened.": "此登录链接不是网页地址，因此未打开。",
+    "Enter a valid value. It was not saved.": "请输入有效值，当前值未保存。"
   },
   "apps/web/src/components/settings/settingsShell.messages.ts": {
+    "on@@settings scope": "在",
+    "across": "应用于",
+    "in@@checkout scope": "在",
+    "Checkout scope": "工作副本范围",
+    "Search checkouts": "搜索工作副本",
     "Advanced": "高级",
     "Applying settings for {projects} across {environments}": "正在为{environments}中的{projects}应用设置",
     "Applying settings for {projects} on {environments}": "正在为{environments}上的{projects}应用设置",
@@ -8686,9 +8970,13 @@
     "Update theme": "更新主题",
     "Cancel": "取消",
     "light": "浅色",
-    "dark": "深色"
+    "dark": "深色",
+    "Applying settings for": "设置将应用于",
+    "Unavailable checkout": "不可用的工作副本",
+    "All checkouts": "所有工作副本"
   },
   "apps/web/src/components/settings/settingsThreads.messages.ts": {
+    "Delete \"{title}\"?\nThis cannot be undone.": "删除“{title}”？\n此操作无法撤销。",
     "Filters": "筛选条件",
     "Run only when every filter matches. Other requests are logged as filtered. Separate “is one of” values with commas; a value can't contain a comma.": "仅在所有筛选条件都满足时运行。其他请求会记为已过滤。“属于以下值之一”的多个值用英文逗号分隔，值本身不能包含逗号。",
     "Add filter": "添加筛选条件",
@@ -9024,9 +9312,15 @@
     "{organization}'s policy does not allow webhook tasks.": "{organization} 的策略不允许使用 webhook 任务。",
     "This machine": "本机",
     "Remote link": "远程连接",
-    "via {route}": "通过 {route}"
+    "via {route}": "通过 {route}",
+    "Pick a time.": "请选择时间。"
   },
   "apps/web/src/components/settings/settingsVoice.messages.ts": {
+    "Smallest": "最小",
+    "Fastest": "最快",
+    "{environment} can’t transcribe audio locally. Choose another destination.": "{environment} 无法在本地转写音频，请选择其他目标。",
+    "Instructions": "指令",
+    ", downloaded only": "，仅限已下载",
     "Auto: press to toggle, hold to record": "自动：点按切换，按住录音",
     "Hold: record while held": "按住：按住时录音",
     "Toggle: press to start, press again to stop": "切换：点按开始，再次点按停止",
@@ -9601,7 +9895,42 @@
     "Could not use a model from that path": "无法使用该路径下的模型",
     "Path to a model file or folder already on this environment": "此环境上已有的模型文件或文件夹路径",
     "Already downloaded elsewhere? Paste the model file or folder path": "已在别处下载过？粘贴模型文件或文件夹路径",
-    "Use existing": "使用已有"
+    "Use existing": "使用已有",
+    "Tap to toggle, hold to talk": "点按切换，按住说话",
+    "Record while held": "按住时录音",
+    "Tap to start, tap to stop": "点按开始，再次点按停止",
+    "Using your file at": "使用你的文件：",
+    "Cancel {value1} download": "取消下载{value1}",
+    "Delete {value1}": "删除{value1}",
+    "Add words, separated by commas": "添加词语，以逗号分隔",
+    "Add a word or phrase to the {value1}": "向{value1}添加词语或短语",
+    "Alias for {value1}": "{value1}的别名",
+    "Used by everyone who dictates in {value1}.": "供在{value1}中使用语音输入的所有人使用。",
+    "Used by everyone who dictates on this environment.": "供在此环境中使用语音输入的所有人使用。",
+    "Streaming transcription": "流式转写",
+    "Transcribe while recording. Turn off to transcribe after stopping, which may help when live transcription falls behind.": "边录音边转写。关闭后会在停止录音后转写，适合实时转写跟不上录音的情况。",
+    "This model doesn’t support native streaming.": "此模型不支持原生流式转写。",
+    "Most accurate": "最准确",
+    "Models": "模型",
+    "This environment can’t transcribe audio: {value1}.": "此环境无法转写音频：{value1}。",
+    "Grades are error rates and speed is seconds per 30 s of audio, from Handy’s benchmark {value1}.": "评分表示错误率，速度表示处理 30 秒音频所需的秒数，数据来自 Handy 的 {value1} 基准测试。",
+    "Filter by language: {value1}": "按语言筛选：{value1}",
+    "Sort and filter models: {value1}{value2}": "排序和筛选模型：{value1}{value2}",
+    "Most accurate in {value1}": "{value1}最准确的模型",
+    "Say a sentence. Cleanup is skipped, so you see exactly what the model heard.": "说一句话。测试会跳过整理步骤，直接显示模型听到的内容。",
+    "Voice input uses the first connected microphone in this list.": "语音输入会使用此列表中排在最前且已连接的麦克风。",
+    "Where your speech is turned into text.": "将语音转为文本的位置。",
+    "The provider detects your language automatically.": "提供方会自动检测语言。",
+    "This model": "此模型",
+    "OpenAI handles silence itself.": "OpenAI 会自行处理静音。",
+    "Skip silence and background noise before transcribing.": "转写前跳过静音和背景噪声。",
+    "Drop “um” and “uh” from transcripts.": "从转写文本中移除“嗯”“呃”等语气词。",
+    "Your dictionary": "你的词典",
+    "Names and terms to spell your way, saved on this device.": "按你的习惯拼写姓名和术语，保存在此设备上。",
+    "Off by default. Sends the transcript and nearby draft text, never audio, to the cleanup model.": "默认关闭。仅将转写文本及附近的草稿文字发送给整理模型，不发送音频。",
+    "Your own instructions for cleanup.": "你自定义的整理指令。",
+    "Fix punctuation, numbers, lists, and spoken corrections.": "修正标点、数字、列表和口头更正。",
+    "The phrase you say to fix a mistake, like “scratch that”.": "用于更正错误的口头指令，例如“撤销刚才的话”。"
   },
   "apps/web/src/components/settings/themeEditorUi.messages.ts": {
     "Theme JSON": "主题 JSON",
@@ -9762,7 +10091,10 @@
     "Terminal cursor": "终端光标",
     "Terminal selection": "终端选中内容",
     "Terminal scrollbar": "终端滚动条",
-    "Terminal scrollbar hover": "终端滚动条悬停色"
+    "Terminal scrollbar hover": "终端滚动条悬停色",
+    "Custom CSS": "自定义 CSS",
+    "Saved with this theme and included when you export it. Web and desktop only. Rules that load remote files are ignored.": "随此主题保存并包含在导出文件中，仅适用于 Web 和桌面端。加载远程文件的规则会被忽略。",
+    "That file is {value1}. Theme files are only a few KB, so this one was not read (limit {value2}).": "该文件大小为 {value1}。主题文件通常只有几 KB，因此未读取此文件（上限为 {value2}）。"
   },
   "apps/web/src/components/settings/themeErrorMessages.ts": {
     "The theme id \"{id}\" is reserved.": "主题 ID “{id}”为保留名称。",
@@ -9856,6 +10188,16 @@
     "{count} themes updated": "已更新 {count} 个主题",
     "System default": "系统默认",
     "System monospace": "系统等宽字体"
+  },
+  "apps/web/src/components/sidebar/SidebarFolderDrop.messages.ts": {
+    "Dropping folders needs the desktop app": "拖入文件夹需要使用桌面应用",
+    "Browsers do not share folder paths. Use Add project to choose a folder.": "浏览器不提供文件夹路径，请使用“添加项目”选择文件夹。",
+    "This computer's server is not connected yet": "尚未连接本机的服务器",
+    "Try again when it connects.": "请在连接后重试。",
+    "T3 Code could not read the folder's path.": "T3 Code 无法读取文件夹路径。",
+    "Only folders can be added as projects": "只能将文件夹添加为项目",
+    "Drop files on a thread to attach them.": "将文件拖入会话即可添加附件。",
+    "Drop folders to add projects": "拖入文件夹以添加项目"
   },
   "apps/web/src/components/sidebar/sidebarUi.messages.ts": {
     "Pinned 1 thread": "已置顶 1 个会话",
@@ -10087,6 +10429,18 @@
     "Guest Request": "访客请求",
     "Completed": "已完成"
   },
+  "apps/web/src/components/threadTitleRegenerationToast.messages.ts": {
+    "An error occurred.": "发生错误。",
+    "Title generation failed.": "标题生成失败。",
+    "Failed to regenerate thread title": "重新生成会话标题失败",
+    "Failed to regenerate {value1} of {value2} thread titles": "{value2} 个会话中有 {value1} 个标题重新生成失败",
+    "Title kept": "已保留标题",
+    "The current title already fits this thread.": "当前标题已适合此会话。",
+    "Titles kept": "已保留标题",
+    "Kept {value1} of {value2} titles": "已保留 {value2} 个标题中的 {value1} 个",
+    "The current titles already fit these threads.": "当前标题已适合这些会话。",
+    "Those titles already fit their threads.": "这些标题已适合各自的会话。"
+  },
   "apps/web/src/components/usage/usagePrices.messages.ts": {
     "Custom model prices": "自定义模型价格",
     "All environments": "所有环境",
@@ -10149,6 +10503,7 @@
     "Model mappings cannot form a cycle on {target}.": "{target} 上的模型映射不能形成循环。"
   },
   "apps/web/src/components/usage/usageUi.messages.ts": {
+    "$0 cap": "上限 $0",
     "Updating {count} providers…": "正在更新 {count} 个提供方…",
     "Updating {count} environments…": "正在更新 {count} 个环境…",
     "Updating {provider}…": "正在更新 {provider}…",
@@ -10292,6 +10647,12 @@
     "{label} · {count} left": "{label} · 剩余 {count} 次",
     "Use@@reset credit": "使用",
     "{label}: {description} This cannot be undone.": "{label}：{description} 此操作无法撤销。"
+  },
+  "apps/web/src/hooks/useOpenLocalWorkspace.messages.ts": {
+    "Failed to unarchive project": "无法取消归档项目"
+  },
+  "apps/web/src/speech/browserMicrophones.messages.ts": {
+    "Microphone {value1}": "麦克风 {value1}"
   },
   "apps/web/src/speech/speechUi.messages.ts": {
     "Microphone {index}": "麦克风 {index}",

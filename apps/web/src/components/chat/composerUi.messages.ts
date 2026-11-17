@@ -2,6 +2,7 @@ import { translate, type Locale } from "../../i18n/locale";
 import { threadRuntimeMessages } from "./threadRuntime.messages";
 
 export const composerUiMessages = {
+  Settings: "设置",
   "Answer or dismiss the question first, then add it to chat.":
     "先回答或关闭问题，再将其添加到聊天中。",
   "Terminal output can't be added to a question answer.": "终端输出无法添加到问题回答中。",
@@ -606,6 +607,66 @@ export const composerUiMessages = {
   "A message can have at most {count} attachments.": "一条消息最多可以有 {count} 个附件。",
   "Image attachment": "图片附件",
   "Retry now": "立即重试",
+  "Replying to {value1}": "正在回复{value1}",
+  "Replying to": "正在回复",
+  "Cancel reply": "取消回复",
+  "Type your answer": "输入你的回答",
+  "Downloading model {value1}%": "正在下载模型 {value1}%",
+  "Starting…": "正在启动…",
+  "Transcribing…": "正在转写…",
+  "Cleaning up…": "正在整理…",
+  "Searching project models...": "正在搜索项目模型…",
+  "Preview {value1}": "预览{value1}",
+  "Mic blocked": "麦克风被阻止",
+  "Already recording": "正在录音",
+  "Still transcribing": "仍在转写",
+  "Couldn’t start": "无法开始",
+  "Couldn’t finish": "无法完成",
+  "No speech heard": "未检测到语音",
+  "Mic failed": "麦克风出错",
+  "Mic disconnected": "麦克风已断开",
+  Dismiss: "忽略",
+  "Couldn’t list microphones. The system default still works.":
+    "无法列出麦克风，仍可使用系统默认麦克风。",
+  "Voice input is ready": "语音输入已就绪",
+  "Download a speech model once. Your audio is transcribed on {value1}.":
+    "首次使用需下载语音模型，音频将在{value1}上转写。",
+  "Pick a microphone, then start talking.": "选择麦克风后即可开始说话。",
+  "Recommended for {value1}. ": "推荐用于{value1}。",
+  "Includes a 1.2 MB silence detector.": "包含 1.2 MB 的静音检测组件。",
+  "Verifying…": "正在验证…",
+  "That microphone is unplugged. Pick another one.": "该麦克风已拔出，请选择其他麦克风。",
+  "Other models": "其他模型",
+  "Choose a model": "选择模型",
+  "Needs an admin to download": "需要管理员下载",
+  "Voice settings": "语音设置",
+  "Still sending your previous message.": "仍在发送上一条消息。",
+  "Send again once it goes through or fails.": "请在发送成功或失败后重试。",
+  "Queued message not updated": "排队消息未更新",
+  "A queued message can't move to a side chat. Remove /side or /btw to save it.":
+    "排队消息无法移到侧聊。请移除 /side 或 /btw 后保存。",
+  "Draft changed while preparing this message. Review it and send again.":
+    "准备消息期间草稿已更改，请检查后重新发送。",
+  "Message may not have been sent": "消息可能未发送",
+  "Message not sent": "消息未发送",
+  "Your new draft was kept. Copy the failed message to send it again.":
+    "新草稿已保留，请复制发送失败的消息后重试。",
+  "Your new draft was kept.": "新草稿已保留。",
+  "Copy message": "复制消息",
+  "Stashed machines can't go in an answer": "暂存的机器无法加入回答",
+  "Restore this prompt after the agent's question is answered.":
+    "请回答智能体的问题后再恢复此提示词。",
+  "Stash again once it finishes compressing.": "请在压缩完成后重新暂存。",
+  "Draft changed while preparing this message. Review it and save again.":
+    "准备消息期间草稿已更改，请检查后重新保存。",
+  "The earlier edit was saved. Review your newer changes and save again.":
+    "之前的编辑已保存，请检查新改动后再次保存。",
+  "Uploaded attachment could not be verified. Attach the file again.":
+    "无法验证已上传的附件，请重新添加。",
+  "Uploaded attachment expired. Remove it and attach it again.":
+    "已上传的附件已过期，请移除后重新添加。",
+  "Uploaded attachment could not be verified. Retry when the server reconnects.":
+    "无法验证已上传的附件，请在服务器重新连接后重试。",
 } as const;
 
 /**

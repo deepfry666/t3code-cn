@@ -1,8 +1,9 @@
 import { useTranslation } from "~/i18n/useTranslation";
 import { settingsShellMessages } from "./settingsShell.messages";
 import { resolveEnvironmentMachineKind } from "@t3tools/contracts";
+import { fileBasename } from "@t3tools/shared/path";
 import { useLocation } from "@tanstack/react-router";
-import { CheckIcon, ChevronDownIcon, LayersIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, FolderIcon, LayersIcon } from "lucide-react";
 import { Fragment, useState, type ReactNode } from "react";
 
 import type { SidebarProjectSnapshot } from "../../sidebarProjectGrouping";
@@ -31,13 +32,17 @@ import {
 import { useOptionalSettingsScope } from "./SettingsScopeContext";
 import { resolveSettingsScope, type SettingsScopeSearch } from "./settingsScope";
 import {
+  ALL_CHECKOUTS_VALUE,
   ALL_ENVIRONMENTS_VALUE,
   ALL_PROJECTS_VALUE,
   environmentAxisValue,
   projectAxisValue,
   projectScopeMenuGroups,
+  selectCheckoutAxis,
   selectEnvironmentAxis,
   selectProjectAxis,
+  settingsScopeCheckoutChoices,
+  settingsScopeCheckoutLabel,
   settingsScopeEnvironmentAddress,
   settingsScopeEnvironmentLabel,
   settingsScopeEnvironmentLabels,
@@ -79,23 +84,21 @@ export function SettingsScopeSentence() {
   };
   return (
     <p className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 px-3 text-sm text-muted-foreground sm:px-4">
-      {t(
-        scope.search.machine || scope.scope.kind === "checkout"
-          ? "Applying settings for {projects} on {environments}"
-          : "Applying settings for {projects} across {environments}",
-      )
-        .split(/(\{projects\}|\{environments\})/)
-        .map((part) =>
-          part === "{projects}" ? (
-            <ProjectScopeMenu key={part} {...props} />
-          ) : part === "{environments}" ? (
-            <EnvironmentScopeMenu key={part} {...props} />
-          ) : part ? (
-            <span key={part} className="shrink-0">
-              {part.trim()}
-            </span>
-          ) : null,
-        )}
+      <span className="flex min-w-0 items-center gap-1.5">
+        <span className="shrink-0">{t("Applying settings for")}</span>
+        <ProjectScopeMenu {...props} />
+      </span>
+      <span className="flex min-w-0 items-center gap-1.5">
+        <span className="shrink-0">
+          {t(
+            scope.search.machine || scope.scope.kind === "checkout"
+              ? "on@@settings scope"
+              : "across",
+          )}
+        </span>
+        <EnvironmentScopeMenu {...props} />
+      </span>
+      <CheckoutScopeMenu {...props} />
     </p>
   );
 }
@@ -313,6 +316,46 @@ function EnvironmentScopeMenu({
         };
       })}
     />
+  );
+}
+
+function CheckoutScopeMenu({ value, groups, onChange }: SettingsScopeMenuProps) {
+  const tx = useTranslation(settingsShellMessages);
+  const group = groups.find((candidate) => candidate.projectKey === value.project);
+  const checkouts = group ? settingsScopeCheckoutChoices(group, value) : [];
+  if (checkouts.length === 0) return null;
+  const selected = checkouts.find((member) => member.physicalProjectKey === value.checkout);
+  return (
+    <span className="flex min-w-0 items-center gap-1.5">
+      <span className="shrink-0">{tx("in@@checkout scope")}</span>
+      <ScopeMenu
+        ariaLabel={tx("Checkout scope")}
+        icon={<FolderIcon aria-hidden className="size-3.5 shrink-0" />}
+        label={
+          selected
+            ? settingsScopeCheckoutLabel(selected, checkouts)
+            : value.checkout
+              ? tx("Unavailable checkout")
+              : tx("All checkouts")
+        }
+        value={value.checkout ?? ALL_CHECKOUTS_VALUE}
+        onChange={(next) =>
+          onChange(
+            selectCheckoutAxis(
+              value,
+              checkouts.find((member) => member.physicalProjectKey === next) ?? null,
+            ),
+          )
+        }
+        searchLabel={tx("Search checkouts")}
+        allOption={{ value: ALL_CHECKOUTS_VALUE, label: tx("All checkouts") }}
+        options={checkouts.map((member) => ({
+          value: member.physicalProjectKey,
+          label: fileBasename(member.workspaceRoot),
+          secondary: member.workspaceRoot,
+        }))}
+      />
+    </span>
   );
 }
 

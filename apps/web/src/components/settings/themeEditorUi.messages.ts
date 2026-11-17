@@ -167,6 +167,11 @@ export const themeEditorUiMessages = {
   "Terminal selection": "终端选中内容",
   "Terminal scrollbar": "终端滚动条",
   "Terminal scrollbar hover": "终端滚动条悬停色",
+  "Custom CSS": "自定义 CSS",
+  "Saved with this theme and included when you export it. Web and desktop only. Rules that load remote files are ignored.":
+    "随此主题保存并包含在导出文件中，仅适用于 Web 和桌面端。加载远程文件的规则会被忽略。",
+  "That file is {value1}. Theme files are only a few KB, so this one was not read (limit {value2}).":
+    "该文件大小为 {value1}。主题文件通常只有几 KB，因此未读取此文件（上限为 {value2}）。",
 } as const;
 export function translateThemeEditorLabel(label: string, locale: Locale): string {
   return Object.hasOwn(themeEditorUiMessages, label)

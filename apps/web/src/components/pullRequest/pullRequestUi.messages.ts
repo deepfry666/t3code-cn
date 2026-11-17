@@ -3,6 +3,8 @@ import { capitalizeTerm } from "@t3tools/client-runtime/source-control-clients";
 import type { Locale } from "~/i18n/locale";
 
 export const pullRequestUiMessages = {
+  "checks@@count": "项检查",
+  "{count} merge loaded": "已加载 {count} 次合并",
   "Resolved conversation": "已解决的讨论",
   "{count} resolved conversations": "{count} 个已解决的讨论",
   "Context, no code": "背景说明，无代码",
@@ -756,6 +758,16 @@ export const pullRequestUiMessages = {
     "请使用 {kind} URL、检出工作副本的命令、123 或 #123。",
   Overview: "概览",
   "The linked item is not in the loaded activity.": "链接的条目不在已加载的动态中。",
+  "Couldn't load this diff.": "无法加载此差异。",
+  "No text diff for this file.": "此文件没有文本差异。",
+  "Diff too large to display.": "差异过大，无法显示。",
+  "Load diff": "加载差异",
+  "Could not put {value1} on": "无法添加{value1}",
+  "Could not take {value1} off": "无法移除{value1}",
+  "Could not ask {value1} for a review": "无法向{value1}请求审查",
+  "Could not take back the review request to {value1}": "无法撤回向{value1}发出的审查请求",
+  "Showing the last pull requests loaded.": "正在显示最近加载的 pull requests。",
+  "Failed to copy {value1} link": "无法复制{value1}链接",
 };
 
 // Only for application-owned labels; user content must remain unchanged.

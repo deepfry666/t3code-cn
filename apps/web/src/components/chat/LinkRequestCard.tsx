@@ -307,9 +307,11 @@ function LinkRequestDialog(props: {
     >
       <WizardPopup>
         <WizardHeader
-          title={pickMachine ? t("Link a machine") : t("Link {target}", { target: targetName })}
+          title={
+            pickMachine ? t("Link a machine") : t("Link {value1}", { value1: String(targetName) })
+          }
           description={t(
-            "Agents here can then launch, message and wait on threads there. Revoke it in that machine's Connections.",
+            "Agents here can then launch, message and wait on threads there. Revoke it in that machine's Sharing & access.",
           )}
         >
           {steps.length > 1 && !useExisting ? (
@@ -398,8 +400,8 @@ function LinkRequestDialog(props: {
                         />
                         <span className="block text-xs text-muted-foreground">
                           {t(
-                            "Create a link on {machine}: Settings → Connections → Create link, then paste its code here.",
-                            { machine: targetName },
+                            "Create a link on {target}: Settings → Sharing & access → Authorized clients → Create link, then paste its code here.",
+                            { target: targetName },
                           )}
                         </span>
                       </label>
@@ -412,8 +414,8 @@ function LinkRequestDialog(props: {
             {useExisting ? (
               <p className="text-xs text-muted-foreground">
                 {t(
-                  "This environment is already linked to {machine}. The agent can use that link as it is; change its access in Settings → Connections.",
-                  { machine: targetName },
+                  "This environment is already linked to {target}. The agent can use that link as it is; change its access in Settings → Environments.",
+                  { target: targetName },
                 )}
               </p>
             ) : null}

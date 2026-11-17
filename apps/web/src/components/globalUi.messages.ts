@@ -1,4 +1,5 @@
 export const globalUiMessages = {
+  " Search to find the rest.": " 可搜索其余文件。",
   // Confirm dialog
   "Confirm action": "确认操作",
   "This action requires your confirmation.": "此操作需要你的确认。",
@@ -297,4 +298,11 @@ export const globalUiMessages = {
   "{server} updated": "{server} 已更新",
   "Update the T3 Code desktop app that runs the {server}? It will close and relaunch on that machine.":
     "要更新运行 {server} 的 T3 Code 桌面应用吗？它会在那台机器上关闭并重新启动。",
+  "Search ignored files": "搜索已忽略的文件",
+  "No ignored files match.": "没有匹配的已忽略文件。",
+  "Showing the first": "仅显示前",
+  "Thread, {value1}": "会话，{value1}",
+  "Could not read the preferred editor.": "无法读取首选编辑器。",
+  "Could not save the preferred editor.": "无法保存首选编辑器。",
+  "Search is limited to {value1} characters.": "搜索内容不能超过 {value1} 个字符。",
 } as const;

@@ -82,4 +82,5 @@ export const clerkUiMessages = {
   "No T3 Connect environments": "没有 T3 Connect 环境",
   "Link an environment from its local Settings to make it available through T3 Connect.":
     "在环境本地的“设置”中关联它，即可通过 T3 Connect 访问。",
+  "Retry T3 Connect": "重试 T3 Connect",
 } as const;

@@ -739,8 +739,8 @@ function PrimaryAction({ app, mcpUrl }: { readonly app: McpApp; readonly mcpUrl:
               actionProps: {
                 children:
                   appLink === null
-                    ? t("Open {app}", { app: app.name })
-                    : t("Open {app} on the web", { app: app.name }),
+                    ? t("Open {value1}", { value1: String(app.name) })
+                    : t("Get {value1}", { value1: String(app.name) }),
                 onClick: () => openLink(link),
               },
             }),
