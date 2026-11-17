@@ -178,6 +178,9 @@ interface Metadata {
   modelId: number;
   timestampMs: number | null;
   usages: Fields[];
+  hasPrimaryUsage: boolean;
+  generationIndex: number | undefined;
+  stepType?: number;
 }
 
 function metadata(bytes: Uint8Array, step: boolean): Metadata {
@@ -196,8 +199,12 @@ function metadata(bytes: Uint8Array, step: boolean): Metadata {
     const retryUsage = bytesAt(fields(retry), 2);
     if (retryUsage !== undefined) usages.push(fields(retryUsage.slice()));
   }
+  const generationIndex =
+    step && bytesAt(data, 20) !== undefined ? numberAt(nested(data, 20), 3) : undefined;
   const names = [textAt(model, step ? 12 : 19), textAt(model, step ? 8 : 21)].map(modelName);
   return {
+    hasPrimaryUsage: primaryUsage !== undefined,
+    generationIndex: typeof generationIndex === "number" ? generationIndex : undefined,
     model:
       names.find(isConcreteModel) ?? names.find((name) => name && !/^model[_-]/.test(name)) ?? "",
     modelId:
@@ -270,6 +277,7 @@ const readDatabase = Effect.fn("readDatabase")(function* (
             readonly row_id: number;
             readonly idx: unknown;
             readonly data: unknown;
+            readonly step_type?: number;
           }>(query, [after, pageRows])
           .pipe(Effect.withTracerEnabled(false));
         for (const row of rows) {
@@ -279,7 +287,13 @@ const readDatabase = Effect.fn("readDatabase")(function* (
           if (typeof idx !== "number") {
             return yield* new AntigravityDatabaseDecodeError({ path });
           }
-          entries.push({ idx, entry: yield* decode(() => metadata(blob(row.data), step)) });
+          entries.push({
+            idx,
+            entry: {
+              ...(yield* decode(() => metadata(blob(row.data), step))),
+              ...(row.step_type === undefined ? {} : { stepType: row.step_type }),
+            },
+          });
         }
         if (rows.length < pageRows) break;
         after = rows[rows.length - 1]!.row_id;
@@ -304,9 +318,15 @@ const readDatabase = Effect.fn("readDatabase")(function* (
         );
       }
     }
+    const stepColumns = tables.has("steps")
+      ? yield* sql.unsafe<{ readonly name: string }>("PRAGMA table_info(steps)")
+      : [];
+    const stepTypeColumn = stepColumns.some((column) => column.name === "step_type")
+      ? ", step_type"
+      : "";
     const steps = tables.has("steps")
       ? yield* readMetadata(
-          "SELECT rowid AS row_id, idx, metadata AS data FROM steps WHERE rowid > ? ORDER BY rowid LIMIT ?",
+          `SELECT rowid AS row_id, idx, metadata AS data${stepTypeColumn} FROM steps WHERE rowid > ? ORDER BY rowid LIMIT ?`,
           STEP_PAGE_ROWS,
           true,
         )
@@ -331,6 +351,36 @@ const readDatabase = Effect.fn("readDatabase")(function* (
   }).pipe(sql.withTransaction);
 });
 
+function usageRequestKeys(usage: Fields): string[] {
+  return ([11, 12, 7] as const).flatMap((key) => {
+    const id = textAt(usage, key);
+    return id ? [`antigravity:${key}:${id}`] : [];
+  });
+}
+
+function localUsageKey(
+  sessionId: string,
+  source: string,
+  idx: number,
+  entry: Metadata,
+  usage: Fields,
+): string {
+  const call =
+    source === "step" && entry.stepType !== undefined && entry.stepType !== 15
+      ? `step:${idx}`
+      : `generation:${source === "step" ? (entry.generationIndex ?? idx) : idx}`;
+  const signature = JSON.stringify(
+    [...usage]
+      .filter(([field]) => ![7, 11, 12].includes(field))
+      .sort(([a], [b]) => a - b)
+      .map(([field, values]) => [
+        field,
+        values.map((value) => (value instanceof Uint8Array ? [...value] : String(value))),
+      ]),
+  );
+  return `antigravity:local:${sessionId}:${call}:${signature}`;
+}
+
 function usageCandidates(
   sessionId: string,
   generations: ReadonlyArray<{ idx: number; entry: Metadata }>,
@@ -340,6 +390,25 @@ function usageCandidates(
 ): UsageCandidate[] {
   const records: UsageCandidate[] = [];
   const generationModels = new Map(generations.map(({ idx, entry }) => [idx, entry]));
+  // Only primary mirrors can supply a missing identity. A real retry can have
+  // identical counts to its primary, so retry IDs must never be used here.
+  const primaryIds = new Map<string, Set<string>>();
+  for (const [source, entries] of [
+    ["step", steps],
+    ["generation", generations],
+  ] as const) {
+    for (const { idx, entry } of entries) {
+      if (!entry.hasPrimaryUsage) continue;
+      const primary = entry.usages[0];
+      if (primary === undefined) continue;
+      const id = usageRequestKeys(primary)[0];
+      if (id === undefined) continue;
+      const key = localUsageKey(sessionId, source, idx, entry, primary);
+      const ids = primaryIds.get(key) ?? new Set<string>();
+      ids.add(id);
+      primaryIds.set(key, ids);
+    }
+  }
   for (const [source, entries] of [
     ["step", steps],
     ["generation", generations],
@@ -347,7 +416,8 @@ function usageCandidates(
     for (const [index, { idx, entry }] of entries.entries()) {
       for (const [usageIndex, usage] of entry.usages.entries()) {
         const modelId = numberAt(usage, 1) || entry.modelId;
-        const generation = source === "step" ? generationModels.get(idx) : undefined;
+        const generation =
+          source === "step" ? generationModels.get(entry.generationIndex ?? idx) : undefined;
         // A retry can use a different model than its enclosing generation or step.
         const matches = (metadata: Metadata) => modelId === 0 || metadata.modelId === modelId;
         const model =
@@ -362,7 +432,7 @@ function usageCandidates(
           cachedInputTokens: numberAt(usage, 5),
           cacheCreationTokens: numberAt(usage, 4),
           outputTokens,
-          reasoningTokens: Math.min(outputTokens, numberAt(usage, 9)),
+          reasoningTokens: Math.min(outputTokens, numberAt(usage, 10)),
         };
         if (
           totals.uncachedInputTokens +
@@ -372,10 +442,15 @@ function usageCandidates(
           0
         )
           continue;
-        const keys = ([11, 12, 7] as const).flatMap((key) => {
-          const id = textAt(usage, key);
-          return id ? [`antigravity:${key}:${id}`] : [];
-        });
+        const keys = usageRequestKeys(usage);
+        // ACP mirrors can omit IDs. Scope content matching to the same call;
+        // non-planner calls and equal counts on other generations stay separate.
+        if (keys.length === 0) {
+          const localKey = localUsageKey(sessionId, source, idx, entry, usage);
+          const ids = primaryIds.get(localKey);
+          const primaryId = ids?.size === 1 ? [...ids][0] : undefined;
+          keys.push(primaryId ?? localKey);
+        }
         const record: UsageRecord = {
           provider: "antigravity",
           sessionId,

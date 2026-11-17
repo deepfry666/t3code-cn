@@ -211,6 +211,117 @@ describe("readAntigravityUsage", () => {
     }).pipe(Effect.provide(NodeServices.layer)),
   );
 
+  it.effect("deduplicates ID-less ACP mirrors while retaining separate calls and retries", () =>
+    Effect.gen(function* () {
+      const path = yield* Path.Path;
+      const dir = yield* tempDir;
+      const main = [
+        ...protoNumber(2, 100),
+        ...protoNumber(3, 30),
+        ...protoNumber(5, 1000),
+        ...protoNumber(9, 10),
+        ...protoNumber(10, 20),
+      ];
+      const compaction = [
+        ...protoNumber(2, 10),
+        ...protoNumber(3, 5),
+        ...protoNumber(5, 500),
+        ...protoNumber(10, 5),
+      ];
+      const retry = [...main, ...protoText(11, "distinct-retry")];
+      const generation = protoBytes(1, [
+        ...protoBytes(4, main),
+        ...protoText(19, "gemini-3-pro"),
+        ...protoBytes(17, protoBytes(2, main)),
+        ...protoBytes(17, protoBytes(2, retry)),
+      ]);
+      const step = (usage: number[], generationIndex: number) =>
+        new Uint8Array([
+          ...protoBytes(9, usage),
+          ...protoBytes(20, generationIndex === 0 ? [] : protoNumber(3, generationIndex)),
+          ...protoBytes(1, protoNumber(1, 1794677091)),
+          ...protoBytes(28, protoBytes(2, usage)),
+        ]);
+      yield* seedDatabase(path.join(dir, "idless.db"), (db) =>
+        Effect.gen(function* () {
+          yield* createTables(db);
+          yield* db.exec("ALTER TABLE steps ADD COLUMN step_type INTEGER");
+          yield* db.run("INSERT INTO gen_metadata VALUES (?, ?)", [0, new Uint8Array(generation)]);
+          // Different step indexes, same generation link; compaction is separate.
+          yield* db.run("INSERT INTO steps (idx, step_type, metadata) VALUES (?, ?, ?)", [
+            8,
+            23,
+            step(compaction, 0),
+          ]);
+          yield* db.run("INSERT INTO steps (idx, step_type, metadata) VALUES (?, ?, ?)", [
+            9,
+            15,
+            step(main, 0),
+          ]);
+          // Equal token counts in another generation are a real separate call.
+          yield* db.run("INSERT INTO gen_metadata VALUES (?, ?)", [
+            1,
+            new Uint8Array(
+              protoBytes(1, [...protoBytes(4, main), ...protoText(19, "gemini-3-pro")]),
+            ),
+          ]);
+          yield* db.run("INSERT INTO steps (idx, step_type, metadata) VALUES (?, ?, ?)", [
+            12,
+            15,
+            step(main, 1),
+          ]);
+          // A retry-only row must not supply a primary identity to another call.
+          yield* db.run("INSERT INTO gen_metadata VALUES (?, ?)", [
+            2,
+            new Uint8Array(
+              protoBytes(1, [
+                ...protoText(19, "gemini-3-pro"),
+                ...protoBytes(17, protoBytes(2, [...main, ...protoText(11, "retry-only")])),
+              ]),
+            ),
+          ]);
+          yield* db.run("INSERT INTO steps (idx, step_type, metadata) VALUES (?, ?, ?)", [
+            15,
+            15,
+            step(main, 2),
+          ]);
+        }),
+      );
+      const cache = makeAntigravityUsageCache();
+      for (const result of [
+        yield* readAntigravityUsage(dir, 0, cache),
+        yield* readAntigravityUsage(dir, 0, cache),
+      ]) {
+        assert.deepStrictEqual(result.errors, []);
+        const read = records(result);
+        assert.strictEqual(read.length, 6);
+        assert.strictEqual(
+          read.reduce(
+            (sum, record) =>
+              sum +
+              record.totals.uncachedInputTokens +
+              record.totals.cachedInputTokens +
+              record.totals.outputTokens,
+            0,
+          ),
+          6165,
+        );
+        assert.strictEqual(
+          read.filter((record) => record.totals.uncachedInputTokens === 100).length,
+          5,
+        );
+        assert.strictEqual(
+          read.find((record) => record.totals.cachedInputTokens === 500)?.model,
+          "gemini-3-pro",
+        );
+        assert.strictEqual(
+          read.find((record) => record.totals.uncachedInputTokens === 100)?.totals.reasoningTokens,
+          20,
+        );
+      }
+    }).pipe(Effect.provide(NodeServices.layer)),
+  );
+
   it.effect(
     "deduplicates Antigravity generation and step usage while preserving retry model and token buckets",
     () =>
@@ -224,6 +335,7 @@ describe("readAntigravityUsage", () => {
           ...protoNumber(4, 5),
           ...protoNumber(5, 20),
           ...protoNumber(9, 10),
+          ...protoNumber(10, 10),
           ...protoText(11, "response-1"),
         ];
         const retry = [
@@ -250,6 +362,8 @@ describe("readAntigravityUsage", () => {
               new Uint8Array(generation),
             ]);
             yield* db.run("INSERT INTO steps VALUES (?, ?)", [0, new Uint8Array(step)]);
+            const idlessMirror = protoBytes(9, usage.slice(0, -protoText(11, "response-1").length));
+            yield* db.run("INSERT INTO steps VALUES (?, ?)", [0, new Uint8Array(idlessMirror)]);
           }),
         );
         const result = yield* readAntigravityUsage(dir, 0);
