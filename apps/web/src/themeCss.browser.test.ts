@@ -2,6 +2,44 @@ import { expect, it } from "vite-plus/test";
 
 import { applyThemeCss } from "./themeCss";
 
+it("keeps English theme selectors working on Chinese labels and after a language switch", () => {
+  const probe = document.createElement("div");
+  probe.dataset.themeCssLocaleProbe = "";
+  probe.innerHTML = `<a aria-label="T3 Code 首页"></a><div class="shrink-0"><button aria-label="新建会话"></button><button aria-label="添加项目"></button></div>`;
+  document.body.append(probe);
+  using _probe = { [Symbol.dispose]: () => probe.remove() };
+  using _css = { [Symbol.dispose]: () => applyThemeCss(undefined) };
+  const button = probe.querySelector("button")!;
+  const link = probe.querySelector("a")!;
+  const css = `
+    [data-theme-css-locale-probe]:has(>div.shrink-0>[aria-label="New thread"]) {
+      display: flex;
+      &>div>[aria-label="New thread"] { background-color: rgb(217, 119, 87); }
+      &>div>:not([aria-label="New thread"],[aria-label="Add project"]) { display: none; }
+    }
+    @media (min-width: 0px) {
+      [data-theme-css-locale-probe] a[aria-label='T3 Code home'] { padding-left: 17px; }
+    }
+    [data-theme-css-locale-probe] button::after { content: '[aria-label=Close]'; }
+  `;
+  applyThemeCss(css);
+
+  expect(getComputedStyle(probe).display).toBe("flex");
+  expect(getComputedStyle(button).backgroundColor).toBe("rgb(217, 119, 87)");
+  expect(getComputedStyle(button).display).not.toBe("none");
+  expect(getComputedStyle(link).paddingLeft).toBe("17px");
+  expect(getComputedStyle(button, "::after").content).toContain("[aria-label=Close]");
+
+  button.setAttribute("aria-label", "New thread");
+  link.setAttribute("aria-label", "T3 Code home");
+  applyThemeCss(css);
+  expect(getComputedStyle(button).backgroundColor).toBe("rgb(217, 119, 87)");
+  expect(getComputedStyle(link).paddingLeft).toBe("17px");
+
+  applyThemeCss(undefined);
+  expect(getComputedStyle(button).backgroundColor).not.toBe("rgb(217, 119, 87)");
+});
+
 it("applies theme CSS and drops every rule that would load a remote file", () => {
   const probe = document.createElement("div");
   probe.dataset.themeCssProbe = "";
@@ -40,4 +78,30 @@ it("applies theme CSS and drops every rule that would load a remote file", () =>
 
   applyThemeCss(undefined);
   expect(getComputedStyle(probe).color).not.toBe("rgb(1, 2, 3)");
+});
+
+it("preserves literal attribute strings, Chinese selectors, unknown labels and specificity", () => {
+  const probe = document.createElement("button");
+  probe.dataset.themeCssLiteralProbe = "";
+  probe.dataset.label = '[aria-label="New thread"]';
+  probe.setAttribute("aria-label", "新建会话");
+  document.body.append(probe);
+  using _probe = { [Symbol.dispose]: () => probe.remove() };
+  using _css = { [Symbol.dispose]: () => applyThemeCss(undefined) };
+
+  applyThemeCss(`
+    [data-theme-css-literal-probe][data-label='[aria-label="New thread"]'] { padding-left: 11px; }
+    [data-theme-css-literal-probe][aria-label="新建会话"] { padding-right: 13px; }
+    [data-theme-css-literal-probe][aria-label="New thread"] { margin-left: 17px; }
+    [data-theme-css-literal-probe][aria-label] { margin-left: 19px; }
+    [data-theme-css-literal-probe][aria-label="My custom tool"] { padding-top: 23px; }
+    [data-theme-css-literal-probe][aria-label=Close] { padding-bottom: 29px; }
+  `);
+  expect(getComputedStyle(probe).paddingLeft).toBe("11px");
+  expect(getComputedStyle(probe).paddingRight).toBe("13px");
+  expect(getComputedStyle(probe).marginLeft).toBe("19px");
+  probe.setAttribute("aria-label", "My custom tool");
+  expect(getComputedStyle(probe).paddingTop).toBe("23px");
+  probe.setAttribute("aria-label", "关闭");
+  expect(getComputedStyle(probe).paddingBottom).toBe("29px");
 });

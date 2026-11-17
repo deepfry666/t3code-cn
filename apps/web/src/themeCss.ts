@@ -1,4 +1,5 @@
 import { themeCssValueFetches } from "@t3tools/shared/themeCss";
+import { localizeThemeSelector } from "./i18n/themeSelectors";
 
 // Theme CSS comes from imported files and from agents, so it must not fetch: a
 // url() on an attribute selector can send what is on screen to another host.
@@ -30,6 +31,9 @@ function stripFetches(parent: RuleParent): void {
   for (let index = parent.cssRules.length - 1; index >= 0; index--) {
     const rule = parent.cssRules[index];
     if (!rule) continue;
+    if (rule instanceof CSSStyleRule) {
+      rule.selectorText = localizeThemeSelector(rule.selectorText);
+    }
     const hasStyle = stripDeclarations(rule);
     if (rule instanceof CSSKeyframesRule) {
       for (const frame of rule.cssRules) stripDeclarations(frame);
