@@ -1,8 +1,7 @@
-import { readLocale, useTranslation } from "~/i18n/useTranslation";
-import { useTraitLabel } from "./useTraitLabel";
-import { composerUiMessages, translateComposerLabel } from "./composerUi.messages";
+import { useLocale, useTranslation } from "~/i18n/useTranslation";
+import { buildLocalizedTraitsTriggerDisplay, useTraitLabel } from "./useTraitLabel";
+import { composerUiMessages } from "./composerUi.messages";
 import {
-  buildTraitsTriggerDisplay,
   getDescriptorStringValue,
   getTraitSelectChange,
   replaceDescriptorCurrentValue,
@@ -61,16 +60,15 @@ const SAVED_OPTION_LABELS: Readonly<Record<string, string>> = {
   agent: "Agent",
   effort: "Effort",
   reasoningEffort: "Reasoning effort",
+  reasoning_effort: "Reasoning effort",
+  thinking_level: "Thinking Level",
   variant: "Reasoning",
 };
 
 function savedOptionLabel(id: string): string {
-  return translateComposerLabel(
+  return (
     SAVED_OPTION_LABELS[id] ??
-      id
-        .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
-        .replace(/^./, (character) => character.toUpperCase()),
-    readLocale(),
+    id.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/^./, (character) => character.toUpperCase())
   );
 }
 
@@ -415,7 +413,7 @@ const TraitsMenuContent = memo(function TraitsMenuContentImpl(props: TraitsSelec
                   {localize(descriptor.label)}
                 </div>
                 <div className="px-2 pb-1.5 text-muted-foreground/80 text-xs">
-                  {localize(value)}
+                  {isReasoningSelect(descriptor) ? value : localize(value)}
                 </div>
               </MenuGroup>
             </div>
@@ -427,47 +425,52 @@ const TraitsMenuContent = memo(function TraitsMenuContentImpl(props: TraitsSelec
 
   return (
     <>
-      {selectDescriptors.map((descriptor, index) => (
-        <div key={descriptor.id}>
-          {index > 0 ? <MenuDivider /> : null}
-          <MenuGroup>
-            <div className="px-2 pt-1.5 pb-1 font-medium text-muted-foreground text-xs">
-              {localize(descriptor.label)}
-            </div>
-            {ultrathinkInBodyText && descriptor.id === primarySelectDescriptor?.id ? (
-              <div className="px-2 pb-1.5 text-muted-foreground/80 text-xs">
-                {t(ULTRATHINK_IN_BODY_NOTE)}
+      {selectDescriptors.map((descriptor, index) => {
+        const reasoning = isReasoningSelect(descriptor);
+        return (
+          <div key={descriptor.id}>
+            {index > 0 ? <MenuDivider /> : null}
+            <MenuGroup>
+              <div className="px-2 pt-1.5 pb-1 font-medium text-muted-foreground text-xs">
+                {localize(descriptor.label)}
               </div>
-            ) : null}
-            <MenuRadioGroup
-              value={traits.selectValue(descriptor)}
-              onValueChange={(value) => traits.changeSelect(descriptor, value)}
-            >
-              {selectableProviderOptionChoices(descriptor).map((option) => (
-                <MenuRadioItem
-                  key={option.id}
-                  value={option.id}
-                  hideIndicator
-                  closeOnClick
-                  disabled={ultrathinkInBodyText && descriptor.id === primarySelectDescriptor?.id}
-                >
-                  <span className="flex w-full min-w-0 flex-col">
-                    <span className="flex min-w-0 items-center gap-1">
-                      <span className="min-w-0 truncate">{localize(option.label)}</span>
-                      {option.isDefault ? <DefaultBadge /> : null}
-                    </span>
-                    {option.description ? (
-                      <span className="max-w-56 text-pretty text-muted-foreground/80 text-xs">
-                        {localize(option.description)}
+              {ultrathinkInBodyText && descriptor.id === primarySelectDescriptor?.id ? (
+                <div className="px-2 pb-1.5 text-muted-foreground/80 text-xs">
+                  {t(ULTRATHINK_IN_BODY_NOTE)}
+                </div>
+              ) : null}
+              <MenuRadioGroup
+                value={traits.selectValue(descriptor)}
+                onValueChange={(value) => traits.changeSelect(descriptor, value)}
+              >
+                {selectableProviderOptionChoices(descriptor).map((option) => (
+                  <MenuRadioItem
+                    key={option.id}
+                    value={option.id}
+                    hideIndicator
+                    closeOnClick
+                    disabled={ultrathinkInBodyText && descriptor.id === primarySelectDescriptor?.id}
+                  >
+                    <span className="flex w-full min-w-0 flex-col">
+                      <span className="flex min-w-0 items-center gap-1">
+                        <span className="min-w-0 truncate">
+                          {reasoning ? option.label : localize(option.label)}
+                        </span>
+                        {option.isDefault ? <DefaultBadge /> : null}
                       </span>
-                    ) : null}
-                  </span>
-                </MenuRadioItem>
-              ))}
-            </MenuRadioGroup>
-          </MenuGroup>
-        </div>
-      ))}
+                      {option.description ? (
+                        <span className="max-w-56 text-pretty text-muted-foreground/80 text-xs">
+                          {reasoning ? option.description : localize(option.description)}
+                        </span>
+                      ) : null}
+                    </span>
+                  </MenuRadioItem>
+                ))}
+              </MenuRadioGroup>
+            </MenuGroup>
+          </div>
+        );
+      })}
       {booleanDescriptors.map((descriptor, index) => (
         <div key={descriptor.id}>
           {index > 0 || selectDescriptors.length > 0 ? <MenuDivider /> : null}
@@ -504,22 +507,25 @@ export const TraitsPicker = memo(function TraitsPicker({
   hidden?: boolean;
   disabled?: boolean;
 }) {
-  const localize = useTraitLabel();
+  const locale = useLocale();
   const [isMenuOpen, setIsMenuOpen] = useComposerMenuState(hidden || disabled);
   const traits = useTraitsSelection(props);
   if (!traits.hasAnyControls) {
     return null;
   }
-  const { label: triggerLabel } = buildTraitsTriggerDisplay({
-    descriptors: traits.descriptors,
-    primarySelectDescriptorId: traits.primarySelectDescriptor?.id ?? null,
-    ultrathinkPromptControlled: traits.ultrathinkPromptControlled,
-    modelSelection:
-      props.instanceId && props.model
-        ? { instanceId: props.instanceId, model: props.model, options: props.modelOptions ?? [] }
-        : null,
-    reportedModelSelection: props.reportedModelSelection,
-  });
+  const { label: triggerLabel } = buildLocalizedTraitsTriggerDisplay(
+    {
+      descriptors: traits.descriptors,
+      primarySelectDescriptorId: traits.primarySelectDescriptor?.id ?? null,
+      ultrathinkPromptControlled: traits.ultrathinkPromptControlled,
+      modelSelection:
+        props.instanceId && props.model
+          ? { instanceId: props.instanceId, model: props.model, options: props.modelOptions ?? [] }
+          : null,
+      reportedModelSelection: props.reportedModelSelection,
+    },
+    locale,
+  );
   const isCodexStyle = props.provider === "codex";
 
   return (
@@ -536,7 +542,7 @@ export const TraitsPicker = memo(function TraitsPicker({
               render={
                 <ComposerControl
                   disabled={disabled}
-                  aria-label={localize(triggerLabel)}
+                  aria-label={triggerLabel}
                   size={size}
                   className={cn(
                     isCodexStyle
@@ -558,17 +564,17 @@ export const TraitsPicker = memo(function TraitsPicker({
             >
               <ComposerControlIcon icon={GaugeIcon} size={size} />
               <span data-composer-control-label className="min-w-0 truncate">
-                {localize(triggerLabel)}
+                {triggerLabel}
               </span>
             </span>
           ) : (
             <>
               <ComposerControlIcon icon={GaugeIcon} size={size} />
-              <span data-composer-control-label>{localize(triggerLabel)}</span>
+              <span data-composer-control-label>{triggerLabel}</span>
             </>
           )}
         </TooltipTrigger>
-        <TooltipPopup side="top">{localize(triggerLabel)}</TooltipPopup>
+        <TooltipPopup side="top">{triggerLabel}</TooltipPopup>
       </Tooltip>
       <MenuPopup align="start">
         <TraitsMenuContent {...props} />

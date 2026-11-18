@@ -124,7 +124,7 @@ it("draws an agent's reasoning as bars and keeps its mode out of the levels", as
   await expect.element(page.getByRole("menuitemradio")).not.toBeInTheDocument();
 });
 
-it("translates provider options live while persisting their original values", async () => {
+it("translates option headers and non-reasoning choices while keeping thinking levels in English", async () => {
   const changes: Array<ReadonlyArray<ProviderOptionSelection> | undefined> = [];
   const traits: TraitsSelectionInput = {
     ...traitsInput([], (next) => changes.push(next)),
@@ -136,14 +136,16 @@ it("translates provider options live while persisting their original values", as
         capabilities: createModelCapabilities({
           optionDescriptors: [
             {
-              id: "reasoningEffort",
-              label: "Reasoning",
+              id: "thinking_level",
+              label: "Thinking Level",
               role: "reasoning",
               type: "select",
-              currentValue: "high",
+              currentValue: "off",
               options: [
+                { id: "off", label: "Off" },
                 { id: "low", label: "Low" },
                 { id: "high", label: "High" },
+                { id: "xhigh", label: "Extra High" },
               ],
             },
             {
@@ -156,6 +158,16 @@ it("translates provider options live while persisting their original values", as
                 { id: "restricted", label: "Restricted" },
               ],
             },
+            {
+              id: "serviceTier",
+              label: "Service Tier",
+              type: "select",
+              currentValue: "fast",
+              options: [
+                { id: "default", label: "Standard" },
+                { id: "fast", label: "Fast" },
+              ],
+            },
           ],
         }),
       },
@@ -163,12 +175,22 @@ it("translates provider options live while persisting their original values", as
   };
   try {
     setLocale("zh-CN");
+    expect(describeComposerEffort(traits, "label", "sm", "zh-CN").detail).toBe("Off 快速 · 标准");
     // The picker writes options directly; no routes involved.
-    await using screen = await render(<ComposerEffortColumn traits={traits} />, { router: false });
-    await expect.element(screen.getByRole("radiogroup", { name: "推理" })).toBeVisible();
-    await userEvent.click(screen.getByRole("radio", { name: "低" }));
+    await using screen = await render(
+      <>
+        <ComposerEffortColumn traits={traits} />
+        <p role="status">{describeComposerEffort(traits, "label", "sm", "zh-CN").suffix}</p>
+      </>,
+      { router: false },
+    );
+    await expect.element(screen.getByRole("status")).toHaveTextContent("Off");
+    await expect.element(screen.getByRole("radiogroup", { name: "思考等级" })).toBeVisible();
+    await expect.element(screen.getByRole("radio", { name: "Off" })).toBeVisible();
+    await expect.element(screen.getByRole("radio", { name: "Extra High" })).toBeVisible();
+    await userEvent.click(screen.getByRole("radio", { name: "Low" }));
     expect(changes.at(-1)).toEqual(
-      expect.arrayContaining([{ id: "reasoningEffort", value: "low" }]),
+      expect.arrayContaining([{ id: "thinking_level", value: "low" }]),
     );
     await userEvent.click(screen.getByRole("button", { name: "网络安全访问: 标准" }));
     await userEvent.click(page.getByRole("menuitemradio", { name: "受限" }));
@@ -176,7 +198,7 @@ it("translates provider options live while persisting their original values", as
       expect.arrayContaining([{ id: "cyberAccess", value: "restricted" }]),
     );
     await act(() => setLocale("en"));
-    await expect.element(screen.getByRole("radiogroup", { name: "Reasoning" })).toBeVisible();
+    await expect.element(screen.getByRole("radiogroup", { name: "Thinking Level" })).toBeVisible();
     await expect
       .element(screen.getByRole("button", { name: "Cyber Access: Standard" }))
       .toBeVisible();

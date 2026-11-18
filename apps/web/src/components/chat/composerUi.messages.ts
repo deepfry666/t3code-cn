@@ -3,15 +3,9 @@ import { threadRuntimeMessages } from "./threadRuntime.messages";
 
 export const composerUiMessages = {
   Reasoning: "推理",
+  "Reasoning Effort": "推理强度",
   Thinking: "思考",
-  Low: "低",
-  Medium: "中",
-  High: "高",
-  "Extra High": "极高",
-  Minimal: "最低",
-  None: "无",
-  Max: "最大",
-  Ultra: "极致",
+  "Thinking Level": "思考等级",
   Normal: "普通",
   "Cyber Access": "网络安全访问",
   Restricted: "受限",

@@ -1,11 +1,15 @@
 import type { Locale } from "~/i18n/locale";
 import { readLocale, useTranslation } from "~/i18n/useTranslation";
-import { translateTraitLabel, useTraitLabel } from "./useTraitLabel";
+import {
+  buildLocalizedTraitsTriggerDisplay,
+  translateTraitLabel,
+  useTraitLabel,
+} from "./useTraitLabel";
 import { composerUiMessages } from "./composerUi.messages";
 import {
-  buildTraitsTriggerDisplay,
   getDescriptorStringValue,
   isReasoningControl,
+  isReasoningSelect,
   selectableProviderOptionChoices,
 } from "@t3tools/client-runtime/model-traits";
 import type { ProviderOptionDescriptor, RuntimeMode } from "@t3tools/contracts";
@@ -99,13 +103,16 @@ export function describeComposerEffort(
       ? { instanceId: traits.instanceId, model: traits.model, options: traits.modelOptions ?? [] }
       : null;
   const primary = visibility.primarySelectDescriptor;
-  const display = buildTraitsTriggerDisplay({
-    descriptors: visibility.descriptors,
-    primarySelectDescriptorId: primary?.id ?? null,
-    ultrathinkPromptControlled: visibility.ultrathinkPromptControlled,
-    modelSelection,
-    reportedModelSelection: traits.reportedModelSelection,
-  });
+  const display = buildLocalizedTraitsTriggerDisplay(
+    {
+      descriptors: visibility.descriptors,
+      primarySelectDescriptorId: primary?.id ?? null,
+      ultrathinkPromptControlled: visibility.ultrathinkPromptControlled,
+      modelSelection,
+      reportedModelSelection: traits.reportedModelSelection,
+    },
+    locale,
+  );
   // The same reasoning control the column lists, wherever the agent put it among its options.
   const reasoning =
     columnControls(visibility.selectDescriptors, visibility.booleanDescriptors).effort
@@ -120,6 +127,12 @@ export function describeComposerEffort(
             : getDescriptorStringValue(reasoning, modelSelection, traits.reportedModelSelection),
         )
       : null;
+  const currentReasoningLabel =
+    reasoning?.type === "select"
+      ? getProviderOptionCurrentLabel(reasoning, modelSelection, traits.reportedModelSelection)
+      : null;
+  const isSelectedReasoningLevel =
+    reasoning?.type === "select" && Boolean(ultrathink || glyph || currentReasoningLabel);
   // Workflow levels such as Ultracode always show their name; the setting names every level.
   const word = glyph
     ? (glyph.special ?? (effortDisplay === "label" ? glyph.label : null))
@@ -129,11 +142,7 @@ export function describeComposerEffort(
         ? `${reasoning.label} ${reasoning.currentValue === true ? "On" : "Off"}`
         : ultrathink
           ? "Ultrathink"
-          : (getProviderOptionCurrentLabel(
-              reasoning,
-              modelSelection,
-              traits.reportedModelSelection,
-            ) ?? (reasoning.id === "thinking" ? reasoning.label : null));
+          : (currentReasoningLabel ?? (reasoning.id === "thinking" ? reasoning.label : null));
   const fast = display.speedLabel === "Fast" || display.speedLabel === "Ultrafast";
   // Agent options such as modes live in the picker; the trigger adds only the context window.
   const contextWindow =
@@ -144,9 +153,9 @@ export function describeComposerEffort(
       traits.reportedModelSelection,
     );
   if (!word && !glyph && !fast && !display.ultracode && !contextWindow)
-    return { suffix: null, detail: translateTraitLabel(display.label, locale) };
+    return { suffix: null, detail: display.label };
   return {
-    detail: translateTraitLabel(display.label, locale),
+    detail: display.label,
     suffix: (
       <span
         className={cn(
@@ -157,7 +166,7 @@ export function describeComposerEffort(
       >
         {word ? (
           <span data-composer-control-label className="max-w-24 truncate">
-            {translateTraitLabel(word, locale)}
+            {isSelectedReasoningLevel ? word : translateTraitLabel(word, locale)}
           </span>
         ) : glyph ? (
           <EffortGlyph count={glyph.count} filled={glyph.filled} size={size} />
@@ -197,7 +206,6 @@ function ColumnRow(props: {
   onPick: () => void;
 }) {
   const t = useTranslation(composerUiMessages);
-  const localize = useTraitLabel();
   const rowProps = {
     type: "button",
     role: "radio",
@@ -213,7 +221,7 @@ function ColumnRow(props: {
   } as const;
   const content = (
     <>
-      <span className="min-w-0 flex-1 truncate">{localize(props.label)}</span>
+      <span className="min-w-0 flex-1 truncate">{props.label}</span>
       {props.selected ? (
         <>
           {props.isDefault ? <span className="sr-only">{t("Default")}</span> : null}
@@ -229,7 +237,7 @@ function ColumnRow(props: {
     <Tooltip>
       <TooltipTrigger render={<button {...rowProps} />}>{content}</TooltipTrigger>
       <TooltipPopup side="right" className="max-w-56">
-        {localize(props.description)}
+        {props.description}
       </TooltipPopup>
     </Tooltip>
   );
@@ -264,7 +272,9 @@ function EffortLevels(props: { traits: TraitsSelectionInput }) {
           return value ? (
             <div key={descriptor.id}>
               <div className={COLUMN_LABEL}>{localize(descriptor.label)}</div>
-              <div className="px-2 pb-1.5 text-muted-foreground/80 text-xs">{localize(value)}</div>
+              <div className="px-2 pb-1.5 text-muted-foreground/80 text-xs">
+                {isReasoningSelect(descriptor) ? value : localize(value)}
+              </div>
             </div>
           ) : null;
         })}
@@ -530,7 +540,7 @@ export function ComposerEffortColumn(props: { traits: TraitsSelectionInput | nul
       {/* Matches the search row's box, so one rule runs across the top of the popup. */}
       <div className="shrink-0 px-3 pt-2.5">
         <div className="flex h-8.25 -translate-y-px items-center gap-2 border-b border-border/70 pb-1.5 text-sm">
-          <span className="text-muted-foreground">
+          <span className="shrink-0 text-muted-foreground">
             {controls?.effort
               ? localize(controls.effort.descriptor.label)
               : controls?.others.length
