@@ -16,28 +16,48 @@ Claude Code、Codex、Cursor、OpenCode、Antigravity、Kiro 等主流智能体�
 [![官方项目](https://img.shields.io/badge/%E5%9F%BA%E4%BA%8E-pingdotgg%2Ft3code-black)](https://github.com/pingdotgg/t3code)
 [![许可证](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-[**下载最新版**](https://github.com/deepfry666/t3code-cn/releases/latest) · [三步上手](#三步上手) · [和官方中文有什么不同](#和官方中文有什么不同) · [常见问题](#常见问题)
+[**换到官方版**](#如何换到官方版) · [下载官方版](https://t3.codes/download) · [和官方中文有什么不同](#和官方中文有什么不同) · [常见问题](#常见问题)
 
 </div>
+
+> [!IMPORTANT]
+> **本项目已停止维护，最后一个版本是 0.1.10-cn.4。**
+> 官方 T3 Code 从 0.1.11 起自带完整的中文界面（桌面、网页和手机都有），请换用 [官方版](https://t3.codes/download)。换过去以后，会话、项目和设置都会保留，步骤见 [如何换到官方版](#如何换到官方版)。
 
 <br>
 
 ![T3 Code 中文版：会话列表、智能体回复和工作区面板](i18n/screenshots/chat.png)
 
+## 如何换到官方版
+
+官方发布 0.1.11 或更新的版本后：
+
+1. 完全退出 T3 Code 中文版。建议先把数据目录 `~/.t3/userdata` 复制一份备份（Windows 上是 `%USERPROFILE%\.t3\userdata`）。
+2. 从 [t3.codes/download](https://t3.codes/download) 下载官方版，或者用包管理器安装：macOS `brew install --cask t3-code`，Windows `winget install T3Tools.T3Code`。
+3. 直接覆盖安装，不需要先卸载，也不要删除 `~/.t3`。macOS 上把官方版拖进“应用程序”文件夹，替换现有的 **T3 Code (Beta)**。
+4. 打开后到 **设置 → 通用 → 显示 → 语言**，确认选的是“中文（简体）”。
+
+需要注意：
+
+- **数据为什么还在**：中文版一直沿用官方的应用标识和 `~/.t3` 数据目录，官方版读的是同一份数据。
+- **只需手动装一次**：中文版和官方版的签名不同，中文版不会自动更新成官方版。装上官方版以后，更新由官方负责。
+- **不要再装回中文版**：0.1.11 比 0.1.10-cn.4 新，数据库会自动升级，旧版本不一定能读升级后的数据。
+- **命令行 `t3`**：运行官方安装命令 `curl -fsSL https://t3.codes/install.sh | sh` 即可覆盖（Windows PowerShell：`irm https://t3.codes/install.ps1 | iex`）。
+- **翻译问题**：官方中文里如果有翻得不好的地方，请到 [官方仓库](https://github.com/pingdotgg/t3code) 或 [中文翻译讨论](https://github.com/pingdotgg/t3code/discussions/34709) 反馈。
+
 ## 为什么做这个版本
 
 [T3 Code](https://github.com/pingdotgg/t3code) 是一个开源的智能体控制台：在一个界面里同时跑多个会话，看智能体读了哪些文件、改了哪些代码，支持工作树隔离、引用回复、自定义主题与工作时保持唤醒，随时批准、回退、开 PR。它很好用，但是英文界面。
 
-中文版只做一件事：**把界面完整地翻成好懂的中文**。功能和官方完全一致，官方每发一个新版，这里通常一两天内跟进。
+中文版只做一件事：**把界面完整地翻成好懂的中文**。功能和官方完全一致，维护期间一直跟着官方版本更新。
 
 - **翻得全**：10,500 多条界面文字，覆盖设置、侧边栏、会话、命令面板、主题外观、Git 与 PR、文件预览、浏览器、设备、定时任务、语音与用量，以及桌面应用的原生菜单。
 - **译得一致**：同一个英文词在任何地方都是同一个中文词。thread 一律是“会话”，agent 一律是“智能体”，由自动检查保证，不会这里一个说法、那里又是另一个说法。
 - **读得顺**：按中文习惯重写句子，不逐字硬翻；Finder、PR 这类大家习惯说英文的词保留英文。
-- **更新省心**：安装一次，之后在应用内自动更新，不会被官方英文版覆盖。
 
 ## 和官方中文有什么不同
 
-2026 年 11 月，官方合并了界面语言切换功能（[#31313](https://github.com/pingdotgg/t3code/pull/31313)），附带一份中文翻译。我们很高兴官方开始支持中文，但目前那份翻译只覆盖设置页的 70 多条文字，其余界面仍是英文，术语也和我们的不同：
+2026 年 11 月 12 日，官方合并了界面语言切换功能（[#31313](https://github.com/pingdotgg/t3code/pull/31313)），附带的中文翻译只覆盖设置页的 70 多条文字，术语也和中文版不同。11 月 18 日，官方在 [#37893](https://github.com/pingdotgg/t3code/pull/37893) 把整个应用翻成了中文，约一万条文字，用词也改成了和中文版一致的“会话”“智能体”等。下表是 11 月 12 日那版的差异，留作记录：
 
 | 英文原文                                              | 官方中文                                       | 中文版                                 |
 | ----------------------------------------------------- | ---------------------------------------------- | -------------------------------------- |
@@ -49,7 +69,7 @@ Claude Code、Codex、Cursor、OpenCode、Antigravity、Kiro 等主流智能体�
 | Confirm thread deletion                               | 删除线程前确认                                 | 确认删除会话                           |
 | “…The boring sidebar in Labs has no Working section.” | “Labs 中的 boring sidebar 没有 Working 分区。” | “实验功能中的简洁侧边栏不显示此分组。” |
 
-我们的做法是：**代码跟官方走，措辞用中文版的**。官方新增的翻译机制照常保留，官方已经翻过的文字会自动换成中文版的译法；官方没翻到的地方，继续由中文版补上。界面里始终只有一个语言开关，选“中文（简体）”看到的就是一套统一的说法。
+官方中文现在已经足够完整，中文版也就完成了它的任务，这是停止维护的原因。
 
 <details>
 <summary>为什么“会话”比“线程”好？</summary>
@@ -72,6 +92,9 @@ Claude Code、Codex、Cursor、OpenCode、Antigravity、Kiro 等主流智能体�
 </table>
 
 ## 三步上手
+
+<details>
+<summary><b>旧版中文版的安装说明（0.1.10-cn.4，已不再更新，推荐使用官方版）</b></summary>
 
 **1. 下载安装**
 
@@ -106,6 +129,8 @@ T3 Code 本身不带模型，它调用你电脑上已经装好的智能体。至
 **3. 切到中文**
 
 系统语言是中文时，首次打开会自动显示中文。如果还是英文，打开 **Settings → General → Display → Language**，选 **中文（简体）**，立即生效，不用重启。
+
+</details>
 
 ## 常见问题
 
@@ -178,9 +203,11 @@ T3 Code 本身不带模型，它调用你电脑上已经装好的智能体。至
 
 ## 参与改进
 
-- **发现翻得不对、漏翻的地方**：到 [Issues](https://github.com/deepfry666/t3code-cn/issues) 提交，附上截图和所在页面就行。
-- **想自己改译文**：全部译文都在 [`i18n/zh-CN.json`](i18n/zh-CN.json) 里，按文件列出“英文原文 → 中文”，术语约定见 [`i18n/README.md`](i18n/README.md)。同步官方和发布新版的流程见 [`docs/operations/fork-maintenance.md`](docs/operations/fork-maintenance.md)。
-- **与汉化无关的功能问题**：请先确认官方版本是否也有，再到 [官方仓库](https://github.com/pingdotgg/t3code/issues) 反馈。
+本仓库已停止维护，不再处理新的问题。
+
+- **翻译问题**：请到 [官方仓库](https://github.com/pingdotgg/t3code/issues) 或 [中文翻译讨论](https://github.com/pingdotgg/t3code/discussions/34709) 反馈。
+- **想参考中文版的译法**：全部译文都在 [`i18n/zh-CN.json`](i18n/zh-CN.json) 里，按文件列出“英文原文 → 中文”，术语约定见 [`i18n/README.md`](i18n/README.md)。
+- **功能问题**：请到 [官方仓库](https://github.com/pingdotgg/t3code/issues) 反馈。
 
 觉得好用的话，点个 Star 让更多人看到。
 
